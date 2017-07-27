@@ -693,8 +693,7 @@ public class SolrQueryBuilder {
 
     public SolrQuery buildSolrQueryForIncompleteReports(String owningInstitution){
         SolrQuery solrQuery = new SolrQuery();
-        solrQuery.setQuery(RecapConstants.DOC_TYPE_ITEM);
-        solrQuery.addFilterQuery(RecapConstants.ITEM_STATUS_INCOMPLETE);
+        solrQuery.setQuery(RecapConstants.ITEM_STATUS_INCOMPLETE+or+"("+RecapConstants.ITEM_STATUS_COMPLETE+and+coreChildFilterQuery+RecapConstants.BIB_STATUS_INCOMPLETE+")");
         solrQuery.addFilterQuery(RecapConstants.ITEM_OWNING_INSTITUTION+":"+owningInstitution);
         solrQuery.addFilterQuery(RecapConstants.IS_DELETED_ITEM_FALSE);
         solrQuery.setFields(RecapConstants.ITEM_ID,RecapConstants.BARCODE,RecapConstants.CUSTOMER_CODE,RecapConstants.ITEM_CREATED_DATE,RecapConstants.ITEM_CATALOGING_STATUS,RecapConstants.ITEM_BIB_ID,RecapConstants.ITEM_OWNING_INSTITUTION);
