@@ -490,5 +490,8 @@ public final class RecapConstants {
         public static final String ROOT = "Root";
     }
 
+    public static final String ITEM_STATUS_COMPLETE="ItemCatalogingStatus:Complete";
+    public static final String BIB_STATUS_INCOMPLETE="BibCatalogingStatus:Incomplete";
+
     private RecapConstants(){}
 }
