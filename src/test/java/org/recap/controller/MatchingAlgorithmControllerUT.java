@@ -19,10 +19,8 @@ import org.recap.repository.jpa.*;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.ui.Model;
@@ -122,6 +120,21 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
 
     @Test
     public void matchingAlgorithmFullTest() throws Exception {
+        Date matchingAlgoDate = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm/dd");
+        String matchingAlgoDateString = sdf.format(matchingAlgoDate);
+        Mockito.when(matchingAlgoController.matchingAlgorithmFindMatchingAndReports()).thenReturn(RecapConstants.STATUS_DONE);
+        Mockito.when(matchingAlgoController.updateMonographCGDInDB()).thenReturn(RecapConstants.STATUS_DONE);
+        Mockito.when(matchingAlgoController.updateSerialCGDInDB()).thenReturn(RecapConstants.STATUS_DONE);
+        Mockito.when(matchingAlgoController.updateMvmCGDInDB()).thenReturn(RecapConstants.STATUS_DONE);
+        Mockito.when(matchingAlgoController.updateCGDInSolr(matchingAlgoDateString)).thenReturn(RecapConstants.STATUS_DONE);
+        Mockito.when(matchingAlgoController.matchingAlgorithmFull(matchingAlgoDateString)).thenCallRealMethod();
+        String response = matchingAlgoController.matchingAlgorithmFull(matchingAlgoDateString);
+        assertTrue(response.contains(RecapConstants.STATUS_DONE));
+    }
+
+    @Test
+    public void matchingAlgorithmFindMatchingAndReportsTest() throws Exception {
         Map<String, Integer> matchingAlgoMap = new HashMap<>();
         matchingAlgoMap.put("pulMatchingCount", 1);
         matchingAlgoMap.put("culMatchingCount", 2);
@@ -136,8 +149,8 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndLCCN(batchSize)).thenReturn(matchingAlgoMap);
         Mockito.when(matchingAlgorithmHelperService.populateReportsForISSNAndLCCN(batchSize)).thenReturn(matchingAlgoMap);
         Mockito.when(matchingAlgorithmHelperService.populateReportsForSingleMatch(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgoController.matchingAlgorithmFull()).thenCallRealMethod();
-        String response = matchingAlgoController.matchingAlgorithmFull();
+        Mockito.when(matchingAlgoController.matchingAlgorithmFindMatchingAndReports()).thenCallRealMethod();
+        String response = matchingAlgoController.matchingAlgorithmFindMatchingAndReports();
         assertTrue(response.contains(RecapConstants.STATUS_DONE));
     }
 
