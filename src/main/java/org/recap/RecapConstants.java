@@ -356,6 +356,7 @@ public final class RecapConstants {
     public static final String  BIBITEM_LASTUPDATED_DATE = "BibItemLastUpdatedDate";
     public static final String  ITEM_LASTUPDATED_DATE = "ItemLastUpdatedDate";
     public static final String  ITEM_CREATED_DATE = "ItemCreatedDate";
+    public static final String  BIB_LASTUPDATED_DATE = "BibLastUpdatedDate";
 
     public static final String CGD_UPDATE_ITEM_BARCODE = "itemBarcode";
     public static final String OWNING_INST = "owningInstitution";
