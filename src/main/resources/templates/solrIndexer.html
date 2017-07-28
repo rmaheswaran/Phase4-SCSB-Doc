@@ -23,7 +23,7 @@
 
     <ul class="nav nav-tabs nav-justified">
         <li class="active"><a data-toggle="tab" href="#solrIndex">Solr Index</a></li>
-        <li><a data-toggle="tab" href="#matchingAlgorithmSaveReport">Matching Algorithm Save Reports</a></li>
+        <li><a data-toggle="tab" href="#matchingAlgorithmSaveReport">Initial Matching Algorithm</a></li>
         <li><a data-toggle="tab" href="#ongoingMatchingJob">Ongoing Matching Job</a></li>
         <li><a data-toggle="tab" href="#generateReports"> Generate Reports</a></li>
     </ul>
@@ -177,8 +177,9 @@
                                                 <select id="matchingCriteria"
                                                         class="form-control"
                                                         style="width: 160px;" th:onchange="'javascript:showDateField()'">
-                                                    <option value="ALL">Find Matching And Run Reports</option>
-                                                    <option value="Reports">Run Only Reports</option>
+                                                    <option value="ALL">Run Matching Full Process</option>
+                                                    <option value="MatchingAndReports">Find Matching And Save Reports</option>
+                                                    <option value="Reports">Save Only Reports</option>
                                                     <option value="UpdateMonographCGDInDB">Update Monographs CGD In DB</option>
                                                     <option value="UpdateSerialCGDInDB">Update Serials CGD In DB</option>
                                                     <option value="UpdateMvmCGDInDB">Update MVMs CGD In DB</option>
@@ -202,7 +203,7 @@
                                         <div class="form-group">
                                             <div class="col-sm-6">
                                                 <button id="saveReport" type="button" onclick="saveReport()"
-                                                        class="btn btn-info active  pull-right">Save Report
+                                                        class="btn btn-info active  pull-right">Submit
                                                 </button>
                                             </div>
                                         </div>
