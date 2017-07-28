@@ -128,11 +128,13 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         Map<Integer, BibItem> bibItemMap = new HashMap<>();
         if(onlyOrphan){
             bibItems = searchByBibForDeleted(searchRecordsRequest);
+            searchRecordsRequest.setFieldName(RecapConstants.ITEM_LASTUPDATED_DATE);
             searchByItem(searchRecordsRequest, true, bibItemMap);
             eliminateNonOrphanRecords(bibItemMap);
         } else {
             searchByItem(searchRecordsRequest, true, bibItemMap);
             searchByItem(searchRecordsRequest, false, bibItemMap);
+            searchRecordsRequest.setFieldName(RecapConstants.BIB_LASTUPDATED_DATE);
             List<BibItem> bibItemForOrphanBib = searchByBibForDeleted(searchRecordsRequest);
             compareAndSetOnlyOrphanBibs(bibItemMap,bibItemForOrphanBib);
         }
