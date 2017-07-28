@@ -85,7 +85,9 @@ function saveReport() {
     var matchingAlgoDate = $('#matchingAlgoDate').val();
     var url = '';
     if(criteria === 'ALL') {
-        url = "/matchingAlgorithm/full";
+        url = "/matchingAlgorithm/full?matchingAlgoDate="+matchingAlgoDate;
+    } else if(criteria === 'MatchingAndReports') {
+        url = "/matchingAlgorithm/findMatchingAndSaveReports";
     } else if (criteria === 'Reports') {
         url = "/matchingAlgorithm/reports";
     } else if (criteria === 'UpdateMonographCGDInDB') {
@@ -115,23 +117,10 @@ function generateReport() {
     var $form = $('#reports-form');
     $("#report").attr('disabled', 'disabled');
     document.getElementById("reportStatus").value = '';
-    var criteria = $('#matchingCriteriaForReports').val();
     var processType = $('#processType').val();
     var url = '';
     if(processType === 'SolrIndex' || processType === 'DeAccession_Summary_Report' || processType ==='Accession'  || processType ==='SubmitCollection') {
         url = "/reportGeneration/generateReports";
-    } else {
-        if(criteria === 'ALL') {
-            url = "/matchingAlgorithm/generateReports/full";
-        } else if(criteria === 'OCLC') {
-            url = "/matchingAlgorithm/generateReports/oclc";
-        } else if(criteria === 'ISBN') {
-            url = "/matchingAlgorithm/generateReports/isbn";
-        } else if(criteria === 'ISSN') {
-            url = "/matchingAlgorithm/generateReports/issn";
-        } else if(criteria === 'LCCN') {
-            url = "/matchingAlgorithm/generateReports/lccn";
-        }
     }
     if(url !== '') {
         var request = $.ajax({
@@ -150,7 +139,7 @@ function generateReport() {
 
 function showDateField() {
     var criteria = $('#matchingCriteria').val();
-    if(criteria === 'UpdateCGDInSolr') {
+    if(criteria === 'UpdateCGDInSolr' || criteria === 'ALL') {
         $('#matchingAlgoDateDiv').show();
     } else {
         $('#matchingAlgoDateDiv').hide();
