@@ -183,6 +183,7 @@ public class MatchingAlgorithmCGDProcessor {
                 if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapConstants.SHARED_CGD))) {
                     populateValues(materialTypeSet, useRestrictionMap, itemEntityMap, itemEntity);
                 }
+                materialTypeSet.add(RecapConstants.MONOGRAPH);
             } else {
                 if(bibliographicEntity.getOwningInstitutionId().equals(institutionMap.get("NYPL"))) {
                     //NYPL
@@ -211,6 +212,7 @@ public class MatchingAlgorithmCGDProcessor {
                                 populateValues(materialTypeSet, useRestrictionMap, itemEntityMap, itemEntity);
                             }
                         }
+                        materialTypeSet.add(RecapConstants.MONOGRAPH);
                     } else {
                         for(ItemEntity itemEntity : itemEntities) {
                             if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapConstants.SHARED_CGD))) {
