@@ -2,6 +2,7 @@ package org.recap.repository.solr.impl;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -130,7 +131,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
             bibItems = searchByBibForDeleted(searchRecordsRequest);
             searchRecordsRequest.setFieldName(RecapConstants.ITEM_LASTUPDATED_DATE);
             searchByItem(searchRecordsRequest, true, bibItemMap);
-            eliminateNonOrphanRecords(bibItemMap);
+            bibItemMap = eliminateNonOrphanRecords(bibItemMap);
         } else {
             searchByItem(searchRecordsRequest, true, bibItemMap);
             searchByItem(searchRecordsRequest, false, bibItemMap);
@@ -144,9 +145,10 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         return bibItems;
     }
 
-    private void eliminateNonOrphanRecords(Map<Integer, BibItem> bibItemMap){
-        for(Integer bibId:bibItemMap.keySet()){
-            BibliographicEntity fetchedBibliographicEntity = bibliographicDetailsRepository.findByBibliographicId(bibId);
+    private Map<Integer, BibItem> eliminateNonOrphanRecords(Map<Integer, BibItem> bibItemMap){
+        Map<Integer, BibItem> updatedBibItemMap = new HashedMap();
+        for(Map.Entry<Integer,BibItem> bibItemEntry:bibItemMap.entrySet()){
+            BibliographicEntity fetchedBibliographicEntity = bibliographicDetailsRepository.findByBibliographicId(bibItemEntry.getKey());
             boolean isBibDeleted = false;
             for(ItemEntity fetchedItemEntity:fetchedBibliographicEntity.getItemEntities()){
                 if(fetchedItemEntity.isDeleted() || isChangedToPrivateCGD(fetchedItemEntity)){
@@ -156,10 +158,11 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
                     break;
                 }
             }
-            if (!isBibDeleted){
-                bibItemMap.remove(bibId);
+            if (isBibDeleted){
+                updatedBibItemMap.put(bibItemEntry.getKey(),bibItemEntry.getValue());
             }
         }
+        return updatedBibItemMap;
     }
 
     private void compareAndSetOnlyOrphanBibs(Map<Integer, BibItem> bibItemMap,List<BibItem> bibItemListForOrphanBib){
