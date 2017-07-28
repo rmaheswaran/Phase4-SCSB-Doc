@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
 
 import java.text.Normalizer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -110,8 +112,11 @@ public class MatchingAlgorithmUT extends BaseTestCase {
 
     @Test
     public void runWholeMatchingAlgorithm() throws Exception {
-        Mockito.when(matchingAlgorithmController.matchingAlgorithmFull()).thenReturn("Status  : Done");
-        String status = matchingAlgorithmController.matchingAlgorithmFull();
+        Date matchingAlgoDate = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm/dd");
+        String matchingAlgoDateString = sdf.format(matchingAlgoDate);
+        Mockito.when(matchingAlgorithmController.matchingAlgorithmFull(matchingAlgoDateString)).thenReturn("Status  : Done");
+        String status = matchingAlgorithmController.matchingAlgorithmFull(matchingAlgoDateString);
         assertNotNull(status);
         assertTrue(status.contains("Done"));
     }

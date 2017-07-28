@@ -124,6 +124,42 @@ public class MatchingAlgorithmController {
     }
 
     /**
+     * The whole matching algorithm process.
+     * First it finds the matching records and updates them in the database (matching_matchpoints_t)
+     * Second it gets the matching records details and saves them in database
+     * Then it generates reports for single match and multiple-match(based on criterias) accordingly
+     * Then update cgd for Monographs in database.
+     * Then update cgd for Serials in database.
+     * Then update cgd for Mvms in database.
+     * Then updates the cgd updated records in solr.
+     *
+     * @param matchingAlgoDate the matching algo date
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value = "/matchingAlgorithm/full", method = RequestMethod.POST)
+    public String matchingAlgorithmFull(@Valid @ModelAttribute("matchingAlgoDate") String matchingAlgoDate) {
+        StringBuilder status = new StringBuilder();
+        try {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            status.append(matchingAlgorithmFindMatchingAndReports());
+            status.append(updateMonographCGDInDB());
+            status.append(updateSerialCGDInDB());
+            status.append(updateMvmCGDInDB());
+            status.append(updateCGDInSolr(matchingAlgoDate));
+            stopWatch.stop();
+            getLogger().info("Total Time taken to process the full Matching Algorithm Process : " + stopWatch.getTotalTimeSeconds());
+            status.append(RecapConstants.STATUS_DONE ).append("\n");
+            status.append(RecapConstants.TOTAL_TIME_TAKEN + "to run full Matching Algorithm Process : " + stopWatch.getTotalTimeSeconds()).append("\n");
+        } catch (Exception e) {
+            getLogger().error(RecapConstants.LOG_ERROR,e);
+            status.append(RecapConstants.STATUS_FAILED);
+        }
+        return status.toString();
+    }
+
+    /**
      * Matching algorithm.
      * First it finds the matching records and updates them in the database (matching_matchpoints_t)
      * Second it gets the matching records details and saves them in database
@@ -132,9 +168,9 @@ public class MatchingAlgorithmController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/matchingAlgorithm/full", method = RequestMethod.POST)
-    public String matchingAlgorithmFull() {
-        StringBuilder stringBuilder = new StringBuilder();
+    @RequestMapping(value = "/matchingAlgorithm/findMatchingAndSaveReports", method = RequestMethod.POST)
+    public String matchingAlgorithmFindMatchingAndReports() {
+        StringBuilder status = new StringBuilder();
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
@@ -153,13 +189,13 @@ public class MatchingAlgorithmController {
 
             stopWatch.stop();
             getLogger().info("Total Time taken to process Matching Algorithm : " + stopWatch.getTotalTimeSeconds());
-            stringBuilder.append(RecapConstants.STATUS_DONE ).append("\n");
-            stringBuilder.append(RecapConstants.TOTAL_TIME_TAKEN + stopWatch.getTotalTimeSeconds()).append("\n");
+            status.append(RecapConstants.STATUS_DONE ).append("\n");
+            status.append(RecapConstants.TOTAL_TIME_TAKEN + "for matching and save reports : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
             getLogger().error(RecapConstants.LOG_ERROR,e);
-            stringBuilder.append(RecapConstants.STATUS_FAILED);
+            status.append(RecapConstants.STATUS_FAILED);
         }
-        return stringBuilder.toString();
+        return status.toString();
     }
 
     /**
@@ -170,20 +206,20 @@ public class MatchingAlgorithmController {
     @ResponseBody
     @RequestMapping(value = "/matchingAlgorithm/reports", method = RequestMethod.POST)
     public String matchingAlgorithmOnlyReports() {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder status = new StringBuilder();
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             runReportsForMatchingAlgorithm(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
             getLogger().info("Total Time taken to process Matching Algorithm Reports : " + stopWatch.getTotalTimeSeconds());
-            stringBuilder.append(RecapConstants.STATUS_DONE ).append("\n");
-            stringBuilder.append(RecapConstants.TOTAL_TIME_TAKEN + stopWatch.getTotalTimeSeconds()).append("\n");
+            status.append(RecapConstants.STATUS_DONE ).append("\n");
+            status.append(RecapConstants.TOTAL_TIME_TAKEN + "to save reports only : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
             getLogger().error(RecapConstants.LOG_ERROR,e);
-            stringBuilder.append(RecapConstants.STATUS_FAILED);
+            status.append(RecapConstants.STATUS_FAILED);
         }
-        return stringBuilder.toString();
+        return status.toString();
     }
 
     /**
@@ -194,20 +230,20 @@ public class MatchingAlgorithmController {
     @ResponseBody
     @RequestMapping(value = "/matchingAlgorithm/updateMonographCGDInDB", method = RequestMethod.POST)
     public String updateMonographCGDInDB() {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder status = new StringBuilder();
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             getMatchingAlgorithmUpdateCGDService().updateCGDProcessForMonographs(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
             getLogger().info("Total Time taken to Update Monographs CGD In DB For Matching Algorithm : " + stopWatch.getTotalTimeSeconds());
-            stringBuilder.append(RecapConstants.STATUS_DONE ).append("\n");
-            stringBuilder.append(RecapConstants.TOTAL_TIME_TAKEN + stopWatch.getTotalTimeSeconds()).append("\n");
+            status.append(RecapConstants.STATUS_DONE ).append("\n");
+            status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update monograph CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
             getLogger().error(RecapConstants.LOG_ERROR,e);
-            stringBuilder.append(RecapConstants.STATUS_FAILED);
+            status.append(RecapConstants.STATUS_FAILED);
         }
-        return stringBuilder.toString();
+        return status.toString();
     }
 
     /**
@@ -218,20 +254,20 @@ public class MatchingAlgorithmController {
     @ResponseBody
     @RequestMapping(value = "/matchingAlgorithm/updateSerialCGDInDB", method = RequestMethod.POST)
     public String updateSerialCGDInDB() {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder status = new StringBuilder();
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             getMatchingAlgorithmUpdateCGDService().updateCGDProcessForSerials(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
             getLogger().info("Total Time taken to Update Serials CGD In DB For Matching Algorithm : " + stopWatch.getTotalTimeSeconds());
-            stringBuilder.append(RecapConstants.STATUS_DONE ).append("\n");
-            stringBuilder.append(RecapConstants.TOTAL_TIME_TAKEN + stopWatch.getTotalTimeSeconds()).append("\n");
+            status.append(RecapConstants.STATUS_DONE ).append("\n");
+            status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update Serial CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
             getLogger().error(RecapConstants.LOG_ERROR,e);
-            stringBuilder.append(RecapConstants.STATUS_FAILED);
+            status.append(RecapConstants.STATUS_FAILED);
         }
-        return stringBuilder.toString();
+        return status.toString();
     }
 
     /**
@@ -242,20 +278,20 @@ public class MatchingAlgorithmController {
     @ResponseBody
     @RequestMapping(value = "/matchingAlgorithm/updateMvmCGDInDB", method = RequestMethod.POST)
     public String updateMvmCGDInDB() {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder status = new StringBuilder();
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             getMatchingAlgorithmUpdateCGDService().updateCGDProcessForMVMs(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
             getLogger().info("Total Time taken to Update MVMs CGD In DB For Matching Algorithm : " + stopWatch.getTotalTimeSeconds());
-            stringBuilder.append(RecapConstants.STATUS_DONE ).append("\n");
-            stringBuilder.append(RecapConstants.TOTAL_TIME_TAKEN + stopWatch.getTotalTimeSeconds()).append("\n");
+            status.append(RecapConstants.STATUS_DONE ).append("\n");
+            status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update MVM CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
             getLogger().error(RecapConstants.LOG_ERROR,e);
-            stringBuilder.append(RecapConstants.STATUS_FAILED);
+            status.append(RecapConstants.STATUS_FAILED);
         }
-        return stringBuilder.toString();
+        return status.toString();
     }
 
     /**
@@ -267,7 +303,7 @@ public class MatchingAlgorithmController {
     @ResponseBody
     @RequestMapping(value = "/matchingAlgorithm/updateCGDInSolr", method = RequestMethod.POST)
     public String updateCGDInSolr(@Valid @ModelAttribute("matchingAlgoDate") String matchingAlgoDate) {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder status = new StringBuilder();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm/dd");
         Date updatedDate = new Date();
         if(StringUtils.isNotBlank(matchingAlgoDate)) {
@@ -283,15 +319,15 @@ public class MatchingAlgorithmController {
             Integer totalProcessedRecords = getMatchingBibItemIndexExecutorService().indexingForMatchingAlgorithm(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, updatedDate);
             stopWatch.stop();
             getLogger().info("Total Time taken to Update CGD In Solr For Matching Algorithm : " + stopWatch.getTotalTimeSeconds());
-            String status = "Total number of records processed : " + totalProcessedRecords;
-            stringBuilder.append(RecapConstants.STATUS_DONE).append("\n");
-            stringBuilder.append(status).append("\n");
-            stringBuilder.append(RecapConstants.TOTAL_TIME_TAKEN + stopWatch.getTotalTimeSeconds()).append("\n");
+            String recordsProcessed = "Total number of records processed : " + totalProcessedRecords;
+            status.append(RecapConstants.STATUS_DONE).append("\n");
+            status.append(recordsProcessed).append("\n");
+            status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update CGD in solr : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
             getLogger().error(RecapConstants.LOG_ERROR,e);
-            stringBuilder.append(RecapConstants.STATUS_FAILED);
+            status.append(RecapConstants.STATUS_FAILED);
         }
-        return stringBuilder.toString();
+        return status.toString();
     }
 
     /**
