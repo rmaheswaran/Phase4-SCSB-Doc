@@ -200,6 +200,8 @@ public class MatchingAlgorithmCGDProcessor {
                     if(!isMultipleCopy) {
                         isMonograph = false;
                         materialTypeSet.add(RecapConstants.MONOGRAPHIC_SET);
+                    } else {
+                        materialTypeSet.add(RecapConstants.MONOGRAPH);
                     }
                 } else {
                     //CUL & PUL
@@ -210,6 +212,11 @@ public class MatchingAlgorithmCGDProcessor {
                             }
                         }
                     } else {
+                        for(ItemEntity itemEntity : itemEntities) {
+                            if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapConstants.SHARED_CGD))) {
+                                populateValues(materialTypeSet, useRestrictionMap, itemEntityMap, itemEntity);
+                            }
+                        }
                         isMonograph = false;
                         materialTypeSet.add(RecapConstants.MONOGRAPHIC_SET);
                     }
@@ -250,7 +257,6 @@ public class MatchingAlgorithmCGDProcessor {
         Integer owningInstitutionId = itemEntity.getOwningInstitutionId();
         Integer useRestriction = getUseRestrictionInNumbers(itemEntity.getUseRestrictions());
         populateUseRestrictionMap(useRestrictionMap, itemEntity, owningInstitutionId, useRestriction);
-        materialTypeSet.add(RecapConstants.MONOGRAPH);
     }
 
     /**
