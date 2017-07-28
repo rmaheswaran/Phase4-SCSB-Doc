@@ -128,11 +128,13 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         Map<Integer, BibItem> bibItemMap = new HashMap<>();
         if(onlyOrphan){
             bibItems = searchByBibForDeleted(searchRecordsRequest);
+            searchRecordsRequest.setFieldName(RecapConstants.ITEM_LASTUPDATED_DATE);
             searchByItem(searchRecordsRequest, true, bibItemMap);
             eliminateNonOrphanRecords(bibItemMap);
         } else {
             searchByItem(searchRecordsRequest, true, bibItemMap);
             searchByItem(searchRecordsRequest, false, bibItemMap);
+            searchRecordsRequest.setFieldName(RecapConstants.BIB_LASTUPDATED_DATE);
             List<BibItem> bibItemForOrphanBib = searchByBibForDeleted(searchRecordsRequest);
             compareAndSetOnlyOrphanBibs(bibItemMap,bibItemForOrphanBib);
         }
@@ -197,6 +199,11 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
                 populateBib(bibSolrDocument, bibItem);
                 bibItems.add(bibItem);
             }
+/*            List<List<BibItem>> partitionedBibItems = Lists.partition(bibItems, 300);
+            for (Iterator<List<BibItem>> iterator = partitionedBibItems.iterator(); iterator.hasNext(); ) {
+                List<BibItem> bibItemList = iterator.next();
+                populateItemInfo(bibItemList, searchRecordsRequest);
+            }*/
         }
 
         return bibItems;
