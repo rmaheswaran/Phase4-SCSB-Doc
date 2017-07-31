@@ -56,6 +56,17 @@ public class TransferService {
     @Autowired
     HelperUtil helperUtil;
 
+    public BibliographicDetailsRepository getBibliographicDetailsRepository() {
+        return bibliographicDetailsRepository;
+    }
+
+    public HelperUtil getHelperUtil() {
+        return helperUtil;
+    }
+
+    public HoldingsDetailsRepository getHoldingsDetailsRepository() {
+        return holdingsDetailsRepository;
+    }
 
     @Transactional
     public List<ItemTransferResponse> processItemTransfer(TransferRequest transferRequest, InstitutionEntity institutionEntity) {
@@ -109,7 +120,7 @@ public class TransferService {
                 ItemTransferResponse itemTransferResponse = new ItemTransferResponse(transferValidationResponse.getMessage(), itemTransferRequest, transferValidationResponse.isValid());
                 itemTransferResponses.add(itemTransferResponse);
 
-                String requestString = helperUtil.getJsonString(itemTransferRequest);
+                String requestString = getHelperUtil().getJsonString(itemTransferRequest);
                 String responseString = transferValidationResponse.getMessage();
                 saveReportForTransfer(requestString, responseString, institutionEntity.getInstitutionCode(), RecapConstants.TRANSFER.TRANSFER_TYPES.ITEM_TRANSFER);
             }
@@ -150,7 +161,7 @@ public class TransferService {
                 String owningInstitutionItemId = destination.getOwningInstitutionItemId();
                 if(StringUtils.isNotBlank(owningInstitutionItemId)) {
                     BibliographicEntity destinationBibEntity =
-                            bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
+                            getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
                     if(null != destinationBibEntity) {
                         transferValidationResponse.setDestBib(destinationBibEntity);
                         validateHoldingsEntity(owningInstitutionId, transferValidationResponse, owningInstitutionHoldingsId, destinationBibEntity, true);
@@ -177,7 +188,7 @@ public class TransferService {
         }
         if(null == holdingsEntity) {
             // todo : check with other entity
-            holdingsEntity = holdingsDetailsRepository.
+            holdingsEntity = getHoldingsDetailsRepository().
                     findByOwningInstitutionHoldingsIdAndOwningInstitutionId(owningInstitutionHoldingsId, owningInstitutionId);
             if(null != holdingsEntity) {
                 transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_HOLDINGS_ATTACHED_WITH_DIFF_BIB);
@@ -195,7 +206,7 @@ public class TransferService {
             if(StringUtils.isNotBlank(owningInstitutionHoldingsId)) {
                 String owningInstitutionItemId = source.getOwningInstitutionItemId();
                 if(StringUtils.isNotBlank(owningInstitutionItemId)) {
-                    BibliographicEntity sourceBibEntity = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
+                    BibliographicEntity sourceBibEntity = getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
                     if(null != sourceBibEntity) {
                         transferValidationResponse.setSourceBib(sourceBibEntity);
                         HoldingsEntity holdingsEntity = matchHoldingIdWithHoldings(owningInstitutionHoldingsId, sourceBibEntity);
@@ -311,7 +322,7 @@ public class TransferService {
                 HoldingTransferResponse holdingTransferResponse = new HoldingTransferResponse(transferValidationResponse.getMessage(), holdingsTransferRequest, transferValidationResponse.isValid());
                 holdingTransferResponses.add(holdingTransferResponse);
 
-                String requestString = helperUtil.getJsonString(holdingsTransferRequest);
+                String requestString = getHelperUtil().getJsonString(holdingsTransferRequest);
                 String responseString = transferValidationResponse.getMessage();
                 saveReportForTransfer(requestString, responseString, institutionEntity.getInstitutionCode(), RecapConstants.TRANSFER.TRANSFER_TYPES.HOLDINGS_TRANSFER);
             }
@@ -548,7 +559,7 @@ public class TransferService {
             String owningInstitutionHoldingsId = destination.getOwningInstitutionHoldingsId();
             if(StringUtils.isNotBlank(owningInstitutionHoldingsId)) {
                 BibliographicEntity destinationBibEntity =
-                        bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
+                        getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
                 if(null != destinationBibEntity) {
                     transferValidationResponse.setDestBib(destinationBibEntity);
                 } else {
@@ -569,7 +580,7 @@ public class TransferService {
         if(StringUtils.isNotBlank(owningInstitutionBibId)) {
             String owningInstitutionHoldingsId = source.getOwningInstitutionHoldingsId();
             if(StringUtils.isNotBlank(owningInstitutionHoldingsId)) {
-                BibliographicEntity sourceBibEntity = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
+                BibliographicEntity sourceBibEntity = getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
                 if(null != sourceBibEntity) {
                     transferValidationResponse.setSourceBib(sourceBibEntity);
                     HoldingsEntity holdingsEntity = matchHoldingIdWithHoldings(owningInstitutionHoldingsId, sourceBibEntity);
