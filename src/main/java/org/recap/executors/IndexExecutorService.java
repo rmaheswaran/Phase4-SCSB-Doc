@@ -165,7 +165,7 @@ public abstract class IndexExecutorService {
                 }
                 logger.info("Total futures executed: ",futureCount);
                 stopWatch.stop();
-                logger.info("Time taken to fetch {} Bib Records and index to recap core : {} seconds {}",totalBibsProcessed,stopWatch.getTotalTimeSeconds());
+                logger.info("Time taken to fetch {} Bib Records and index to recap core : {} seconds",totalBibsProcessed,stopWatch.getTotalTimeSeconds());
                 if (!isIncremental) {
                     solrAdmin.unLoadCores(coreNames);
                 }
