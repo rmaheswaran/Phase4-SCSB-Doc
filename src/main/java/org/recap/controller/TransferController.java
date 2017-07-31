@@ -37,6 +37,14 @@ public class TransferController {
     @Autowired
     private HelperUtil helperUtil;
 
+    public TransferService getTransferService() {
+        return transferService;
+    }
+
+    public HelperUtil getHelperUtil() {
+        return helperUtil;
+    }
+
     private ObjectMapper objectMapper;
 
     /**
@@ -58,23 +66,23 @@ public class TransferController {
         if(StringUtils.isBlank(institution)) {
             transferResponse.setMessage(RecapConstants.TRANSFER.INSTITUION_EMPTY);
             institution = RecapConstants.UNKNOWN_INSTITUTION;
-            String requestString = helperUtil.getJsonString(transferRequest);
+            String requestString = getHelperUtil().getJsonString(transferRequest);
             String responseString = transferResponse.getMessage();
-            transferService.saveReportForTransfer(requestString, responseString, institution, RecapConstants.TRANSFER.ROOT);
+            getTransferService().saveReportForTransfer(requestString, responseString, institution, RecapConstants.TRANSFER.ROOT);
             return transferResponse;
         } else {
-            institutionEntity = transferService.getInstitutionDetailsRepository().findByInstitutionCode(institution);
+            institutionEntity = getTransferService().getInstitutionDetailsRepository().findByInstitutionCode(institution);
             if(null == institutionEntity) {
                 transferResponse.setMessage(RecapConstants.TRANSFER.UNKNOWN_INSTITUTION);
                 institution = RecapConstants.UNKNOWN_INSTITUTION;
-                String requestString = helperUtil.getJsonString(transferRequest);
+                String requestString = getHelperUtil().getJsonString(transferRequest);
                 String responseString = transferResponse.getMessage();
-                transferService.saveReportForTransfer(requestString, responseString, institution, RecapConstants.TRANSFER.ROOT);
+                getTransferService().saveReportForTransfer(requestString, responseString, institution, RecapConstants.TRANSFER.ROOT);
                 return transferResponse;
             }
         }
 
-        List<HoldingTransferResponse> holdingTransferResponses = transferService.processHoldingTransfer(transferRequest, institutionEntity);
+        List<HoldingTransferResponse> holdingTransferResponses = getTransferService().processHoldingTransfer(transferRequest, institutionEntity);
         transferResponse.setHoldingTransferResponses(holdingTransferResponses);
 
         if(CollectionUtils.isNotEmpty(holdingTransferResponses)) {
@@ -88,7 +96,7 @@ public class TransferController {
             }
         }
 
-        List<ItemTransferResponse> itemTransferResponses = transferService.processItemTransfer(transferRequest, institutionEntity);
+        List<ItemTransferResponse> itemTransferResponses = getTransferService().processItemTransfer(transferRequest, institutionEntity);
         transferResponse.setItemTransferResponses(itemTransferResponses);
 
         if(CollectionUtils.isNotEmpty(itemTransferResponses)) {
