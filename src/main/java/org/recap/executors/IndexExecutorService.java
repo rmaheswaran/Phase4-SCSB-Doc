@@ -93,7 +93,7 @@ public abstract class IndexExecutorService {
                 int quotient = totalDocCount / (docsPerThread);
                 int remainder = totalDocCount % (docsPerThread);
                 Integer loopCount = remainder == 0 ? quotient : quotient + 1;
-                logger.info("Loop Count Value : ",loopCount);
+                logger.info("Loop Count Value : {} ",loopCount);
                 logger.info("Commit Indexes Interval : {}",commitIndexesInterval);
 
                 Integer callableCountByCommitInterval = commitIndexesInterval / (docsPerThread);
