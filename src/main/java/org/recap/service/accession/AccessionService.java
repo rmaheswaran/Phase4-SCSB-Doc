@@ -673,7 +673,7 @@ public class AccessionService {
      * @return
      */
     @Transactional
-    private String updateData(Object record, String owningInstitution, List<Map<String, String>> responseMapList, AccessionRequest accessionRequest, boolean isValidBoundWithRecord,boolean isFirstRecord){
+    private synchronized String updateData(Object record, String owningInstitution, List<Map<String, String>> responseMapList, AccessionRequest accessionRequest, boolean isValidBoundWithRecord,boolean isFirstRecord){
         String response = null;
         String incompleteResponse = new String();
         XmlToBibEntityConverterInterface xmlToBibEntityConverterInterface = getConverter(owningInstitution);
