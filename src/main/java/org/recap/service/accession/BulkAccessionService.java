@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -44,6 +45,8 @@ public class BulkAccessionService extends AccessionService{
 
     @Override
     public List<AccessionResponse> doAccession(List<AccessionRequest> accessionRequestList, AccessionSummary accessionSummary) {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         int requestedCount = accessionRequestList.size();
         List<AccessionRequest> trimmedAccessionRequests = getTrimmedAccessionRequests(accessionRequestList);
         trimmedAccessionRequests = getAccessionHelperUtil().removeDuplicateRecord(trimmedAccessionRequests);
@@ -62,7 +65,7 @@ public class BulkAccessionService extends AccessionService{
             List<AccessionRequest> failedRequests = new ArrayList<>();
             for (Iterator<AccessionRequest> accessionRequestIterator = accessionRequests.iterator(); accessionRequestIterator.hasNext(); ) {
                 AccessionRequest accessionRequest = accessionRequestIterator.next();
-
+                logger.info("Processing accession for item barcode----->{}",accessionRequest.getItemBarcode());
                 // validate empty barcode ,customer code and owning institution
                 String itemBarcode = accessionRequest.getItemBarcode();
                 String customerCode = accessionRequest.getCustomerCode();
@@ -118,7 +121,8 @@ public class BulkAccessionService extends AccessionService{
                 }
             }
         }
-
+        stopWatch.stop();
+        logger.info("Total time taken to accession for all barcode -> {} sec",stopWatch.getTotalTimeSeconds());
         return null;
     }
 
