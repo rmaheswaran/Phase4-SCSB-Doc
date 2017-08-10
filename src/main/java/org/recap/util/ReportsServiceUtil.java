@@ -164,7 +164,6 @@ public class ReportsServiceUtil {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(RecapConstants.BIB_DOC_TYPE);
         solrQuery.addFilterQuery(RecapConstants.SOLR_BIB_ID+StringEscapeUtils.escapeJava(bibIdJoin).replace(",","\" \""));
-        solrQuery.addFilterQuery(RecapConstants.IS_DELETED_BIB_TRUE);
         solrQuery.setFields(RecapConstants.BIB_ID,RecapConstants.TITLE_DISPLAY);
         solrQuery.setRows(reportsRequest.getPageSize());
         QueryResponse response = solrTemplate.getSolrClient().query(solrQuery);
