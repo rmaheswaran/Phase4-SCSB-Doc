@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.Group;
+import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -89,10 +91,12 @@ public class ReportsServiceUtil {
         for (String owningInstitution : reportsRequest.getOwningInstitutions()) {
             for (String collectionGroupDesignation : reportsRequest.getCollectionGroupDesignations()) {
                 SolrQuery query = solrQueryBuilder.buildSolrQueryForCGDReports(owningInstitution, collectionGroupDesignation);
-                query.setStart(0);
+                query.setRows(0);
+                query.setGetFieldStatistics(true);
+                query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
+                query.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
                 QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-                SolrDocumentList results = queryResponse.getResults();
-                long numFound = results.getNumFound();
+                long numFound= queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getCountDistinct();
                 if (owningInstitution.equalsIgnoreCase(RecapConstants.PRINCETON)) {
                     if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_OPEN)) {
                         reportsResponse.setOpenPulCgdCount(numFound);
@@ -131,15 +135,39 @@ public class ReportsServiceUtil {
      * @throws Exception the exception
      */
     public ReportsResponse populateDeaccessionResults(ReportsRequest reportsRequest) throws Exception {
+        List<Item> itemList = new ArrayList<>();
+        List<Integer> itemIdList = new ArrayList<>();
+        List<Integer> bibIdList = new ArrayList<>();
         ReportsResponse reportsResponse = new ReportsResponse();
         String date = getSolrFormattedDates(reportsRequest.getAccessionDeaccessionFromDate(), reportsRequest.getAccessionDeaccessionToDate());
         SolrQuery query = solrQueryBuilder.buildSolrQueryForDeaccesionReportInformation(date, reportsRequest.getDeaccessionOwningInstitution(), true);
         query.setRows(reportsRequest.getPageSize());
         query.setStart(reportsRequest.getPageNumber() * reportsRequest.getPageSize());
+        query.set(RecapConstants.GROUP,true);
+        query.set(RecapConstants.GROUP_FIELD,RecapConstants.BARCODE);
+        query.setGetFieldStatistics(true);
+        query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
+        query.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
         query.setSort(RecapConstants.ITEM_LAST_UPDATED_DATE, SolrQuery.ORDER.desc);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-        SolrDocumentList solrDocuments = queryResponse.getResults();
-        long numFound = solrDocuments.getNumFound();
+        List<GroupCommand> values = queryResponse.getGroupResponse().getValues();
+        for (GroupCommand groupCommand : values) {
+            List<Group> groupList = groupCommand.getValues();
+            for (Group group : groupList) {
+                SolrDocumentList result = group.getResult();
+                for (SolrDocument solrDocument : result) {
+                    boolean isDeletedItem = (boolean) solrDocument.getFieldValue(RecapConstants.IS_DELETED_ITEM);
+                    if (isDeletedItem) {
+                        Item item = getItem(solrDocument);
+                        itemList.add(item);
+                        itemIdList.add(item.getItemId());
+                        bibIdList.add(item.getItemBibIdList().get(0));
+                    }
+                }
+
+            }
+        }
+        long numFound= queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getCountDistinct();
         reportsResponse.setTotalRecordsCount(String.valueOf(numFound));
         int totalPagesCount = (int) Math.ceil((double) numFound / (double) reportsRequest.getPageSize());
         if(totalPagesCount == 0){
@@ -147,25 +175,12 @@ public class ReportsServiceUtil {
         }else{
             reportsResponse.setTotalPageCount(totalPagesCount);
         }
-        List<Item> itemList = new ArrayList<>();
-        List<Integer> itemIdList = new ArrayList<>();
-        List<Integer> bibIdList = new ArrayList<>();
-        for (Iterator<SolrDocument> solrDocumentIterator = solrDocuments.iterator(); solrDocumentIterator.hasNext(); ) {
-            SolrDocument solrDocument = solrDocumentIterator.next();
-            boolean isDeletedItem = (boolean) solrDocument.getFieldValue(RecapConstants.IS_DELETED_ITEM);
-            if (isDeletedItem) {
-                Item item = getItem(solrDocument);
-                itemList.add(item);
-                itemIdList.add(item.getItemId());
-                bibIdList.add(item.getItemBibIdList().get(0));
-            }
-        }
         String bibIdJoin = StringUtils.join(bibIdList, ",");
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(RecapConstants.BIB_DOC_TYPE);
         solrQuery.addFilterQuery(RecapConstants.SOLR_BIB_ID+StringEscapeUtils.escapeJava(bibIdJoin).replace(",","\" \""));
         solrQuery.setFields(RecapConstants.BIB_ID,RecapConstants.TITLE_DISPLAY);
-        solrQuery.setRows(reportsRequest.getPageSize());
+        solrQuery.setRows(Integer.MAX_VALUE);
         QueryResponse response = solrTemplate.getSolrClient().query(solrQuery);
         Map<Integer,String> map = new HashMap<>();
         SolrDocumentList list = response.getResults();
@@ -234,6 +249,7 @@ public class ReportsServiceUtil {
             itemList.add(item);
             bibIdList.add((Integer)item.getItemBibIdList().get(0));
         }
+        if (bibIdList.size() > 0){
         Map<Integer, IncompleteReportBibDetails> bibDetailsMap = getBibDetailsIncompleteReport(bibIdList);
         List<IncompleteReportResultsRow> incompleteReportResultsRows = new ArrayList<>();
         for (Item item : itemList) {
@@ -253,6 +269,7 @@ public class ReportsServiceUtil {
         reportsResponse.setIncompleteTotalPageCount(totalPagesCount);
         reportsResponse.setIncompleteTotalRecordsCount(String.valueOf(numFound));
         reportsResponse.setIncompleteReportResultsRows(incompleteReportResultsRows);
+        }
         return reportsResponse;
     }
 
@@ -295,9 +312,11 @@ public class ReportsServiceUtil {
             for (String collectionGroupDesignation : reportsRequest.getCollectionGroupDesignations()) {
                 SolrQuery query = solrQueryBuilder.buildSolrQueryForAccessionReports(solrFormattedDate, owningInstitution, false, collectionGroupDesignation);
                 query.setRows(0);
+                query.setGetFieldStatistics(true);
+                query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
+                query.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
                 QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-                SolrDocumentList results = queryResponse.getResults();
-                long numFound = results.getNumFound();
+                long numFound= queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getCountDistinct();
                 if (owningInstitution.equalsIgnoreCase(RecapConstants.PRINCETON)) {
                     if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_OPEN)) {
                         reportsResponse.setAccessionOpenPulCount(numFound);
@@ -339,9 +358,11 @@ public class ReportsServiceUtil {
             for (String collectionGroupDesignation : reportsRequest.getCollectionGroupDesignations()) {
                 SolrQuery query = solrQueryBuilder.buildSolrQueryForDeaccessionReports(solrFormattedDate, ownInstitution, true, collectionGroupDesignation);
                 query.setRows(0);
+                query.setGetFieldStatistics(true);
+                query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
+                query.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
                 QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-                SolrDocumentList results = queryResponse.getResults();
-                long numFound = results.getNumFound();
+                long numFound = queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getCountDistinct();
                 if (ownInstitution.equalsIgnoreCase(RecapConstants.PRINCETON)) {
                     if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_OPEN)) {
                         reportsResponse.setDeaccessionOpenPulCount(numFound);
