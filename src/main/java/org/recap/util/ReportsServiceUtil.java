@@ -222,32 +222,48 @@ public class ReportsServiceUtil {
      */
     public ReportsResponse populateIncompleteRecordsReport(ReportsRequest reportsRequest) throws Exception {
         ReportsResponse reportsResponse = new ReportsResponse();
+        List<Integer> bibIdList = new ArrayList<>();
+        List<Item> itemList = new ArrayList<>();
         SolrQuery solrQuery;
         QueryResponse queryResponse;
-        SolrDocumentList itemDocumentList;
         solrQuery = solrQueryBuilder.buildSolrQueryForIncompleteReports(reportsRequest.getIncompleteRequestingInstitution());
         if (!reportsRequest.isExport()){
             solrQuery.setStart(reportsRequest.getIncompletePageSize() * reportsRequest.getIncompletePageNumber());
             solrQuery.setRows(reportsRequest.getIncompletePageSize());
         }
+        solrQuery.set(RecapConstants.GROUP,true);
+        solrQuery.set(RecapConstants.GROUP_FIELD,RecapConstants.BARCODE);
+        solrQuery.setGetFieldStatistics(true);
+        solrQuery.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
+        solrQuery.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
         solrQuery.setSort(RecapConstants.ITEM_CREATED_DATE, SolrQuery.ORDER.desc);
         queryResponse = solrTemplate.getSolrClient().query(solrQuery);
-        itemDocumentList = queryResponse.getResults();
-        long numFound = itemDocumentList.getNumFound();
+        long numFound = queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getCountDistinct();
         if (reportsRequest.isExport()){
             solrQuery = solrQueryBuilder.buildSolrQueryForIncompleteReports(reportsRequest.getIncompleteRequestingInstitution());
             solrQuery.setStart(0);
             solrQuery.setRows((int) numFound);
+            solrQuery.set(RecapConstants.GROUP,true);
+            solrQuery.set(RecapConstants.GROUP_FIELD,RecapConstants.BARCODE);
+            solrQuery.setGetFieldStatistics(true);
+            solrQuery.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
+            solrQuery.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
             solrQuery.setSort(RecapConstants.ITEM_CREATED_DATE, SolrQuery.ORDER.desc);
             queryResponse = solrTemplate.getSolrClient().query(solrQuery);
-            itemDocumentList= queryResponse.getResults();
         }
-        List<Integer> bibIdList = new ArrayList<>();
-        List<Item> itemList = new ArrayList<>();
-        for (SolrDocument itemDocument : itemDocumentList) {
-            Item item = getItem(itemDocument);
-            itemList.add(item);
-            bibIdList.add((Integer)item.getItemBibIdList().get(0));
+
+        List<GroupCommand> values = queryResponse.getGroupResponse().getValues();
+        for (GroupCommand groupCommand : values) {
+            List<Group> groupList = groupCommand.getValues();
+            for (Group group : groupList) {
+                SolrDocumentList result = group.getResult();
+                for (SolrDocument itemDocument : result) {
+                    Item item = getItem(itemDocument);
+                    itemList.add(item);
+                    bibIdList.add((Integer)item.getItemBibIdList().get(0));
+                }
+            }
+
         }
         if (bibIdList.size() > 0){
         Map<Integer, IncompleteReportBibDetails> bibDetailsMap = getBibDetailsIncompleteReport(bibIdList);
