@@ -493,6 +493,9 @@ public final class RecapConstants {
 
     public static final String ITEM_STATUS_COMPLETE="ItemCatalogingStatus:Complete";
     public static final String BIB_STATUS_INCOMPLETE="BibCatalogingStatus:Incomplete";
+    public static final String DISTINCT_VALUES_FALSE="{!distinctValues=false}Barcode";
+    public static final String GROUP = "group";
+    public static final String GROUP_FIELD = "group.field";
 
     private RecapConstants(){}
 }
