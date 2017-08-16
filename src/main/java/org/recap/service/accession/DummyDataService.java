@@ -5,6 +5,7 @@ import org.recap.model.jpa.*;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.ItemStatusDetailsRepository;
+import org.recap.repository.jpa.OwningInstitutionIDSequenceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,9 @@ public class DummyDataService {
     private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
 
     @Autowired
+    private OwningInstitutionIDSequenceRepository owningInstitutionIDSequenceRepository;
+
+    @Autowired
     private AccessionDAO accessionDAO;
 
     @PersistenceContext
@@ -57,9 +61,9 @@ public class DummyDataService {
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
         Date currentDate = new Date();
         try {
-            updateBibWithDummyDetails(owningInstitutionId, bibliographicEntity, currentDate,RecapConstants.ACCESSION, String.valueOf(random.nextInt()));
+            updateBibWithDummyDetails(owningInstitutionId, bibliographicEntity, currentDate,RecapConstants.ACCESSION, getDummyOwningInstId());
 
-            HoldingsEntity holdingsEntity = getHoldingsWithDummyDetails(owningInstitutionId, currentDate,RecapConstants.ACCESSION, String.valueOf(random.nextInt()));
+            HoldingsEntity holdingsEntity = getHoldingsWithDummyDetails(owningInstitutionId, currentDate,RecapConstants.ACCESSION, getDummyOwningInstId());
 
             ItemEntity itemEntity = new ItemEntity();
             itemEntity.setCallNumberType(RecapConstants.DUMMY_CALL_NUMBER_TYPE);
@@ -69,7 +73,7 @@ public class DummyDataService {
             itemEntity.setLastUpdatedDate(currentDate);
             itemEntity.setLastUpdatedBy(RecapConstants.ACCESSION);
             itemEntity.setBarcode(itemBarcode);
-            itemEntity.setOwningInstitutionItemId(String.valueOf(random.nextInt()));
+            itemEntity.setOwningInstitutionItemId(getDummyOwningInstId());
             itemEntity.setOwningInstitutionId(owningInstitutionId);
             itemEntity.setCollectionGroupId((Integer) getCollectionGroupMap().get(RecapConstants.NOT_AVAILABLE_CGD));
             itemEntity.setCustomerCode(customerCode);
@@ -165,5 +169,12 @@ public class DummyDataService {
             logger.error(RecapConstants.EXCEPTION,e);
         }
         return out.toString();
+    }
+
+    private String getDummyOwningInstId(){
+        OwningInstitutionIDSequence owningInstitutionIDSequence = new OwningInstitutionIDSequence();
+        OwningInstitutionIDSequence savedOwningInstitutionIDSequence = owningInstitutionIDSequenceRepository.saveAndFlush(owningInstitutionIDSequence);
+        logger.info("seq id---->{}",savedOwningInstitutionIDSequence.getID());
+        return "d"+savedOwningInstitutionIDSequence.getID();
     }
 }
