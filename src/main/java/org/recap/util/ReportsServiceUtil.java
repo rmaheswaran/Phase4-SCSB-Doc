@@ -1,5 +1,6 @@
 package org.recap.util;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -266,40 +267,37 @@ public class ReportsServiceUtil {
 
         }
         if (bibIdList.size() > 0){
-        Map<Integer, IncompleteReportBibDetails> bibDetailsMap = getBibDetailsIncompleteReport(bibIdList);
-        List<IncompleteReportResultsRow> incompleteReportResultsRows = new ArrayList<>();
-        for (Item item : itemList) {
-            IncompleteReportResultsRow incompleteReportResultsRow = new IncompleteReportResultsRow();
-            incompleteReportResultsRow.setOwningInstitution(item.getOwningInstitution());
-            IncompleteReportBibDetails incompleteReportBibDetails = bibDetailsMap.get(item.getItemBibIdList().get(0));
-            if(incompleteReportBibDetails!=null){
-                incompleteReportResultsRow.setTitle(incompleteReportBibDetails.getTitle());
-                incompleteReportResultsRow.setAuthor(incompleteReportBibDetails.getAuthorDisplay());
+            Map<Integer, IncompleteReportBibDetails> bibDetailsMap = new HashMap<>();
+            List<List<Integer>> partionedBibIdList = Lists.partition(bibIdList,1000);
+            for (List<Integer> bibIds : partionedBibIdList) {
+                bibDetailsMap = getBibDetailsIncompleteReport(bibIds,bibDetailsMap);
             }
-            incompleteReportResultsRow.setCreatedDate(getFormattedDates(item.getItemCreatedDate()));
-            incompleteReportResultsRow.setCustomerCode(item.getCustomerCode());
-            incompleteReportResultsRow.setBarcode(item.getBarcode());
-            incompleteReportResultsRows.add(incompleteReportResultsRow);
-        }
-        int totalPagesCount = (int) Math.ceil((double) numFound / (double) reportsRequest.getIncompletePageSize());
-        reportsResponse.setIncompleteTotalPageCount(totalPagesCount);
-        reportsResponse.setIncompleteTotalRecordsCount(String.valueOf(numFound));
-        reportsResponse.setIncompleteReportResultsRows(incompleteReportResultsRows);
+            List<IncompleteReportResultsRow> incompleteReportResultsRows = new ArrayList<>();
+            for (Item item : itemList) {
+                IncompleteReportResultsRow incompleteReportResultsRow = new IncompleteReportResultsRow();
+                incompleteReportResultsRow.setOwningInstitution(item.getOwningInstitution());
+                IncompleteReportBibDetails incompleteReportBibDetails = bibDetailsMap.get(item.getItemBibIdList().get(0));
+                if (incompleteReportBibDetails != null) {
+                    incompleteReportResultsRow.setTitle(incompleteReportBibDetails.getTitle());
+                    incompleteReportResultsRow.setAuthor(incompleteReportBibDetails.getAuthorDisplay());
+                }
+                incompleteReportResultsRow.setCreatedDate(getFormattedDates(item.getItemCreatedDate()));
+                incompleteReportResultsRow.setCustomerCode(item.getCustomerCode());
+                incompleteReportResultsRow.setBarcode(item.getBarcode());
+                incompleteReportResultsRows.add(incompleteReportResultsRow);
+            }
+            int totalPagesCount = (int) Math.ceil((double) numFound / (double) reportsRequest.getIncompletePageSize());
+            reportsResponse.setIncompleteTotalPageCount(totalPagesCount);
+            reportsResponse.setIncompleteTotalRecordsCount(String.valueOf(numFound));
+            reportsResponse.setIncompleteReportResultsRows(incompleteReportResultsRows);
         }
         return reportsResponse;
     }
 
-    private Map<Integer, IncompleteReportBibDetails> getBibDetailsIncompleteReport(List<Integer> bibIdList) throws SolrServerException, IOException {
-        SolrQuery bibDetailsQuery;
-        QueryResponse bibDetailsResponse;
-        bibDetailsQuery  = solrQueryBuilder.buildSolrQueryToGetBibDetails(bibIdList,bibIdList.size());
-        bibDetailsResponse = solrTemplate.getSolrClient().query(bibDetailsQuery, SolrRequest.METHOD.POST);
-        if(bibIdList.size() != bibDetailsResponse.getResults().getNumFound()){
-            bibDetailsQuery = solrQueryBuilder.buildSolrQueryToGetBibDetails(bibIdList, (int) bibDetailsResponse.getResults().getNumFound());
-            bibDetailsResponse = solrTemplate.getSolrClient().query(bibDetailsQuery, SolrRequest.METHOD.POST);
-        }
+    private Map<Integer, IncompleteReportBibDetails> getBibDetailsIncompleteReport(List<Integer> bibIdList,Map<Integer,IncompleteReportBibDetails> bibDetailsMap) throws SolrServerException, IOException {
+        SolrQuery bibDetailsQuery = solrQueryBuilder.buildSolrQueryToGetBibDetails(bibIdList, Integer.MAX_VALUE);
+        QueryResponse bibDetailsResponse = solrTemplate.getSolrClient().query(bibDetailsQuery, SolrRequest.METHOD.POST);
         SolrDocumentList bibDocumentList = bibDetailsResponse.getResults();
-        Map<Integer,IncompleteReportBibDetails> bibDetailsMap = new HashMap<>();
         for (SolrDocument bibDetail : bibDocumentList) {
             IncompleteReportBibDetails incompleteReportBibDetails = new IncompleteReportBibDetails();
             incompleteReportBibDetails.setTitle((String)bibDetail.getFieldValue(RecapConstants.TITLE_DISPLAY));
