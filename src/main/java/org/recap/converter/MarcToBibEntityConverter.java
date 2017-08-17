@@ -361,7 +361,6 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
         itemEntity.setCustomerCode(customerCode);
         itemEntity.setCallNumber(holdingsCallNumber);
         itemEntity.setCallNumberType(String.valueOf(holdingsCallNumberType));
-        itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get("Available"));//TODO need to change
         String copyNumber = marcUtil.getDataFieldValue(itemRecord, "876", 't');
         if (StringUtils.isNotBlank(copyNumber) && org.apache.commons.lang3.math.NumberUtils.isNumber(copyNumber)) {
             itemEntity.setCopyNumber(Integer.valueOf(copyNumber));
@@ -402,8 +401,10 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
 
         if(isComplete){
             bibliographicEntity.setCatalogingStatus(RecapConstants.COMPLETE_STATUS);
+            itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get("Available"));
             itemEntity.setCatalogingStatus(RecapConstants.COMPLETE_STATUS);
         } else {
+            itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get("Not Available"));
             bibliographicEntity.setCatalogingStatus(RecapConstants.INCOMPLETE_STATUS);
             itemEntity.setCatalogingStatus(RecapConstants.INCOMPLETE_STATUS);
         }
