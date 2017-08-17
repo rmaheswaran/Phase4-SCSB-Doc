@@ -377,7 +377,6 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
             itemEntity.setCustomerCode(accessionRequest.getCustomerCode());
             itemEntity.setCallNumber(holdingsCallNumber);
             itemEntity.setCallNumberType(String.valueOf(holdingsCallNumberType));
-            itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get("Available"));
             String copyNumber = getMarcUtil().getDataFieldValueForRecordType(itemRecordType, "876", null, null, "t");
             if (StringUtils.isNotBlank(copyNumber) && org.apache.commons.lang3.math.NumberUtils.isNumber(copyNumber)) {
                 itemEntity.setCopyNumber(Integer.valueOf(copyNumber));
@@ -416,9 +415,11 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
             }
 
             if(isComplete){
+                itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get("Available"));
                 bibliographicEntity.setCatalogingStatus(RecapConstants.COMPLETE_STATUS);
                 itemEntity.setCatalogingStatus(RecapConstants.COMPLETE_STATUS);
             } else {
+                itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get("Not Available"));
                 bibliographicEntity.setCatalogingStatus(RecapConstants.INCOMPLETE_STATUS);
                 itemEntity.setCatalogingStatus(RecapConstants.INCOMPLETE_STATUS);
             }
