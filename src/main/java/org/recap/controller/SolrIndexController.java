@@ -162,24 +162,28 @@ public class SolrIndexController {
     /**
      * This method is used to delete records by bib,holding and item id.
      *
-     * @param idMapToRemoveIndex the id map to remove index
+     * @param idMapToRemoveIndexList the id list of map to remove index
      * @return the string
      */
     @ResponseBody
     @RequestMapping(value = "/solrIndexer/deleteByBibHoldingItemId", method = RequestMethod.POST)
-    public String deleteByBibHoldingItemId(@RequestBody Map<String,String> idMapToRemoveIndex) {
+    public String deleteByBibHoldingItemId(@RequestBody List<Map<String,String>> idMapToRemoveIndexList) {
         String response = null;
-        String bibliographicId = idMapToRemoveIndex.get("BibId");
-        String holdingId = idMapToRemoveIndex.get("HoldingId");
-        String itemId = idMapToRemoveIndex.get("ItemId");
-        try {
-            getSolrIndexService().deleteByDocId(RecapConstants.BIB_ID,bibliographicId);
-            getSolrIndexService().deleteByDocId(RecapConstants.HOLDING_ID,holdingId);
-            getSolrIndexService().deleteByDocId(RecapConstants.ITEM_ID,itemId);
-            response = RecapConstants.SUCCESS;
-        } catch (Exception e) {
-            response = RecapConstants.FAILURE;
-            logger.error(RecapConstants.LOG_ERROR,e);
+        logger.info("idMapToRemoveIndexList size--->",idMapToRemoveIndexList.size());
+        for (Map<String,String> idMapToRemoveIndex : idMapToRemoveIndexList) {
+            String bibliographicId = idMapToRemoveIndex.get("BibId");
+            String holdingId = idMapToRemoveIndex.get("HoldingId");
+            String itemId = idMapToRemoveIndex.get("ItemId");
+            logger.info("deleting dummy record from solr bib id - {}, holding id - {}, item id {}",bibliographicId,holdingId,itemId);
+            try {
+                getSolrIndexService().deleteByDocId(RecapConstants.BIB_ID,bibliographicId);
+                getSolrIndexService().deleteByDocId(RecapConstants.HOLDING_ID,holdingId);
+                getSolrIndexService().deleteByDocId(RecapConstants.ITEM_ID,itemId);
+                response = RecapConstants.SUCCESS;
+            } catch (Exception e) {
+                response = RecapConstants.FAILURE;
+                logger.error(RecapConstants.LOG_ERROR,e);
+            }
         }
         return response;
     }
