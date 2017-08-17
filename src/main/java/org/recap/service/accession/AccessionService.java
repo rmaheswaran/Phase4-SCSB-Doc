@@ -731,9 +731,6 @@ public class AccessionService {
         }else{ // Existing bib Record
             // Bib
             fetchBibliographicEntity.setContent(bibliographicEntity.getContent());
-            fetchBibliographicEntity.setCreatedBy(bibliographicEntity.getCreatedBy());
-            fetchBibliographicEntity.setCreatedDate(bibliographicEntity.getCreatedDate());
-            fetchBibliographicEntity.setDeleted(bibliographicEntity.isDeleted());
             fetchBibliographicEntity.setLastUpdatedBy(bibliographicEntity.getLastUpdatedBy());
             fetchBibliographicEntity.setLastUpdatedDate(bibliographicEntity.getLastUpdatedDate());
 
