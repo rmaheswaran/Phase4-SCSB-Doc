@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StopWatch;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -169,7 +170,9 @@ public class SolrIndexController {
     @RequestMapping(value = "/solrIndexer/deleteByBibHoldingItemId", method = RequestMethod.POST)
     public String deleteByBibHoldingItemId(@RequestBody List<Map<String,String>> idMapToRemoveIndexList) {
         String response = null;
-        logger.info("idMapToRemoveIndexList size--->",idMapToRemoveIndexList.size());
+        logger.info("idMapToRemoveIndexList size--->{}",idMapToRemoveIndexList.size());
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         for (Map<String,String> idMapToRemoveIndex : idMapToRemoveIndexList) {
             String bibliographicId = idMapToRemoveIndex.get("BibId");
             String holdingId = idMapToRemoveIndex.get("HoldingId");
@@ -185,6 +188,8 @@ public class SolrIndexController {
                 logger.error(RecapConstants.LOG_ERROR,e);
             }
         }
+        stopWatch.stop();
+        logger.info("Total time to delete dummy record from solr--->{}",stopWatch.getTotalTimeSeconds());
         return response;
     }
 
