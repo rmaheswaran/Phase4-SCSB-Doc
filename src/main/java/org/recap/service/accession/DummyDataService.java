@@ -119,7 +119,7 @@ public class DummyDataService {
         bibliographicEntity.setCatalogingStatus(RecapConstants.INCOMPLETE_STATUS);
     }
 
-    private Map getCollectionGroupMap() {
+    private synchronized Map getCollectionGroupMap() {
         if (null == collectionGroupMap) {
             collectionGroupMap = new HashMap();
             try {
@@ -135,7 +135,7 @@ public class DummyDataService {
         return collectionGroupMap;
     }
 
-    private Map getItemStatusMap() {
+    private synchronized Map getItemStatusMap() {
         if (null == itemStatusMap) {
             itemStatusMap = new HashMap();
             try {
