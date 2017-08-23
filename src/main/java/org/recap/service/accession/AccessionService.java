@@ -746,9 +746,7 @@ public class AccessionService {
                 HoldingsEntity holdingsEntity =(HoldingsEntity) iholdings.next();
                 for (int j=0;j<fetchHoldingsEntities.size();j++) {
                     HoldingsEntity fetchHolding=fetchHoldingsEntities.get(j);
-                    boolean matchedHoldingBasedOn852b = checkIsHoldingContentsAreEqual(holdingsEntity,fetchHolding);
-                    if(fetchHolding.getOwningInstitutionHoldingsId().equalsIgnoreCase(holdingsEntity.getOwningInstitutionHoldingsId())  && fetchHolding.getOwningInstitutionId().intValue() == holdingsEntity.getOwningInstitutionId().intValue()
-                            || matchedHoldingBasedOn852b) {
+                    if(fetchHolding.getOwningInstitutionHoldingsId().equalsIgnoreCase(holdingsEntity.getOwningInstitutionHoldingsId())  && fetchHolding.getOwningInstitutionId().intValue() == holdingsEntity.getOwningInstitutionId().intValue()) {
                         copyHoldingsEntity(fetchHolding,holdingsEntity);
                         iholdings.remove();
                     }else{
@@ -927,9 +925,6 @@ public class AccessionService {
 
     private HoldingsEntity copyHoldingsEntity(HoldingsEntity fetchHoldingsEntity, HoldingsEntity holdingsEntity){
         fetchHoldingsEntity.setContent(holdingsEntity.getContent());
-        fetchHoldingsEntity.setCreatedBy(holdingsEntity.getCreatedBy());
-        fetchHoldingsEntity.setCreatedDate(holdingsEntity.getCreatedDate());
-        fetchHoldingsEntity.setDeleted(holdingsEntity.isDeleted());
         fetchHoldingsEntity.setLastUpdatedBy(holdingsEntity.getLastUpdatedBy());
         fetchHoldingsEntity.setLastUpdatedDate(holdingsEntity.getLastUpdatedDate());
         List<ItemEntity> fetchedItemEntities = fetchHoldingsEntity.getItemEntities();
@@ -942,9 +937,6 @@ public class AccessionService {
 
     private ItemEntity copyItemEntity(ItemEntity fetchItemEntity, ItemEntity itemEntity){
         fetchItemEntity.setBarcode(itemEntity.getBarcode());
-        fetchItemEntity.setCreatedBy(itemEntity.getCreatedBy());
-        fetchItemEntity.setCreatedDate(itemEntity.getCreatedDate());
-        fetchItemEntity.setDeleted(itemEntity.isDeleted());
         fetchItemEntity.setLastUpdatedBy(itemEntity.getLastUpdatedBy());
         fetchItemEntity.setLastUpdatedDate(itemEntity.getLastUpdatedDate());
         fetchItemEntity.setCallNumber(itemEntity.getCallNumber());
@@ -967,7 +959,7 @@ public class AccessionService {
         return null;
     }
 
-    private Map getInstitutionEntityMap() {
+    private synchronized Map getInstitutionEntityMap() {
         if (null == institutionEntityMap) {
             institutionEntityMap = new HashMap();
             try {
