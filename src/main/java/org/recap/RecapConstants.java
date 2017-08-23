@@ -299,7 +299,7 @@ public final class RecapConstants {
     public static final String FAILURE_ITEM_REASON = "ReasonForFailureItem";
     public static final String ITEMBARCODE = "itemBarcode";
 
-    public static final String SUBMIT_COLLECTION_REPORT = "Submit_Collection_Report";
+    public static final String SUBMIT_COLLECTION_REPORT = "Submit_Coll";
     public static final String SUBMIT_COLLECTION_REJECTION_REPORT = "Submit_Collection_Rejection_Report";
     public static final String SUBMIT_COLLECTION_EXCEPTION_REPORT = "Submit_Collection_Exception_Report";
     public static final String SUBMIT_COLLECTION_SUCCESS_REPORT = "Submit_Collection_Success_Report";
