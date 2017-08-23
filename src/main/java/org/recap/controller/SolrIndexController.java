@@ -174,6 +174,8 @@ public class SolrIndexController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         for (Map<String,String> idMapToRemoveIndex : idMapToRemoveIndexList) {
+            StopWatch stopWatchDeleteDummyRec = new StopWatch();
+            stopWatchDeleteDummyRec.start();
             String bibliographicId = idMapToRemoveIndex.get("BibId");
             String holdingId = idMapToRemoveIndex.get("HoldingId");
             String itemId = idMapToRemoveIndex.get("ItemId");
@@ -187,9 +189,11 @@ public class SolrIndexController {
                 response = RecapConstants.FAILURE;
                 logger.error(RecapConstants.LOG_ERROR,e);
             }
+            stopWatchDeleteDummyRec.stop();
+            logger.info("Time taken to delete  bib id - {}, holding id - {}, item id {}--> is {} milli sec",bibliographicId,holdingId,itemId,stopWatchDeleteDummyRec.getTotalTimeMillis());
         }
         stopWatch.stop();
-        logger.info("Total time to delete dummy record from solr--->{}",stopWatch.getTotalTimeSeconds());
+        logger.info("Total time to delete dummy record from solr--->{} milli sec",stopWatch.getTotalTimeMillis());
         return response;
     }
 
