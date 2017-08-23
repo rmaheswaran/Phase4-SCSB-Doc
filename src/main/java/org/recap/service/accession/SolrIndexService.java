@@ -130,7 +130,7 @@ public class SolrIndexService {
      * @throws SolrServerException the solr server exception
      */
     public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
-        solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue);
+        solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue,1);
         solrTemplate.commit();
     }
 }
