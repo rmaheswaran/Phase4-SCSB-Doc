@@ -248,7 +248,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
      */
     public void populateItemInfo(List<BibItem> bibItems, SearchRecordsRequest searchRecordsRequest) {
         boolean nonFullTreeInst = isIncrementalNonFullTreeInstitution(searchRecordsRequest);
-
+        logger.info("nonFullTreeInst---->{}",nonFullTreeInst);
         String queryStringForMatchParentReturnChild = solrQueryBuilder.getQueryStringForMatchParentReturnChild(searchRecordsRequest);
         String querForItemString = "_root_:" + getRootIds(bibItems) + and + RecapConstants.DOCTYPE + ":" + RecapConstants.ITEM + and
                 + queryStringForMatchParentReturnChild + and + RecapConstants.IS_DELETED_ITEM + ":" + searchRecordsRequest.isDeleted() + and + RecapConstants.ITEM_CATALOGING_STATUS + ":"
@@ -256,7 +256,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         if(nonFullTreeInst && searchRecordsRequest.getFieldName().contains(RecapConstants.BIBITEM_LASTUPDATED_DATE)){
             querForItemString = querForItemString + and + RecapConstants.ITEM_LASTUPDATED_DATE + ":["+searchRecordsRequest.getFieldValue()+"]";
         }
-
+        logger.info("query string for export--->{}",querForItemString);
         SolrQuery solrQueryForItem = solrQueryBuilder.getSolrQueryForBibItem(querForItemString) ;
         QueryResponse queryResponse = null;
         try {
@@ -421,6 +421,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
 
     private boolean isIncrementalNonFullTreeInstitution(SearchRecordsRequest searchRecordsRequest){
         String requestingInstitution = searchRecordsRequest.getRequestingInstitution();
+        logger.info("incrementalNonFullTreeInstitution--->{}",incrementalNonFullTreeInstitution);
         List<String> incrementalNonFullTreeInstitutionList = getInstitutionList(incrementalNonFullTreeInstitution);
         if(incrementalNonFullTreeInstitutionList.contains(requestingInstitution)){
             return true;
