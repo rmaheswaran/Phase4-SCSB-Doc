@@ -64,6 +64,9 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
     @Value("${datadump.deleted.type.onlyorphan.institution}")
     private String deletedOnlyOrphanInstitution;
 
+    @Value("${datadump.incremental.type.nonfulltree.institution}")
+    private String incrementalNonFullTreeInstitution;
+
     @Override
     public Map<String, Object> search(SearchRecordsRequest searchRecordsRequest) {
         List<BibItem> bibItems;
@@ -244,12 +247,16 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
      * @param searchRecordsRequest the search records request
      */
     public void populateItemInfo(List<BibItem> bibItems, SearchRecordsRequest searchRecordsRequest) {
-
+        boolean nonFullTreeInst = isIncrementalNonFullTreeInstitution(searchRecordsRequest);
+        logger.info("nonFullTreeInst---->{}",nonFullTreeInst);
         String queryStringForMatchParentReturnChild = solrQueryBuilder.getQueryStringForMatchParentReturnChild(searchRecordsRequest);
         String querForItemString = "_root_:" + getRootIds(bibItems) + and + RecapConstants.DOCTYPE + ":" + RecapConstants.ITEM + and
                 + queryStringForMatchParentReturnChild + and + RecapConstants.IS_DELETED_ITEM + ":" + searchRecordsRequest.isDeleted() + and + RecapConstants.ITEM_CATALOGING_STATUS + ":"
                 + RecapConstants.COMPLETE_STATUS;
-
+        if(nonFullTreeInst && searchRecordsRequest.getFieldName().contains(RecapConstants.BIBITEM_LASTUPDATED_DATE)){
+            querForItemString = querForItemString + and + RecapConstants.ITEM_LASTUPDATED_DATE + ":["+searchRecordsRequest.getFieldValue()+"]";
+        }
+        logger.info("query string for export--->{}",querForItemString);
         SolrQuery solrQueryForItem = solrQueryBuilder.getSolrQueryForBibItem(querForItemString) ;
         QueryResponse queryResponse = null;
         try {
@@ -406,6 +413,17 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         String requestingInstitution = searchRecordsRequest.getRequestingInstitution();
         List<String> deleteOnlyOrphanInstitutionList = getInstitutionList(deletedOnlyOrphanInstitution);
         if(deleteOnlyOrphanInstitutionList.contains(requestingInstitution)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isIncrementalNonFullTreeInstitution(SearchRecordsRequest searchRecordsRequest){
+        String requestingInstitution = searchRecordsRequest.getRequestingInstitution();
+        logger.info("incrementalNonFullTreeInstitution--->{}",incrementalNonFullTreeInstitution);
+        List<String> incrementalNonFullTreeInstitutionList = getInstitutionList(incrementalNonFullTreeInstitution);
+        if(incrementalNonFullTreeInstitutionList.contains(requestingInstitution)){
             return true;
         } else {
             return false;
