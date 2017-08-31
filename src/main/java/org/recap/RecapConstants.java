@@ -496,6 +496,7 @@ public final class RecapConstants {
     public static final String DISTINCT_VALUES_FALSE="{!distinctValues=false}Barcode";
     public static final String GROUP = "group";
     public static final String GROUP_FIELD = "group.field";
+    public static final String INCREMENTAL_DUMP_TO_NOW = "TO NOW";
 
     private RecapConstants(){}
 }
