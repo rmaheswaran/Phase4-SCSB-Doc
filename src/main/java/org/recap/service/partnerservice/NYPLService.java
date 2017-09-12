@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -25,6 +25,12 @@ public class NYPLService {
 
     @Value("${ils.nypl.bibdata}")
     private String ilsNYPLBibData;
+
+    @Value("${bibdata.api.connection.timeout}")
+    private Integer connectionTimeout;
+
+    @Value("${bibdata.api.read.timeout}")
+    private Integer readTimeout;
 
     @Value("${ils.nypl.bibdata.parameter}")
     private String ilsNYPLBibDataParameter;
@@ -65,6 +71,8 @@ public class NYPLService {
      */
     public String getBibData(String itemBarcode, String customerCode) {
         RestTemplate restTemplate = getRestTemplate();
+        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(connectionTimeout);
+        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setReadTimeout(readTimeout);
         String bibDataResponse = null;
         String response = null;
         try {
