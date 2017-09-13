@@ -43,7 +43,7 @@ public class BibItemIndexCallableUT extends BaseTestCase {
         int page = 1;
         int size = 1;
         Page<BibliographicEntity> bibliographicEntities = new SolrResultPage<>(getBibliographicEntityList());
-        BibItemIndexCallable mockBibItemIndexCallable = new BibItemIndexCallable("","",1,1,bibliographicDetailsRepository,holdingsDetailsRepository,1,new Date(),producerTemplate,solrTemplate);
+        BibItemIndexCallable mockBibItemIndexCallable = new BibItemIndexCallable("","",1,1,bibliographicDetailsRepository,holdingsDetailsRepository,1,new Date(),producerTemplate,solrTemplate, null, null);
         //when(bibliographicDetailsRepository.findAll(new PageRequest(page, size))).thenReturn(bibliographicEntities);
         int response = (int) mockBibItemIndexCallable.call();
         assertNotNull(response);

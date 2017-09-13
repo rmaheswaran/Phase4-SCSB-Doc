@@ -22,21 +22,22 @@
     </div>
 
     <ul class="nav nav-tabs nav-justified">
-        <li class="active"><a data-toggle="tab" href="#solrIndex">Solr Index</a></li>
+        <li class="active"><a data-toggle="tab" href="#solrFullIndex">Solr Full Index</a></li>
+        <li><a data-toggle="tab" href="#solrPartialIndex">Solr Partial Index</a></li>
         <li><a data-toggle="tab" href="#matchingAlgorithmSaveReport">Initial Matching Algorithm</a></li>
         <li><a data-toggle="tab" href="#ongoingMatchingJob">Ongoing Matching Job</a></li>
         <li><a data-toggle="tab" href="#generateReports"> Generate Reports</a></li>
     </ul>
 
     <div class="tab-content">
-        <div id="solrIndex" class="tab-pane fade in active">
+        <div id="solrFullIndex" class="tab-pane fade in active">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-4">
                         <div id="fullIndexingDiv">
                             <br/><br/>
                             <div class="container">
-                                <!-- Horizonatal Form -->
+                                <!-- Horizontal Form -->
                                 <div class="row">
                                     <div class="col-xs-6">
                                         <div th:fragment="index-form" xmlns:th="http://www.thymeleaf.org"
@@ -111,6 +112,14 @@
                                                     </div>
 
                                                     <div class="form-group">
+                                                        <div class="col-sm-7">
+                                                            <label for="clean">Clean All/Institution</label> &nbsp;&nbsp;
+                                                            <input type="checkbox" id="clean" name="clean"
+                                                                   th:field="*{doClean}"/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
                                                         <label for="dateFrom" class="col-sm-4">Date From</label>
 
                                                         <div class="col-sm-4">
@@ -135,11 +144,6 @@
 
                                                     <div class="form-group">
                                                         <div class="col-sm-4">
-                                                            <label for="clean">Clean</label> &nbsp;&nbsp;
-                                                            <input type="checkbox" id="clean" name="clean"
-                                                                   th:field="*{doClean}"/>
-                                                        </div>
-                                                        <div class="col-sm-4">
                                                             <button id="submit" type="submit" name="fullIndex"
                                                                     class="btn btn-info active  pull-right">Index
                                                             </button>
@@ -147,10 +151,32 @@
                                                     </div>
 
                                                     <div class="form-group">
-                                        <textarea class="form-control" id="fullIndexingStatus" rows="5"
-                                                  placeholder="Full Indexing Status" readonly="true"></textarea>
+                                                        <textarea class="form-control" id="fullIndexingStatus" rows="5"
+                                                                  placeholder="Full Indexing Status" readonly="true"></textarea>
                                                     </div>
                                                 </fieldset>
+
+                                                <div id="deleteConfirmationModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+                                                    <div class="modal-dialog">
+                                                        <div id="deleteConfModalContent" class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title">Clean Index Confirmation</h4>
+                                                            </div>
+                                                            <div class="modal-body" style="height: 100px;">
+                                                                <p>Do you want to proceed to Clean the existing solr data and Index ?</p>
+                                                                <div class="col-sm-4 pull-right">
+                                                                    <button id="proceedBtn" type="button" name="action" onclick="proceedIndex()"
+                                                                            class="btn btn-primary">Proceed
+                                                                    </button>
+                                                                    <button id="cancelBtn" type="button" name="cancel" data-dismiss="modal"
+                                                                            class="btn btn-danger">Cancel
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             </form>
                                         </div>
                                     </div>
@@ -160,6 +186,170 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div id="solrPartialIndex" class="tab-pane fade">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div id="partialIndexDiv">
+                                <br/><br/>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <div th:fragment="reports-form" xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+                                                <form id="partialIndex-form" name="reports-form" class="form-horizontal"
+                                                      action="#"
+                                                      th:action="@{/solrIndexer/partialIndex}"
+                                                      th:object="${solrIndexRequest}" method="post">
+                                                    <fieldset>
+                                                        <div class="form-group">
+                                                            <label for="numberOfThreads" class="col-sm-4">Number of
+                                                                threads</label>
+
+                                                            <div class="col-sm-4">
+                                                                <input type="text" th:field="*{numberOfThreads}"
+                                                                       class="form-control"
+                                                                       id="noOfThreads"
+                                                                       placeholder="Number of threads" th:required="true"/>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <span id="noOfThreadErrorMessage"></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label for="numberOfDocs" class="col-sm-4">Number of Documents
+                                                                to be
+                                                                processed per thread</label>
+
+                                                            <div class="col-sm-4">
+                                                                <input type="text" th:field="*{numberOfDocs}"
+                                                                       class="form-control bfh-number"
+                                                                       id="noOfDocs"
+                                                                       placeholder="Number of Docs" th:required="true"/>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <span id="noOfDocErrorMessage"></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label for="commitInterval" class="col-sm-4">Commit
+                                                                Interval</label>
+
+                                                            <div class="col-sm-4">
+                                                                <input type="text" th:field="*{commitInterval}"
+                                                                       class="form-control"
+                                                                       id="commitIntervalForPartialIndex"
+                                                                       placeholder="Commit Interval"/>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <span id="commitIntervalErrorMsg"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="padding-left: 40px;">
+                                                            <label for="BibIdList" accesskey="R" class="radio-inline report-hide-shadow" style="padding-right: 30px;" tabindex="0">
+                                                                <input type="radio" name="BibIdList"
+                                                                       id="BibIdList" value="BibIdList"
+                                                                       onclick="showBibIdList()" th:field="*{partialIndexType}"/>
+                                                                BibIdList
+                                                            </label>
+                                                            <label for="BibIdRange" accesskey="A" class="radio-inline report-hide-shadow" style="padding-right: 30px;" tabindex="0">
+                                                                <input type="radio" name="BibIdRange"
+                                                                       id="BibIdRange" value="BibIdRange"
+                                                                       onclick="showBibIdRange()" th:field="*{partialIndexType}"/>
+                                                                BibIdRange
+                                                            </label>
+                                                            <label for="DateRange" accesskey="C" class="radio-inline report-hide-shadow" style="padding-right: 30px" tabindex="0">
+                                                                <input type="radio" name="ReportTypeoption"
+                                                                       id="DateRange"
+                                                                       value="DateRange"
+                                                                       onclick="showBibIdDateRange()" th:field="*{partialIndexType}"/>
+                                                                BibIdDateRange
+                                                            </label>
+                                                        </div>
+
+                                                        <div>
+                                                            <div id="BibIdListView" style="display:none">
+                                                                <div id="BibIds" style="margin-top: 30px;">
+                                                                    <label>Enter Bib Id's</label>
+                                                                    <input class="form-control input-lg" type="text" id="BibIdListInput" th:field="*{bibIds}"
+                                                                           placeholder="Enter values separated by comma"/>
+                                                                </div>
+                                                                <div style="margin-top: 30px; padding-left: 200px;">
+                                                                    <button class="btn btn-info active"
+                                                                            id="bibIdListSubmit"
+                                                                            type="submit"> Submit
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div>
+                                                            <div id="BibIdRangeView" style="display:none">
+                                                                <div id="BibIdRangeFrom" style="margin-top: 30px;">
+                                                                    <label>Bib Id From</label>
+                                                                    <input class="form-control" type="text" id="BibIdFrom" th:field="*{fromBibId}"/>
+                                                                </div>
+                                                                <div id="BibIdRangeTo" style="margin-top: 30px;">
+                                                                    <label>Bib Id To</label>
+                                                                    <input class="form-control" type="text" id="BibIdTo" th:field="*{toBibId}"/>
+                                                                </div>
+                                                                <div style="margin-top: 30px; padding-left: 200px;">
+                                                                    <button class="btn btn-info active"
+                                                                            id="bibIdRangeSubmit"
+                                                                            type="submit"> Submit
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div>
+                                                            <div id="DateRangeView" style="display:none">
+                                                                <div id="DateRangeFrom" style="margin-top: 30px;">
+                                                                    <label>Date From</label>
+                                                                    <input type="text"
+                                                                           class="form-control date"
+                                                                           id="partialIndexFromDate"
+                                                                           placeholder="From Date" th:field="*{dateFrom}"/>
+                                                                    <span class="add-on">
+                                                                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                                                    </span>
+                                                                </div>
+
+                                                                <div id="DateRangeTo" style="margin-top: 30px;">
+                                                                    <label>Date To</label>
+                                                                    <input type="text"
+                                                                           class="form-control date"
+                                                                           id="partialIndexToDate"
+                                                                           placeholder="To Date" th:field="*{dateTo}"/>
+                                                                    <span class="add-on">
+                                                                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                                                    </span>
+                                                                </div>
+                                                                <div style="margin-top: 30px; padding-left: 200px;">
+                                                                    <button class="btn btn-info active"
+                                                                            id="bibIdDateRangeSubmit"
+                                                                            type="submit"> Submit
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-top: 30px;">
+                                                            <textarea class="form-control" id="partialIndexingStatus" rows="5"
+                                                                      placeholder="Partial Indexing Status" readonly="true"></textarea>
+                                                        </div>
+                                                    </fieldset>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
 
         <div id="matchingAlgorithmSaveReport" class="tab-pane fade">
@@ -299,7 +489,7 @@
                                                                     th:field="*{processType}">
                                                                 <option value="SolrIndex">Solr Index</option>
                                                                 <option value="Accession">Accession</option>
-                                                                <option value="SolrIndex">DeAccession</option>
+                                                                <option value="DeAccession">DeAccession</option>
                                                                 <option value="SubmitCollection">Submit Collection</option>
                                                             </select>
                                                         </div>

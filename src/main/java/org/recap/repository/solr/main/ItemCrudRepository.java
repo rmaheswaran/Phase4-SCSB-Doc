@@ -61,4 +61,12 @@ public interface ItemCrudRepository extends SolrCrudRepository<Item, String> {
      * @return the int
      */
     int deleteByItemIdIn(@Param("itemIds") List<Integer> itemIds);
+
+    /**
+     * Delete by owning institution int.
+     *
+     * @param owningInstitution the owning institution
+     * @return the int
+     */
+    int deleteByOwningInstitution(@Param("owningInstitution") String owningInstitution);
 }
