@@ -9,12 +9,12 @@ import org.recap.BaseTestCase;
 import org.recap.admin.SolrAdmin;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.solr.temp.BibCrudRepositoryMultiCoreSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 /**
@@ -60,7 +60,7 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCase{
 
     private class MockBibItemIndexExecutorService extends BibItemIndexExecutorService {
         @Override
-        public Callable getCallable(String coreName, int startingPage, int numRecordsPerPage, Integer owningInstitutionId, Date fromDate) {
+        public Callable getCallable(String coreName, int startingPage, int numRecordsPerPage, Integer owningInstitutionId, Date fromDate, String partialIndexType, Map<String, Object> partialIndexMap) {
             return mockBibItemIndexCallable;
         }
 

@@ -120,4 +120,12 @@ public interface BibSolrCrudRepository extends SolrCrudRepository<Bib, String> {
      * @return the int
      */
     int deleteByBibIdIn(@Param("bibIds") List<Integer> bibIds);
+
+    /**
+     * Delete by owning institution int.
+     *
+     * @param owningInstitution the owning institution
+     * @return the int
+     */
+    int deleteByOwningInstitution(@Param("owningInstitution") String owningInstitution);
 }
