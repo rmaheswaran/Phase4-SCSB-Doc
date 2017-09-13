@@ -13,6 +13,7 @@ public class SolrIndexRequest {
     private String owningInstitutionCode;
     private boolean doClean;
     private String dateFrom;
+    private String dateTo;
 
     private String matchingCriteria;
     private String reportType;
@@ -20,6 +21,12 @@ public class SolrIndexRequest {
     private Date createdDate;
     private String processType;
     private Date toDate;
+
+    private String fromBibId;
+    private String toBibId;
+    private String partialIndexType;
+    private String bibIds;
+
 
     /**
      * Gets doc type.
@@ -220,6 +227,24 @@ public class SolrIndexRequest {
     }
 
     /**
+     * Gets date to.
+     *
+     * @return the date to
+     */
+    public String getDateTo() {
+        return dateTo;
+    }
+
+    /**
+     * Sets date to.
+     *
+     * @param dateTo the date to
+     */
+    public void setDateTo(String dateTo) {
+        this.dateTo = dateTo;
+    }
+
+    /**
      * Gets process type.
      *
      * @return the process type
@@ -253,5 +278,77 @@ public class SolrIndexRequest {
      */
     public void setToDate(Date toDate) {
         this.toDate = toDate;
+    }
+
+    /**
+     * Gets from bib id.
+     *
+     * @return the from bib id
+     */
+    public String getFromBibId() {
+        return fromBibId;
+    }
+
+    /**
+     * Sets from bib id.
+     *
+     * @param fromBibId the from bib id
+     */
+    public void setFromBibId(String fromBibId) {
+        this.fromBibId = fromBibId;
+    }
+
+    /**
+     * Gets to bib id.
+     *
+     * @return the to bib id
+     */
+    public String getToBibId() {
+        return toBibId;
+    }
+
+    /**
+     * Sets to bib id.
+     *
+     * @param toBibId the to bib id
+     */
+    public void setToBibId(String toBibId) {
+        this.toBibId = toBibId;
+    }
+
+    /**
+     * Gets partial index type.
+     *
+     * @return the partial index type
+     */
+    public String getPartialIndexType() {
+        return partialIndexType;
+    }
+
+    /**
+     * Sets partial index type.
+     *
+     * @param partialIndexType the partial index type
+     */
+    public void setPartialIndexType(String partialIndexType) {
+        this.partialIndexType = partialIndexType;
+    }
+
+    /**
+     * Gets bib ids.
+     *
+     * @return the bib ids
+     */
+    public String getBibIds() {
+        return bibIds;
+    }
+
+    /**
+     * Sets bib ids.
+     *
+     * @param bibIds the bib ids
+     */
+    public void setBibIds(String bibIds) {
+        this.bibIds = bibIds;
     }
 }

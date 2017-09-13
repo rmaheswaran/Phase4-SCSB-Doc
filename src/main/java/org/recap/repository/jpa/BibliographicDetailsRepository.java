@@ -214,8 +214,8 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      *
      * @param pageable      the pageable
      * @param operationType the operation type
-     * @param from the from date
-     * @param to the to date
+     * @param from          the from date
+     * @param to            the to date
      * @return the bibliographic entities for changed items
      */
     @Query(value = "SELECT distinct BIB FROM BibliographicEntity as BIB WHERE BIB.bibliographicId IN " +
@@ -226,14 +226,75 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
     /**
      * Gets count of bibliographic entities for changed items based on the operation type and date.
      *
-     * @param from the from date
-     * @param to the to date
      * @param operationType the operation type
+     * @param from          the from date
+     * @param to            the to date
      * @return the count of bibliographic entities for changed items
      */
     @Query(value = "SELECT count(distinct BIB) FROM BibliographicEntity as BIB WHERE BIB.bibliographicId IN " +
             "(SELECT DISTINCT BIB1.bibliographicId FROM BibliographicEntity as BIB1 INNER JOIN BIB1.itemEntities AS ITEMS " +
             "WHERE ITEMS.itemId IN (SELECT recordId FROM ItemChangeLogEntity where operationType=?1 and updated_date between ?2 and ?3))")
     Long getCountOfBibliographicEntitiesForChangedItems(String operationType, Date from, Date to);
+
+    /**
+     * Gets count of bib based on bib ids.
+     *
+     * @param bibliographicIds the bibliographic ids
+     * @return the count of bib based on bib ids
+     */
+    @Query(value = "SELECT count(distinct BIB) FROM BibliographicEntity as BIB WHERE BIB.bibliographicId in (:bibliographicIds)")
+    Long getCountOfBibBasedOnBibIds(@Param("bibliographicIds") List<Integer> bibliographicIds);
+
+    /**
+     * Gets count of bib based on bib id range.
+     *
+     * @param bibliographicIdFrom the bibliographic id from
+     * @param bibliographicIdTo   the bibliographic id to
+     * @return the count of bib based on bib id range
+     */
+    @Query(value = "SELECT count(distinct BIB) FROM BibliographicEntity as BIB WHERE BIB.bibliographicId BETWEEN :bibliographicIdFrom and :bibliographicIdTo")
+    Long getCountOfBibBasedOnBibIdRange(@Param("bibliographicIdFrom") Integer bibliographicIdFrom, @Param("bibliographicIdTo")Integer bibliographicIdTo);
+
+    /**
+     * Gets count of bib based on date range.
+     *
+     * @param lastUpdatedDateFrom the last updated date from
+     * @param lastUpdatedDateTo   the last updated date to
+     * @return the count of bib based on date range
+     */
+    @Query(value = "SELECT count(distinct BIB) FROM BibliographicEntity as BIB WHERE BIB.lastUpdatedDate BETWEEN :lastUpdatedDateFrom and :lastUpdatedDateTo")
+    Long getCountOfBibBasedOnDateRange(@Param("lastUpdatedDateFrom") Date lastUpdatedDateFrom, @Param("lastUpdatedDateTo") Date lastUpdatedDateTo);
+
+    /**
+     * Gets bibs based on bib ids.
+     *
+     * @param pageable         the pageable
+     * @param bibliographicIds the bibliographic ids
+     * @return the bibs based on bib ids
+     */
+    @Query(value = "SELECT BIB FROM BibliographicEntity as BIB WHERE BIB.bibliographicId in (:bibliographicIds)")
+    Page<BibliographicEntity> getBibsBasedOnBibIds(Pageable pageable, @Param("bibliographicIds") List<Integer> bibliographicIds);
+
+    /**
+     * Gets bibs based on bib id range.
+     *
+     * @param pageable            the pageable
+     * @param bibliographicIdFrom the bibliographic id from
+     * @param bibliographicIdTo   the bibliographic id to
+     * @return the bibs based on bib id range
+     */
+    @Query(value = "SELECT BIB FROM BibliographicEntity as BIB WHERE BIB.bibliographicId BETWEEN :bibliographicIdFrom and :bibliographicIdTo")
+    Page<BibliographicEntity> getBibsBasedOnBibIdRange(Pageable pageable, @Param("bibliographicIdFrom") Integer bibliographicIdFrom, @Param("bibliographicIdTo")Integer bibliographicIdTo);
+
+    /**
+     * Gets bibs based on date range.
+     *
+     * @param pageable            the pageable
+     * @param lastUpdatedDateFrom the last updated date from
+     * @param lastUpdatedDateTo   the last updated date to
+     * @return the bibs based on date range
+     */
+    @Query(value = "SELECT BIB FROM BibliographicEntity as BIB WHERE BIB.lastUpdatedDate BETWEEN :lastUpdatedDateFrom and :lastUpdatedDateTo")
+    Page<BibliographicEntity> getBibsBasedOnDateRange(Pageable pageable, @Param("lastUpdatedDateFrom") Date lastUpdatedDateFrom, @Param("lastUpdatedDateTo") Date lastUpdatedDateTo);
 
 }
