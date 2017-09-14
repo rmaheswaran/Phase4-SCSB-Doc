@@ -63,8 +63,7 @@ function refresh() {
 }
 
 function fullIndex() {
-
-    alert('Clean == ' + $('#clean').is(':checked'));
+    
     if($('#clean').is(':checked')) {
         $('#deleteConfirmationModal').modal('show');
     } else {
