@@ -328,6 +328,13 @@ public final class RecapConstants {
     public static final String UTC_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     public static final String UTC = "UTC";
     public static final String SOLR_DATE_RANGE_TO_NOW = " TO NOW";
+    public static final String BIB_ID_LIST = "BibIdList";
+    public static final String BIB_ID_RANGE = "BibIdRange";
+    public static final String DATE_RANGE = "DateRange";
+    public static final String BIB_ID_RANGE_FROM = "BibIdRangeFrom";
+    public static final String BIB_ID_RANGE_TO = "BibIdRangeTo";
+    public static final String DATE_RANGE_FROM = "DateRangeFrom";
+    public static final String DATE_RANGE_TO = "DateRangeTo";
 
     //Reports
     public static final String SIMPLE_DATE_FORMAT_REPORTS = "MM/dd/yyyy";

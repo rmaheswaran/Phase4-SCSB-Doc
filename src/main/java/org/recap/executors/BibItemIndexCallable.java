@@ -1,6 +1,7 @@
 package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.common.SolrInputDocument;
 import org.recap.RecapConstants;
@@ -15,10 +16,7 @@ import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,6 +39,8 @@ public class BibItemIndexCallable implements Callable {
     private HoldingsDetailsRepository holdingsDetailsRepository;
     private ProducerTemplate producerTemplate;
     private SolrTemplate solrTemplate;
+    private String partialIndexType;
+    private Map<String, Object> partialIndexMap;
 
     /**
      * This method instantiates a new bib item index callable.
@@ -55,8 +55,11 @@ public class BibItemIndexCallable implements Callable {
      * @param fromDate                       the from date
      * @param producerTemplate               the producer template
      * @param solrTemplate                   the solr template
+     * @param partialIndexType               the partial index type
+     * @param partialIndexMap                the partial index map
      */
-    public BibItemIndexCallable(String solrURL, String coreName, int pageNum, int docsPerPage, BibliographicDetailsRepository bibliographicDetailsRepository, HoldingsDetailsRepository holdingsDetailsRepository, Integer owningInstitutionId, Date fromDate, ProducerTemplate producerTemplate, SolrTemplate solrTemplate) {
+    public BibItemIndexCallable(String solrURL, String coreName, int pageNum, int docsPerPage, BibliographicDetailsRepository bibliographicDetailsRepository, HoldingsDetailsRepository holdingsDetailsRepository, Integer owningInstitutionId,
+                                Date fromDate, ProducerTemplate producerTemplate, SolrTemplate solrTemplate, String partialIndexType, Map<String, Object> partialIndexMap) {
         this.coreName = coreName;
         this.solrURL = solrURL;
         this.pageNum = pageNum;
@@ -67,6 +70,8 @@ public class BibItemIndexCallable implements Callable {
         this.fromDate = fromDate;
         this.producerTemplate = producerTemplate;
         this.solrTemplate = solrTemplate;
+        this.partialIndexType = partialIndexType;
+        this.partialIndexMap = partialIndexMap;
     }
 
     /**
@@ -78,14 +83,29 @@ public class BibItemIndexCallable implements Callable {
     public Object call() throws Exception {
 
         Page<BibliographicEntity> bibliographicEntities = null;
-        if (null == owningInstitutionId && null == fromDate) {
-            bibliographicEntities = bibliographicDetailsRepository.findAll(new PageRequest(pageNum, docsPerPage));
-        } else if (null != owningInstitutionId && null == fromDate) {
-            bibliographicEntities = bibliographicDetailsRepository.findByOwningInstitutionId(new PageRequest(pageNum, docsPerPage), owningInstitutionId);
-        } else if (null == owningInstitutionId && null != fromDate) {
-            bibliographicEntities = bibliographicDetailsRepository.findByLastUpdatedDateAfter(new PageRequest(pageNum, docsPerPage), fromDate);
-        } else if (null != owningInstitutionId && null != fromDate) {
-            bibliographicEntities = bibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(new PageRequest(pageNum, docsPerPage), owningInstitutionId, fromDate);
+        if(StringUtils.isNotBlank(partialIndexType) && partialIndexMap != null) {
+            if(partialIndexType.equalsIgnoreCase(RecapConstants.BIB_ID_LIST)) {
+                List<Integer> bibIdList = (List<Integer>) partialIndexMap.get(RecapConstants.BIB_ID_LIST);
+                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnBibIds(new PageRequest(pageNum, docsPerPage), bibIdList);
+            } else if(partialIndexType.equalsIgnoreCase(RecapConstants.BIB_ID_RANGE)) {
+                String bibIdFrom = (String) partialIndexMap.get(RecapConstants.BIB_ID_RANGE_FROM);
+                String bibIdTo = (String) partialIndexMap.get(RecapConstants.BIB_ID_RANGE_TO);
+                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnBibIdRange(new PageRequest(pageNum, docsPerPage), Integer.valueOf(bibIdFrom), Integer.valueOf(bibIdTo));
+            } else if(partialIndexType.equalsIgnoreCase(RecapConstants.DATE_RANGE)) {
+                Date dateFrom = (Date) partialIndexMap.get(RecapConstants.DATE_RANGE_FROM);
+                Date dateTo = (Date) partialIndexMap.get(RecapConstants.DATE_RANGE_TO);
+                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnDateRange(new PageRequest(pageNum, docsPerPage), dateFrom, dateTo);
+            }
+         } else {
+            if (null == owningInstitutionId && null == fromDate) {
+                bibliographicEntities = bibliographicDetailsRepository.findAll(new PageRequest(pageNum, docsPerPage));
+            } else if (null != owningInstitutionId && null == fromDate) {
+                bibliographicEntities = bibliographicDetailsRepository.findByOwningInstitutionId(new PageRequest(pageNum, docsPerPage), owningInstitutionId);
+            } else if (null == owningInstitutionId && null != fromDate) {
+                bibliographicEntities = bibliographicDetailsRepository.findByLastUpdatedDateAfter(new PageRequest(pageNum, docsPerPage), fromDate);
+            } else if (null != owningInstitutionId && null != fromDate) {
+                bibliographicEntities = bibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(new PageRequest(pageNum, docsPerPage), owningInstitutionId, fromDate);
+            }
         }
 
         logger.info("Num Bibs Fetched : " + bibliographicEntities.getNumberOfElements());

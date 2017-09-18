@@ -9,6 +9,11 @@ jQuery(document).ready(function ($) {
         fullIndex();
     });
 
+    $("#partialIndex-form").submit(function (event) {
+        event.preventDefault();
+        partialIndex();
+    })
+
     $("#reports-form").submit(function (event) {
         event.preventDefault();
         generateReport();
@@ -34,6 +39,14 @@ jQuery(document).ready(function ($) {
         format: "yyyy/mm/dd"
     });
 
+    $('#partialIndexFromDate').datetimepicker({
+        format: "dd-mm-yyyy hh:ii"
+    });
+
+    $('#partialIndexToDate').datetimepicker({
+        format: "dd-mm-yyyy hh:ii"
+    });
+
     showDateField();
 });
 
@@ -50,6 +63,16 @@ function refresh() {
 }
 
 function fullIndex() {
+    
+    if($('#clean').is(':checked')) {
+        $('#deleteConfirmationModal').modal('show');
+    } else {
+        proceedIndex();
+    }
+}
+
+function proceedIndex() {
+    $('#deleteConfirmationModal').modal('hide');
     var $form = $('#fullIndex-form');
     $("#submit").attr('disabled', 'disabled');
     $.ajax({
@@ -63,11 +86,29 @@ function fullIndex() {
     });
     setTimeout(function(){
     }, 2000);
-    updateStatus();
+    updateFullIndexStatus();
+}
+
+function partialIndex() {
+
+    var $form = $("#partialIndex-form");
+    $("#submit").attr('disabled', 'disabled');
+    $.ajax({
+        url: $form.attr('action'),
+        type: 'post',
+        data: $form.serialize(),
+        success: function (response) {
+            $("#submit").removeAttr('disabled');
+            document.getElementById("partialIndexingStatus").value = response;
+        }
+    });
+    setTimeout(function(){
+    }, 2000);
+    updatePartialIndexStatus();
 }
 
 
-function updateStatus() {
+function updateFullIndexStatus() {
     var request = $.ajax({
         url: "solrIndexer/report",
         type: "GET",
@@ -75,6 +116,17 @@ function updateStatus() {
     });
     request.done(function (msg) {
         document.getElementById("fullIndexingStatus").value = msg;
+    });
+}
+
+function updatePartialIndexStatus() {
+    var request = $.ajax({
+        url: "solrIndexer/report",
+        type: "GET",
+        contentType: "application/json"
+    });
+    request.done(function (msg) {
+        document.getElementById("partialIndexingStatus").value = msg;
     });
 }
 
@@ -119,7 +171,7 @@ function generateReport() {
     document.getElementById("reportStatus").value = '';
     var processType = $('#processType').val();
     var url = '';
-    if(processType === 'SolrIndex' || processType === 'DeAccession_Summary_Report' || processType ==='Accession'  || processType ==='SubmitCollection') {
+    if(processType === 'SolrIndex' || processType === 'DeAccession' || processType ==='Accession'  || processType ==='SubmitCollection') {
         url = "/reportGeneration/generateReports";
     }
     if(url !== '') {
@@ -144,4 +196,22 @@ function showDateField() {
     } else {
         $('#matchingAlgoDateDiv').hide();
     }
+}
+
+function showBibIdList(){
+    $("#BibIdListView").show();
+    $("#BibIdRangeView").hide();
+    $("#DateRangeView").hide();
+}
+
+function showBibIdRange(){
+    $("#BibIdListView").hide();
+    $("#BibIdRangeView").show();
+    $("#DateRangeView").hide();
+}
+
+function showBibIdDateRange(){
+    $("#BibIdListView").hide();
+    $("#BibIdRangeView").hide();
+    $("#DateRangeView").show();
 }

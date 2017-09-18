@@ -1,23 +1,19 @@
 package org.recap.controller;
 
-import org.apache.camel.ProducerTemplate;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.codehaus.plexus.util.StringUtils;
 import org.recap.RecapConstants;
 import org.recap.admin.SolrAdmin;
 import org.recap.executors.BibItemIndexExecutorService;
 import org.recap.model.solr.SolrIndexRequest;
-import org.recap.report.ReportGenerator;
-import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.solr.main.BibSolrCrudRepository;
+import org.recap.repository.solr.main.HoldingsSolrCrudRepository;
 import org.recap.repository.solr.main.ItemCrudRepository;
 import org.recap.service.accession.SolrIndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StopWatch;
@@ -47,28 +43,16 @@ public class SolrIndexController {
     private ItemCrudRepository itemCrudRepository;
 
     @Autowired
+    private HoldingsSolrCrudRepository holdingsSolrCrudRepository;
+
+    @Autowired
     private SolrAdmin solrAdmin;
 
     @Value("${commit.indexes.interval}")
     private Integer commitIndexesInterval;
 
     @Autowired
-    private ReportGenerator reportGenerator;
-
-    @Autowired
-    private SolrTemplate solrTemplate;
-
-    @Autowired
-    private BibliographicDetailsRepository bibliographicDetailsRepository;
-
-    @Autowired
-    private HoldingsDetailsRepository holdingsDetailsRepository;
-
-    @Autowired
     private SolrIndexService solrIndexService;
-
-    @Autowired
-    private ProducerTemplate producerTemplate;
 
     @Value("${solr.parent.core}")
     private String solrCore;
@@ -103,6 +87,7 @@ public class SolrIndexController {
         String docType = solrIndexRequest.getDocType();
         Integer numberOfThread = solrIndexRequest.getNumberOfThreads();
         Integer numberOfDoc = solrIndexRequest.getNumberOfDocs();
+        String owningInstitutionCode = solrIndexRequest.getOwningInstitutionCode();
         if (solrIndexRequest.getCommitInterval() == null) {
             solrIndexRequest.setCommitInterval(commitIndexesInterval);
         }
@@ -111,8 +96,15 @@ public class SolrIndexController {
         logger.info("Document Type : {} Number of Threads : {} Number of Docs : {} Commit Interval : {} From Date : {}",docType,numberOfThread,numberOfDoc,commitInterval,solrIndexRequest.getDateFrom());
 
         if (solrIndexRequest.isDoClean()) {
-            bibSolrCrudRepository.deleteAll();
-            itemCrudRepository.deleteAll();
+            if(StringUtils.isNotBlank(owningInstitutionCode)) {
+                bibSolrCrudRepository.deleteByOwningInstitution(owningInstitutionCode);
+                holdingsSolrCrudRepository.deleteByOwningInstitution(owningInstitutionCode);
+                itemCrudRepository.deleteByOwningInstitution(owningInstitutionCode);
+            } else {
+                bibSolrCrudRepository.deleteAll();
+                holdingsSolrCrudRepository.deleteAll();
+                itemCrudRepository.deleteAll();
+            }
             try {
                 solrAdmin.unloadTempCores();
             } catch (IOException | SolrServerException e) {
@@ -121,6 +113,35 @@ public class SolrIndexController {
         }
 
         Integer totalProcessedRecords = bibItemIndexExecutorService.index(solrIndexRequest);
+        String status = "Total number of records processed : " + totalProcessedRecords;
+
+        return report(status);
+    }
+
+    /**
+     * Partial index string.
+     *
+     * @param solrIndexRequest the solr index request
+     * @param result           the result
+     * @param model            the model
+     * @return the string
+     * @throws Exception the exception
+     */
+    @ResponseBody
+    @RequestMapping(value = "/solrIndexer/partialIndex", method = RequestMethod.POST)
+    public String partialIndex(@Valid @ModelAttribute("solrIndexRequest") SolrIndexRequest solrIndexRequest,
+                            BindingResult result,
+                            Model model) throws Exception {
+        Integer numberOfThread = solrIndexRequest.getNumberOfThreads();
+        Integer numberOfDoc = solrIndexRequest.getNumberOfDocs();
+        if (solrIndexRequest.getCommitInterval() == null) {
+            solrIndexRequest.setCommitInterval(commitIndexesInterval);
+        }
+        Integer commitInterval = solrIndexRequest.getCommitInterval();
+
+        logger.info("Number of Threads : {} Number of Docs : {} Commit Interval : {} From Date : {}",numberOfThread,numberOfDoc,commitInterval,solrIndexRequest.getDateFrom());
+
+        Integer totalProcessedRecords = bibItemIndexExecutorService.partialIndex(solrIndexRequest);
         String status = "Total number of records processed : " + totalProcessedRecords;
 
         return report(status);

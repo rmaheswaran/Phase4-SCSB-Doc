@@ -36,4 +36,12 @@ public interface HoldingsSolrCrudRepository extends SolrCrudRepository<Holdings,
      * @return the int
      */
     int deleteByHoldingsIdIn(@Param("holdingsIds") List<Integer> holdingsIds);
+
+    /**
+     * Delete by owning institution int.
+     *
+     * @param owningInstitution the owning institution
+     * @return the int
+     */
+    int deleteByOwningInstitution(@Param("owningInstitution") String owningInstitution);
 }
