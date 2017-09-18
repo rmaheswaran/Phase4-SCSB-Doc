@@ -5,8 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.HostnameVerifier;
@@ -24,6 +24,12 @@ public class ColumbiaService {
 
     @Value("${ils.columbia.bibdata}")
     private String ilsColumbiaBibData;
+
+    @Value("${bibdata.api.connection.timeout}")
+    private Integer connectionTimeout;
+
+    @Value("${bibdata.api.read.timeout}")
+    private Integer readTimeout;
 
     public static Logger getLogger() {
         return logger;
@@ -48,6 +54,8 @@ public class ColumbiaService {
         HostnameVerifier verifier = new NullHostnameVerifier();
         SCSBSimpleClientHttpRequestFactory factory = new SCSBSimpleClientHttpRequestFactory(verifier);
         restTemplate.setRequestFactory(factory);
+        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(connectionTimeout);
+        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setReadTimeout(readTimeout);
 
         String bibDataResponse = null;
         String response = null;
