@@ -7,6 +7,7 @@ import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.BibliographicPK;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
+import org.recap.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +16,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
 
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -35,6 +35,9 @@ public class BibliographicDetailsRepositoryUT extends BaseTestCase {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private DateUtil dateUtil;
 
     @Test
     public void saveAndFindBibHoldingsItemEntity() throws Exception {
@@ -143,6 +146,50 @@ public class BibliographicDetailsRepositoryUT extends BaseTestCase {
         Date fromDate = DateUtils.addDays(new Date(), -1);
         Page<BibliographicEntity> byCreatedDateAfterAndIsDeletedFalse = bibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(new PageRequest(0, 10), 1, fromDate);
         assertNotNull(byCreatedDateAfterAndIsDeletedFalse);
+    }
+
+    @Test
+    public void findCountByBibIdRangesTest() throws Exception {
+
+        saveAndFindBibHoldingsItemEntity();
+
+        List<Integer> bibIds = Arrays.asList(1,2,3);
+        Integer fromBibId = 1;
+        Integer toBibId = 10;
+
+        Long countOfBibBasedOnBibId = bibliographicDetailsRepository.getCountOfBibBasedOnBibIds(bibIds);
+        assertNotNull(countOfBibBasedOnBibId);
+        assertTrue(countOfBibBasedOnBibId > 0);
+
+        Long countOfBibBasedOnBibIdRange = bibliographicDetailsRepository.getCountOfBibBasedOnBibIdRange(fromBibId, toBibId);
+        assertNotNull(countOfBibBasedOnBibIdRange);
+        assertTrue(countOfBibBasedOnBibIdRange > 0);
+
+        Long countOfBibBasedOnBibIdRangeAndInst = bibliographicDetailsRepository.getCountOfBibBasedOnDateRange(dateUtil.getFromDate(new Date()), dateUtil.getToDate(new Date()));
+        assertNotNull(countOfBibBasedOnBibIdRangeAndInst);
+        assertTrue(countOfBibBasedOnBibIdRangeAndInst > 0);
+    }
+
+    @Test
+    public void findBibsByBibIdRangesTest() throws Exception {
+
+        saveAndFindBibHoldingsItemEntity();
+
+        List<Integer> bibIds = Arrays.asList(1,2,3);
+        Integer fromBibId = 1;
+        Integer toBibId = 10;
+
+        Page<BibliographicEntity> bibsBasedOnBibId = bibliographicDetailsRepository.getBibsBasedOnBibIds(new PageRequest(0, 10), bibIds);
+        assertNotNull(bibsBasedOnBibId);
+        assertTrue(bibsBasedOnBibId.getContent().size() > 0);
+
+        Page<BibliographicEntity> bibsBasedOnBibIdRange = bibliographicDetailsRepository.getBibsBasedOnBibIdRange(new PageRequest(0, 10), fromBibId, toBibId);
+        assertNotNull(bibsBasedOnBibIdRange);
+        assertTrue(bibsBasedOnBibIdRange.getContent().size() > 0);
+
+        Page<BibliographicEntity> bibsBasedOnBibIdRangeAndInst = bibliographicDetailsRepository.getBibsBasedOnDateRange(new PageRequest(0, 10), dateUtil.getFromDate(new Date()), dateUtil.getToDate(new Date()));
+        assertNotNull(bibsBasedOnBibIdRangeAndInst);
+        assertTrue(bibsBasedOnBibIdRangeAndInst.getContent().size() > 0);
     }
 
 }
