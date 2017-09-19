@@ -125,10 +125,10 @@ jacocoTestReport {
 	}
 }
 
-task myJavadocs(type: Javadoc) {
+task scsbSolrClientJavadocs(type: Javadoc) {
 	source = sourceSets.main.java
 	classpath = configurations.compile
-	File file =  new File("/data/javadocs/scsb-solrclient");
-	destinationDir = file
 	options.addStringOption('Xdoclint:none', '-quiet')
+	String home = System.getProperty("user.home");
+	destinationDir = new File(home+"/scsb-javadocs/scsb-solr-client");
 }
