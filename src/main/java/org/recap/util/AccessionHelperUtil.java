@@ -367,9 +367,13 @@ public class AccessionHelperUtil {
         String response = ex.getMessage();
         if (StringUtils.contains(response, RecapConstants.ITEM_BARCODE_NOT_FOUND)) {
             logger.error(RecapConstants.LOG_ERROR + response);
+        } else if(StringUtils.contains(response,RecapConstants.MARC_FORMAT_PARSER_ERROR)){
+            logger.error(RecapConstants.LOG_ERROR + response);
+            response = RecapConstants.INVALID_MARC_XML_ERROR_MSG;
+            logger.error(RecapConstants.EXCEPTION,ex);
         } else {
             response = RecapConstants.EXCEPTION + response;
-            ex.printStackTrace();
+            logger.error(RecapConstants.EXCEPTION,ex);
         }
         //Create dummy record
         response = accessionService.createDummyRecordIfAny(response, owningInstitution, reportDataEntityList, accessionRequest);
