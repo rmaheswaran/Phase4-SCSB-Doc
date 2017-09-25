@@ -378,6 +378,8 @@ public final class RecapConstants {
     public static final String ERROR = "error->";
     public static final String EXCEPTION = "exception->";
     public static final String ITEM_BARCODE_NOT_FOUND = "Item Barcode not found";
+    public static final String MARC_FORMAT_PARSER_ERROR = "Unable to parse input";
+    public static final String INVALID_MARC_XML_ERROR_MSG = "Unable to parse input, xml is having invalid marc tag";
     public static final String SERVICE_UNAVAILABLE =" Service is unavailable.";
     public static final String VERIFY_ONGOING_ACCESSION_REPORT_MSG = "Please verify ongoing accession report";
     public static final String DUMMY_BIB_CONTENT_XML = "dummybibcontent.xml";
