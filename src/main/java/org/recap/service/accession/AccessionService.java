@@ -997,7 +997,7 @@ public class AccessionService {
         for (AccessionRequest accessionRequest : accessionRequestList) {
             AccessionRequest request = new AccessionRequest();
             request.setItemBarcode(accessionRequest.getItemBarcode().trim());
-            request.setCustomerCode(accessionRequest.getCustomerCode().trim());
+            request.setCustomerCode(accessionRequest.getCustomerCode().trim().toUpperCase());
             trimmedAccessionRequests.add(request);
         }
         return trimmedAccessionRequests;

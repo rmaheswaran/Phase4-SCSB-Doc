@@ -48,6 +48,9 @@ public class SearchRecordRestController {
     @ResponseBody
     public SearchRecordsResponse searchRecordsServiceGetParam(@ApiParam(value = "Paramerters for Searching Records" , required = true, name="requestJson") @RequestBody SearchRecordsRequest searchRecordsRequest) {
         SearchRecordsResponse searchRecordsResponse = new SearchRecordsResponse();
+        if(RecapConstants.CUSTOMER_CODE.equalsIgnoreCase(searchRecordsRequest.getFieldName())){
+            searchRecordsRequest.setFieldValue(searchRecordsRequest.getFieldValue().toUpperCase());
+        }
         try {
             List<SearchResultRow> searchResultRows = searchRecordsUtil.searchRecords(searchRecordsRequest);
             searchRecordsResponse.setSearchResultRows(searchResultRows);
