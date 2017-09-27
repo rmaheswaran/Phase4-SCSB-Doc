@@ -6,6 +6,7 @@ package org.recap.model;
 public class ItemAvailabilityResponse {
     private String itemBarcode;
     private String itemAvailabilityStatus;
+    private String collectionGroupDesignation;
     private String errorMessage;
 
     /**
@@ -60,5 +61,13 @@ public class ItemAvailabilityResponse {
      */
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public String getCollectionGroupDesignation() {
+        return collectionGroupDesignation;
+    }
+
+    public void setCollectionGroupDesignation(String collectionGroupDesignation) {
+        this.collectionGroupDesignation = collectionGroupDesignation;
     }
 }
