@@ -4,9 +4,7 @@ import org.recap.RecapConstants;
 import org.recap.controller.SharedCollectionRestController;
 import org.recap.model.BibItemAvailabityStatusRequest;
 import org.recap.model.ItemAvailabilityResponse;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.*;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
@@ -14,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,6 +100,10 @@ public class ItemAvailabilityService {
                         ItemAvailabilityResponse itemAvailabilityResponse = new ItemAvailabilityResponse();
                         itemAvailabilityResponse.setItemBarcode(itemEntity.getBarcode());
                         itemAvailabilityResponse.setItemAvailabilityStatus(itemEntity.getItemStatusEntity().getStatusCode());
+                        CollectionGroupEntity collectionGroupEntity = itemEntity.getCollectionGroupEntity();
+                        if(collectionGroupEntity != null && !StringUtils.isEmpty(collectionGroupEntity.getCollectionGroupDescription())){
+                            itemAvailabilityResponse.setCollectionGroupDesignation(collectionGroupEntity.getCollectionGroupDescription());
+                        }
                         itemAvailabilityResponses.add(itemAvailabilityResponse);
                     }
                 }
