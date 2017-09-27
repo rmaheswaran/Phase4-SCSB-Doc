@@ -15,6 +15,7 @@ public class EmailPayLoad implements Serializable {
     private String notes;
     private String jobName;
     private String jobDescription;
+    private String jobAction;
     private Date startDate;
     private String status;
     private String message;
@@ -147,6 +148,24 @@ public class EmailPayLoad implements Serializable {
      */
     public void setJobDescription(String jobDescription) {
         this.jobDescription = jobDescription;
+    }
+
+    /**
+     * Gets job action.
+     *
+     * @return the job action
+     */
+    public String getJobAction() {
+        return jobAction;
+    }
+
+    /**
+     * Sets job action.
+     *
+     * @param jobAction the job action
+     */
+    public void setJobAction(String jobAction) {
+        this.jobAction = jobAction;
     }
 
     /**
