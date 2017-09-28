@@ -2,6 +2,7 @@ package org.recap.controller;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.recap.RecapConstants;
+import org.recap.model.BibAvailabilityResponse;
 import org.recap.model.BibItemAvailabityStatusRequest;
 import org.recap.model.ItemAvailabilityResponse;
 import org.recap.model.ItemAvailabityStatusRequest;
@@ -108,16 +109,16 @@ public class SharedCollectionRestController {
     @RequestMapping(value = "/bibAvailabilityStatus", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity bibAvailabilityStatus(@RequestBody BibItemAvailabityStatusRequest bibItemAvailabityStatusRequest) {
-        List<ItemAvailabilityResponse> itemAvailabilityResponses;
+        List<BibAvailabilityResponse> bibAvailabilityResponses;
         ResponseEntity responseEntity;
-        itemAvailabilityResponses = getItemAvailabilityService().getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
-        if (itemAvailabilityResponses.isEmpty()) {
-            ItemAvailabilityResponse itemAvailabilityResponse = new ItemAvailabilityResponse();
-            itemAvailabilityResponse.setErrorMessage(RecapConstants.BIB_ITEM_DOESNOT_EXIST);
-            itemAvailabilityResponses.add(itemAvailabilityResponse);
-            responseEntity = new ResponseEntity(itemAvailabilityResponses, getHttpHeaders(), HttpStatus.OK);
+        bibAvailabilityResponses = getItemAvailabilityService().getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
+        if (bibAvailabilityResponses.isEmpty()) {
+            BibAvailabilityResponse bibAvailabilityResponse = new BibAvailabilityResponse();
+            bibAvailabilityResponse.setErrorMessage(RecapConstants.BIB_ITEM_DOESNOT_EXIST);
+            bibAvailabilityResponses.add(bibAvailabilityResponse);
+            responseEntity = new ResponseEntity(bibAvailabilityResponses, getHttpHeaders(), HttpStatus.OK);
         } else {
-            responseEntity = new ResponseEntity(itemAvailabilityResponses, getHttpHeaders(), HttpStatus.OK);
+            responseEntity = new ResponseEntity(bibAvailabilityResponses, getHttpHeaders(), HttpStatus.OK);
         }
         return responseEntity;
     }
