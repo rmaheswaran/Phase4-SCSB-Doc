@@ -2,6 +2,7 @@ package org.recap.service;
 
 import org.recap.RecapConstants;
 import org.recap.controller.SharedCollectionRestController;
+import org.recap.model.BibAvailabilityResponse;
 import org.recap.model.BibItemAvailabityStatusRequest;
 import org.recap.model.ItemAvailabilityResponse;
 import org.recap.model.jpa.*;
@@ -84,8 +85,8 @@ public class ItemAvailabilityService {
      * @param bibItemAvailabityStatusRequest the bib item availabity status request
      * @return the item avaiablity status
      */
-    public List<ItemAvailabilityResponse> getbibItemAvaiablityStatus(BibItemAvailabityStatusRequest bibItemAvailabityStatusRequest) {
-        List<ItemAvailabilityResponse> itemAvailabilityResponses = new ArrayList<>();
+    public List<BibAvailabilityResponse> getbibItemAvaiablityStatus(BibItemAvailabityStatusRequest bibItemAvailabityStatusRequest) {
+        List<BibAvailabilityResponse> bibAvailabilityResponses = new ArrayList<>();
         BibliographicEntity bibliographicEntity;
         try {
             if (bibItemAvailabityStatusRequest.getInstitutionId().equalsIgnoreCase(RecapConstants.SCSB)) {
@@ -97,25 +98,25 @@ public class ItemAvailabilityService {
             if (bibliographicEntity != null) {
                 for (ItemEntity itemEntity : bibliographicEntity.getItemEntities()) {
                     if(!itemEntity.isDeleted()) {
-                        ItemAvailabilityResponse itemAvailabilityResponse = new ItemAvailabilityResponse();
-                        itemAvailabilityResponse.setItemBarcode(itemEntity.getBarcode());
-                        itemAvailabilityResponse.setItemAvailabilityStatus(itemEntity.getItemStatusEntity().getStatusCode());
+                        BibAvailabilityResponse bibAvailabilityResponse = new BibAvailabilityResponse();
+                        bibAvailabilityResponse.setItemBarcode(itemEntity.getBarcode());
+                        bibAvailabilityResponse.setItemAvailabilityStatus(itemEntity.getItemStatusEntity().getStatusCode());
                         CollectionGroupEntity collectionGroupEntity = itemEntity.getCollectionGroupEntity();
                         if(collectionGroupEntity != null && !StringUtils.isEmpty(collectionGroupEntity.getCollectionGroupDescription())){
-                            itemAvailabilityResponse.setCollectionGroupDesignation(collectionGroupEntity.getCollectionGroupDescription());
+                            bibAvailabilityResponse.setCollectionGroupDesignation(collectionGroupEntity.getCollectionGroupDescription());
                         }
-                        itemAvailabilityResponses.add(itemAvailabilityResponse);
+                        bibAvailabilityResponses.add(bibAvailabilityResponse);
                     }
                 }
             }else{
-                ItemAvailabilityResponse itemAvailabilityResponse = new ItemAvailabilityResponse();
-                itemAvailabilityResponse.setItemBarcode("");
-                itemAvailabilityResponse.setErrorMessage(RecapConstants.BIB_ITEM_DOESNOT_EXIST);
-                itemAvailabilityResponses.add(itemAvailabilityResponse);
+                BibAvailabilityResponse bibAvailabilityResponse = new BibAvailabilityResponse();
+                bibAvailabilityResponse.setItemBarcode("");
+                bibAvailabilityResponse.setErrorMessage(RecapConstants.BIB_ITEM_DOESNOT_EXIST);
+                bibAvailabilityResponses.add(bibAvailabilityResponse);
             }
         } catch (Exception e) {
             logger.error(RecapConstants.EXCEPTION,e);
         }
-        return itemAvailabilityResponses;
+        return bibAvailabilityResponses;
     }
 }
