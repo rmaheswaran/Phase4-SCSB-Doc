@@ -1,11 +1,13 @@
 package org.recap.model;
 
 /**
- * Created by akulak on 3/3/17.
+ * Created by hemalathas on 28/9/17.
  */
-public class ItemAvailabilityResponse {
+public class BibAvailabilityResponse {
+
     private String itemBarcode;
     private String itemAvailabilityStatus;
+    private String collectionGroupDesignation;
     private String errorMessage;
 
     /**
@@ -45,6 +47,24 @@ public class ItemAvailabilityResponse {
     }
 
     /**
+     * Gets collection group designation.
+     *
+     * @return the collection group designation
+     */
+    public String getCollectionGroupDesignation() {
+        return collectionGroupDesignation;
+    }
+
+    /**
+     * Sets collection group designation.
+     *
+     * @param collectionGroupDesignation the collection group designation
+     */
+    public void setCollectionGroupDesignation(String collectionGroupDesignation) {
+        this.collectionGroupDesignation = collectionGroupDesignation;
+    }
+
+    /**
      * Gets error message.
      *
      * @return the error message
@@ -61,5 +81,4 @@ public class ItemAvailabilityResponse {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
-
 }
