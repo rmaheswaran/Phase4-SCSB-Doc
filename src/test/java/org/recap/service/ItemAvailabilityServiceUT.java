@@ -2,6 +2,7 @@ package org.recap.service;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
+import org.recap.model.BibAvailabilityResponse;
 import org.recap.model.BibItemAvailabityStatusRequest;
 import org.recap.model.ItemAvailabilityResponse;
 import org.recap.model.jpa.BibliographicEntity;
@@ -65,28 +66,28 @@ public class ItemAvailabilityServiceUT extends BaseTestCase {
         BibItemAvailabityStatusRequest bibItemAvailabityStatusRequest = new BibItemAvailabityStatusRequest();
         bibItemAvailabityStatusRequest.setBibliographicId("93540");
         bibItemAvailabityStatusRequest.setInstitutionId("PUL");
-        List<ItemAvailabilityResponse> itemAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
-        assertNotNull(itemAvailabilityResponses);
+        List<BibAvailabilityResponse> bibAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
+        assertNotNull(bibAvailabilityResponses);
 
         bibItemAvailabityStatusRequest.setBibliographicId("66056");
         bibItemAvailabityStatusRequest.setInstitutionId("CUL");
-        itemAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
-        assertNotNull(itemAvailabilityResponses);
+        bibAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
+        assertNotNull(bibAvailabilityResponses);
 
         bibItemAvailabityStatusRequest.setBibliographicId("59321");
         bibItemAvailabityStatusRequest.setInstitutionId("SCSB");
-        itemAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
-        assertNotNull(itemAvailabilityResponses);
+        bibAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
+        assertNotNull(bibAvailabilityResponses);
 
         bibItemAvailabityStatusRequest.setBibliographicId("0000");
         bibItemAvailabityStatusRequest.setInstitutionId("PUL");
-        itemAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
-        assertNotNull(itemAvailabilityResponses);
+        bibAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
+        assertNotNull(bibAvailabilityResponses);
 
         bibItemAvailabityStatusRequest.setBibliographicId("0000");
         bibItemAvailabityStatusRequest.setInstitutionId("PU");
-        itemAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
-        assertNotNull(itemAvailabilityResponses);
+        bibAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
+        assertNotNull(bibAvailabilityResponses);
     }
 
     public BibliographicEntity saveBibSingleHoldingsSingleItem() throws Exception {
