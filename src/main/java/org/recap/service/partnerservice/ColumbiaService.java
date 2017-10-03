@@ -60,7 +60,7 @@ public class ColumbiaService {
         String bibDataResponse = null;
         String response = null;
         try {
-            logger.info("BIBDATA URL = "+getIlsColumbiaBibData());
+            logger.info("CUL BIBDATA URL = "+getIlsColumbiaBibData());
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_XML));
             HttpEntity requestEntity = new HttpEntity(headers);
