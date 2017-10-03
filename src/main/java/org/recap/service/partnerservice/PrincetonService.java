@@ -60,7 +60,7 @@ public class PrincetonService {
         String bibDataResponse = null;
         String response = null;
         try {
-            getLogger().info("BIBDATA URL = "+getIlsprincetonBibData());
+            getLogger().info("PUL BIBDATA URL = "+getIlsprincetonBibData());
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_XML));
             HttpEntity requestEntity = new HttpEntity(headers);

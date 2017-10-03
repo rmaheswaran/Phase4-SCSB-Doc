@@ -60,13 +60,13 @@ public class NYPLBibDataResolver extends BibDataResolver {
     }
 
     @Override
-    public ItemEntity getItemEntityFromRecord(Object object) {
+    public ItemEntity getItemEntityFromRecord(Object object,Integer owningInstitutionId) {
         BibRecords bibRecords = (BibRecords) object;
         List<BibRecord> bibRecordList = bibRecords.getBibRecordList();
         if(CollectionUtils.isNotEmpty(bibRecordList)) {
             String owningInstitutionItemId = getOwningInstitutionItemIdFromBibRecord(bibRecordList.get(0));
             if(StringUtils.isNotBlank(owningInstitutionItemId)) {
-                return itemDetailsRepository.findByOwningInstitutionItemId(owningInstitutionItemId);
+                return itemDetailsRepository.findByOwningInstitutionItemIdAndOwningInstitutionId(owningInstitutionItemId,owningInstitutionId);
             }
         }
         return null;
