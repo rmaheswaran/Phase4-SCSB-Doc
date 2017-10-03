@@ -41,7 +41,7 @@ public abstract class BibDataResolver {
 
     public abstract Object unmarshal(String unmarshal);
 
-    public abstract ItemEntity getItemEntityFromRecord(Object object);
+    public abstract ItemEntity getItemEntityFromRecord(Object object,Integer owningInstitutionId);
 
     public abstract String processXml(Set<AccessionResponse> accessionResponses, Object object,
                                               List<Map<String, String>> responseMapList, String owningInstitution,
@@ -55,11 +55,11 @@ public abstract class BibDataResolver {
         return records;
     }
 
-    public ItemEntity getItemEntityFormMarcRecord(List<Record> object) {
+    public ItemEntity getItemEntityFormMarcRecord(List<Record> object,Integer owningInstitutionId) {
         List<Record> records  = object;
         String owningInstitutionItemIdFromMarcRecord = getOwningInstitutionItemIdFromMarcRecord(records);
         if(StringUtils.isNotBlank(owningInstitutionItemIdFromMarcRecord)) {
-            return itemDetailsRepository.findByOwningInstitutionItemId(owningInstitutionItemIdFromMarcRecord);
+            return itemDetailsRepository.findByOwningInstitutionItemIdAndOwningInstitutionId(owningInstitutionItemIdFromMarcRecord,owningInstitutionId);
         }
 
         return null;

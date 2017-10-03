@@ -86,6 +86,7 @@ public class NYPLService {
             params.put("barcode", itemBarcode);
             params.put("customercode", customerCode);
             String url = getIlsNYPLBibData() + getIlsNYPLBibDataParameter();
+            logger.info("NYPL BIBDATA URL = {}",url);
             ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class, params);
             bibDataResponse = responseEntity.getBody();
         } catch (Exception e) {

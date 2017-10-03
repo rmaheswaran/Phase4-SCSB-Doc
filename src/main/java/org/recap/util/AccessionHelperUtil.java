@@ -8,10 +8,7 @@ import org.recap.model.accession.AccessionResponse;
 import org.recap.model.jpa.*;
 import org.recap.model.request.ItemCheckInRequest;
 import org.recap.model.request.ItemCheckinResponse;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
-import org.recap.repository.jpa.ItemBarcodeHistoryDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.repository.jpa.*;
 import org.recap.service.accession.AccessionService;
 import org.recap.service.accession.resolver.BibDataResolver;
 import org.recap.spring.SwaggerAPIProvider;
@@ -52,6 +49,11 @@ public class AccessionHelperUtil {
 
     @Autowired
     private AccessionService accessionService;
+
+    @Autowired
+    private InstitutionDetailsRepository institutionDetailsRepository;
+
+    private Map<String,Integer> institutionEntityMap;
 
     @Value("${scsb.url}")
     private String scsbUrl;
@@ -112,7 +114,8 @@ public class AccessionHelperUtil {
                     try { // Check whether owningInsitutionItemId attached with another barcode.
 
                         Object unmarshalObject = bibDataResolver.unmarshal(bibData);
-                        ItemEntity itemEntity = bibDataResolver.getItemEntityFromRecord(unmarshalObject);
+                        Integer owningInstitutionId = getInstitutionIdCodeMap().get(owningInstitution);
+                        ItemEntity itemEntity = bibDataResolver.getItemEntityFromRecord(unmarshalObject,owningInstitutionId);
                         boolean accessionProcess = bibDataResolver.isAccessionProcess(itemEntity, owningInstitution);
 
                         // Process XML Record
@@ -430,6 +433,27 @@ public class AccessionHelperUtil {
         itemBarcodeHistoryEntity.setNewBarcode(newBarcode);
         itemBarcodeHistoryEntity.setCreatedDate(new Date());
         return itemBarcodeHistoryEntity;
+    }
+
+    /**
+     * Gets institution id and institution code from db and puts it into a map where status id as key and status code as value.
+     *
+     * @return the institution entity map
+     */
+    public synchronized Map<String,Integer> getInstitutionIdCodeMap() {
+        if (null == institutionEntityMap) {
+            institutionEntityMap = new HashMap();
+            try {
+                Iterable<InstitutionEntity> institutionEntities = institutionDetailsRepository.findAll();
+                for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
+                    InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
+                    institutionEntityMap.put(institutionEntity.getInstitutionCode(),institutionEntity.getInstitutionId());
+                }
+            } catch (Exception e) {
+                logger.error(RecapConstants.EXCEPTION,e);
+            }
+        }
+        return institutionEntityMap;
     }
 
 }
