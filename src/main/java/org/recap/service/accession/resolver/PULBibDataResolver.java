@@ -46,8 +46,8 @@ public class PULBibDataResolver extends BibDataResolver {
     }
 
     @Override
-    public ItemEntity getItemEntityFromRecord(Object object) {
-        return getItemEntityFormMarcRecord((List<Record>) object);
+    public ItemEntity getItemEntityFromRecord(Object object,Integer owningInstitutionId) {
+        return getItemEntityFormMarcRecord((List<Record>) object,owningInstitutionId);
     }
 
     @Override
