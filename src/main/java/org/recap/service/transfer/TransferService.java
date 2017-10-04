@@ -193,7 +193,11 @@ public class TransferService {
             if(null != holdingsEntity) {
                 transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_HOLDINGS_ATTACHED_WITH_DIFF_BIB);
             }
-        } else {
+        }
+        else if (holdingsEntity.isDeleted()==true){
+            transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_HOLDING_DEACCESSIONED);
+        }
+        else {
             transferValidationResponse.setDestHoldings(holdingsEntity);
         }
         transferValidationResponse.setDestHoldingsId(owningInstitutionHoldingsId);
@@ -214,8 +218,9 @@ public class TransferService {
                             transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB);
                         } else {
                             transferValidationResponse.setSourceHoldings(holdingsEntity);
-                            ItemEntity itemEntity = matchItemIdWithItem(owningInstitutionItemId, holdingsEntity);
+                            ItemEntity itemEntity = matchItemIdWithItem(owningInstitutionItemId, holdingsEntity,transferValidationResponse);
                             if(null == itemEntity) {
+                                if(StringUtils.isEmpty(transferValidationResponse.getMessage()) && StringUtils.isBlank(transferValidationResponse.getMessage()))
                                 transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_ITEM_NOT_UNDER_SOURCE_HOLDING);
                             } else {
                                 transferValidationResponse.setSourceItem(itemEntity);
@@ -235,13 +240,19 @@ public class TransferService {
         }
     }
 
-    private ItemEntity matchItemIdWithItem(String owningInstitutionItemId, HoldingsEntity holdingsEntity) {
+    private ItemEntity matchItemIdWithItem(String owningInstitutionItemId, HoldingsEntity holdingsEntity,TransferValidationResponse transferValidationResponse) {
         List<ItemEntity> itemEntities = holdingsEntity.getItemEntities();
         if(CollectionUtils.isNotEmpty(itemEntities)) {
             for (Iterator<ItemEntity> iterator = itemEntities.iterator(); iterator.hasNext(); ) {
                 ItemEntity itemEntity = iterator.next();
                 if(StringUtils.equals(itemEntity.getOwningInstitutionItemId(), owningInstitutionItemId)) {
-                    return itemEntity;
+                    if(!itemEntity.isDeleted()) {
+                        return itemEntity;
+                    }
+                    else {
+                        transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_ITEM_DEACCESSIONED);
+                        return null;
+                    }
                 }
             }
         }
@@ -561,7 +572,12 @@ public class TransferService {
                 BibliographicEntity destinationBibEntity =
                         getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
                 if(null != destinationBibEntity) {
-                    transferValidationResponse.setDestBib(destinationBibEntity);
+                    if(destinationBibEntity.isDeleted()==false) {
+                        transferValidationResponse.setDestBib(destinationBibEntity);
+                    }
+                    else {
+                        transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_BIB_DEACCESSIONED);
+                    }
                 } else {
                     transferValidationResponse.setDestinationBibId(owningInstitutionBibId);
                 }
@@ -586,7 +602,11 @@ public class TransferService {
                     HoldingsEntity holdingsEntity = matchHoldingIdWithHoldings(owningInstitutionHoldingsId, sourceBibEntity);
                     if (holdingsEntity == null) {
                         transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB);
-                    } else {
+                    }
+                    else if(holdingsEntity.isDeleted()==true){
+                        transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_HOLDING_DEACCESSIONED);
+                    }
+                    else {
                         transferValidationResponse.setSourceHoldings(holdingsEntity);
                     }
                 } else {
