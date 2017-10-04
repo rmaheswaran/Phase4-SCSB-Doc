@@ -483,6 +483,10 @@ public final class RecapConstants {
         public static final String SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB = "Source holdings is not under source bib";
         public static final String SOURCE_ITEM_NOT_UNDER_SOURCE_HOLDING = "Source item is not under source holding";
         public static final String DEST_HOLDINGS_ATTACHED_WITH_DIFF_BIB = "Destination holdings is linked with another bib and not under destination bib";
+        public static final String DEST_HOLDING_DEACCESSIONED="Destination holding is a deaccessioned holding";
+        public static final String SOURCE_ITEM_DEACCESSIONED="Source item is a deaccessioned item";
+        public static final String DEST_BIB_DEACCESSIONED="Destination Bib is a deaccessioned bib";
+        public static final String SOURCE_HOLDING_DEACCESSIONED="Source Holding is a deaccessioned holding";
 
         public static final String SUCCESSFULLY_RELINKED = "Successfully relinked";
         public static final String RELINKED_FAILED = "Relinked Failed";
