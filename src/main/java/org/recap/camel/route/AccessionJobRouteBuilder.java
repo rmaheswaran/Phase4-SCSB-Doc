@@ -1,0 +1,61 @@
+package org.recap.camel.route;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import org.recap.RecapConstants;
+import org.recap.controller.SharedCollectionRestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+/**
+ * Created by rajeshbabuk on 21/8/17.
+ */
+@Component
+public class AccessionJobRouteBuilder {
+
+    private static final Logger logger = LoggerFactory.getLogger(AccessionJobRouteBuilder.class);
+
+    /**
+     * Instantiates a new Accession job route builder.
+     *
+     * @param camelContext                   the camel context
+     * @param sharedCollectionRestController the shared collection rest controller
+     */
+    @Autowired
+    public AccessionJobRouteBuilder(CamelContext camelContext, SharedCollectionRestController sharedCollectionRestController) {
+        try {
+            camelContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from(RecapConstants.ACCESSION_JOB_INITIATE_QUEUE)
+                            .routeId(RecapConstants.ACCESSION_JOB_INITIATE_ROUTE_ID)
+                            .process(new Processor() {
+                                @Override
+                                public void process(Exchange exchange) {
+                                    String jobId = null;
+                                    try {
+                                        jobId = (String) exchange.getIn().getBody();
+                                        logger.info("Accession Job initiated for Job Id : {}", jobId);
+                                        String accessionJobStatus = sharedCollectionRestController.ongoingAccessionJob();
+                                        logger.info("Job Id : {} Accession Job Status : {}", jobId, accessionJobStatus);
+                                        exchange.getIn().setBody("JobId:" + jobId + "|" + accessionJobStatus);
+                                    } catch (Exception ex) {
+                                        exchange.getIn().setBody("JobId:" + jobId + "|" + ex.getMessage());
+                                        logger.info(RecapConstants.LOG_ERROR, ex);
+                                    }
+                                }
+                            })
+                            .onCompletion()
+                            .to(RecapConstants.ACCESSION_JOB_COMPLETION_OUTGOING_QUEUE)
+                            .end();
+                }
+            });
+        } catch (Exception ex) {
+            logger.error(RecapConstants.EXCEPTION, ex);
+        }
+    }
+}
