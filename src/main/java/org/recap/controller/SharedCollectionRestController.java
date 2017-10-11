@@ -189,6 +189,7 @@ public class SharedCollectionRestController {
         AccessionSummary accessionSummary = new AccessionSummary(accessionType);
         if(CollectionUtils.isNotEmpty(accessionRequestList)) {
             logger.info("Total record for Bulk Accession : {}" , accessionRequestList.size());
+            getAccessionService().updateStatusForAccessionEntities(accessionEntities, RecapConstants.PROCESSING);
             getBulkAccessionService().doAccession(accessionRequestList, accessionSummary);
             if(accessionSummary.getSuccessRecords() != 0) {
                 status = RecapConstants.SUCCESS;
