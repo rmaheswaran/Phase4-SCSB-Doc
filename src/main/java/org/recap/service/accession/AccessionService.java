@@ -861,22 +861,16 @@ public class AccessionService {
             for(ItemEntity itemEntity:itemEntityList){
                 itemEntity.setDeleted(false);
                 Date currentDateTime = new Date();
-                itemEntity.setCreatedDate(currentDateTime);
-                itemEntity.setCreatedBy(RecapConstants.REACCESSION);
                 itemEntity.setLastUpdatedDate(currentDateTime);
                 itemEntity.setLastUpdatedBy(RecapConstants.REACCESSION);
 
                 for (HoldingsEntity holdingsEntity:itemEntity.getHoldingsEntities()) {
                     holdingsEntity.setDeleted(false);
-                    itemEntity.setCreatedDate(currentDateTime);
-                    itemEntity.setCreatedBy(RecapConstants.REACCESSION);
                     holdingsEntity.setLastUpdatedDate(currentDateTime);
                     holdingsEntity.setLastUpdatedBy(RecapConstants.REACCESSION);
                 }
                 for(BibliographicEntity bibliographicEntity:itemEntity.getBibliographicEntities()) {
                     bibliographicEntity.setDeleted(false);
-                    itemEntity.setCreatedDate(currentDateTime);
-                    itemEntity.setCreatedBy(RecapConstants.REACCESSION);
                     bibliographicEntity.setLastUpdatedDate(currentDateTime);
                     bibliographicEntity.setLastUpdatedBy(RecapConstants.REACCESSION);
                 }
