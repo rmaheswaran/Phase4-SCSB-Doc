@@ -219,6 +219,7 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
             errorMessage.append("\n");
             errorMessage.append("Owning Institution Id cannot be null");
         }
+        bibliographicEntity.setDeleted(false);
         bibliographicEntity.setCreatedDate(currentDate);
         bibliographicEntity.setCreatedBy(RecapConstants.ACCESSION);
         bibliographicEntity.setLastUpdatedDate(currentDate);
@@ -304,7 +305,7 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
         } else {
             errorMessage.append("Holdings Content cannot be empty");
         }
-
+        holdingsEntity.setDeleted(false);
         holdingsEntity.setCreatedDate(currentDate);
         holdingsEntity.setCreatedBy(RecapConstants.ACCESSION);
         holdingsEntity.setLastUpdatedDate(currentDate);
@@ -393,6 +394,7 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
             } else {
                 itemEntity.setCollectionGroupId((Integer) collectionGroupMap.get("Open"));
             }
+            itemEntity.setDeleted(false);
             itemEntity.setCreatedDate(currentDate);
             itemEntity.setCreatedBy(RecapConstants.ACCESSION);
             itemEntity.setLastUpdatedDate(currentDate);

@@ -734,6 +734,8 @@ public class AccessionService {
             fetchBibliographicEntity.setContent(bibliographicEntity.getContent());
             fetchBibliographicEntity.setLastUpdatedBy(bibliographicEntity.getLastUpdatedBy());
             fetchBibliographicEntity.setLastUpdatedDate(bibliographicEntity.getLastUpdatedDate());
+            fetchBibliographicEntity.setDeleted(bibliographicEntity.isDeleted());
+            fetchBibliographicEntity.setCatalogingStatus(bibliographicEntity.getCatalogingStatus());
 
             // Holding
             List<HoldingsEntity> fetchHoldingsEntities =fetchBibliographicEntity.getHoldingsEntities();
@@ -928,6 +930,7 @@ public class AccessionService {
         fetchHoldingsEntity.setContent(holdingsEntity.getContent());
         fetchHoldingsEntity.setLastUpdatedBy(holdingsEntity.getLastUpdatedBy());
         fetchHoldingsEntity.setLastUpdatedDate(holdingsEntity.getLastUpdatedDate());
+        fetchHoldingsEntity.setDeleted(holdingsEntity.isDeleted());
         List<ItemEntity> fetchedItemEntities = fetchHoldingsEntity.getItemEntities();
 
         processItems(fetchedItemEntities, holdingsEntity.getItemEntities());
@@ -948,6 +951,8 @@ public class AccessionService {
         fetchItemEntity.setCollectionGroupId(itemEntity.getCollectionGroupId());
         fetchItemEntity.setUseRestrictions(itemEntity.getUseRestrictions());
         fetchItemEntity.setVolumePartYear(itemEntity.getVolumePartYear());
+        fetchItemEntity.setDeleted(itemEntity.isDeleted());
+        fetchItemEntity.setCatalogingStatus(itemEntity.getCatalogingStatus());
         return fetchItemEntity;
     }
 
