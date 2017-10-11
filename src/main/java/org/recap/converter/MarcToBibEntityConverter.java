@@ -205,6 +205,7 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
             errorMessage.append("\n");
             errorMessage.append("Owning Institution Id cannot be null");
         }
+        bibliographicEntity.setDeleted(false);
         bibliographicEntity.setCreatedDate(currentDate);
         bibliographicEntity.setCreatedBy(RecapConstants.ACCESSION);
         bibliographicEntity.setLastUpdatedDate(currentDate);
@@ -289,6 +290,7 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
         } else {
             errorMessage.append("Holdings Content cannot be empty");
         }
+        holdingsEntity.setDeleted(false);
         holdingsEntity.setCreatedDate(currentDate);
         holdingsEntity.setCreatedBy(RecapConstants.ACCESSION);
         holdingsEntity.setLastUpdatedDate(currentDate);
@@ -378,6 +380,7 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
             isComplete = false;
             itemEntity.setCollectionGroupId((Integer) getCollectionGroupMap().get(RecapConstants.NOT_AVAILABLE_CGD));
         }
+        itemEntity.setDeleted(false);
         itemEntity.setCreatedDate(currentDate);
         itemEntity.setCreatedBy(RecapConstants.ACCESSION);
         itemEntity.setLastUpdatedDate(currentDate);
