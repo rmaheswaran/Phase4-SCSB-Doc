@@ -511,5 +511,18 @@ public final class RecapConstants {
     public static final String GROUP_FIELD = "group.field";
     public static final String INCREMENTAL_DUMP_TO_NOW = "TO NOW";
 
+    public static final String ACCESSION_JOB_INITIATE_QUEUE = "scsbactivemq:queue:accessionInitiateQ";
+    public static final String ACCESSION_JOB_INITIATE_ROUTE_ID = "scsbactivemq:queue:accessionInitiateRoute";
+    public static final String ACCESSION_JOB_COMPLETION_OUTGOING_QUEUE = "scsbactivemq:queue:accessionCompletionOutgoingQ";
+    public static final String MATCHING_ALGORITHM_JOB_INITIATE_QUEUE = "scsbactivemq:queue:matchingAlgorithmInitiateQ";
+    public static final String MATCHING_ALGORITHM_JOB_INITIATE_ROUTE_ID = "scsbactivemq:queue:matchingAlgorithmInitiateRoute";
+    public static final String MATCHING_ALGORITHM_JOB_COMPLETION_OUTGOING_QUEUE = "scsbactivemq:queue:matchingAlgorithmCompletionOutgoingQ";
+
+    public static final String JOB_ID = "jobId";
+    public static final String PROCESS_TYPE = "processType";
+    public static final String CREATED_DATE = "createdDate";
+    public static final String PROCESSING = "Processing";
+    public static final String MATCHING_BATCH_JOB_DATE_FORMAT = "EEE MMM dd HH:mm:ss z yyyy";
+
     private RecapConstants(){}
 }
