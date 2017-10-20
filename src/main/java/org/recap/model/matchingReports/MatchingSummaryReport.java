@@ -23,14 +23,20 @@ public class MatchingSummaryReport implements Serializable {
     @DataField(pos = 4, columnName = "Shared Items Before Matching")
     private String sharedItemsBeforeMatching;
 
-    @DataField(pos = 5, columnName = "Open Items Before Matching")
-    private String openItemsBeforeMatching;
-
-    @DataField(pos = 6, columnName = "Shared Items After Matching")
+    @DataField(pos = 5, columnName = "Shared Items After Matching")
     private String sharedItemsAfterMatching;
 
-    @DataField(pos = 7, columnName = "Open Items After Matching")
+    @DataField(pos = 6, columnName = "Difference of Shared Items")
+    private String sharedItemsDiff;
+
+    @DataField(pos = 7, columnName = "Open Items Before Matching")
+    private String openItemsBeforeMatching;
+
+    @DataField(pos = 8, columnName = "Open Items After Matching")
     private String openItemsAfterMatching;
+
+    @DataField(pos = 9, columnName = "Difference of Open Items")
+    private String openItemsDiff;
 
     /**
      * Gets institution.
@@ -156,5 +162,41 @@ public class MatchingSummaryReport implements Serializable {
      */
     public void setOpenItemsAfterMatching(String openItemsAfterMatching) {
         this.openItemsAfterMatching = openItemsAfterMatching;
+    }
+
+    /**
+     * Gets shared items diff.
+     *
+     * @return the shared items diff
+     */
+    public String getSharedItemsDiff() {
+        return sharedItemsDiff;
+    }
+
+    /**
+     * Sets shared items diff.
+     *
+     * @param sharedItemsDiff the shared items diff
+     */
+    public void setSharedItemsDiff(String sharedItemsDiff) {
+        this.sharedItemsDiff = sharedItemsDiff;
+    }
+
+    /**
+     * Gets open items diff.
+     *
+     * @return the open items diff
+     */
+    public String getOpenItemsDiff() {
+        return openItemsDiff;
+    }
+
+    /**
+     * Sets open items diff.
+     *
+     * @param openItemsDiff the open items diff
+     */
+    public void setOpenItemsDiff(String openItemsDiff) {
+        this.openItemsDiff = openItemsDiff;
     }
 }
