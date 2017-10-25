@@ -347,7 +347,7 @@ public class MatchingAlgorithmController {
         return respone;
     }
 
-    private void runReportsForMatchingAlgorithm(Integer batchSize) {
+    private void runReportsForMatchingAlgorithm(Integer batchSize) throws InterruptedException {
         Integer pulMatchingCount = 0;
         Integer culMatchingCount = 0;
         Integer nyplMatchingCount = 0;
