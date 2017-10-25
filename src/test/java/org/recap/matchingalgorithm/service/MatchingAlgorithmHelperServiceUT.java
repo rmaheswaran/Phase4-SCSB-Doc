@@ -9,11 +9,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCase;
 import org.recap.RecapConstants;
-import org.recap.camel.activemq.JmxHelper;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
+import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.recap.util.SolrQueryBuilder;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCase{
     private SolrTemplate solrTemplate;
 
     @Mock
-    private JmxHelper jmxHelper;
+    private ActiveMqQueuesInfo activeMqQueuesInfo;
 
     @Mock
     private ProducerTemplate producerTemplate;
@@ -103,7 +103,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCase{
         List<MatchingMatchPointsEntity> matchingMatchPointsEntities = new ArrayList<>();
         matchingMatchPointsEntities.add(getMatchingMatchPointEntity());
         Mockito.when(matchingAlgoHelperService.getMatchingAlgorithmUtil()).thenReturn(matchingAlgorithmUtil);
-        Mockito.when(matchingAlgoHelperService.getJmxHelper()).thenReturn(jmxHelper);
+        Mockito.when(matchingAlgoHelperService.getActiveMqQueuesInfo()).thenReturn(activeMqQueuesInfo);
         Mockito.when(matchingAlgorithmUtil.getMatchingMatchPointsEntity(RecapConstants.MATCH_POINT_FIELD_OCLC)).thenReturn(matchingMatchPointsEntities);
         Mockito.when(matchingAlgorithmUtil.getMatchingMatchPointsEntity(RecapConstants.MATCH_POINT_FIELD_ISBN)).thenReturn(matchingMatchPointsEntities);
         Mockito.when(matchingAlgorithmUtil.getMatchingMatchPointsEntity(RecapConstants.MATCH_POINT_FIELD_ISSN)).thenReturn(matchingMatchPointsEntities);
@@ -118,7 +118,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCase{
     @Test
     public void populateMatchingBibEntities() throws Exception {
         Mockito.when(matchingAlgoHelperService.populateMatchingBibEntities()).thenCallRealMethod();
-        Mockito.when(matchingAlgoHelperService.getJmxHelper()).thenReturn(jmxHelper);
+        Mockito.when(matchingAlgoHelperService.getActiveMqQueuesInfo()).thenReturn(activeMqQueuesInfo);
         Mockito.when(matchingAlgoHelperService.getMatchingMatchPointsDetailsRepository()).thenReturn(matchingMatchPointsDetailsRepository);
         Mockito.when(matchingAlgoHelperService.fetchAndSaveMatchingBibs(RecapConstants.MATCH_POINT_FIELD_OCLC)).thenCallRealMethod();
         Mockito.when(matchingAlgoHelperService.fetchAndSaveMatchingBibs(RecapConstants.MATCH_POINT_FIELD_ISBN)).thenCallRealMethod();
@@ -330,7 +330,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCase{
         countMap.put(RecapConstants.NYPL_MATCHING_COUNT, 1);
         Set<Integer> matchingBibIds = new HashSet<>();
         Mockito.when(matchingAlgoHelperService.getMatchingAlgorithmUtil()).thenReturn(matchingAlgorithmUtil);
-        Mockito.when(matchingAlgoHelperService.getJmxHelper()).thenReturn(jmxHelper);
+        Mockito.when(matchingAlgoHelperService.getActiveMqQueuesInfo()).thenReturn(activeMqQueuesInfo);
         Mockito.when(matchingAlgoHelperService.getMatchingBibDetailsRepository()).thenReturn(matchingBibDetailsRepository);
         Mockito.when(matchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1000, RecapConstants.MATCH_POINT_FIELD_OCLC)).thenReturn(countMap);
         Mockito.when(matchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1000, RecapConstants.MATCH_POINT_FIELD_ISBN)).thenReturn(countMap);
@@ -349,14 +349,14 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCase{
 
     @Test
     public void checkGetterServices() throws Exception {
-        Mockito.when(matchingAlgoHelperService.getJmxHelper()).thenCallRealMethod();
+        Mockito.when(matchingAlgoHelperService.getActiveMqQueuesInfo()).thenCallRealMethod();
         Mockito.when(matchingAlgoHelperService.getMatchingBibDetailsRepository()).thenCallRealMethod();
         Mockito.when(matchingAlgoHelperService.getMatchingAlgorithmUtil()).thenCallRealMethod();
         Mockito.when(matchingAlgoHelperService.getMatchingMatchPointsDetailsRepository()).thenCallRealMethod();
         Mockito.when(matchingAlgoHelperService.getProducerTemplate()).thenCallRealMethod();
         Mockito.when(matchingAlgoHelperService.getSolrQueryBuilder()).thenCallRealMethod();
         Mockito.when(matchingAlgoHelperService.getSolrTemplate()).thenCallRealMethod();
-        assertNotEquals(jmxHelper, matchingAlgoHelperService.getJmxHelper());
+        assertNotEquals(activeMqQueuesInfo, matchingAlgoHelperService.getActiveMqQueuesInfo());
         assertNotEquals(matchingBibDetailsRepository, matchingAlgoHelperService.getMatchingBibDetailsRepository());
         assertNotEquals(matchingAlgorithmUtil, matchingAlgoHelperService.getMatchingAlgorithmUtil());
         assertNotEquals(solrQueryBuilder, matchingAlgoHelperService.getSolrQueryBuilder());
