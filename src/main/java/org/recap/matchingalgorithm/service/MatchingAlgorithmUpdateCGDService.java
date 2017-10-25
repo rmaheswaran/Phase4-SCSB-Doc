@@ -115,7 +115,7 @@ public class MatchingAlgorithmUpdateCGDService {
      * @throws IOException         the io exception
      * @throws SolrServerException the solr server exception
      */
-    public void updateCGDProcessForMonographs(Integer batchSize) throws IOException, SolrServerException {
+    public void updateCGDProcessForMonographs(Integer batchSize) throws IOException, SolrServerException, InterruptedException {
         getLogger().info("Start CGD Process For Monographs.");
 
         getMatchingAlgorithmUtil().populateMatchingCounter();
@@ -127,7 +127,8 @@ public class MatchingAlgorithmUpdateCGDService {
 
         if(updateItemsQ != null) {
             while (updateItemsQ != 0) {
-                //Waiting for the updateItemQ messages finish processing
+                Thread.sleep(10000);
+                updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
             }
         }
 
@@ -141,7 +142,8 @@ public class MatchingAlgorithmUpdateCGDService {
 
         if(updateItemsQ != null){
             while (updateItemsQ != 0) {
-                //Waiting for the updateItemQ messages finish processing
+                Thread.sleep(10000);
+                updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
             }
         }
         executor.shutdown();
@@ -180,7 +182,7 @@ public class MatchingAlgorithmUpdateCGDService {
      * @throws IOException         the io exception
      * @throws SolrServerException the solr server exception
      */
-    public void updateCGDProcessForSerials(Integer batchSize) throws IOException, SolrServerException {
+    public void updateCGDProcessForSerials(Integer batchSize) throws IOException, SolrServerException, InterruptedException {
         logger.info("Start CGD Process For Serials.");
 
         getMatchingAlgorithmUtil().populateMatchingCounter();
@@ -207,7 +209,8 @@ public class MatchingAlgorithmUpdateCGDService {
         Integer updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
         if(updateItemsQ != null){
             while (updateItemsQ != 0) {
-                //Waiting for the updateItemQ messages finish processing
+                Thread.sleep(10000);
+                updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
             }
         }
 
@@ -221,7 +224,7 @@ public class MatchingAlgorithmUpdateCGDService {
      * @throws IOException         the io exception
      * @throws SolrServerException the solr server exception
      */
-    public void updateCGDProcessForMVMs(Integer batchSize) throws IOException, SolrServerException {
+    public void updateCGDProcessForMVMs(Integer batchSize) throws IOException, SolrServerException, InterruptedException {
         logger.info("Start CGD Process For MVMs.");
 
         getMatchingAlgorithmUtil().populateMatchingCounter();
@@ -249,7 +252,8 @@ public class MatchingAlgorithmUpdateCGDService {
 
         if(updateItemsQ != null) {
             while (updateItemsQ != 0) {
-                //Waiting for the updateItemQ messages finish processing
+                Thread.sleep(10000);
+                updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
             }
         }
 
