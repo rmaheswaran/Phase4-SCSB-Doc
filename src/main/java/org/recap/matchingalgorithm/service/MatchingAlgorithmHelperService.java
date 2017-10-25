@@ -158,7 +158,8 @@ public class MatchingAlgorithmHelperService {
 
         if(saveMatchingMatchPointsQ != null) {
             while (saveMatchingMatchPointsQ != 0) {
-                //Do Nothing
+                Thread.sleep(10000);
+                saveMatchingMatchPointsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("saveMatchingMatchPointsQ");
             }
         }
         return count;
@@ -171,7 +172,7 @@ public class MatchingAlgorithmHelperService {
      * @throws IOException         the io exception
      * @throws SolrServerException the solr server exception
      */
-    public long populateMatchingBibEntities() throws IOException, SolrServerException {
+    public long populateMatchingBibEntities() throws IOException, SolrServerException, InterruptedException {
         Integer count = 0;
         count = count + fetchAndSaveMatchingBibs(RecapConstants.MATCH_POINT_FIELD_OCLC);
         count = count + fetchAndSaveMatchingBibs(RecapConstants.MATCH_POINT_FIELD_ISBN);
@@ -180,7 +181,8 @@ public class MatchingAlgorithmHelperService {
         Integer saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("saveMatchingBibsQ");
         if(saveMatchingBibsQ != null) {
             while (saveMatchingBibsQ != 0) {
-                //Do nothing
+                Thread.sleep(10000);
+                saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("saveMatchingBibsQ");
             }
         }
         return count;
@@ -511,7 +513,7 @@ public class MatchingAlgorithmHelperService {
      * @param batchSize the batch size
      * @return the map
      */
-    public Map<String,Integer> populateReportsForSingleMatch(Integer batchSize) {
+    public Map<String,Integer> populateReportsForSingleMatch(Integer batchSize) throws InterruptedException {
         Integer pulMatchingCount = 0;
         Integer culMatchingCount = 0;
         Integer nyplMatchingCount = 0;
@@ -535,7 +537,8 @@ public class MatchingAlgorithmHelperService {
         Integer saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateMatchingBibEntityQ");
         if(saveMatchingBibsQ != null) {
             while (saveMatchingBibsQ != 0) {
-                //Do nothing
+                Thread.sleep(10000);
+                saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateMatchingBibEntityQ");
             }
         }
 
