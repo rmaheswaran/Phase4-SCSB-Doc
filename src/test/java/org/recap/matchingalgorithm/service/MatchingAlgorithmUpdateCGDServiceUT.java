@@ -5,12 +5,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCase;
-import org.recap.camel.activemq.JmxHelper;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.repository.jpa.*;
+import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.MatchingAlgorithmUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,7 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCase{
     private ItemChangeLogDetailsRepository itemChangeLogDetailsRepository;
 
     @Mock
-    private JmxHelper jmxHelper;
+    private ActiveMqQueuesInfo activeMqQueuesInfo;
 
     @Mock
     private MatchingAlgorithmUtil matchingAlgorithmUtil;
@@ -101,7 +100,7 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCase{
         Mockito.when(matchingAlgorithmUpdateCGDService.getInstitutionDetailsRepository()).thenCallRealMethod();
         Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository()).thenCallRealMethod();
         Mockito.when(matchingAlgorithmUpdateCGDService.getItemChangeLogDetailsRepository()).thenCallRealMethod();
-        Mockito.when(matchingAlgorithmUpdateCGDService.getJmxHelper()).thenCallRealMethod();
+        Mockito.when(matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo()).thenCallRealMethod();
         Mockito.when(matchingAlgorithmUpdateCGDService.getMatchingAlgorithmUtil()).thenCallRealMethod();
         Mockito.when(matchingAlgorithmUpdateCGDService.getItemDetailsRepository()).thenCallRealMethod();
         assertNotEquals(bibliographicDetailsRepository,matchingAlgorithmUpdateCGDService.getBibliographicDetailsRepository());
@@ -110,7 +109,7 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCase{
         assertNotEquals(institutionDetailsRepository,matchingAlgorithmUpdateCGDService.getInstitutionDetailsRepository());
         assertNotEquals(reportDataDetailsRepository,matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository());
         assertNotEquals(itemChangeLogDetailsRepository,matchingAlgorithmUpdateCGDService.getItemChangeLogDetailsRepository());
-        assertNotEquals(jmxHelper,matchingAlgorithmUpdateCGDService.getJmxHelper());
+        assertNotEquals(activeMqQueuesInfo,matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo());
         assertNotEquals(matchingAlgorithmUtil,matchingAlgorithmUpdateCGDService.getMatchingAlgorithmUtil());
         assertNotEquals(itemDetailsRepository,matchingAlgorithmUpdateCGDService.getItemDetailsRepository());
     }

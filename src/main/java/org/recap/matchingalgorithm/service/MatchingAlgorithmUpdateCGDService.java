@@ -6,13 +6,13 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.recap.RecapConstants;
-import org.recap.camel.activemq.JmxHelper;
 import org.recap.executors.MatchingAlgorithmMVMsCGDCallable;
 import org.recap.executors.MatchingAlgorithmMonographCGDCallable;
 import org.recap.executors.MatchingAlgorithmSerialsCGDCallable;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.*;
 import org.recap.repository.jpa.*;
+import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,13 +51,13 @@ public class MatchingAlgorithmUpdateCGDService {
     private ItemChangeLogDetailsRepository itemChangeLogDetailsRepository;
 
     @Autowired
-    private JmxHelper jmxHelper;
-
-    @Autowired
     private MatchingAlgorithmUtil matchingAlgorithmUtil;
 
     @Autowired
     private ItemDetailsRepository itemDetailsRepository;
+
+    @Autowired
+    private ActiveMqQueuesInfo activeMqQueuesInfo;
 
     /**
      * Gets report data details repository.
@@ -96,12 +96,12 @@ public class MatchingAlgorithmUpdateCGDService {
         return itemDetailsRepository;
     }
 
-    public JmxHelper getJmxHelper() {
-        return jmxHelper;
-    }
-
     public static Logger getLogger() {
         return logger;
+    }
+
+    public ActiveMqQueuesInfo getActiveMqQueuesInfo() {
+        return activeMqQueuesInfo;
     }
 
     private ExecutorService executorService;
@@ -123,10 +123,10 @@ public class MatchingAlgorithmUpdateCGDService {
 
         processCallablesForMonographs(batchSize, executor, false);
 
-        DestinationViewMBean updateItemsQ = getJmxHelper().getBeanForQueueName("updateItemsQ");
+        Integer updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
 
         if(updateItemsQ != null) {
-            while (updateItemsQ.getQueueSize() != 0) {
+            while (updateItemsQ != 0) {
                 //Waiting for the updateItemQ messages finish processing
             }
         }
@@ -140,7 +140,7 @@ public class MatchingAlgorithmUpdateCGDService {
         logger.info("NYPL Final Counter Value: {}" , MatchingCounter.getNyplSharedCount());
 
         if(updateItemsQ != null){
-            while (updateItemsQ.getQueueSize() != 0) {
+            while (updateItemsQ != 0) {
                 //Waiting for the updateItemQ messages finish processing
             }
         }
@@ -204,9 +204,9 @@ public class MatchingAlgorithmUpdateCGDService {
         logger.info("CUL Final Counter Value: {}" , MatchingCounter.getCulSharedCount());
         logger.info("NYPL Final Counter Value: {}" , MatchingCounter.getNyplSharedCount());
 
-        DestinationViewMBean updateItemsQ = getJmxHelper().getBeanForQueueName("updateItemsQ");
+        Integer updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
         if(updateItemsQ != null){
-            while (updateItemsQ.getQueueSize() != 0) {
+            while (updateItemsQ != 0) {
                 //Waiting for the updateItemQ messages finish processing
             }
         }
@@ -245,10 +245,10 @@ public class MatchingAlgorithmUpdateCGDService {
         logger.info("CUL Final Counter Value: {}" , MatchingCounter.getCulSharedCount());
         logger.info("NYPL Final Counter Value: {}" , MatchingCounter.getNyplSharedCount());
 
-        DestinationViewMBean updateItemsQ = getJmxHelper().getBeanForQueueName("updateItemsQ");
+        Integer updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
 
         if(updateItemsQ != null) {
-            while (updateItemsQ.getQueueSize() != 0) {
+            while (updateItemsQ != 0) {
                 //Waiting for the updateItemQ messages finish processing
             }
         }
