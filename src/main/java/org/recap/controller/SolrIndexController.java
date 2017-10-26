@@ -16,12 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.InstanceFilter;
 import org.springframework.util.StopWatch;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -173,6 +176,28 @@ public class SolrIndexController {
             for (Integer bibliographicId : bibliographicIdList) {
                 getSolrIndexService().indexByBibliographicId(bibliographicId);
             }
+            response = RecapConstants.SUCCESS;
+        } catch (Exception e) {
+            response = RecapConstants.FAILURE;
+            logger.error(RecapConstants.LOG_ERROR,e);
+        }
+        return response;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/solrIndexer/indexByOwningInstBibliographicIdList", method = RequestMethod.POST)
+    public String indexByOwningInstBibliographicIdList(@RequestParam Map<String,Object> requestParameters) {
+        String ownInstbibliographicIdListString = (String)requestParameters.get(RecapConstants.OWN_INST_BIBID_LIST);
+        ownInstbibliographicIdListString = ownInstbibliographicIdListString.replace("[","");
+        ownInstbibliographicIdListString = ownInstbibliographicIdListString.replace("]","");
+        ownInstbibliographicIdListString = ownInstbibliographicIdListString.replace("\"","");
+        logger.info("ownInstbibliographicIdListString--->{}",ownInstbibliographicIdListString);
+        String[] ownInstbibliographicIdArray = ownInstbibliographicIdListString.split(",");
+        List<String> ownInstbibliographicIdList = Arrays.asList(ownInstbibliographicIdArray);
+        Integer owningInstId = Integer.valueOf((String) requestParameters.get(RecapConstants.OWN_INSTITUTION_ID));
+        String response = null;
+        try {
+            getSolrIndexService().indexByOwnInstBibId(ownInstbibliographicIdList,owningInstId);
             response = RecapConstants.SUCCESS;
         } catch (Exception e) {
             response = RecapConstants.FAILURE;

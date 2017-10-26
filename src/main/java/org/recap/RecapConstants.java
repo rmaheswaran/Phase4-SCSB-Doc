@@ -451,6 +451,8 @@ public final class RecapConstants {
     public static final String OWN_INST_BIB_ID = " OwningInstBibId-";
     public static final String OWN_INST_HOLDING_ID = " OwningInstHoldingId-";
     public static final String OWN_INST_ITEM_ID = " OwningInstItemId-";
+    public static final String OWN_INST_BIBID_LIST = "owningInstBibIdList";
+    public static final String OWN_INSTITUTION_ID = "institutionId";
 
 
     public static final String BULK_ACCESSION_SUMMARY = "BULK_ACCESSION_SUMMARY";
