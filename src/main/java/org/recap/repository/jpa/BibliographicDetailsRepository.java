@@ -157,6 +157,8 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      */
     List<BibliographicEntity> findByOwningInstitutionBibId(String owningInstitutionBibId);
 
+    List<BibliographicEntity> findByOwningInstitutionBibIdInAndOwningInstitutionId(List<String> owningInstBibIdList,Integer owningInstitutionBibId);
+
     /**
      * Count the number of bibs by using owning institution code and is deleted field which has false value.
      *
