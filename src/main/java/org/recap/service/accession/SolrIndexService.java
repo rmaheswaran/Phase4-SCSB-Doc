@@ -1,6 +1,7 @@
 package org.recap.service.accession;
 
 import org.apache.camel.ProducerTemplate;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
@@ -11,12 +12,15 @@ import org.recap.util.BibJSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rajeshbabuk on 10/11/16.
@@ -40,6 +44,10 @@ public class SolrIndexService {
 
     @Autowired
     private SolrClient solrClient;
+
+    @Value("${submit.collection.owninginstbibidlist.partition.size}")
+    private Integer submitCollectionOwnInstBibIdListPartitionSize;
+
 
     /**
      * Gets logger.
@@ -119,6 +127,30 @@ public class SolrIndexService {
             logger.info("Time taken to index the doc--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
         }
         return solrInputDocument;
+    }
+
+    public void indexByOwnInstBibId(List<String> owningInstBibIdList,Integer owningInstId){
+        List<List<String>> owningInstBibIdPartitionedList = ListUtils.partition(owningInstBibIdList,submitCollectionOwnInstBibIdListPartitionSize);
+        for (List<String> owningInstBibIdPartitionedListForIndexing:owningInstBibIdPartitionedList) {
+            List<Integer> bibliographicIdList = getBibliographicIdForIndexing(owningInstBibIdPartitionedListForIndexing,owningInstId);
+            for(Integer bibliographicId:bibliographicIdList){
+                indexByBibliographicId(bibliographicId);
+            }
+        }
+    }
+
+    public List<Integer> getBibliographicIdForIndexing(List<String> owningInstBibIdList,Integer owningInstId){
+        List<Integer> bibliographicIdList = new ArrayList<>();
+        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByOwningInstitutionBibIdInAndOwningInstitutionId(owningInstBibIdList,owningInstId);
+        if (bibliographicEntityList != null) {
+            for(BibliographicEntity bibliographicEntity:bibliographicEntityList){
+                if(owningInstBibIdList.contains(bibliographicEntity.getOwningInstitutionBibId()) && bibliographicEntity.getBibliographicId() != null){
+                    bibliographicIdList.add(bibliographicEntity.getBibliographicId());
+                    logger.info("Upded Dummy record scsb bibid to index--->{}",bibliographicEntity.getBibliographicId());
+                }
+            }
+        }
+        return bibliographicIdList;
     }
 
     /**
