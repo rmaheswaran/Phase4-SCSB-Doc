@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.RecapConstants;
-import org.recap.camel.activemq.JmxHelper;
 import org.recap.executors.MatchingBibItemIndexExecutorService;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmHelperService;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmUpdateCGDService;
@@ -16,6 +15,7 @@ import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
 import org.recap.model.jpa.*;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.jpa.*;
+import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +32,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by hemalathas on 1/8/16.
@@ -95,7 +93,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
     ReportDetailRepository reportDetailRepository;
 
     @Mock
-    private JmxHelper jmxHelper;
+    private ActiveMqQueuesInfo activeMqQueuesInfo;
 
     @Mock
     private MatchingBibInfoDetailRepository matchingBibInfoDetailRepository;
@@ -192,7 +190,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository()).thenReturn(collectionGroupDetailsRepository);
         Mockito.when(matchingAlgorithmUpdateCGDService.getItemChangeLogDetailsRepository()).thenReturn(itemChangeLogDetailsRepository);
         Mockito.when(matchingAlgorithmUpdateCGDService.getItemDetailsRepository()).thenReturn(itemDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getJmxHelper()).thenReturn(jmxHelper);
+        Mockito.when(matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo()).thenReturn(activeMqQueuesInfo);
         Mockito.when(matchingAlgorithmUtil.getReportDetailRepository()).thenReturn(reportDetailRepository);
         Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingMonograph(RecapConstants.BIB_ID)).thenReturn(new Long(10000));
         Mockito.doCallRealMethod().when(matchingAlgorithmUpdateCGDService).updateCGDProcessForMonographs(Mockito.any());
@@ -223,7 +221,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository()).thenReturn(collectionGroupDetailsRepository);
         Mockito.when(matchingAlgorithmUpdateCGDService.getItemChangeLogDetailsRepository()).thenReturn(itemChangeLogDetailsRepository);
         Mockito.when(matchingAlgorithmUpdateCGDService.getItemDetailsRepository()).thenReturn(itemDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getJmxHelper()).thenReturn(jmxHelper);
+        Mockito.when(matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo()).thenReturn(activeMqQueuesInfo);
         Mockito.when(matchingAlgorithmUtil.getReportDetailRepository()).thenReturn(reportDetailRepository);
         Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(RecapConstants.BIB_ID)).thenReturn(new Long(10000));
         Mockito.doCallRealMethod().when(matchingAlgorithmUtil).saveCGDUpdatedSummaryReport(Mockito.any());
@@ -253,7 +251,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository()).thenReturn(collectionGroupDetailsRepository);
         Mockito.when(matchingAlgorithmUpdateCGDService.getItemChangeLogDetailsRepository()).thenReturn(itemChangeLogDetailsRepository);
         Mockito.when(matchingAlgorithmUpdateCGDService.getItemDetailsRepository()).thenReturn(itemDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getJmxHelper()).thenReturn(jmxHelper);
+        Mockito.when(matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo()).thenReturn(activeMqQueuesInfo);
         Mockito.when(matchingAlgorithmUtil.getReportDetailRepository()).thenReturn(reportDetailRepository);
         Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingMVMs(RecapConstants.BIB_ID)).thenReturn(new Long(10000));
         Mockito.doCallRealMethod().when(matchingAlgorithmUtil).saveCGDUpdatedSummaryReport(Mockito.any());

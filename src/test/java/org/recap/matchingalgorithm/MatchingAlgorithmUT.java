@@ -6,7 +6,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCase;
-import org.recap.camel.activemq.JmxHelper;
 import org.recap.controller.MatchingAlgorithmController;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmHelperService;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmUpdateCGDService;
@@ -22,7 +21,8 @@ import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by angelind on 27/10/16.
@@ -45,9 +45,6 @@ public class MatchingAlgorithmUT extends BaseTestCase {
 
     @Mock
     MatchingAlgorithmController matchingAlgorithmController;
-
-    @Autowired
-    JmxHelper jmxHelper;
 
     @Mock
     MatchingAlgorithmUpdateCGDService matchingAlgorithmUpdateCGDService;

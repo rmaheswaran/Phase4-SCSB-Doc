@@ -321,21 +321,29 @@ public class OngoingMatchingReportsService {
         } catch (Exception e) {
             getLogger().error("Exception : {}", e);
         }
-        for(MatchingSummaryReport matchingSummaryReport : matchingSummaryReports) {
-            matchingSummaryReport.setTotalBibs(String.valueOf(bibCount));
-            matchingSummaryReport.setTotalItems(String.valueOf(itemCount));
-            if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapConstants.PRINCETON)) {
-                matchingSummaryReport.setOpenItemsAfterMatching(String.valueOf(MatchingCounter.getPulOpenCount()));
-                matchingSummaryReport.setSharedItemsAfterMatching(String.valueOf(MatchingCounter.getPulSharedCount()));
-            } else if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapConstants.COLUMBIA)) {
-                matchingSummaryReport.setOpenItemsAfterMatching(String.valueOf(MatchingCounter.getCulOpenCount()));
-                matchingSummaryReport.setSharedItemsAfterMatching(String.valueOf(MatchingCounter.getCulSharedCount()));
-            } else if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapConstants.NYPL)) {
-                matchingSummaryReport.setOpenItemsAfterMatching(String.valueOf(MatchingCounter.getNyplOpenCount()));
-                matchingSummaryReport.setSharedItemsAfterMatching(String.valueOf(MatchingCounter.getNyplSharedCount()));
-            }
-        }
         try {
+            for(MatchingSummaryReport matchingSummaryReport : matchingSummaryReports) {
+                matchingSummaryReport.setTotalBibs(String.valueOf(bibCount));
+                matchingSummaryReport.setTotalItems(String.valueOf(itemCount));
+                String openItemsAfterMatching = "";
+                String sharedItemsAfterMatching = "";
+                if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapConstants.PRINCETON)) {
+                    openItemsAfterMatching = String.valueOf(MatchingCounter.getPulOpenCount());
+                    sharedItemsAfterMatching = String.valueOf(MatchingCounter.getPulSharedCount());
+                } else if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapConstants.COLUMBIA)) {
+                    openItemsAfterMatching = String.valueOf(MatchingCounter.getCulOpenCount());
+                    sharedItemsAfterMatching = String.valueOf(MatchingCounter.getCulSharedCount());
+                } else if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapConstants.NYPL)) {
+                    openItemsAfterMatching = String.valueOf(MatchingCounter.getNyplOpenCount());
+                    sharedItemsAfterMatching = String.valueOf(MatchingCounter.getNyplSharedCount());
+                }
+                String openItemsDiff = String.valueOf(Integer.valueOf(openItemsAfterMatching) - Integer.valueOf(matchingSummaryReport.getOpenItemsBeforeMatching()));
+                String sharedItemsDiff = String.valueOf(Integer.valueOf(sharedItemsAfterMatching) - Integer.valueOf(matchingSummaryReport.getSharedItemsBeforeMatching()));
+                matchingSummaryReport.setOpenItemsDiff(openItemsDiff);
+                matchingSummaryReport.setSharedItemsDiff(sharedItemsDiff);
+                matchingSummaryReport.setOpenItemsAfterMatching(openItemsAfterMatching);
+                matchingSummaryReport.setSharedItemsAfterMatching(sharedItemsAfterMatching);
+            }
             getCamelContext().startRoute(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID);
             getProducerTemplate().sendBodyAndHeader(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_Q, matchingSummaryReports, RecapConstants.FILE_NAME, RecapConstants.MATCHING_SUMMARY_REPORT);
         } catch (Exception e) {

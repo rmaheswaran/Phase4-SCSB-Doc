@@ -1,13 +1,11 @@
 package org.recap.matchingalgorithm.service;
 
 import com.google.common.collect.Lists;
-import org.apache.activemq.broker.jmx.DestinationViewMBean;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.recap.RecapConstants;
-import org.recap.camel.activemq.JmxHelper;
 import org.recap.executors.SaveMatchingBibsCallable;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
@@ -15,6 +13,7 @@ import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
+import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.recap.util.SolrQueryBuilder;
 import org.slf4j.Logger;
@@ -53,12 +52,12 @@ public class MatchingAlgorithmHelperService {
     private SolrTemplate solrTemplate;
 
     @Autowired
-    private JmxHelper jmxHelper;
-
-    @Autowired
     private ProducerTemplate producerTemplate;
 
     private ExecutorService executorService;
+
+    @Autowired
+    private ActiveMqQueuesInfo activeMqQueuesInfo;
 
     /**
      * Gets logger.
@@ -115,21 +114,16 @@ public class MatchingAlgorithmHelperService {
     }
 
     /**
-     * Gets jmx helper.
-     *
-     * @return the jmx helper
-     */
-    public JmxHelper getJmxHelper() {
-        return jmxHelper;
-    }
-
-    /**
      * Gets producer template.
      *
      * @return the producer template
      */
     public ProducerTemplate getProducerTemplate() {
         return producerTemplate;
+    }
+
+    public ActiveMqQueuesInfo getActiveMqQueuesInfo() {
+        return activeMqQueuesInfo;
     }
 
     /**
@@ -160,11 +154,12 @@ public class MatchingAlgorithmHelperService {
 
         getLogger().info("Total count : {} " , count);
 
-        DestinationViewMBean saveMatchingMatchPointsQ = getJmxHelper().getBeanForQueueName("saveMatchingMatchPointsQ");
+        Integer saveMatchingMatchPointsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("saveMatchingMatchPointsQ");
 
         if(saveMatchingMatchPointsQ != null) {
-            while (saveMatchingMatchPointsQ.getQueueSize() != 0) {
-                //Do Nothing
+            while (saveMatchingMatchPointsQ != 0) {
+                Thread.sleep(10000);
+                saveMatchingMatchPointsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("saveMatchingMatchPointsQ");
             }
         }
         return count;
@@ -177,16 +172,17 @@ public class MatchingAlgorithmHelperService {
      * @throws IOException         the io exception
      * @throws SolrServerException the solr server exception
      */
-    public long populateMatchingBibEntities() throws IOException, SolrServerException {
+    public long populateMatchingBibEntities() throws IOException, SolrServerException, InterruptedException {
         Integer count = 0;
         count = count + fetchAndSaveMatchingBibs(RecapConstants.MATCH_POINT_FIELD_OCLC);
         count = count + fetchAndSaveMatchingBibs(RecapConstants.MATCH_POINT_FIELD_ISBN);
         count = count + fetchAndSaveMatchingBibs(RecapConstants.MATCH_POINT_FIELD_ISSN);
         count = count + fetchAndSaveMatchingBibs(RecapConstants.MATCH_POINT_FIELD_LCCN);
-        DestinationViewMBean saveMatchingBibsQ = getJmxHelper().getBeanForQueueName("saveMatchingBibsQ");
+        Integer saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("saveMatchingBibsQ");
         if(saveMatchingBibsQ != null) {
-            while (saveMatchingBibsQ.getQueueSize() != 0) {
-                //Do nothing
+            while (saveMatchingBibsQ != 0) {
+                Thread.sleep(10000);
+                saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("saveMatchingBibsQ");
             }
         }
         return count;
@@ -517,7 +513,7 @@ public class MatchingAlgorithmHelperService {
      * @param batchSize the batch size
      * @return the map
      */
-    public Map<String,Integer> populateReportsForSingleMatch(Integer batchSize) {
+    public Map<String,Integer> populateReportsForSingleMatch(Integer batchSize) throws InterruptedException {
         Integer pulMatchingCount = 0;
         Integer culMatchingCount = 0;
         Integer nyplMatchingCount = 0;
@@ -538,10 +534,11 @@ public class MatchingAlgorithmHelperService {
         culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
         nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
 
-        DestinationViewMBean saveMatchingBibsQ = getJmxHelper().getBeanForQueueName("updateMatchingBibEntityQ");
+        Integer saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateMatchingBibEntityQ");
         if(saveMatchingBibsQ != null) {
-            while (saveMatchingBibsQ.getQueueSize() != 0) {
-                //Do nothing
+            while (saveMatchingBibsQ != 0) {
+                Thread.sleep(10000);
+                saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateMatchingBibEntityQ");
             }
         }
 
