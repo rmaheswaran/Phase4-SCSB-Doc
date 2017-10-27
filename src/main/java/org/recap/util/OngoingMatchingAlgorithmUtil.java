@@ -290,17 +290,18 @@ public class OngoingMatchingAlgorithmUtil {
             reportEntity.setFileName(fileName);
             reportEntity.setInstitutionName(RecapConstants.ALL_INST);
             reportEntity.setCreatedDate(new Date());
+            String criteriaValueString = StringUtils.join(criteriaValues, ",");
             if(materialTypeSet.size() == 1) {
-                Set<String> unMatchingTitleHeaderSet = matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(titleMap);
-                if(CollectionUtils.isNotEmpty(unMatchingTitleHeaderSet)) {
-
-                    reportEntitiesToSave.add(processCGDAndReportsForUnMatchingTitles(fileName, titleMap, bibIds,
-                            materialTypeList, owningInstList, owningInstBibIds,
-                            StringUtils.join(criteriaValues, ","), unMatchingTitleHeaderSet, matchPointString));
-                }
-                reportEntity.setType(RecapConstants.SINGLE_MATCH);
+                Map parameterMap = new HashMap();
+                parameterMap.put(RecapConstants.BIB_ID, bibIds);
+                parameterMap.put(RecapConstants.MATERIAL_TYPE, materialTypeList);
+                parameterMap.put(RecapConstants.OWNING_INST_BIB_ID, owningInstBibIds);
+                parameterMap.put(RecapConstants.OWNING_INST, owningInstList);
+                parameterMap.put(RecapConstants.CRITERIA_VALUES, criteriaValueString);
+                parameterMap.put(RecapConstants.MATCH_POINT, matchPointString);
                 try {
-                    itemIds = updateCGDBasedOnMaterialTypes(reportEntity, bibIds, materialTypeList, materialTypeSet, serialMvmBibIds);
+                    itemIds = updateCGDBasedOnMaterialTypes(reportEntity, materialTypeSet, serialMvmBibIds, RecapConstants.SINGLE_MATCH, parameterMap, reportEntitiesToSave, titleMap);
+                    materialTypeList = (List<String>) parameterMap.get(RecapConstants.MATERIAL_TYPE);
                 } catch (Exception e) {
                     logger.error(RecapConstants.LOG_ERROR,e);
                 }
@@ -308,7 +309,7 @@ public class OngoingMatchingAlgorithmUtil {
                 reportEntity.setType(RecapConstants.MATERIAL_TYPE_EXCEPTION);
             }
             matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIds, materialTypeList, owningInstBibIds);
-            matchingAlgorithmUtil.getReportDataEntity(matchPointString.equalsIgnoreCase(RecapConstants.OCLC_NUMBER) ? RecapConstants.OCLC_CRITERIA : matchPointString, StringUtils.join(criteriaValues, ","), reportDataEntities);
+            matchingAlgorithmUtil.getReportDataEntity(matchPointString.equalsIgnoreCase(RecapConstants.OCLC_NUMBER) ? RecapConstants.OCLC_CRITERIA : matchPointString, criteriaValueString, reportDataEntities);
             reportEntity.addAll(reportDataEntities);
             reportEntitiesToSave.add(reportEntity);
             producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", reportEntitiesToSave);
@@ -401,7 +402,11 @@ public class OngoingMatchingAlgorithmUtil {
         }
 
         if(owningInstSet.size() > 1) {
-            itemIds = updateCGDBasedOnMaterialTypes(reportEntity, bibIdList, materialTypeList, materialTypes, serialMvmBibIds);
+            Map parameterMap = new HashMap();
+            parameterMap.put(RecapConstants.BIB_ID, bibIdList);
+            parameterMap.put(RecapConstants.MATERIAL_TYPE, materialTypeList);
+            itemIds = updateCGDBasedOnMaterialTypes(reportEntity, materialTypes, serialMvmBibIds, RecapConstants.MULTI_MATCH, parameterMap, new ArrayList<>(), null);
+            materialTypeList = (List<String>) parameterMap.get(RecapConstants.MATERIAL_TYPE);
             matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds);
 
             if(CollectionUtils.isNotEmpty(oclcNumbers)) {
@@ -428,33 +433,48 @@ public class OngoingMatchingAlgorithmUtil {
 
     /**
      * This method checks for monograph and updates the CGD
-     * @param reportEntity
-     * @param bibIdList
-     * @param materialTypeList
-     * @param materialTypes
-     * @return
-     * @throws IOException
-     * @throws SolrServerException
+     *
+     * @param reportEntity     the report entity
+     * @param materialTypes    the material types
+     * @param serialMvmBibIds  the serial mvm bib ids
+     * @param matchType        the match type
+     * @param parameterMap     the parameter map
+     * @param reportEntityList the report entity list
+     * @param titleMap         the title map
+     * @return the list
+     * @throws IOException         the io exception
+     * @throws SolrServerException the solr server exception
      */
-    private List<Integer> updateCGDBasedOnMaterialTypes(ReportEntity reportEntity, List<Integer> bibIdList, List<String> materialTypeList, Set<String> materialTypes, List<Integer> serialMvmBibIds) throws IOException, SolrServerException {
+    private List<Integer> updateCGDBasedOnMaterialTypes(ReportEntity reportEntity, Set<String> materialTypes, List<Integer> serialMvmBibIds, String matchType, Map parameterMap,
+                                                        List<ReportEntity> reportEntityList, Map<String,String> titleMap) throws IOException, SolrServerException {
         List<Integer> itemIds = new ArrayList<>();
+        List<String> materialTypeList = (List<String>) parameterMap.get(RecapConstants.MATERIAL_TYPE);
+        List<Integer> bibIdList = (List<Integer>) parameterMap.get(RecapConstants.BIB_ID);
         MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate,
                 getCollectionGroupMap(), getInstitutionEntityMap(), itemChangeLogDetailsRepository, RecapConstants.ONGOING_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository);
         if(materialTypes.size() == 1) {
-            reportEntity.setType(RecapConstants.MULTI_MATCH);
+            reportEntity.setType(matchType);
             Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap = new HashMap<>();
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
             if(materialTypes.contains(RecapConstants.MONOGRAPH)) {
                 Set<String> materialTypeSet = new HashSet<>();
                 boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, useRestrictionMap, itemEntityMap, bibIdList);
                 if(isMonograph) {
+                    if(matchType.equalsIgnoreCase(RecapConstants.SINGLE_MATCH)) {
+                        ReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
+                        reportEntityList.add(reportEntityForTitleException);
+                    }
                     matchingAlgorithmCGDProcessor.updateCGDProcess(useRestrictionMap, itemEntityMap);
                     itemIds.addAll(itemEntityMap.keySet());
                 } else {
                     if(materialTypeSet.size() > 1) {
                         reportEntity.setType(RecapConstants.MATERIAL_TYPE_EXCEPTION);
                     } else if(materialTypeSet.size() == 1){
-                        reportEntity.setType(RecapConstants.MULTI_MATCH);
+                        reportEntity.setType(matchType);
+                        if(matchType.equalsIgnoreCase(RecapConstants.SINGLE_MATCH)) {
+                            ReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
+                            reportEntityList.add(reportEntityForTitleException);
+                        }
                         if(materialTypeSet.contains(RecapConstants.MONOGRAPHIC_SET)) {
                             int size = materialTypeList.size();
                             materialTypeList = new ArrayList<>();
@@ -468,6 +488,10 @@ public class OngoingMatchingAlgorithmUtil {
                     }
                 }
             } else if(materialTypes.contains(RecapConstants.SERIAL)) {
+                if(matchType.equalsIgnoreCase(RecapConstants.SINGLE_MATCH)) {
+                    ReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
+                    reportEntityList.add(reportEntityForTitleException);
+                }
                 matchingAlgorithmCGDProcessor.populateItemEntityMap(itemEntityMap, bibIdList);
                 matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
                 itemIds.addAll(itemEntityMap.keySet());
@@ -476,6 +500,7 @@ public class OngoingMatchingAlgorithmUtil {
         } else {
             reportEntity.setType(RecapConstants.MATERIAL_TYPE_EXCEPTION);
         }
+        parameterMap.put(RecapConstants.MATERIAL_TYPE, materialTypeList);
         return itemIds;
     }
 
@@ -539,6 +564,32 @@ public class OngoingMatchingAlgorithmUtil {
             logger.error(RecapConstants.LOG_ERROR,e);
         }
         return bibItemMap;
+    }
+
+    /**
+     * Title verification for single match report entity.
+     *
+     * @param fileName         the file name
+     * @param titleMap         the title map
+     * @param bibIds           the bib ids
+     * @param materialTypeList the material type list
+     * @param parameterMap     the parameter map
+     * @return the report entity
+     */
+    private ReportEntity titleVerificationForSingleMatch(String fileName, Map<String,String> titleMap, List<Integer> bibIds, List<String> materialTypeList, Map parameterMap) {
+        ReportEntity reportEntity = new ReportEntity();
+        List<String> owningInstBibIds = (List<String>) parameterMap.get(RecapConstants.OWNING_INST_BIB_ID);
+        List<String> owningInstList = (List<String>) parameterMap.get(RecapConstants.OWNING_INST);
+        String criteriaValues = (String) parameterMap.get(RecapConstants.CRITERIA_VALUES);
+        String matchPointString = (String) parameterMap.get(RecapConstants.MATCH_POINT);
+        Set<String> unMatchingTitleHeaderSet = matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(titleMap);
+        if(CollectionUtils.isNotEmpty(unMatchingTitleHeaderSet)) {
+
+            reportEntity = processCGDAndReportsForUnMatchingTitles(fileName, titleMap, bibIds,
+                    materialTypeList, owningInstList, owningInstBibIds,
+                    criteriaValues, unMatchingTitleHeaderSet, matchPointString);
+        }
+        return reportEntity;
     }
 
     /**

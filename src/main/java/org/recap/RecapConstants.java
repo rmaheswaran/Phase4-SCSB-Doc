@@ -182,6 +182,8 @@ public final class RecapConstants {
     public static final String ONGOING_MATCHING_ALGORITHM = "OngoingMatchingAlgorithm";
     public static final String MATERIAL_TYPE_EXCEPTION = "MaterialTypeException";
     public static final String TITLE_EXCEPTION_TYPE = "TitleException";
+    public static final String CRITERIA_VALUES = "CriteriaValues";
+    public static final String MATCH_POINT = "MatchPoint";
 
     //Error Message
     public static final String RECORD_NOT_AVAILABLE = "Database may be empty or bib table does not contain this record";
