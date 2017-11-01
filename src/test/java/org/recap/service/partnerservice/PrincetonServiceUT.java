@@ -2,21 +2,13 @@ package org.recap.service.partnerservice;
 
 import org.junit.Test;
 import org.marc4j.marc.Record;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.recap.BaseTestCase;
 import org.recap.util.MarcUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertNotEquals;
@@ -28,17 +20,11 @@ public class PrincetonServiceUT extends BaseTestCase{
 
     private static final Logger logger = LoggerFactory.getLogger(PrincetonServiceUT.class);
 
-    @Mock
+    @Autowired
     private PrincetonService princetonService;
 
     @Autowired
     private MarcUtil marcUtil;
-
-    @Mock
-    RestTemplate restTemplate;
-
-    @Value("${ils.princeton.bibdata}")
-    private String ilsprincetonBibData;
 
     String bibData = "<?xml version = \"1.0\" encoding = \"UTF-8\"?>\n" +
             "  <collection xmlns=\"http://www.loc.gov/MARC21/slim\"\n" +
@@ -160,17 +146,7 @@ public class PrincetonServiceUT extends BaseTestCase{
 
     @Test
     public void getBibData() {
-        ResponseEntity<String> responseEntity = new ResponseEntity<String>(bibData,HttpStatus.OK);
         String itemBarcode = "32101062128309";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_XML));
-        HttpEntity requestEntity = new HttpEntity(headers);
-        Map<String, String> params = new HashMap<>();
-        params.put("barcode", itemBarcode);
-        Mockito.when(princetonService.getRestTemplate()).thenReturn(restTemplate);
-        Mockito.when(princetonService.getIlsprincetonBibData()).thenReturn(ilsprincetonBibData);
-        Mockito.when(restTemplate.exchange(ilsprincetonBibData, HttpMethod.GET, requestEntity, String.class, params)).thenReturn(responseEntity);
-        Mockito.when(princetonService.getBibData(itemBarcode)).thenCallRealMethod();
         String bibDataResponse = princetonService.getBibData(itemBarcode);
         assertNotNull(bibDataResponse);
         List<Record> records = marcUtil.readMarcXml(bibDataResponse);
@@ -179,11 +155,9 @@ public class PrincetonServiceUT extends BaseTestCase{
 
     @Test
     public void checkGetterServices(){
-        Mockito.when(princetonService.getIlsprincetonBibData()).thenCallRealMethod();
-        Mockito.when(princetonService.getRestTemplate()).thenCallRealMethod();
-        assertNotEquals(princetonService,princetonService.getIlsprincetonBibData());
-        assertNotEquals(restTemplate,princetonService.getRestTemplate());
-        assertNotEquals(logger,princetonService.getLogger());
+        String ilsprincetonBibData = princetonService.getIlsprincetonBibData();
+        assertNotNull(ilsprincetonBibData);
+        assertNotEquals(logger, princetonService.getLogger());
     }
 
 
