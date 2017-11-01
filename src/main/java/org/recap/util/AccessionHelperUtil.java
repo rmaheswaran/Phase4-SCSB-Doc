@@ -8,6 +8,7 @@ import org.recap.model.accession.AccessionResponse;
 import org.recap.model.jpa.*;
 import org.recap.model.request.ItemCheckInRequest;
 import org.recap.model.request.ItemCheckinResponse;
+import org.recap.model.request.ItemRefileResponse;
 import org.recap.repository.jpa.*;
 import org.recap.service.accession.AccessionService;
 import org.recap.service.accession.resolver.BibDataResolver;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 
@@ -392,14 +394,23 @@ public class AccessionHelperUtil {
 
     @Async
     public void callCheckin(String itemBarcode, String owningInstitutionId) {
-        ResponseEntity<ItemCheckinResponse> responseEntity = null;
         ItemCheckInRequest itemRequestInfo = new ItemCheckInRequest();
         RestTemplate restTemplate = new RestTemplate();
         try {
             itemRequestInfo.setItemBarcodes(Arrays.asList(itemBarcode));
             itemRequestInfo.setItemOwningInstitution(owningInstitutionId);
-            HttpEntity request = new HttpEntity<>(itemRequestInfo, getHttpHeadersAuth());
-            responseEntity = restTemplate.exchange(scsbUrl + RecapConstants.SERVICE_PATH.CHECKIN_ITEM, HttpMethod.POST, request, ItemCheckinResponse.class);
+            if (RecapConstants.NYPL.equalsIgnoreCase(owningInstitutionId)) {
+                HttpEntity request = new HttpEntity<>(getHttpHeadersAuth());
+                UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(scsbUrl + RecapConstants.SERVICE_PATH.REFILE_ITEM_IN_ILS);
+                builder.queryParam(RecapConstants.ITEMBARCODE, itemBarcode);
+                builder.queryParam(RecapConstants.OWNING_INST, owningInstitutionId);
+                ResponseEntity<ItemRefileResponse> responseEntity = restTemplate.exchange(builder.build().encode().toUri(), HttpMethod.POST, request, ItemRefileResponse.class);
+                logger.info("Refile response for item barcode {} : {}", itemBarcode, null != responseEntity.getBody() ? responseEntity.getBody().getScreenMessage() : null);
+            } else {
+                HttpEntity request = new HttpEntity<>(itemRequestInfo, getHttpHeadersAuth());
+                ResponseEntity<ItemCheckinResponse> responseEntity = restTemplate.exchange(scsbUrl + RecapConstants.SERVICE_PATH.CHECKIN_ITEM, HttpMethod.POST, request, ItemCheckinResponse.class);
+                logger.info("Checkin response for item barcode {} : {}", itemBarcode, null != responseEntity.getBody() ? responseEntity.getBody().getScreenMessage() : null);
+            }
         } catch (RestClientException ex) {
             logger.error(RecapConstants.EXCEPTION, ex);
         } catch (Exception ex) {
