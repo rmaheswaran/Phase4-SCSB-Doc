@@ -462,6 +462,7 @@ public final class RecapConstants {
 
     public static class SERVICE_PATH {
         public static final String CHECKIN_ITEM = "requestItem/checkinItem";
+        public static final String REFILE_ITEM_IN_ILS = "requestItem/refileItemInILS";
     }
 
     public static final String SUCCESS_INCOMPLETE_RECORD = "Success - Incomplete record";
