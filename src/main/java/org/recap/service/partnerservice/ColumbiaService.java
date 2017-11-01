@@ -39,6 +39,14 @@ public class ColumbiaService {
         return ilsColumbiaBibData;
     }
 
+    public Integer getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public Integer getReadTimeout() {
+        return readTimeout;
+    }
+
     public RestTemplate getRestTemplate(){
         return new RestTemplate();
     }
@@ -54,8 +62,8 @@ public class ColumbiaService {
         HostnameVerifier verifier = new NullHostnameVerifier();
         SCSBSimpleClientHttpRequestFactory factory = new SCSBSimpleClientHttpRequestFactory(verifier);
         restTemplate.setRequestFactory(factory);
-        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(connectionTimeout);
-        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setReadTimeout(readTimeout);
+        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(getConnectionTimeout());
+        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setReadTimeout(getReadTimeout());
 
         String bibDataResponse = null;
         String response = null;
