@@ -735,7 +735,9 @@ public class AccessionService {
             fetchBibliographicEntity.setLastUpdatedBy(bibliographicEntity.getLastUpdatedBy());
             fetchBibliographicEntity.setLastUpdatedDate(bibliographicEntity.getLastUpdatedDate());
             fetchBibliographicEntity.setDeleted(bibliographicEntity.isDeleted());
-            fetchBibliographicEntity.setCatalogingStatus(bibliographicEntity.getCatalogingStatus());
+            if (fetchBibliographicEntity.getCatalogingStatus().equals(RecapConstants.INCOMPLETE_STATUS)) {
+                fetchBibliographicEntity.setCatalogingStatus(bibliographicEntity.getCatalogingStatus());
+            }
 
             // Holding
             List<HoldingsEntity> fetchHoldingsEntities =fetchBibliographicEntity.getHoldingsEntities();
