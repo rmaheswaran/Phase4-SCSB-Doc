@@ -2,23 +2,14 @@ package org.recap.service.partnerservice;
 
 import org.junit.Test;
 import org.marc4j.marc.Record;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.recap.BaseTestCase;
 import org.recap.model.jaxb.JAXBHandler;
 import org.recap.model.jaxb.marc.BibRecords;
 import org.recap.service.authorization.NyplOauthTokenApiService;
 import org.recap.util.MarcUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
 
-import javax.xml.bind.JAXBException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static junit.framework.TestCase.assertNotNull;
 
@@ -27,26 +18,14 @@ import static junit.framework.TestCase.assertNotNull;
  */
 public class PartnerServicesUT extends BaseTestCase {
 
-    @Mock
+    @Autowired
     private PrincetonService princetonService;
 
-    @Mock
+    @Autowired
     private NYPLService nyplService;
 
     @Autowired
     private MarcUtil marcUtil;
-
-    @Mock
-    RestTemplate restTemplate;
-
-    @Value("${ils.princeton.bibdata}")
-    private String ilsprincetonBibData;
-
-    @Value("${ils.nypl.bibdata}")
-    private String ilsNYPLBibData;
-
-    @Value("${ils.nypl.bibdata.parameter}")
-    private String ilsNYPLBibDataParameter;
 
     @Autowired
     private NyplOauthTokenApiService nyplOauthTokenApiService;
@@ -317,46 +296,16 @@ public class PartnerServicesUT extends BaseTestCase {
 
     @Test
     public void getBibData() throws Exception {
-        ResponseEntity<String> responseEntity = new ResponseEntity<String>(bibData, HttpStatus.OK);
         String itemBarcode = "32101062128309";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_XML));
-        HttpEntity requestEntity = new HttpEntity(headers);
-        Map<String, String> params = new HashMap<>();
-        params.put("barcode", itemBarcode);
-        Mockito.when(princetonService.getRestTemplate()).thenReturn(restTemplate);
-        Mockito.when(princetonService.getIlsprincetonBibData()).thenReturn(ilsprincetonBibData);
-        Mockito.when(restTemplate.exchange(ilsprincetonBibData, HttpMethod.GET, requestEntity, String.class, params)).thenReturn(responseEntity);
-        Mockito.when(princetonService.getBibData(itemBarcode)).thenCallRealMethod();
         String bibDataResponse = princetonService.getBibData(itemBarcode);
         assertNotNull(bibDataResponse);
         List<Record> records = marcUtil.readMarcXml(bibDataResponse);
         assertNotNull(records);
 
-        String customerCode = "NA";
-        itemBarcode = "33433002031718";
-        String authorization = "Bearer " + nyplOauthTokenApiService.generateAccessTokenForNyplApi();
-        headers = new HttpHeaders();
-        headers.clear();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_XML));
-        headers.set("Authorization", authorization);
-        params = new HashMap<>();
-        params.clear();
-        params.put("barcode", itemBarcode);
-        params.put("customercode", customerCode);
-        requestEntity = new HttpEntity(headers);
-        String url = ilsNYPLBibData + ilsNYPLBibDataParameter;
-        responseEntity = new ResponseEntity<String>(scsbXml, HttpStatus.OK);
-        Mockito.when(nyplService.getRestTemplate()).thenReturn(restTemplate);
-        Mockito.when(nyplService.getNyplOauthTokenApiService()).thenReturn(nyplOauthTokenApiService);
-        Mockito.when(nyplService.getIlsNYPLBibData()).thenReturn(ilsNYPLBibData);
-        Mockito.when(nyplService.getHttpHeaders()).thenReturn(headers);
-        Mockito.when(nyplService.getHttpEntity(headers)).thenReturn(requestEntity);
-        Mockito.when(nyplService.getIlsNYPLBibDataParameter()).thenReturn(ilsNYPLBibDataParameter);
-        Mockito.when(restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class, params)).thenReturn(responseEntity);
-        Mockito.when(nyplService.getBibData(itemBarcode, customerCode)).thenCallRealMethod();
-        String bibDataResponseFoNYPL = nyplService.getBibData(itemBarcode, customerCode);
+        String customerCodeForNypl = "NA";
+        String itemBarcodeForNypl = "33433002031718";
+
+        String bibDataResponseFoNYPL = nyplService.getBibData(itemBarcodeForNypl, customerCodeForNypl);
         assertNotNull(bibDataResponseFoNYPL);
         BibRecords bibRecords = (BibRecords) JAXBHandler.getInstance().unmarshal(bibDataResponseFoNYPL, BibRecords.class);
         assertNotNull(bibRecords);
