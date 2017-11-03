@@ -2,21 +2,13 @@ package org.recap.service.partnerservice;
 
 import org.junit.Test;
 import org.marc4j.marc.Record;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.recap.BaseTestCase;
 import org.recap.util.MarcUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertNotEquals;
@@ -28,17 +20,12 @@ public class ColumbiaServiceUT extends BaseTestCase{
 
     private static final Logger logger = LoggerFactory.getLogger(ColumbiaServiceUT.class);
 
-    @Mock
+
+    @Autowired
     private ColumbiaService columbiaService;
 
     @Autowired
     private MarcUtil marcUtil;
-
-    @Mock
-    RestTemplate restTemplate;
-
-    @Value("${ils.columbia.bibdata}")
-    private String ilsColumbiaBibData;
 
     String bibData = "<?xml version = \"1.0\" encoding = \"UTF-8\"?>\n" +
             "  <collection xmlns=\"http://www.loc.gov/MARC21/slim\"\n" +
@@ -157,20 +144,9 @@ public class ColumbiaServiceUT extends BaseTestCase{
             "\n" +
             "</collection>  \n";
 
-
     @Test
     public void getBibData() {
-        ResponseEntity<String> responseEntity = new ResponseEntity<String>(bibData, HttpStatus.OK);
         String itemBarcode = "CU54175534";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_XML));
-        HttpEntity requestEntity = new HttpEntity(headers);
-        Map<String, String> params = new HashMap<>();
-        params.put("barcode", itemBarcode);
-        Mockito.when(columbiaService.getRestTemplate()).thenReturn(restTemplate);
-        Mockito.when(columbiaService.getIlsColumbiaBibData()).thenReturn(ilsColumbiaBibData);
-        Mockito.when(restTemplate.exchange(ilsColumbiaBibData, HttpMethod.GET, requestEntity, String.class, params)).thenReturn(responseEntity);
-        Mockito.when(columbiaService.getBibData(itemBarcode)).thenCallRealMethod();
         String bibDataResponse = columbiaService.getBibData(itemBarcode);
         assertNotNull(bibDataResponse);
         List<Record> records = marcUtil.readMarcXml(bibDataResponse);
@@ -179,10 +155,12 @@ public class ColumbiaServiceUT extends BaseTestCase{
 
     @Test
     public void checkGetterServices(){
-        Mockito.when(columbiaService.getIlsColumbiaBibData()).thenCallRealMethod();
-        Mockito.when(columbiaService.getRestTemplate()).thenCallRealMethod();
-        assertNotEquals(ilsColumbiaBibData,columbiaService.getIlsColumbiaBibData());
-        assertNotEquals(restTemplate,columbiaService.getRestTemplate());
+        String ilsColumbiaBibData = columbiaService.getIlsColumbiaBibData();
+        assertNotNull(ilsColumbiaBibData);
+        Integer connectionTimeout = columbiaService.getConnectionTimeout();
+        assertNotNull(connectionTimeout);
+        Integer readTimeout = columbiaService.getReadTimeout();
+        assertNotNull(readTimeout);
         assertNotEquals(logger,columbiaService.getLogger());
     }
 }
