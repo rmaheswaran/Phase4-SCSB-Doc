@@ -462,7 +462,11 @@ public class OngoingMatchingAlgorithmUtil {
                 if(isMonograph) {
                     if(matchType.equalsIgnoreCase(RecapConstants.SINGLE_MATCH)) {
                         ReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
-                        reportEntityList.add(reportEntityForTitleException);
+                        if(reportEntityForTitleException != null) {
+                            logger.info("updateCGDBasedOnMaterialTypes, Match type is Single Match, TileException Found");
+                            reportEntityList.add(reportEntityForTitleException);
+                        }
+
                     }
                     matchingAlgorithmCGDProcessor.updateCGDProcess(useRestrictionMap, itemEntityMap);
                     itemIds.addAll(itemEntityMap.keySet());
@@ -473,7 +477,10 @@ public class OngoingMatchingAlgorithmUtil {
                         reportEntity.setType(matchType);
                         if(matchType.equalsIgnoreCase(RecapConstants.SINGLE_MATCH)) {
                             ReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
-                            reportEntityList.add(reportEntityForTitleException);
+                            if(reportEntityForTitleException != null) {
+                                logger.info("updateCGDBasedOnMaterialTypes, Match type is Single Match, TileException Found");
+                                reportEntityList.add(reportEntityForTitleException);
+                            }
                         }
                         if(materialTypeSet.contains(RecapConstants.MONOGRAPHIC_SET)) {
                             int size = materialTypeList.size();
@@ -490,7 +497,10 @@ public class OngoingMatchingAlgorithmUtil {
             } else if(materialTypes.contains(RecapConstants.SERIAL)) {
                 if(matchType.equalsIgnoreCase(RecapConstants.SINGLE_MATCH)) {
                     ReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
-                    reportEntityList.add(reportEntityForTitleException);
+                    if(reportEntityForTitleException != null) {
+                        logger.info("updateCGDBasedOnMaterialTypes, Match type is Single Match, TileException Found");
+                        reportEntityList.add(reportEntityForTitleException);
+                    }
                 }
                 matchingAlgorithmCGDProcessor.populateItemEntityMap(itemEntityMap, bibIdList);
                 matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
@@ -577,17 +587,17 @@ public class OngoingMatchingAlgorithmUtil {
      * @return the report entity
      */
     private ReportEntity titleVerificationForSingleMatch(String fileName, Map<String,String> titleMap, List<Integer> bibIds, List<String> materialTypeList, Map parameterMap) {
-        ReportEntity reportEntity = new ReportEntity();
+        ReportEntity reportEntity = null;
         List<String> owningInstBibIds = (List<String>) parameterMap.get(RecapConstants.OWNING_INST_BIB_ID);
         List<String> owningInstList = (List<String>) parameterMap.get(RecapConstants.OWNING_INST);
         String criteriaValues = (String) parameterMap.get(RecapConstants.CRITERIA_VALUES);
         String matchPointString = (String) parameterMap.get(RecapConstants.MATCH_POINT);
         Set<String> unMatchingTitleHeaderSet = matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(titleMap);
         if(CollectionUtils.isNotEmpty(unMatchingTitleHeaderSet)) {
-
             reportEntity = processCGDAndReportsForUnMatchingTitles(fileName, titleMap, bibIds,
                     materialTypeList, owningInstList, owningInstBibIds,
                     criteriaValues, unMatchingTitleHeaderSet, matchPointString);
+            logger.info("titleVerificationForSingleMatch, Single Match, found unmatching titles");
         }
         return reportEntity;
     }
