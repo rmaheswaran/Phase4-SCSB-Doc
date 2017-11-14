@@ -69,7 +69,7 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
         String reasonForFailureItem = "";
         Map<String, Object> map = new HashMap<>();
         boolean processBib = false;
-        String incompleteResponse = new String();
+        String incompleteResponse = "";
         List<HoldingsEntity> holdingsEntities = new ArrayList<>();
         List<ItemEntity> itemEntities = new ArrayList<>();
         List<ReportEntity> reportEntities = new ArrayList<>();
@@ -118,6 +118,9 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
                         holdingsEntities.add(holdingsEntity);
                     }
                     String holdingsCallNumber = getMarcUtil().getDataFieldValueForRecordType(holdingsRecordType, "852", null, null, "h");
+                    if(holdingsCallNumber == null){
+                        holdingsCallNumber = "";
+                    }
                     String holdingsCallNumberType = getMarcUtil().getInd1ForRecordType(holdingsRecordType, "852", "h");
 
                     List<Items> items = holding.getItems();
@@ -377,7 +380,7 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
             }
             itemEntity.setCustomerCode(accessionRequest.getCustomerCode());
             itemEntity.setCallNumber(holdingsCallNumber);
-            itemEntity.setCallNumberType(String.valueOf(holdingsCallNumberType));
+            itemEntity.setCallNumberType(holdingsCallNumberType != null ? String.valueOf(holdingsCallNumberType) : "");
             String copyNumber = getMarcUtil().getDataFieldValueForRecordType(itemRecordType, "876", null, null, "t");
             if (StringUtils.isNotBlank(copyNumber) && org.apache.commons.lang3.math.NumberUtils.isNumber(copyNumber)) {
                 itemEntity.setCopyNumber(Integer.valueOf(copyNumber));
