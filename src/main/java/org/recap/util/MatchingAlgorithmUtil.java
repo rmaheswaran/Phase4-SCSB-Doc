@@ -510,9 +510,11 @@ public class MatchingAlgorithmUtil {
 
     private void setTrimmedHeaderValue(String headerName, ReportDataEntity bibIdReportDataEntity, String joinedHeaderValue) {
         int headerValueLength = joinedHeaderValue.length();
+        logger.info("Matching header value length : {}",headerValueLength);
         if (headerValueLength <= matchingHeaderValueLength){
             bibIdReportDataEntity.setHeaderValue(joinedHeaderValue);
         }else {
+            logger.debug("Header value : {} ",joinedHeaderValue);
             logger.info("Maximum Header value crossed : {} for header name : {} and started truncating",joinedHeaderValue.length(),headerName);
             String substring = StringUtils.substring(joinedHeaderValue, 0, matchingHeaderValueLength);
             bibIdReportDataEntity.setHeaderValue(StringUtils.substringBeforeLast(substring,","));
