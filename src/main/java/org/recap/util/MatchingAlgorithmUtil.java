@@ -23,6 +23,7 @@ import org.recap.repository.jpa.ReportDetailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
@@ -63,6 +64,9 @@ public class MatchingAlgorithmUtil {
     private String and = " AND ";
 
     private String coreParentFilterQuery = "{!parent which=\"ContentType:parent\"}";
+
+    @Value("${matching.report.header.value.length}")
+    private Integer matchingHeaderValueLength;
 
     /**
      * Gets report detail repository.
@@ -495,8 +499,24 @@ public class MatchingAlgorithmUtil {
     public ReportDataEntity getReportDataEntityForCollectionValues(Collection headerValues, String headerName) {
         ReportDataEntity bibIdReportDataEntity = new ReportDataEntity();
         bibIdReportDataEntity.setHeaderName(headerName);
-        bibIdReportDataEntity.setHeaderValue(StringUtils.join(headerValues, ","));
+        String joinedHeaderValue = StringUtils.join(headerValues, ",");
+        if (StringUtils.isNotBlank(joinedHeaderValue)){
+            setTrimmedHeaderValue(headerName, bibIdReportDataEntity, joinedHeaderValue);
+        }else {
+            bibIdReportDataEntity.setHeaderValue(joinedHeaderValue);
+        }
         return bibIdReportDataEntity;
+    }
+
+    private void setTrimmedHeaderValue(String headerName, ReportDataEntity bibIdReportDataEntity, String joinedHeaderValue) {
+        int headerValueLength = joinedHeaderValue.length();
+        if (headerValueLength <= matchingHeaderValueLength){
+            bibIdReportDataEntity.setHeaderValue(joinedHeaderValue);
+        }else {
+            logger.info("Maximum Header value crossed : {} for header name : {} and started truncating",joinedHeaderValue.length(),headerName);
+            String substring = StringUtils.substring(joinedHeaderValue, 0, matchingHeaderValueLength);
+            bibIdReportDataEntity.setHeaderValue(StringUtils.substringBeforeLast(substring,","));
+        }
     }
 
     /**
