@@ -514,6 +514,7 @@ public class MatchingAlgorithmUtil {
         if (headerValueLength <= matchingHeaderValueLength){
             bibIdReportDataEntity.setHeaderValue(joinedHeaderValue);
         }else {
+            logger.debug("Header value : {} ",joinedHeaderValue);
             logger.info("Maximum Header value crossed : {} for header name : {} and started truncating",joinedHeaderValue.length(),headerName);
             String substring = StringUtils.substring(joinedHeaderValue, 0, matchingHeaderValueLength);
             bibIdReportDataEntity.setHeaderValue(StringUtils.substringBeforeLast(substring,","));
