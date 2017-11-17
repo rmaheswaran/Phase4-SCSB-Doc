@@ -27,6 +27,7 @@
         <li><a data-toggle="tab" href="#matchingAlgorithmSaveReport">Initial Matching Algorithm</a></li>
         <li><a data-toggle="tab" href="#ongoingMatchingJob">Ongoing Matching Job</a></li>
         <li><a data-toggle="tab" href="#generateReports"> Generate Reports</a></li>
+        <li><a data-toggle="tab" href="#RequestReSubmit"> Request Re-Submit</a></li>
     </ul>
 
     <div class="tab-content">
@@ -583,6 +584,132 @@
                                                                   placeholder="Report Status" readonly="true"></textarea>
                                                     </div>
 
+                                                </fieldset>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="RequestReSubmit" class="tab-pane fade">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div id="RequestReSubmitDiv">
+                            <br/><br/>
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-xs-8">
+                                        <div th:fragment="requests-form" xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+                                            <form id="requestResubmit-form" name="requests-form" class="form-horizontal"
+                                                  action="/resubmitRequests" th:object="${solrIndexRequest}" method="post">
+                                                <fieldset>
+                                                    <div class="form-group" style="padding-left: 10px;">
+                                                        <label for="RequestStatus" accesskey="R" class="radio-inline report-hide-shadow" style="padding-right: 10px;" tabindex="0">
+                                                            <input type="radio" name="RequestStatus"
+                                                                   id="RequestStatus" value="RequestStatus"
+                                                                   onclick="showRequest()" th:field="*{replaceRequestByType}"/>
+                                                            By Request Status
+                                                        </label>
+                                                        <label for="RequestId" accesskey="R" class="radio-inline report-hide-shadow" style="padding-right: 10px;" tabindex="0">
+                                                            <input type="radio" name="RequestIds"
+                                                                   id="RequestId" value="RequestIds"
+                                                                   onclick="showRequest()" th:field="*{replaceRequestByType}"/>
+                                                            By Request Id's
+                                                        </label>
+                                                        <label for="RequestIdRange" accesskey="A" class="radio-inline report-hide-shadow" style="padding-right: 10px;" tabindex="0">
+                                                            <input type="radio" name="RequestIdRange"
+                                                                   id="RequestIdRange" value="RangeOfRequestIds"
+                                                                   onclick="showRequest()" th:field="*{replaceRequestByType}"/>
+                                                            By Range of Request Id's
+                                                        </label>
+                                                        <label for="RequestDateRange" accesskey="C" class="radio-inline report-hide-shadow" style="padding-right: 10px" tabindex="0">
+                                                            <input type="radio" name="RequestDateRange"
+                                                                   id="RequestDateRange"
+                                                                   value="RangeOfRequestDates"
+                                                                   onclick="showRequest()" th:field="*{replaceRequestByType}"/>
+                                                            By Date Range of Requests
+                                                        </label>
+                                                    </div>
+
+
+                                                    <div>
+                                                        <div id="RequestStatusView" style="display:none">
+                                                            <div id="RequestStatusDiv" style="margin-top: 30px;">
+                                                                <label>Request Status</label>
+                                                                <select id="RequestStatusSelect"
+                                                                        class="form-control"
+                                                                        style="width: 160px;"
+                                                                        th:field="*{requestStatus}">
+                                                                    <option value="Pending">Pending</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div id="RequestIdListView" style="display:none">
+                                                            <div id="RequestIds" style="margin-top: 30px;">
+                                                                <label>Enter Request Id's</label>
+                                                                <input class="form-control input-lg" type="text" id="RequestIdListInput" th:field="*{requestIds}"
+                                                                       placeholder="Enter values separated by comma"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div id="RequestIdRangeView" style="display:none">
+                                                            <div id="RequestIdRangeFrom" style="margin-top: 30px;">
+                                                                <label>Start Request Id</label>
+                                                                <input class="form-control" type="text" id="RequestIdFrom" th:field="*{startRequestId}"/>
+                                                            </div>
+                                                            <div id="RequestIdRangeTo" style="margin-top: 30px;">
+                                                                <label>End Request Id</label>
+                                                                <input class="form-control" type="text" id="RequestIdTo" th:field="*{endRequestId}"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div id="RequestDateRangeView" style="display:none">
+                                                            <div id="RequestDateRangeFrom" style="margin-top: 30px;">
+                                                                <label>Date From</label>
+                                                                <input type="text"
+                                                                       class="form-control date"
+                                                                       id="RequestFromDate"
+                                                                       placeholder="From Date" th:field="*{fromDate}"/>
+                                                                <span class="add-on">
+                                                                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                                                    </span>
+                                                            </div>
+
+                                                            <div id="RequestDateRangeTo" style="margin-top: 30px;">
+                                                                <label>Date To</label>
+                                                                <input type="text"
+                                                                       class="form-control date"
+                                                                       id="RequetToDate"
+                                                                       placeholder="To Date" th:field="*{toDate}"/>
+                                                                <span class="add-on">
+                                                                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                                                    </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="requestSubmitBtnDiv" style="margin-top: 30px; padding-left: 200px; display: none">
+                                                        <button class="btn btn-info active"
+                                                                id="requestSubmit"
+                                                                type="submit"> Submit
+                                                        </button>
+                                                    </div>
+                                                    <div class="form-group" style="margin-top: 30px;">
+                                                            <textarea class="form-control" id="resubmitRequestStatus" rows="8"
+                                                                      placeholder="RequestReSubmit Status" readonly="true"></textarea>
+                                                    </div>
                                                 </fieldset>
                                             </form>
                                         </div>

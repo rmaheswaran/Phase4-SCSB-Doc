@@ -372,6 +372,7 @@ public final class RecapConstants {
     public static final String OLD_CGD = "oldCollectionGroupDesignation";
     public static final String NEW_CGD = "newCollectionGroupDesignation";
     public static final String CGD_CHANGE_NOTES = "cgdChangeNotes";
+    public static final String USER_NAME = "userName";
     public static final String TO = "To";
     public static final String ITEM_CATALOGING_STATUS = "ItemCatalogingStatus";
     public static final String BIB_CATALOGING_STATUS = "BibCatalogingStatus";
@@ -463,6 +464,7 @@ public final class RecapConstants {
     public static class SERVICE_PATH {
         public static final String CHECKIN_ITEM = "requestItem/checkinItem";
         public static final String REFILE_ITEM_IN_ILS = "requestItem/refileItemInILS";
+        public static final String REPLACE_REQUEST = "requestItem/replaceRequest";
     }
 
     public static final String SUCCESS_INCOMPLETE_RECORD = "Success - Incomplete record";
@@ -528,6 +530,9 @@ public final class RecapConstants {
     public static final String CREATED_DATE = "createdDate";
     public static final String PROCESSING = "Processing";
     public static final String MATCHING_BATCH_JOB_DATE_FORMAT = "EEE MMM dd HH:mm:ss z yyyy";
+    public static final String TOTAL_REQUESTS_FOUND = "TotalRequestsFound";
+    public static final String TOTAL_REQUESTS_IDS = "TotalRequestIds";
+    public static final String INVALID_REQUEST = "InvalidRequest";
 
     private RecapConstants(){}
 }
