@@ -2,6 +2,7 @@ package org.recap.util;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.recap.RecapConstants;
 import org.recap.model.camel.EmailPayLoad;
@@ -64,17 +65,17 @@ public class UpdateCgdUtil {
      * @param cgdChangeNotes                the cgd change notes
      * @return the string
      */
-    public String updateCGDForItem(String itemBarcode, String owningInstitution, String oldCollectionGroupDesignation, String newCollectionGroupDesignation, String cgdChangeNotes) {
-        String username = RecapConstants.GUEST;
+    public String updateCGDForItem(String itemBarcode, String owningInstitution, String oldCollectionGroupDesignation, String newCollectionGroupDesignation, String cgdChangeNotes, String username) {
+        String userName = StringUtils.isBlank(username) ? RecapConstants.GUEST : username;
         List<ItemEntity> itemEntities = new ArrayList<>();
         Date lastUpdatedDate = new Date();
         String cgdChangeLog = oldCollectionGroupDesignation + RecapConstants.TO + newCollectionGroupDesignation;
         try {
-            updateCGDForItemInDB(itemBarcode, newCollectionGroupDesignation, username, lastUpdatedDate);
+            updateCGDForItemInDB(itemBarcode, newCollectionGroupDesignation, userName, lastUpdatedDate);
             itemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
             setCGDChangeLogToItemEntity(cgdChangeLog,itemEntities);
             updateCGDForItemInSolr(itemEntities);
-            saveItemChangeLogEntity(itemEntities, username, lastUpdatedDate, RecapConstants.UPDATE_CGD, cgdChangeNotes);
+            saveItemChangeLogEntity(itemEntities, userName, lastUpdatedDate, RecapConstants.UPDATE_CGD, cgdChangeNotes);
             sendEmail(itemBarcode, owningInstitution, oldCollectionGroupDesignation, newCollectionGroupDesignation, cgdChangeNotes);
             return RecapConstants.SUCCESS;
         } catch (Exception e) {

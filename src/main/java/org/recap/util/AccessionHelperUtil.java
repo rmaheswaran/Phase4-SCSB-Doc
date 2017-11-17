@@ -404,11 +404,19 @@ public class AccessionHelperUtil {
                 UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(scsbUrl + RecapConstants.SERVICE_PATH.REFILE_ITEM_IN_ILS);
                 builder.queryParam(RecapConstants.ITEMBARCODE, itemBarcode);
                 builder.queryParam(RecapConstants.OWNING_INST, owningInstitutionId);
+                StopWatch stopWatch = new StopWatch();
+                stopWatch.start();
                 ResponseEntity<ItemRefileResponse> responseEntity = restTemplate.exchange(builder.build().encode().toUri(), HttpMethod.POST, request, ItemRefileResponse.class);
+                stopWatch.stop();
+                logger.info("Time taken to refile item barcode {} in NYPL : {}", itemBarcode, stopWatch.getTotalTimeSeconds());
                 logger.info("Refile response for item barcode {} : {}", itemBarcode, null != responseEntity.getBody() ? responseEntity.getBody().getScreenMessage() : null);
             } else {
                 HttpEntity request = new HttpEntity<>(itemRequestInfo, getHttpHeadersAuth());
+                StopWatch stopWatch = new StopWatch();
+                stopWatch.start();
                 ResponseEntity<ItemCheckinResponse> responseEntity = restTemplate.exchange(scsbUrl + RecapConstants.SERVICE_PATH.CHECKIN_ITEM, HttpMethod.POST, request, ItemCheckinResponse.class);
+                stopWatch.stop();
+                logger.info("Time taken to checkin item barcode {} in {} : {}", itemBarcode, owningInstitutionId, stopWatch.getTotalTimeSeconds());
                 logger.info("Checkin response for item barcode {} : {}", itemBarcode, null != responseEntity.getBody() ? responseEntity.getBody().getScreenMessage() : null);
             }
         } catch (RestClientException ex) {

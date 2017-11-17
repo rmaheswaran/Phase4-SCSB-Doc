@@ -12,11 +12,16 @@ jQuery(document).ready(function ($) {
     $("#partialIndex-form").submit(function (event) {
         event.preventDefault();
         partialIndex();
-    })
+    });
 
     $("#reports-form").submit(function (event) {
         event.preventDefault();
         generateReport();
+    });
+
+    $("#requestResubmit-form").submit(function (event) {
+        event.preventDefault();
+        resubmitRequests();
     });
 
     $('#dateFrom').datetimepicker({
@@ -44,6 +49,14 @@ jQuery(document).ready(function ($) {
     });
 
     $('#partialIndexToDate').datetimepicker({
+        format: "dd-mm-yyyy hh:ii"
+    });
+
+    $('#RequestFromDate').datetimepicker({
+        format: "dd-mm-yyyy hh:ii"
+    });
+
+    $('#RequetToDate').datetimepicker({
         format: "dd-mm-yyyy hh:ii"
     });
 
@@ -189,6 +202,20 @@ function generateReport() {
     }
 }
 
+function resubmitRequests() {
+    var $form = $('#requestResubmit-form');
+    $("#requestSubmit").attr('disabled', 'disabled');
+    $.ajax({
+        url: $form.attr('action'),
+        type: 'post',
+        data: $form.serialize(),
+        success: function (response) {
+            $("#requestSubmit").removeAttr('disabled');
+            document.getElementById("resubmitRequestStatus").value = response;
+        }
+    });
+}
+
 function showDateField() {
     var criteria = $('#matchingCriteria').val();
     if(criteria === 'UpdateCGDInSolr' || criteria === 'ALL') {
@@ -214,4 +241,32 @@ function showBibIdDateRange(){
     $("#BibIdListView").hide();
     $("#BibIdRangeView").hide();
     $("#DateRangeView").show();
+}
+
+function showRequest() {
+    if ($('#RequestStatus').is(':checked')){
+        $("#RequestStatusView").show();
+        $("#requestSubmitBtnDiv").show();
+        $("#RequestIdListView").hide();
+        $("#RequestIdRangeView").hide();
+        $("#RequestDateRangeView").hide();
+    }if ($('#RequestId').is(':checked')){
+        $("#RequestStatusView").hide();
+        $("#RequestIdListView").show();
+        $("#requestSubmitBtnDiv").show();
+        $("#RequestIdRangeView").hide();
+        $("#RequestDateRangeView").hide();
+    }if ($('#RequestIdRange').is(':checked')){
+        $("#RequestStatusView").hide();
+        $("#RequestIdListView").hide();
+        $("#RequestIdRangeView").show();
+        $("#requestSubmitBtnDiv").show();
+        $("#RequestDateRangeView").hide();
+    }if ($('#RequestDateRange').is(':checked')){
+        $("#RequestStatusView").hide();
+        $("#RequestIdListView").hide();
+        $("#RequestIdRangeView").hide();
+        $("#RequestDateRangeView").show();
+        $("#requestSubmitBtnDiv").show();
+    }
 }
