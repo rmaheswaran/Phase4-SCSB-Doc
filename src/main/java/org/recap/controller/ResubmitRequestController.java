@@ -68,6 +68,7 @@ public class ResubmitRequestController {
             logger.error(RecapConstants.LOG_ERROR, exception);
             responseMessage = RecapConstants.FAILURE + ":" + exception.getMessage();
         }
+        logger.info("Resubmit requests status : {}", responseMessage);
         return responseMessage;
     }
 
