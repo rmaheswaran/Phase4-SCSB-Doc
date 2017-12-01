@@ -251,19 +251,19 @@ function showRequest() {
         $("#RequestIdRangeView").hide();
         $("#RequestDateRangeView").hide();
     }if ($('#RequestId').is(':checked')){
-        $("#RequestStatusView").hide();
+        $("#RequestStatusView").show();
         $("#RequestIdListView").show();
         $("#requestSubmitBtnDiv").show();
         $("#RequestIdRangeView").hide();
         $("#RequestDateRangeView").hide();
     }if ($('#RequestIdRange').is(':checked')){
-        $("#RequestStatusView").hide();
+        $("#RequestStatusView").show();
         $("#RequestIdListView").hide();
         $("#RequestIdRangeView").show();
         $("#requestSubmitBtnDiv").show();
         $("#RequestDateRangeView").hide();
     }if ($('#RequestDateRange').is(':checked')){
-        $("#RequestStatusView").hide();
+        $("#RequestStatusView").show();
         $("#RequestIdListView").hide();
         $("#RequestIdRangeView").hide();
         $("#RequestDateRangeView").show();
