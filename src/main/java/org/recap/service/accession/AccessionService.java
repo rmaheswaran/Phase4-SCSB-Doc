@@ -676,32 +676,32 @@ public class AccessionService {
     @Transactional
     private synchronized String updateData(Object record, String owningInstitution, List<Map<String, String>> responseMapList, AccessionRequest accessionRequest, boolean isValidBoundWithRecord,boolean isFirstRecord){
         String response = null;
-        String incompleteResponse = new String();
         XmlToBibEntityConverterInterface xmlToBibEntityConverterInterface = getConverter(owningInstitution);
         if (null != xmlToBibEntityConverterInterface) {
             Map responseMap = xmlToBibEntityConverterInterface.convert(record, owningInstitution,accessionRequest);
             responseMapList.add(responseMap);
+            StringBuilder errorMessage = (StringBuilder)responseMap.get("errorMessage");
             BibliographicEntity bibliographicEntity = (BibliographicEntity) responseMap.get(RecapConstants.BIBLIOGRAPHICENTITY);
-            List<ReportEntity> reportEntityList = (List<ReportEntity>) responseMap.get(RecapConstants.REPORTENTITIES);
-            incompleteResponse = (String) responseMap.get(RecapConstants.INCOMPLETE_RESPONSE);
-            if (CollectionUtils.isNotEmpty(reportEntityList)) {
-                reportDetailRepository.save(reportEntityList);
-            }
-            if (bibliographicEntity != null) {
-                StringBuilder errorMessage = new StringBuilder();
-                boolean isValidItemAndHolding = accessionValidationService.validateItemAndHolding(bibliographicEntity,isValidBoundWithRecord,isFirstRecord,errorMessage);
-                if (isValidItemAndHolding) {
-                    BibliographicEntity savedBibliographicEntity = updateBibliographicEntity(bibliographicEntity);
-                    if (null != savedBibliographicEntity) {
-                        response = indexBibliographicRecord(savedBibliographicEntity.getBibliographicId());
+            String incompleteResponse = (String) responseMap.get(RecapConstants.INCOMPLETE_RESPONSE);
+            if (errorMessage != null && errorMessage.length()==0) {//Valid bibliographic entity is returned for further processing
+                if (bibliographicEntity != null) {
+                    boolean isValidItemAndHolding = accessionValidationService.validateItemAndHolding(bibliographicEntity,isValidBoundWithRecord,isFirstRecord,errorMessage);
+                    if (isValidItemAndHolding) {
+                        BibliographicEntity savedBibliographicEntity = updateBibliographicEntity(bibliographicEntity);
+                        if (null != savedBibliographicEntity) {
+                            response = indexBibliographicRecord(savedBibliographicEntity.getBibliographicId());
+                        }
+                    } else {
+                        response = errorMessage.toString();
                     }
-                } else {
-                    response = errorMessage.toString();
                 }
+                if (StringUtils.isNotEmpty(response) && StringUtils.isNotEmpty(incompleteResponse) && RecapConstants.SUCCESS.equalsIgnoreCase(response)){
+                    return RecapConstants.SUCCESS_INCOMPLETE_RECORD;
+                }
+            } else{
+                return RecapConstants.FAILED+RecapConstants.HYPHEN+errorMessage.toString();
             }
-        }
-        if (StringUtils.isNotEmpty(response) && StringUtils.isNotEmpty(incompleteResponse) && RecapConstants.SUCCESS.equalsIgnoreCase(response)){
-            return RecapConstants.SUCCESS_INCOMPLETE_RECORD;
+
         }
         return response;
     }
