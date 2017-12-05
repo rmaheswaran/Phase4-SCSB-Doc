@@ -391,6 +391,7 @@ public final class RecapConstants {
     public static final String HYPHEN = " - ";
     public static final String ITEM_ALREADY_ACCESSIONED = "Item already accessioned - Existing item details : ";
     public static final String INVALID_BOUNDWITH_RECORD = "Bound-with item having invalid data";
+    public static final String FAILED = "Failed";
 
     public static final String STATUS_DONE="Status  : Done";
     public static final String TOTAL_TIME_TAKEN="Total Time Taken ";
