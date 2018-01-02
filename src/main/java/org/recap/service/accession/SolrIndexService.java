@@ -165,4 +165,16 @@ public class SolrIndexService {
         solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue,1);
         solrTemplate.commit();
     }
+
+    /**
+     * This method is used to delete by query in solr.
+     *
+     * @param query
+     * @throws IOException
+     * @throws SolrServerException
+     */
+    public void deleteBySolrQuery(String query) throws IOException, SolrServerException {
+        solrTemplate.getSolrClient().deleteByQuery(query,1);
+        solrTemplate.commit();
+    }
 }

@@ -208,6 +208,7 @@ public class SolrIndexController {
 
     /**
      * This method is used to delete records by bib,holding and item id.
+     * Root value is passed to delete the associated holdings and item for that bib.
      *
      * @param idMapToRemoveIndexList the id list of map to remove index
      * @return the string
@@ -225,11 +226,20 @@ public class SolrIndexController {
             String bibliographicId = idMapToRemoveIndex.get("BibId");
             String holdingId = idMapToRemoveIndex.get("HoldingId");
             String itemId = idMapToRemoveIndex.get("ItemId");
-            logger.info("deleting dummy record from solr bib id - {}, holding id - {}, item id {}",bibliographicId,holdingId,itemId);
+            String root = idMapToRemoveIndex.get("_root_");
+            // Scenario : Bound-with - when a bib is unlinked to an item, the relationship between the bib and its holdings and item should be removed from solr.
+            // Root value is used to delete the associated holdings and item for that bib.
             try {
-                getSolrIndexService().deleteByDocId(RecapConstants.BIB_ID,bibliographicId);
-                getSolrIndexService().deleteByDocId(RecapConstants.HOLDING_ID,holdingId);
-                getSolrIndexService().deleteByDocId(RecapConstants.ITEM_ID,itemId);
+                if (StringUtils.isNotBlank(root)) {
+                    logger.info("deleting unlinked holding and item record from solr holding id - {}, item id - {}, root - {}",bibliographicId,holdingId,itemId,root);
+                    getSolrIndexService().deleteBySolrQuery(RecapConstants.HOLDING_ID + ":" + holdingId + " AND " + RecapConstants.ROOT + ":" + root);
+                    getSolrIndexService().deleteBySolrQuery(RecapConstants.ITEM_ID + ":" + itemId + " AND " + RecapConstants.ROOT + ":" + root);
+                } else {
+                    logger.info("deleting dummy record from solr bib id - {}, holding id - {}, item id - {}",bibliographicId,holdingId,itemId);
+                    getSolrIndexService().deleteByDocId(RecapConstants.BIB_ID, bibliographicId);
+                    getSolrIndexService().deleteByDocId(RecapConstants.HOLDING_ID, holdingId);
+                    getSolrIndexService().deleteByDocId(RecapConstants.ITEM_ID, itemId);
+                }
                 response = RecapConstants.SUCCESS;
             } catch (Exception e) {
                 response = RecapConstants.FAILURE;
