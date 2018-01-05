@@ -232,8 +232,8 @@ public class SolrIndexController {
             try {
                 if (StringUtils.isNotBlank(root)) {
                     logger.info("deleting unlinked holding and item record from solr holding id - {}, item id - {}, root - {}",bibliographicId,holdingId,itemId,root);
-                    getSolrIndexService().deleteBySolrQuery(RecapConstants.HOLDING_ID + ":" + holdingId + " AND " + RecapConstants.ROOT + ":" + root);
-                    getSolrIndexService().deleteBySolrQuery(RecapConstants.ITEM_ID + ":" + itemId + " AND " + RecapConstants.ROOT + ":" + root);
+                    getSolrIndexService().deleteBySolrQuery(RecapConstants.HOLDING_ID + ":" + holdingId + " " + RecapConstants.AND + " " + RecapConstants.ROOT + ":" + root);
+                    getSolrIndexService().deleteBySolrQuery(RecapConstants.ITEM_ID + ":" + itemId + " " + RecapConstants.AND + " " + RecapConstants.ROOT + ":" + root);
                 } else {
                     logger.info("deleting dummy record from solr bib id - {}, holding id - {}, item id - {}",bibliographicId,holdingId,itemId);
                     getSolrIndexService().deleteByDocId(RecapConstants.BIB_ID, bibliographicId);
@@ -250,6 +250,40 @@ public class SolrIndexController {
         }
         stopWatch.stop();
         logger.info("Total time to delete dummy record from solr--->{} milli sec",stopWatch.getTotalTimeMillis());
+        return response;
+    }
+
+    /**
+     * This method is used to delete records by bib id and is deleted flag.
+     *
+     * @param bibIdMapToRemoveIndexList
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/solrIndexer/deleteByBibIdAndIsDeletedFlag", method = RequestMethod.POST)
+    public String deleteByBibIdAndIsDeletedFlag(@RequestBody List<Map<String,String>> bibIdMapToRemoveIndexList) {
+        String response = null;
+        logger.info("bibIdMapToRemoveIndexList size--->{}",bibIdMapToRemoveIndexList.size());
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        for (Map<String,String> bibIdMapToRemoveIndex : bibIdMapToRemoveIndexList) {
+            StopWatch stopWatchDeleteRec = new StopWatch();
+            stopWatchDeleteRec.start();
+            String bibliographicId = bibIdMapToRemoveIndex.get(RecapConstants.BIB_ID);
+            String isDeletedBib = bibIdMapToRemoveIndex.get(RecapConstants.IS_DELETED_BIB);
+            try {
+                logger.info("deleting linked existing bib record from solr bib id - {}, is Deleted Bib - {}", bibliographicId, isDeletedBib);
+                getSolrIndexService().deleteBySolrQuery(RecapConstants.BIB_ID + ":" + bibliographicId + " " + RecapConstants.AND + " " + RecapConstants.IS_DELETED_BIB + ":" + isDeletedBib);
+                response = RecapConstants.SUCCESS;
+            } catch (Exception e) {
+                response = RecapConstants.FAILURE;
+                logger.error(RecapConstants.LOG_ERROR, e);
+            }
+            stopWatchDeleteRec.stop();
+            logger.info("Time taken to delete  bib id - {} --> is {} milli sec", bibliographicId, stopWatchDeleteRec.getTotalTimeMillis());
+        }
+        stopWatch.stop();
+        logger.info("Total time to delete bib record from solr--->{} milli sec", stopWatch.getTotalTimeMillis());
         return response;
     }
 
