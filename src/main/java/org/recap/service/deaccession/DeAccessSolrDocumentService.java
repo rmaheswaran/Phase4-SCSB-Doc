@@ -96,7 +96,6 @@ public class DeAccessSolrDocumentService {
             for(Integer bibId : bibIds){
                 BibliographicEntity bibEntity = getBibliographicDetailsRepository().findByBibliographicId(bibId);
                 SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
-                bibSolrInputDocument.setField(RecapConstants.IS_DELETED_BIB,true);
                 StopWatch stopWatchIndexDocument = new StopWatch();
                 stopWatchIndexDocument.start();
                 getSolrTemplate().saveDocument(bibSolrInputDocument,1);
@@ -123,11 +122,6 @@ public class DeAccessSolrDocumentService {
                 if(holdingsEntity != null && CollectionUtils.isNotEmpty(holdingsEntity.getBibliographicEntities())) {
                     for(BibliographicEntity bibliographicEntity : holdingsEntity.getBibliographicEntities()) {
                         SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
-                        for (SolrInputDocument holdingsSolrInputDocument : bibSolrInputDocument.getChildDocuments()) {
-                            if (holdingsId.equals(holdingsSolrInputDocument.get(RecapConstants.HOLDING_ID).getValue())) {
-                                holdingsSolrInputDocument.setField(RecapConstants.IS_DELETED_HOLDINGS, true);
-                            }
-                        }
                         StopWatch stopWatchIndexDocument = new StopWatch();
                         stopWatchIndexDocument.start();
                         getSolrTemplate().saveDocument(bibSolrInputDocument,1);
@@ -156,13 +150,6 @@ public class DeAccessSolrDocumentService {
                 if(itemEntity != null && CollectionUtils.isNotEmpty(itemEntity.getBibliographicEntities())) {
                     for(BibliographicEntity bibliographicEntity : itemEntity.getBibliographicEntities()) {
                         SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
-                        for (SolrInputDocument holdingsSolrInputDocument : bibSolrInputDocument.getChildDocuments()) {
-                            for (SolrInputDocument itemSolrInputDocument : holdingsSolrInputDocument.getChildDocuments()) {
-                                if (itemId.equals(itemSolrInputDocument.get(RecapConstants.ITEM_ID).getValue())) {
-                                    itemSolrInputDocument.setField(RecapConstants.IS_DELETED_ITEM,true);
-                                }
-                            }
-                        }
                         StopWatch stopWatchIndexDocument = new StopWatch();
                         stopWatchIndexDocument.start();
                         getSolrTemplate().saveDocument(bibSolrInputDocument,1);
