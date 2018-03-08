@@ -36,18 +36,6 @@ public class ItemChangeLogDetailsRepositoryUT extends BaseTestCase {
     }
 
     @Test
-    public void checkfindByRecordId() throws Exception{
-        ItemChangeLogEntity itemChangeLogEntity = saveDeaccessionNotes();
-        List<ItemChangeLogEntity> byRecordId = itemChangeLogDetailsRepository.findByRecordIdAndOperationTypeAndOrderByUpdatedDateDesc(itemChangeLogEntity.getRecordId(),"Deaccession");
-        assertNotNull(byRecordId);
-        for (ItemChangeLogEntity changeLogEntity : byRecordId) {
-            if (itemChangeLogEntity.getOperationType().equalsIgnoreCase("Deaccession")){
-                assertEquals("testing",changeLogEntity.getNotes());
-            }
-        }
-    }
-
-    @Test
     public void getRecordIdByOperationType() throws Exception {
         ItemChangeLogEntity itemChangeLogEntity = saveDeaccessionNotes();
         Page<Integer> recordIdByOperationType = itemChangeLogDetailsRepository.getRecordIdByOperationType(new PageRequest(0,10), itemChangeLogEntity.getOperationType());
