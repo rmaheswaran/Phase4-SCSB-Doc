@@ -14,7 +14,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.recap.RecapConstants;
 import org.recap.model.IncompleteReportBibDetails;
-import org.recap.model.jpa.ItemChangeLogEntity;
+import org.recap.model.jpa.DeaccessionItemChangeLog;
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.DeaccessionItemResultsRow;
@@ -22,9 +22,8 @@ import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.resolver.ItemValueResolver;
 import org.recap.model.search.resolver.impl.item.*;
 import org.recap.model.solr.Item;
-import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
+import org.recap.repository.jpa.DeaccesionItemChangeLogDetailsRepository;
 import org.recap.repository.solr.impl.BibSolrDocumentRepositoryImpl;
-import org.recap.repository.solr.main.BibSolrCrudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
@@ -48,10 +47,7 @@ public class ReportsServiceUtil {
     private SolrQueryBuilder solrQueryBuilder;
 
     @Autowired
-    private BibSolrCrudRepository bibSolrCrudRepository;
-
-    @Autowired
-    private ItemChangeLogDetailsRepository itemChangeLogDetailsRepository;
+    private DeaccesionItemChangeLogDetailsRepository deaccesionItemChangeLogDetailsRepository;
 
     private List<ItemValueResolver> itemValueResolvers;
 
@@ -201,9 +197,9 @@ public class ReportsServiceUtil {
             deaccessionItemResultsRow.setDeaccessionDate(deaccessionDate);
             deaccessionItemResultsRow.setDeaccessionOwnInst(item.getOwningInstitution());
             deaccessionItemResultsRow.setItemBarcode(item.getBarcode());
-            List<ItemChangeLogEntity> itemChangeLogEntityList = itemChangeLogDetailsRepository.findByRecordIdAndOperationTypeAndOrderByUpdatedDateDesc(item.getItemId(), RecapConstants.REPORTS_DEACCESSION);
+            List<DeaccessionItemChangeLog> itemChangeLogEntityList = deaccesionItemChangeLogDetailsRepository.findByRecordIdAndOperationTypeAndOrderByUpdatedDateDesc(item.getItemId(), RecapConstants.REPORTS_DEACCESSION);
             if (CollectionUtils.isNotEmpty(itemChangeLogEntityList)) {
-                ItemChangeLogEntity itemChangeLogEntity = itemChangeLogEntityList.get(0);
+                DeaccessionItemChangeLog itemChangeLogEntity = itemChangeLogEntityList.get(0);
                 deaccessionItemResultsRow.setDeaccessionNotes(itemChangeLogEntity.getNotes());
             }
             deaccessionItemResultsRow.setDeaccessionCreatedBy(item.getItemLastUpdatedBy());
