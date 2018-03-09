@@ -15,16 +15,6 @@ import java.util.List;
 public interface ItemChangeLogDetailsRepository extends JpaRepository<ItemChangeLogEntity, Integer> {
 
     /**
-     * Finds ItemChangeLogEntity by using record id and operation type,orders them by updated date description.
-     *
-     * @param recordId      the record id
-     * @param operationType the operation type
-     * @return the list
-     */
-    @Query(value = "select item from ItemChangeLogEntity item where item.recordId=:recordId and item.operationType=:operationType order by item.updatedDate desc")
-     List<ItemChangeLogEntity> findByRecordIdAndOperationTypeAndOrderByUpdatedDateDesc(@Param("recordId") Integer recordId, @Param("operationType") String operationType);
-
-    /**
      * Gets record ids based on the operation type .
      *
      * @param pageable      the pageable
