@@ -224,7 +224,7 @@ public class MatchingAlgorithmUtil {
                 bibIds.add(bibId);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(RecapConstants.LOG_ERROR,e);
         }
         return bibIds;
     }
