@@ -99,7 +99,7 @@ public class BulkAccessionService extends AccessionService{
                     }
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error(RecapConstants.LOG_ERROR,e);
                 }
             }
 
@@ -116,11 +116,12 @@ public class BulkAccessionService extends AccessionService{
                     Object o = submit.get();
                     prepareSummary(accessionSummary, o);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error(RecapConstants.LOG_ERROR,e);
                     accessionSummary.addException(1);
                 }
             }
         }
+        executorService.shutdown();
         stopWatch.stop();
         logger.info("Total time taken to accession for all barcode -> {} sec",stopWatch.getTotalTimeSeconds());
         return null;

@@ -2,7 +2,6 @@ package org.recap.service.accession.resolver;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.marc4j.marc.Record;
 import org.recap.RecapConstants;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.accession.AccessionResponse;
@@ -13,9 +12,10 @@ import org.recap.model.jaxb.marc.ContentType;
 import org.recap.model.jaxb.marc.RecordType;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.marc.BibMarcRecord;
 import org.recap.service.accession.BulkAccessionService;
 import org.recap.service.partnerservice.NYPLService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +30,8 @@ import java.util.Set;
  */
 @Service
 public class NYPLBibDataResolver extends BibDataResolver {
+
+    private static final Logger logger = LoggerFactory.getLogger(NYPLBibDataResolver.class);
 
     @Autowired
     private NYPLService nyplService;
@@ -54,7 +56,7 @@ public class NYPLBibDataResolver extends BibDataResolver {
         try {
             bibRecords = (BibRecords) JAXBHandler.getInstance().unmarshal(bibDataResponse, BibRecords.class);
         } catch (JAXBException e) {
-            e.printStackTrace();
+            logger.error(RecapConstants.LOG_ERROR,e);
         }
         return bibRecords;
     }

@@ -113,7 +113,7 @@ public class TransferService {
 
                         transferValidationResponse.setMessage(RecapConstants.TRANSFER.SUCCESSFULLY_RELINKED);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        logger.error(RecapConstants.LOG_ERROR,e);
                         transferValidationResponse.setMessage(RecapConstants.TRANSFER.RELINKED_FAILED);
                     }
                 }
@@ -325,7 +325,7 @@ public class TransferService {
 
                         transferValidationResponse.setMessage(RecapConstants.TRANSFER.SUCCESSFULLY_RELINKED);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        logger.error(RecapConstants.LOG_ERROR,e);
                         transferValidationResponse.setMessage(RecapConstants.TRANSFER.RELINKED_FAILED);
                     }
 
@@ -378,11 +378,12 @@ public class TransferService {
                     for (Iterator<Integer> stringIterator = ids.iterator(); stringIterator.hasNext(); ) {
                         Integer id = stringIterator.next();
                         try {
+                            logger.info("deleting {} from solr for relink, {} - {}, ",docId,docId,id);
                             solrIndexService.deleteByDocId(docId, String.valueOf(id));
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            logger.error(RecapConstants.LOG_ERROR,e);
                         } catch (SolrServerException e) {
-                            e.printStackTrace();
+                            logger.error(RecapConstants.LOG_ERROR,e);
                         }
                     }
                 }
@@ -401,7 +402,7 @@ public class TransferService {
                         try {
                             solrIndexService.indexByBibliographicId(id);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            logger.error(RecapConstants.LOG_ERROR,e);
                         }
                     }
                 }
