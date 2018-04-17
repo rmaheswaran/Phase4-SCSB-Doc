@@ -9,6 +9,8 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,8 @@ import java.util.List;
  */
 @Service
 public class HelperUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(HelperUtil.class);
 
     @Autowired
     private ProducerTemplate producerTemplate;
@@ -76,7 +80,7 @@ public class HelperUtil {
         try {
             return getObjectMapper().writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error(RecapConstants.LOG_ERROR,e);
             return e.getMessage();
         }
     }

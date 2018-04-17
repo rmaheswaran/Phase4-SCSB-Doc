@@ -231,7 +231,7 @@ public class SolrIndexController {
             // Root value is used to delete the associated holdings and item for that bib.
             try {
                 if (StringUtils.isNotBlank(root)) {
-                    logger.info("deleting unlinked holding and item record from solr holding id - {}, item id - {}, root - {}",bibliographicId,holdingId,itemId,root);
+                    logger.info("deleting unlinked holding and item record from solr holding id - {}, item id - {}, root - {}",holdingId,itemId,root);
                     getSolrIndexService().deleteBySolrQuery(RecapConstants.HOLDING_ID + ":" + holdingId + " " + RecapConstants.AND + " " + RecapConstants.ROOT + ":" + root);
                     getSolrIndexService().deleteBySolrQuery(RecapConstants.ITEM_ID + ":" + itemId + " " + RecapConstants.AND + " " + RecapConstants.ROOT + ":" + root);
                 } else {
