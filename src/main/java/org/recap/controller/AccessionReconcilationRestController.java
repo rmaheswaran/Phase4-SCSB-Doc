@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by akulak on 16/5/17.
@@ -30,38 +29,39 @@ public class AccessionReconcilationRestController {
     private SolrTemplate solrTemplate;
 
     /**
-     * This method is used to start accession reconcilation to find the missing barcodes in scsb.
      *
-     * @param barcodes the barcodes
-     * @return the set
-     * @throws IOException         the io exception
-     * @throws SolrServerException the solr server exception
+     * @param barcodesAndCustomerCodes
+     * @return
+     * @throws IOException
+     * @throws SolrServerException
      */
     @RequestMapping(method = RequestMethod.POST,value = "/startAccessionReconcilation")
-    public Set<String> startAccessionReconcilation(@RequestBody String barcodes) throws IOException, SolrServerException {
-        Set<String> missingBarcodes = new HashSet<>();
+    public Map<String,String> startAccessionReconcilation(@RequestBody Map<String,String> barcodesAndCustomerCodes) throws IOException, SolrServerException {
         SolrClient solrClient = solrTemplate.getSolrClient();
-        String[] splittedBarcodes = barcodes.trim().split(",");
+        Set<String> barcodes = barcodesAndCustomerCodes.keySet();
+        List<String> barcodesList= new ArrayList<>(barcodes);
+        String splittedBarcodes = barcodesList.stream().map(String::trim).collect(Collectors.joining(","));
         Set<String> lasBarcodes = new HashSet<>(Arrays.asList(splittedBarcodes));
-        SolrQuery solrQuery = getSolrQuery(barcodes, splittedBarcodes.length);
+        SolrQuery solrQuery = getSolrQuery(splittedBarcodes, splittedBarcodes.length());
         QueryResponse queryResponse = solrClient.query(solrQuery, SolrRequest.METHOD.POST);
         if (lasBarcodes.size() != queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getCountDistinct()){
-            missingBarcodes = getDifference(lasBarcodes, queryResponse);
+            getDifference(lasBarcodes, queryResponse,barcodesAndCustomerCodes);
         }
-        return missingBarcodes;
+        return barcodesAndCustomerCodes;
     }
 
     /**
-     * This method is used to find the missing barcodes in scsb.
      *
      * @param lasBarcodes
      * @param queryResponse
+     * @param barcodesAndCustomerCodes
      * @return
      */
-    private Set<String> getDifference(Set<String> lasBarcodes, QueryResponse queryResponse) {
-        Set<String> temp = new HashSet<>(lasBarcodes);
-        temp.removeAll(queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getDistinctValues());
-        return temp;
+    private Map<String, String> getDifference(Set<String> lasBarcodes, QueryResponse queryResponse, Map<String, String> barcodesAndCustomerCodes) {
+        for (Object barcode : queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getDistinctValues()) {
+            barcodesAndCustomerCodes.entrySet().removeIf(p -> p.getKey().contains(barcode.toString()));
+        }
+        return barcodesAndCustomerCodes;
     }
 
     /**
