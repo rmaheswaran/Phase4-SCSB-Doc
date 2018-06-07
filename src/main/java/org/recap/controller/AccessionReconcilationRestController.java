@@ -29,7 +29,7 @@ public class AccessionReconcilationRestController {
     private SolrTemplate solrTemplate;
 
     /**
-     *
+     *This method is used to start accession reconcilation to find the missing barcodes in scsb.
      * @param barcodesAndCustomerCodes
      * @return
      * @throws IOException
@@ -39,25 +39,19 @@ public class AccessionReconcilationRestController {
     public Map<String,String> startAccessionReconcilation(@RequestBody Map<String,String> barcodesAndCustomerCodes) throws IOException, SolrServerException {
         SolrClient solrClient = solrTemplate.getSolrClient();
         Set<String> barcodes = barcodesAndCustomerCodes.keySet();
-        List<String> barcodesList= new ArrayList<>(barcodes);
-        String splittedBarcodes = barcodesList.stream().map(String::trim).collect(Collectors.joining(","));
-        Set<String> lasBarcodes = new HashSet<>(Arrays.asList(splittedBarcodes));
-        SolrQuery solrQuery = getSolrQuery(splittedBarcodes, splittedBarcodes.length());
+        String splittedBarcodes = barcodes.stream().map(String::trim).collect(Collectors.joining(","));
+        SolrQuery solrQuery = getSolrQuery(splittedBarcodes, barcodes.size());
         QueryResponse queryResponse = solrClient.query(solrQuery, SolrRequest.METHOD.POST);
-        if (lasBarcodes.size() != queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getCountDistinct()){
-            getDifference(lasBarcodes, queryResponse,barcodesAndCustomerCodes);
-        }
-        return barcodesAndCustomerCodes;
+        return getDifference(queryResponse,barcodesAndCustomerCodes);
     }
 
     /**
-     *
-     * @param lasBarcodes
+     * This method is used to find the missing barcodes in scsb.
      * @param queryResponse
      * @param barcodesAndCustomerCodes
      * @return
      */
-    private Map<String, String> getDifference(Set<String> lasBarcodes, QueryResponse queryResponse, Map<String, String> barcodesAndCustomerCodes) {
+    private Map<String, String> getDifference(QueryResponse queryResponse, Map<String, String> barcodesAndCustomerCodes) {
         for (Object barcode : queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getDistinctValues()) {
             barcodesAndCustomerCodes.entrySet().removeIf(p -> p.getKey().contains(barcode.toString()));
         }
