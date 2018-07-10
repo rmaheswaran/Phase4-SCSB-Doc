@@ -17,6 +17,7 @@ import org.recap.util.HelperUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,9 @@ public class TransferService {
 
     @Autowired
     HelperUtil helperUtil;
+
+    @Value("${transfer.api.nonholdingid.institution}")
+    private String nonHoldingIdInstitutionForTransferApi;
 
     public BibliographicDetailsRepository getBibliographicDetailsRepository() {
         return bibliographicDetailsRepository;
@@ -155,8 +159,18 @@ public class TransferService {
 
     private void validDestinationBibAndHoldingsAndItem(ItemDestination destination, Integer owningInstitutionId, TransferValidationResponse transferValidationResponse) {
         String owningInstitutionBibId = destination.getOwningInstitutionBibId();
+        String owningInstitutionHoldingsId;
+        InstitutionEntity fetchedInstitutionEntity = institutionDetailsRepository.findByInstitutionId(owningInstitutionId);
+        String[] nonHoldingIdInstitutionArray = nonHoldingIdInstitutionForTransferApi.split(",");
+        boolean isNonHoldingIdInstitution = Arrays.asList(nonHoldingIdInstitutionArray).contains(fetchedInstitutionEntity.getInstitutionCode());
         if(StringUtils.isNotBlank(owningInstitutionBibId)) {
-            String owningInstitutionHoldingsId = destination.getOwningInstitutionHoldingsId();
+            BibliographicEntity fetchedBibliographicEntity = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
+            if(fetchedBibliographicEntity==null && StringUtils.isBlank(destination.getOwningInstitutionHoldingsId()) && isNonHoldingIdInstitution){
+                owningInstitutionHoldingsId= UUID.randomUUID().toString();
+            }
+            else {
+                owningInstitutionHoldingsId = destination.getOwningInstitutionHoldingsId();
+            }
             if(StringUtils.isNotBlank(owningInstitutionHoldingsId)) {
                 String owningInstitutionItemId = destination.getOwningInstitutionItemId();
                 if(StringUtils.isNotBlank(owningInstitutionItemId)) {
