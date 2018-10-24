@@ -1,13 +1,14 @@
 package org.recap.service.accession;
 
 import org.marc4j.marc.Record;
+import org.recap.model.jaxb.Bib;
 import org.recap.model.jaxb.BibRecord;
 import org.recap.model.jaxb.Holding;
 import org.recap.model.jaxb.Holdings;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.*;
+import org.recap.repository.jpa.CustomerCodeDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.util.MarcUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,19 @@ public class AccessionValidationService {
     @Autowired
     private ItemDetailsRepository itemDetailsRepository;
 
+    @Autowired
+    private CustomerCodeDetailsRepository customerCodeDetailsRepository;
+
+    @Autowired
+    private InstitutionDetailsRepository institutionDetailsRepository;
+
     public boolean validateBoundWithMarcRecordFromIls(List<Record> records){
         List<String> holdingIdList = new ArrayList<>();
+        String holdingId=null;
+        String customerCode=null;
         for(Record record : records){
-            String holdingId = marcUtil.getDataFieldValue(record,"876","","","0");
+            holdingId = marcUtil.getDataFieldValue(record,"876","","","0");
+            customerCode = marcUtil.getDataFieldValue(record, "876",'z');
             if(holdingIdList.isEmpty()){
                 holdingIdList.add(holdingId);
             } else {
@@ -43,16 +53,26 @@ public class AccessionValidationService {
                 }
             }
         }
+        CustomerCodeEntity customerCodeEntity = customerCodeDetailsRepository.findByCustomerCode(customerCode);
+        Integer owningInstitutionId = customerCodeEntity.getOwningInstitutionId();
+        HoldingsEntity holdingsEntity = holdingsDetailsRepository.findByOwningInstitutionHoldingsIdAndOwningInstitutionId(holdingId, owningInstitutionId);
+        if(holdingsEntity!=null && holdingsEntity.getBibliographicEntities().size() >= 1) {
+            return false;
+        }
         return true;
     }
 
     public boolean validateBoundWithScsbRecordFromIls(List<BibRecord> bibRecordList){
         List<String> holdingIdList = new ArrayList<>();
+        String owningInstitutionHoldingId = null;
+        String owningInstitutionId = null;
         for(BibRecord bibRecord : bibRecordList){
+            Bib bib = bibRecord.getBib();
+            owningInstitutionId = bib.getOwningInstitutionId();
             List<Holdings> holdings = bibRecord.getHoldings();
             for(Holdings holdings1 : holdings) {
                 for (Holding holding : holdings1.getHolding()) {
-                    String owningInstitutionHoldingId = holding.getOwningInstitutionHoldingsId();
+                    owningInstitutionHoldingId = holding.getOwningInstitutionHoldingsId();
                     if(holdingIdList.isEmpty()){
                         holdingIdList.add(owningInstitutionHoldingId);
                     } else {
@@ -62,6 +82,11 @@ public class AccessionValidationService {
                     }
                 }
             }
+        }
+        InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(owningInstitutionId);
+        HoldingsEntity holdingsEntity = holdingsDetailsRepository.findByOwningInstitutionHoldingsIdAndOwningInstitutionId(owningInstitutionHoldingId,institutionEntity.getInstitutionId());
+        if(holdingsEntity!=null && holdingsEntity.getBibliographicEntities().size() >= 1) {
+            return false;
         }
         return true;
     }
