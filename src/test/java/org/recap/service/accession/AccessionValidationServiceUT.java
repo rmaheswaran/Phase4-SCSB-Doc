@@ -53,7 +53,10 @@ public class AccessionValidationServiceUT extends BaseTestCase{
         File bibContentFile = getXmlContent("ValidBoundWithMarc.xml");
         String marcXmlString = FileUtils.readFileToString(bibContentFile, "UTF-8");
         List<Record> records = readMarcXml(marcXmlString);
-        boolean isValidBoundWithRecord = accessionValidationService.validateBoundWithMarcRecordFromIls(records);
+        AccessionRequest accessionRequest=new AccessionRequest();
+        accessionRequest.setItemBarcode("CU24049476");
+        accessionRequest.setCustomerCode("PA");
+        boolean isValidBoundWithRecord = accessionValidationService.validateBoundWithMarcRecordFromIls(records,accessionRequest);
         assertEquals(true,isValidBoundWithRecord);
     }
 
@@ -62,7 +65,10 @@ public class AccessionValidationServiceUT extends BaseTestCase{
         File bibContentFile = getXmlContent("InvalidBoundWithMarc.xml");
         String marcXmlString = FileUtils.readFileToString(bibContentFile, "UTF-8");
         List<Record> records = readMarcXml(marcXmlString);
-        boolean isValidBoundWithRecord = accessionValidationService.validateBoundWithMarcRecordFromIls(records);
+        AccessionRequest accessionRequest=new AccessionRequest();
+        accessionRequest.setItemBarcode("32101075852200");
+        accessionRequest.setCustomerCode("PA");
+        boolean isValidBoundWithRecord = accessionValidationService.validateBoundWithMarcRecordFromIls(records,accessionRequest);
         assertEquals(false,isValidBoundWithRecord);
     }
 

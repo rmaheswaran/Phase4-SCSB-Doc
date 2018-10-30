@@ -466,7 +466,7 @@ public class AccessionService {
         boolean isBoundWithItem = isBoundWithItemForMarcRecord(records);
         boolean isValidBoundWithRecord = true;
         if(isBoundWithItem) {
-            isValidBoundWithRecord = accessionValidationService.validateBoundWithMarcRecordFromIls(records);
+            isValidBoundWithRecord = accessionValidationService.validateBoundWithMarcRecordFromIls(records,accessionRequest);
         }
         if ((!isBoundWithItem) || (isBoundWithItem && isValidBoundWithRecord)) {
             if (CollectionUtils.isNotEmpty(records)) {
