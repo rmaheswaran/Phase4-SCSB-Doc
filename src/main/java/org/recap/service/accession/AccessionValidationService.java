@@ -1,6 +1,7 @@
 package org.recap.service.accession;
 
 import org.marc4j.marc.Record;
+import org.recap.model.accession.AccessionRequest;
 import org.recap.model.jaxb.Bib;
 import org.recap.model.jaxb.BibRecord;
 import org.recap.model.jaxb.Holding;
@@ -38,13 +39,11 @@ public class AccessionValidationService {
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
 
-    public boolean validateBoundWithMarcRecordFromIls(List<Record> records){
+    public boolean validateBoundWithMarcRecordFromIls(List<Record> records,AccessionRequest accessionRequest){
         List<String> holdingIdList = new ArrayList<>();
         String holdingId=null;
-        String customerCode=null;
         for(Record record : records){
             holdingId = marcUtil.getDataFieldValue(record,"876","","","0");
-            customerCode = marcUtil.getDataFieldValue(record, "876",'z');
             if(holdingIdList.isEmpty()){
                 holdingIdList.add(holdingId);
             } else {
@@ -53,7 +52,7 @@ public class AccessionValidationService {
                 }
             }
         }
-        CustomerCodeEntity customerCodeEntity = customerCodeDetailsRepository.findByCustomerCode(customerCode);
+        CustomerCodeEntity customerCodeEntity = customerCodeDetailsRepository.findByCustomerCode(accessionRequest.getCustomerCode());
         Integer owningInstitutionId = customerCodeEntity.getOwningInstitutionId();
         HoldingsEntity holdingsEntity = holdingsDetailsRepository.findByOwningInstitutionHoldingsIdAndOwningInstitutionId(holdingId, owningInstitutionId);
         if(holdingsEntity!=null && holdingsEntity.getBibliographicEntities().size() >= 1) {
