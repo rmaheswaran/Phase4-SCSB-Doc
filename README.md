@@ -1,4 +1,4 @@
 # scsb-solr-client
 Solr Client for ReCAP Middleware
 
-[![HTC](https://github.com/premkumarbalu/images/blob/master/htc-global-services-squarelogo.png)](https://www.htcinc.com/)
+SCSB-SOLR-CLIENT is a microservice application that is mainly used for indexing data to the Solr-server. This application’s major functionalities are accession, matching-algorithm, transfer-API, deaccession services, and report generation.
