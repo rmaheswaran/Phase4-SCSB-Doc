@@ -52,9 +52,6 @@ public class RequestItemEntity implements Serializable {
     @Column(name = "NOTES")
     private String notes;
 
-    @Column(name = "IS_GFA_STATUS_SCH")
-    private boolean isGFAStatusSch;
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "REQUESTING_INST_ID", insertable = false, updatable = false)
     private InstitutionEntity institutionEntity;
@@ -357,13 +354,5 @@ public class RequestItemEntity implements Serializable {
      */
     public void setNotes(String notes) {
         this.notes = notes;
-    }
-
-    public boolean isGFAStatusSch() {
-        return isGFAStatusSch;
-    }
-
-    public void setGFAStatusSch(boolean GFAStatusSch) {
-        isGFAStatusSch = GFAStatusSch;
     }
 }
