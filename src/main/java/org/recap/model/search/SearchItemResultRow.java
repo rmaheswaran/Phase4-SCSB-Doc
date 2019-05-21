@@ -230,13 +230,7 @@ public class SearchItemResultRow implements Comparable<SearchItemResultRow> {
         this.owningInstitutionHoldingsId = owningInstitutionHoldingsId;
     }
 
-    @Override
-    public int compareTo(SearchItemResultRow searchItemResultRow) {
-        if (null != this.getChronologyAndEnum() && null != searchItemResultRow && null != searchItemResultRow.getChronologyAndEnum()) {
-            return this.getChronologyAndEnum().compareTo(searchItemResultRow.getChronologyAndEnum());
-        }
-        return 0;
-    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object)
@@ -254,4 +248,29 @@ public class SearchItemResultRow implements Comparable<SearchItemResultRow> {
     public int hashCode() {
         return chronologyAndEnum != null ? chronologyAndEnum.hashCode() : 0;
     }
+
+    @Override
+    public int compareTo(SearchItemResultRow searchItemResultRow) {
+        String objChronologyAndEnum=null;
+        String searchItemResultRowChronologyAndEnum=null;
+        if(this != null && this.getChronologyAndEnum() !=null){
+            objChronologyAndEnum=this.getChronologyAndEnum();
+        }
+        if(searchItemResultRow != null && searchItemResultRow.getChronologyAndEnum() !=null){
+            searchItemResultRowChronologyAndEnum=searchItemResultRow.getChronologyAndEnum();
+        }
+        if(objChronologyAndEnum == null && searchItemResultRowChronologyAndEnum == null){
+            return 0;
+        }
+        else if(objChronologyAndEnum == null){
+            return -1;
+        }
+        else if(searchItemResultRowChronologyAndEnum == null){
+            return 1;
+        }
+        else {
+            return objChronologyAndEnum.compareTo(searchItemResultRowChronologyAndEnum);
+        }
+    }
 }
+
