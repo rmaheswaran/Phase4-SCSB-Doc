@@ -461,6 +461,7 @@ public final class RecapConstants {
 
     public static final String BULK_ACCESSION_SUMMARY = "BULK_ACCESSION_SUMMARY";
     public static final String ACCESSION_SUMMARY = "ACCESSION_SUMMARY";
+    public static final String ACCESSION_JOB_FAILURE = "Exception occurred in accession job";
 
     public static class SERVICE_PATH {
         public static final String CHECKIN_ITEM = "requestItem/checkinItem";
@@ -534,6 +535,9 @@ public final class RecapConstants {
     public static final String TOTAL_REQUESTS_FOUND = "TotalRequestsFound";
     public static final String TOTAL_REQUESTS_IDS = "TotalRequestIds";
     public static final String INVALID_REQUEST = "InvalidRequest";
+
+    public static final String DIRECT_ROUTE_FOR_EXCEPTION = "direct:Exception";
+    public static final String ACCESSION__CAUGHT_EXCEPTION_METHOD = "caughtException";
 
     private RecapConstants(){}
 }

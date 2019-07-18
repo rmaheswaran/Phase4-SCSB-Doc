@@ -5,10 +5,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.recap.RecapConstants;
+import org.recap.camel.processor.AccessionJobProcessor;
 import org.recap.controller.SharedCollectionRestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,11 +28,15 @@ public class AccessionJobRouteBuilder {
      * @param sharedCollectionRestController the shared collection rest controller
      */
     @Autowired
-    public AccessionJobRouteBuilder(CamelContext camelContext, SharedCollectionRestController sharedCollectionRestController) {
+    public AccessionJobRouteBuilder(CamelContext camelContext, ApplicationContext applicationContext, SharedCollectionRestController sharedCollectionRestController) {
         try {
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
+                    onException(Exception.class)
+                            .log("Exception caught during ongoing Accession Job")
+                            .handled(true)
+                            .to(RecapConstants.DIRECT_ROUTE_FOR_EXCEPTION);
                     from(RecapConstants.ACCESSION_JOB_INITIATE_QUEUE)
                             .routeId(RecapConstants.ACCESSION_JOB_INITIATE_ROUTE_ID)
                             .process(new Processor() {
@@ -40,7 +46,8 @@ public class AccessionJobRouteBuilder {
                                     try {
                                         jobId = (String) exchange.getIn().getBody();
                                         logger.info("Accession Job initiated for Job Id : {}", jobId);
-                                        String accessionJobStatus = sharedCollectionRestController.ongoingAccessionJob();
+                                        String accessionJobStatus = sharedCollectionRestController.ongoingAccessionJob(exchange);
+
                                         logger.info("Job Id : {} Accession Job Status : {}", jobId, accessionJobStatus);
                                         exchange.getIn().setBody("JobId:" + jobId + "|" + accessionJobStatus);
                                     } catch (Exception ex) {
@@ -52,6 +59,15 @@ public class AccessionJobRouteBuilder {
                             .onCompletion()
                             .to(RecapConstants.ACCESSION_JOB_COMPLETION_OUTGOING_QUEUE)
                             .end();
+                }
+            });
+
+            camelContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from(RecapConstants.DIRECT_ROUTE_FOR_EXCEPTION)
+                            .log("Calling direct route for exception")
+                            .bean(applicationContext.getBean(AccessionJobProcessor.class), RecapConstants.ACCESSION__CAUGHT_EXCEPTION_METHOD);
                 }
             });
         } catch (Exception ex) {
