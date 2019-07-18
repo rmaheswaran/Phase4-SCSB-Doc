@@ -86,6 +86,14 @@ public class EmailRouteBuilder {
                                         .setHeader("to", simple("${header.emailPayLoad.to}"))
                                         .setHeader("cc", simple("${header.emailPayLoad.cc}"))
                                         .log("Email For Accession reports")
+                                        .to("smtps://" + smtpServer + "?username=" + username + "&password=" + emailPassword)
+                                    .when(header(RecapConstants.EMAIL_FOR).isEqualTo(RecapConstants.ACCESSION_JOB_FAILURE))
+                                        .setHeader("subject", simple(RecapConstants.ACCESSION_JOB_FAILURE))
+                                        .setBody(simple("${header.emailPayLoad.message}"))
+                                        .setHeader("from", simple(from))
+                                        .setHeader("to", simple("${header.emailPayLoad.to}"))
+                                        .setHeader("cc", simple("${header.emailPayLoad.cc}"))
+                                        .log("Email For Accession Job Failure")
                                         .to("smtps://" + smtpServer + "?username=" + username + "&password=" + emailPassword);
                 }
 
