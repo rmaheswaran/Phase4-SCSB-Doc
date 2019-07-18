@@ -1,8 +1,7 @@
 package org.recap.service.accession;
 
 import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.camel.Exchange;
 import org.recap.RecapConstants;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.accession.AccessionResponse;
@@ -20,7 +19,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -44,7 +46,7 @@ public class BulkAccessionService extends AccessionService{
     int batchAccessionThreadSize;
 
     @Override
-    public List<AccessionResponse> doAccession(List<AccessionRequest> accessionRequestList, AccessionSummary accessionSummary) {
+    public List<AccessionResponse> doAccession(List<AccessionRequest> accessionRequestList, AccessionSummary accessionSummary, Exchange exhange) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         int requestedCount = accessionRequestList.size();
@@ -59,70 +61,74 @@ public class BulkAccessionService extends AccessionService{
 
         List<List<AccessionRequest>> partitions = Lists.partition(trimmedAccessionRequests, batchAccessionThreadSize);
 
-        for (Iterator<List<AccessionRequest>> iterator = partitions.iterator(); iterator.hasNext(); ) {
-            List<AccessionRequest> accessionRequests = iterator.next();
-            List<Future> futures = new ArrayList<>();
-            List<AccessionRequest> failedRequests = new ArrayList<>();
-            for (Iterator<AccessionRequest> accessionRequestIterator = accessionRequests.iterator(); accessionRequestIterator.hasNext(); ) {
-                AccessionRequest accessionRequest = accessionRequestIterator.next();
-                logger.info("Processing accession for item barcode----->{}",accessionRequest.getItemBarcode());
-                // validate empty barcode ,customer code and owning institution
-                String itemBarcode = accessionRequest.getItemBarcode();
-                String customerCode = accessionRequest.getCustomerCode();
-                AccessionValidationResponse accessionValidationResponse = validateBarcodeOrCustomerCode(itemBarcode, customerCode);
 
-                String owningInstitution = accessionValidationResponse.getOwningInstitution();
+            for (Iterator<List<AccessionRequest>> iterator = partitions.iterator(); iterator.hasNext(); ) {
+                List<AccessionRequest> accessionRequests = iterator.next();
+                List<Future> futures = new ArrayList<>();
+                List<AccessionRequest> failedRequests = new ArrayList<>();
+                for (Iterator<AccessionRequest> accessionRequestIterator = accessionRequests.iterator(); accessionRequestIterator.hasNext(); ) {
+                    AccessionRequest accessionRequest = accessionRequestIterator.next();
+                    logger.info("Processing accession for item barcode----->{}", accessionRequest.getItemBarcode());
+                    // validate empty barcode ,customer code and owning institution
+                    String itemBarcode = accessionRequest.getItemBarcode();
+                    String customerCode = accessionRequest.getCustomerCode();
+                    AccessionValidationResponse accessionValidationResponse = validateBarcodeOrCustomerCode(itemBarcode, customerCode);
 
-                if(!accessionValidationResponse.isValid()) {
-                    String message = accessionValidationResponse.getMessage();
-                    List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
-                    reportDataEntityList.addAll(getAccessionHelperUtil().createReportDataEntityList(accessionRequest, message));
-                    saveReportEntity(owningInstitution, reportDataEntityList);
-                    addCountToSummary(accessionSummary, message);
-                    continue;
-                }
+                    String owningInstitution = accessionValidationResponse.getOwningInstitution();
 
-                BibDataCallable bibDataCallable = (BibDataCallable) applicationContext.getBean(BibDataCallable.class);
-                bibDataCallable.setAccessionRequest(accessionRequest);
-                bibDataCallable.setOwningInstitution(owningInstitution);
-                futures.add(executorService.submit(bibDataCallable));
-
-            }
-            for (Iterator<Future> futureIterator = futures.iterator(); futureIterator.hasNext(); ) {
-                Future bibDataFuture = futureIterator.next();
-                try {
-                    Object object = bibDataFuture.get();
-                    if(object instanceof Set) {
-                        prepareSummary(accessionSummary, object);
-                    } else if(object instanceof AccessionRequest) {
-                        failedRequests.add((AccessionRequest)object);
+                    if (!accessionValidationResponse.isValid()) {
+                        String message = accessionValidationResponse.getMessage();
+                        List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
+                        reportDataEntityList.addAll(getAccessionHelperUtil().createReportDataEntityList(accessionRequest, message));
+                        saveReportEntity(owningInstitution, reportDataEntityList);
+                        addCountToSummary(accessionSummary, message);
+                        continue;
                     }
 
-                } catch (Exception e) {
-                    logger.error(RecapConstants.LOG_ERROR,e);
-                }
-            }
+                    BibDataCallable bibDataCallable = (BibDataCallable) applicationContext.getBean(BibDataCallable.class);
+                    bibDataCallable.setAccessionRequest(accessionRequest);
+                    bibDataCallable.setOwningInstitution(owningInstitution);
+                    futures.add(executorService.submit(bibDataCallable));
 
-            // Processed failed barcodes one by one
-            for (Iterator<AccessionRequest> accessionRequestIterator = failedRequests.iterator(); accessionRequestIterator.hasNext(); ) {
-                AccessionRequest accessionRequest = accessionRequestIterator.next();
-                BibDataCallable bibDataCallable = applicationContext.getBean(BibDataCallable.class);
-                bibDataCallable.setAccessionRequest(accessionRequest);
-                bibDataCallable.setWriteToReport(true);
-                String owningInstitution = getOwningInstitution(accessionRequest.getCustomerCode());
-                bibDataCallable.setOwningInstitution(owningInstitution);
-                Future submit = executorService.submit(bibDataCallable);
-                try {
-                    Object o = submit.get();
-                    prepareSummary(accessionSummary, o);
-                } catch (Exception e) {
-                    logger.error(RecapConstants.LOG_ERROR,e);
-                    accessionSummary.addException(1);
+                }
+                for (Iterator<Future> futureIterator = futures.iterator(); futureIterator.hasNext(); ) {
+                    Future bibDataFuture = futureIterator.next();
+                    try {
+                        Object object = bibDataFuture.get();
+                        if (object instanceof Set) {
+                            prepareSummary(accessionSummary, object);
+                        } else if (object instanceof AccessionRequest) {
+                            failedRequests.add((AccessionRequest) object);
+                        }
+
+                    } catch (Exception e) {
+                        logger.error(RecapConstants.LOG_ERROR, e);
+                        exhange.setException(e);
+                    }
+                }
+
+                // Processed failed barcodes one by one
+                for (Iterator<AccessionRequest> accessionRequestIterator = failedRequests.iterator(); accessionRequestIterator.hasNext(); ) {
+                    AccessionRequest accessionRequest = accessionRequestIterator.next();
+                    BibDataCallable bibDataCallable = applicationContext.getBean(BibDataCallable.class);
+                    bibDataCallable.setAccessionRequest(accessionRequest);
+                    bibDataCallable.setWriteToReport(true);
+                    String owningInstitution = getOwningInstitution(accessionRequest.getCustomerCode());
+                    bibDataCallable.setOwningInstitution(owningInstitution);
+                    Future submit = executorService.submit(bibDataCallable);
+                    try {
+                        Object o = submit.get();
+                        prepareSummary(accessionSummary, o);
+                    } catch (Exception e) {
+                        logger.error(RecapConstants.LOG_ERROR, e);
+                        exhange.setException(e);
+                        accessionSummary.addException(1);
+                    }
                 }
             }
-        }
-        executorService.shutdown();
-        stopWatch.stop();
+            executorService.shutdown();
+            stopWatch.stop();
+
         logger.info("Total time taken to accession for all barcode -> {} sec",stopWatch.getTotalTimeSeconds());
         return null;
     }
