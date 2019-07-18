@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import org.apache.camel.Exchange;
 import org.apache.commons.collections.CollectionUtils;
 import org.recap.RecapConstants;
 import org.recap.model.BibAvailabilityResponse;
@@ -24,7 +25,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by chenchulakshmig on 6/10/16.
@@ -145,7 +148,7 @@ public class SharedCollectionRestController {
      */
     @RequestMapping(value = "/accession", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity accession(@RequestBody List<AccessionRequest> accessionRequestList) {
+    public ResponseEntity accession(@RequestBody List<AccessionRequest> accessionRequestList,Exchange exchange) {
         ResponseEntity responseEntity;
         List<AccessionResponse> accessionResponsesList;
         if (accessionRequestList.size() > getInputLimit()) {
@@ -157,7 +160,7 @@ public class SharedCollectionRestController {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             logger.info("Total record for Accession : {}" , accessionRequestList.size());
-            accessionResponsesList = getAccessionService().doAccession(accessionRequestList, accessionSummary);
+            accessionResponsesList = getAccessionService().doAccession(accessionRequestList, accessionSummary,exchange);
 
             stopWatch.stop();
             accessionSummary.setTimeElapsed(stopWatch.getTotalTimeSeconds() + " Secs");
@@ -178,7 +181,7 @@ public class SharedCollectionRestController {
      */
     @RequestMapping(value = "/ongoingAccessionJob", method = RequestMethod.GET)
     @ResponseBody
-    public String ongoingAccessionJob() {
+    public String ongoingAccessionJob(Exchange exchange) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
@@ -187,28 +190,32 @@ public class SharedCollectionRestController {
         List<AccessionRequest> accessionRequestList = getBulkAccessionService().getAccessionRequest(accessionEntities);
         String accessionType = RecapConstants.BULK_ACCESSION_SUMMARY;
         AccessionSummary accessionSummary = new AccessionSummary(accessionType);
-        if(CollectionUtils.isNotEmpty(accessionRequestList)) {
-            logger.info("Total record for Bulk Accession : {}" , accessionRequestList.size());
-            getAccessionService().updateStatusForAccessionEntities(accessionEntities, RecapConstants.PROCESSING);
-            getBulkAccessionService().doAccession(accessionRequestList, accessionSummary);
-            if(accessionSummary.getSuccessRecords() != 0) {
-                status = RecapConstants.SUCCESS;
+
+            if (CollectionUtils.isNotEmpty(accessionRequestList)) {
+                logger.info("Total record for Bulk Accession : {}", accessionRequestList.size());
+                getAccessionService().updateStatusForAccessionEntities(accessionEntities, RecapConstants.PROCESSING);
+
+                    getBulkAccessionService().doAccession(accessionRequestList, accessionSummary,exchange);
+
+                if (accessionSummary.getSuccessRecords() != 0) {
+                    status = RecapConstants.SUCCESS;
+                } else {
+                    status = RecapConstants.FAILURE;
+                }
             } else {
-                status = RecapConstants.FAILURE;
+                status = RecapConstants.ACCESSION_NO_PENDING_REQUESTS;
             }
-        } else {
-            status = RecapConstants.ACCESSION_NO_PENDING_REQUESTS;
-        }
-        getAccessionService().updateStatusForAccessionEntities(accessionEntities, RecapConstants.COMPLETE_STATUS);
-        stopWatch.stop();
-        accessionSummary.setTimeElapsed(stopWatch.getTotalTimeSeconds() + " Secs");
 
-        getBulkAccessionService().createSummaryReport(accessionSummary.toString(),accessionType);
+            getAccessionService().updateStatusForAccessionEntities(accessionEntities, RecapConstants.COMPLETE_STATUS);
+            stopWatch.stop();
+            accessionSummary.setTimeElapsed(stopWatch.getTotalTimeSeconds() + " Secs");
 
-        logger.info("Total time taken for processing {} records : {} secs", accessionRequestList.size(), stopWatch.getTotalTimeSeconds());
-        logger.info(accessionSummary.toString());
+            getBulkAccessionService().createSummaryReport(accessionSummary.toString(), accessionType);
+            logger.info("Total time taken for processing {} records : {} secs", accessionRequestList.size(), stopWatch.getTotalTimeSeconds());
+            logger.info(accessionSummary.toString());
 
-        return status;
+            return status;
+
     }
 
     private List<AccessionResponse> getAccessionResponses() {
