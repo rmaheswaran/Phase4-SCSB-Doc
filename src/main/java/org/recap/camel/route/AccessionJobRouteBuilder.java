@@ -67,7 +67,9 @@ public class AccessionJobRouteBuilder {
                 public void configure() throws Exception {
                     from(RecapConstants.DIRECT_ROUTE_FOR_EXCEPTION)
                             .log("Calling direct route for exception")
-                            .bean(applicationContext.getBean(AccessionJobProcessor.class), RecapConstants.ACCESSION__CAUGHT_EXCEPTION_METHOD);
+                            .bean(applicationContext.getBean(AccessionJobProcessor.class), RecapConstants.ACCESSION__CAUGHT_EXCEPTION_METHOD)
+                            .onCompletion()
+                            .to(RecapConstants.ACCESSION_JOB_COMPLETION_OUTGOING_QUEUE);
                 }
             });
         } catch (Exception ex) {
