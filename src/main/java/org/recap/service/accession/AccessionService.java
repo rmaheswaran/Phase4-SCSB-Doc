@@ -126,6 +126,18 @@ public class AccessionService {
 
     private List<BibDataResolver> bibDataResolvers;
 
+    public PULBibDataResolver getPulBibDataResolver() {
+        return pulBibDataResolver;
+    }
+
+    public CULBibDataResolver getCulBibDataResolver() {
+        return culBibDataResolver;
+    }
+
+    public NYPLBibDataResolver getNyplBibDataResolver() {
+        return nyplBibDataResolver;
+    }
+
 
     private Map<String,Integer> institutionEntityMap;
 
@@ -1013,9 +1025,9 @@ public class AccessionService {
     public List<BibDataResolver> getBibDataResolvers() {
         if(CollectionUtils.isEmpty(bibDataResolvers)) {
             bibDataResolvers = new ArrayList<>();
-            bibDataResolvers.add(pulBibDataResolver);
-            bibDataResolvers.add(culBibDataResolver);
-            bibDataResolvers.add(nyplBibDataResolver);
+            bibDataResolvers.add(getPulBibDataResolver());
+            bibDataResolvers.add(getCulBibDataResolver());
+            bibDataResolvers.add(getNyplBibDataResolver());
         }
         return bibDataResolvers;
     }
