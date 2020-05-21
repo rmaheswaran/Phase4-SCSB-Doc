@@ -15,6 +15,7 @@ import org.recap.repository.solr.main.ItemCrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -30,6 +31,9 @@ import java.util.List;
 public class UpdateCgdUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(UpdateCgdUtil.class);
+
+    @Value("${solr.parent.core}")
+    private String solrCore;
 
     @Autowired
     private BibliographicDetailsRepository bibliographicDetailsRepository;
@@ -111,7 +115,7 @@ public class UpdateCgdUtil {
                         StopWatch stopWatchIndexDocument = new StopWatch();
                         stopWatchIndexDocument.start();
                         SolrInputDocument bibSolrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(bibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository);
-                        solrTemplate.saveDocument(bibSolrInputDocument,1);
+                        solrTemplate.saveDocument(solrCore, bibSolrInputDocument);
                         stopWatchIndexDocument.stop();
                         logger.info("Time taken to index the doc for updateCGDForItemInSolr--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
                     }

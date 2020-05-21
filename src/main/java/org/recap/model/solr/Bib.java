@@ -3,6 +3,7 @@ package org.recap.model.solr;
 
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * Created by pvsubrah on 6/11/16.
  */
+@SolrDocument
 public class Bib {
     @Id
     @Field("id")
