@@ -2,6 +2,7 @@ package org.recap.repository.solr.temp;
 
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.recap.model.solr.Bib;
+import org.springframework.data.solr.core.SolrOperations;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.convert.MappingSolrConverter;
 import org.springframework.data.solr.core.mapping.SimpleSolrMappingContext;
@@ -17,15 +18,19 @@ public class BibCrudRepositoryMultiCoreSupport extends SimpleSolrRepository<Bib,
     /**
      * This method instantiates a new bib crud repository to perform crud operations on temp cores.
      *
-     * @param coreName the core name
-     * @param solrUrl  the solr url
+     * @param solrOperations solr Operations
+     * @param entityClass  solr entity class
      */
-    public BibCrudRepositoryMultiCoreSupport(String coreName, String solrUrl) {
+    public BibCrudRepositoryMultiCoreSupport(SolrOperations solrOperations, Class<Bib> entityClass) {
+        super(solrOperations, entityClass);
+    }
 
-        SolrTemplate solrTemplate = new SolrTemplate( new HttpSolrClient(solrUrl+ File.separator+coreName));
+    /*public BibCrudRepositoryMultiCoreSupport(String coreName, String solrUrl) {
+
+        SolrTemplate solrTemplate = new SolrTemplate( new HttpSolrClient.Builder(solrUrl+ File.separator+coreName).build());
         solrTemplate.setSolrConverter(new MappingSolrConverter(new SimpleSolrMappingContext()) {
         });
         solrTemplate.setSolrCore(coreName);
         setSolrOperations(solrTemplate);
-    }
+    }*/
 }

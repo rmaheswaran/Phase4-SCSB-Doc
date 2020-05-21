@@ -852,7 +852,7 @@ public class MatchingAlgorithmUtil {
                 for(ReportEntity reportEntity : reportEntities) {
                     reportEntity.setType(RecapConstants.MATERIAL_TYPE_EXCEPTION);
                 }
-                reportDetailRepository.save(reportEntities);
+                reportDetailRepository.saveAll(reportEntities);
             }
         }
     }
@@ -878,7 +878,7 @@ public class MatchingAlgorithmUtil {
                         }
                         reportDataEntity.setHeaderValue(StringUtils.join(modifiedMaterialTypes, ","));
                     }
-                    reportDataDetailsRepository.save(reportDataEntitiesToUpdate);
+                    reportDataDetailsRepository.saveAll(reportDataEntitiesToUpdate);
                 }
             }
         }

@@ -3,9 +3,11 @@ package org.recap.executors;
 import com.google.common.collect.Lists;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.recap.RecapConstants;
 import org.recap.admin.SolrAdmin;
 import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.solr.Bib;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.solr.main.BibSolrCrudRepository;
@@ -15,8 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.data.solr.core.convert.MappingSolrConverter;
+import org.springframework.data.solr.core.mapping.SimpleSolrMappingContext;
 import org.springframework.util.StopWatch;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -382,7 +388,9 @@ public abstract class IndexExecutorService {
      * @return bib crud repository multi core support
      */
     protected BibCrudRepositoryMultiCoreSupport getBibCrudRepositoryMultiCoreSupport(String solrUrl, String coreName) {
-        return new BibCrudRepositoryMultiCoreSupport(coreName, solrUrl);
+        SolrTemplate solrTemplate = new SolrTemplate(new HttpSolrClient.Builder(solrUrl + File.separator + coreName).build());
+        solrTemplate.setSolrConverter(new MappingSolrConverter(new SimpleSolrMappingContext()) {});
+        return new BibCrudRepositoryMultiCoreSupport(solrTemplate, Bib.class);
     }
 
     /**
