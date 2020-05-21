@@ -129,14 +129,14 @@ public class OngoingMatchingReportsService {
      * @return the string
      */
     public String generateTitleExceptionReport(Date createdDate, Integer batchSize) {
-        Page<ReportEntity> reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(new PageRequest(0, batchSize), RecapConstants.ONGOING_MATCHING_ALGORITHM, RecapConstants.TITLE_EXCEPTION_TYPE,
+        Page<ReportEntity> reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(0, batchSize), RecapConstants.ONGOING_MATCHING_ALGORITHM, RecapConstants.TITLE_EXCEPTION_TYPE,
                 getDateUtil().getFromDate(createdDate), getDateUtil().getToDate(createdDate));
         int totalPages = reportEntityPage.getTotalPages();
         List<TitleExceptionReport> titleExceptionReports = new ArrayList<>();
         int maxTitleCount = 0;
         maxTitleCount = getTitleExceptionReport(reportEntityPage.getContent(), titleExceptionReports, maxTitleCount);
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
-            reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(new PageRequest(pageNum, batchSize), RecapConstants.ONGOING_MATCHING_ALGORITHM, RecapConstants.TITLE_EXCEPTION_TYPE,
+            reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(pageNum, batchSize), RecapConstants.ONGOING_MATCHING_ALGORITHM, RecapConstants.TITLE_EXCEPTION_TYPE,
                     getDateUtil().getFromDate(createdDate), getDateUtil().getToDate(createdDate));
             maxTitleCount = getTitleExceptionReport(reportEntityPage.getContent(), titleExceptionReports, maxTitleCount);
         }
@@ -147,7 +147,7 @@ public class OngoingMatchingReportsService {
                 String formattedDate = sdf.format(new Date());
                 String fileNameWithExtension = getMatchingReportsDirectory() + File.separator + RecapConstants.TITLE_EXCEPTION_REPORT + RecapConstants.UNDER_SCORE + formattedDate + RecapConstants.CSV_EXTENSION;
                 file = getCsvUtil().createTitleExceptionReportFile(fileNameWithExtension, maxTitleCount, titleExceptionReports);
-                getCamelContext().startRoute(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID);
+                getCamelContext().getRouteController().startRoute(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID);
             } catch (Exception e) {
                 getLogger().error("Exception : {}", e);
             }
@@ -212,7 +212,7 @@ public class OngoingMatchingReportsService {
         }
         if(CollectionUtils.isNotEmpty(matchingSerialAndMvmReports)) {
             try {
-                getCamelContext().startRoute(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID);
+                getCamelContext().getRouteController().startRoute(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID);
                 getProducerTemplate().sendBodyAndHeader(RecapConstants.FTP_SERIAL_MVM_REPORT_Q, matchingSerialAndMvmReports, RecapConstants.FILE_NAME, RecapConstants.MATCHING_SERIAL_MVM_REPORT);
             } catch (Exception e) {
                 getLogger().error("Exception : {}", e);
@@ -344,7 +344,7 @@ public class OngoingMatchingReportsService {
                 matchingSummaryReport.setOpenItemsAfterMatching(openItemsAfterMatching);
                 matchingSummaryReport.setSharedItemsAfterMatching(sharedItemsAfterMatching);
             }
-            getCamelContext().startRoute(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID);
+            getCamelContext().getRouteController().startRoute(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID);
             getProducerTemplate().sendBodyAndHeader(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_Q, matchingSummaryReports, RecapConstants.FILE_NAME, RecapConstants.MATCHING_SUMMARY_REPORT);
         } catch (Exception e) {
             getLogger().error("Exception : {}", e);

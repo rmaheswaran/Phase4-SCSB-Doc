@@ -28,7 +28,7 @@ public class StopRouteProcessor implements Processor {
             @Override
             public void run() {
                 try {
-                    exchange.getContext().stopRoute(routeId);
+                    exchange.getContext().getRouteController().stopRoute(routeId);
                 } catch (Exception e) {
                     logger.error("Exception while stop route : " + routeId);
                     e.printStackTrace();

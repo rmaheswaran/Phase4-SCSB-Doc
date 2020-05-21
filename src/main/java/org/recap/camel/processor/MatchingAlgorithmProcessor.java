@@ -43,7 +43,7 @@ public class MatchingAlgorithmProcessor {
      * @param matchingMatchPointsEntities the matching match points entities
      */
     public void saveMatchingMatchPointEntity(List<MatchingMatchPointsEntity> matchingMatchPointsEntities){
-        matchingMatchPointsDetailsRepository.save(matchingMatchPointsEntities);
+        matchingMatchPointsDetailsRepository.saveAll(matchingMatchPointsEntities);
     }
 
     /**
@@ -53,7 +53,7 @@ public class MatchingAlgorithmProcessor {
      */
     public void saveMatchingBibEntity(List<MatchingBibEntity> matchingBibEntities){
         try {
-            matchingBibDetailsRepository.save(matchingBibEntities);
+            matchingBibDetailsRepository.saveAll(matchingBibEntities);
         } catch (Exception ex) {
             logger.info("Exception : {}",ex);
             for(MatchingBibEntity matchingBibEntity : matchingBibEntities) {
@@ -73,7 +73,7 @@ public class MatchingAlgorithmProcessor {
      * @param reportEntityList the report entity list
      */
     public void saveMatchingReportEntity(List<ReportEntity> reportEntityList) {
-        reportDetailRepository.save(reportEntityList);
+        reportDetailRepository.saveAll(reportEntityList);
     }
 
     /**
@@ -82,7 +82,7 @@ public class MatchingAlgorithmProcessor {
      * @param itemEntities the item entities
      */
     public void updateItemEntity(List<ItemEntity> itemEntities) {
-        itemDetailsRepository.save(itemEntities);
+        itemDetailsRepository.saveAll(itemEntities);
     }
 
     /**

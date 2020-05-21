@@ -3,6 +3,7 @@ package org.recap.model.solr;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * Created by angelind on 15/6/16.
  */
+@SolrDocument
 public class Item {
 
     @Id
