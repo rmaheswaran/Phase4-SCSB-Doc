@@ -5,10 +5,12 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatConnectorCustomizer;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration;
+import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.repository.config.EnableSolrRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -18,9 +20,11 @@ import java.io.File;
 /**
  * The Main class is used to lanuch the spring boot application.
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = ActiveMQAutoConfiguration.class)
 @EnableTransactionManagement
-@EnableSolrRepositories(value = "org.recap.repository.solr.main", multicoreSupport = true)
+@EnableJpaRepositories(value = "org.recap.repository.jpa")
+@EnableSolrRepositories(value = "org.recap.repository.solr.main")
+@PropertySource("classpath:application.properties")
 public class Main {
 
     /**
@@ -54,7 +58,7 @@ public class Main {
      */
     @Bean
 	public SolrClient solrAdminClient() {
-		return new HttpSolrClient(solrServerProtocol + solrUrl);
+		return new HttpSolrClient.Builder(solrServerProtocol + solrUrl).build();
 	}
 
     /**
@@ -65,7 +69,7 @@ public class Main {
     @Bean
 	public SolrClient solrClient() {
 		String baseURLForParentCore = solrServerProtocol + solrUrl + File.separator + solrParentCore;
-		return new HttpSolrClient(baseURLForParentCore);
+		return new HttpSolrClient.Builder(baseURLForParentCore).build();
 	}
 
     /**
@@ -85,9 +89,9 @@ public class Main {
      *
      * @return the embedded servlet container factory
      */
-    @Bean
-	public EmbeddedServletContainerFactory servletContainerFactory() {
-		TomcatEmbeddedServletContainerFactory factory = new TomcatEmbeddedServletContainerFactory();
+	@Bean
+	public TomcatServletWebServerFactory servletContainerFactory() {
+		TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
 		factory.addConnectorCustomizers((TomcatConnectorCustomizer) connector -> connector.setMaxParameterCount(tomcatMaxParameterCount));
 		return factory;
 	}

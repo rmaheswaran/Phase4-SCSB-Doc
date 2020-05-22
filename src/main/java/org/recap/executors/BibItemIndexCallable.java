@@ -86,25 +86,25 @@ public class BibItemIndexCallable implements Callable {
         if(StringUtils.isNotBlank(partialIndexType) && partialIndexMap != null) {
             if(partialIndexType.equalsIgnoreCase(RecapConstants.BIB_ID_LIST)) {
                 List<Integer> bibIdList = (List<Integer>) partialIndexMap.get(RecapConstants.BIB_ID_LIST);
-                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnBibIds(new PageRequest(pageNum, docsPerPage), bibIdList);
+                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnBibIds(PageRequest.of(pageNum, docsPerPage), bibIdList);
             } else if(partialIndexType.equalsIgnoreCase(RecapConstants.BIB_ID_RANGE)) {
                 String bibIdFrom = (String) partialIndexMap.get(RecapConstants.BIB_ID_RANGE_FROM);
                 String bibIdTo = (String) partialIndexMap.get(RecapConstants.BIB_ID_RANGE_TO);
-                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnBibIdRange(new PageRequest(pageNum, docsPerPage), Integer.valueOf(bibIdFrom), Integer.valueOf(bibIdTo));
+                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnBibIdRange(PageRequest.of(pageNum, docsPerPage), Integer.valueOf(bibIdFrom), Integer.valueOf(bibIdTo));
             } else if(partialIndexType.equalsIgnoreCase(RecapConstants.DATE_RANGE)) {
                 Date dateFrom = (Date) partialIndexMap.get(RecapConstants.DATE_RANGE_FROM);
                 Date dateTo = (Date) partialIndexMap.get(RecapConstants.DATE_RANGE_TO);
-                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnDateRange(new PageRequest(pageNum, docsPerPage), dateFrom, dateTo);
+                bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnDateRange(PageRequest.of(pageNum, docsPerPage), dateFrom, dateTo);
             }
          } else {
             if (null == owningInstitutionId && null == fromDate) {
-                bibliographicEntities = bibliographicDetailsRepository.findAll(new PageRequest(pageNum, docsPerPage));
+                bibliographicEntities = bibliographicDetailsRepository.findAll(PageRequest.of(pageNum, docsPerPage));
             } else if (null != owningInstitutionId && null == fromDate) {
-                bibliographicEntities = bibliographicDetailsRepository.findByOwningInstitutionId(new PageRequest(pageNum, docsPerPage), owningInstitutionId);
+                bibliographicEntities = bibliographicDetailsRepository.findByOwningInstitutionId(PageRequest.of(pageNum, docsPerPage), owningInstitutionId);
             } else if (null == owningInstitutionId && null != fromDate) {
-                bibliographicEntities = bibliographicDetailsRepository.findByLastUpdatedDateAfter(new PageRequest(pageNum, docsPerPage), fromDate);
+                bibliographicEntities = bibliographicDetailsRepository.findByLastUpdatedDateAfter(PageRequest.of(pageNum, docsPerPage), fromDate);
             } else if (null != owningInstitutionId && null != fromDate) {
-                bibliographicEntities = bibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(new PageRequest(pageNum, docsPerPage), owningInstitutionId, fromDate);
+                bibliographicEntities = bibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(PageRequest.of(pageNum, docsPerPage), owningInstitutionId, fromDate);
             }
         }
 
@@ -137,10 +137,10 @@ public class BibItemIndexCallable implements Callable {
         executorService.shutdown();
 
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
-            SolrTemplate templateForSolr = new SolrTemplate(new HttpSolrClient(solrURL + File.separator + coreName));
-            templateForSolr.setSolrCore(coreName);
-            templateForSolr.saveDocuments(solrInputDocumentsToIndex);
-            templateForSolr.commit();
+            SolrTemplate templateForSolr = new SolrTemplate(new HttpSolrClient.Builder(solrURL + File.separator).build());
+            //templateForSolr.setSolrCore(coreName);
+            templateForSolr.saveDocuments(coreName, solrInputDocumentsToIndex);
+            templateForSolr.commit(coreName);
         }
         return solrInputDocumentsToIndex.size();
     }

@@ -2,7 +2,7 @@ package org.recap.repository.solr.main;
 
 import org.recap.model.solr.Bib;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+//import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.solr.repository.SolrCrudRepository;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by pvsubrah on 6/11/16.
  */
-@RepositoryRestResource(collectionResourceRel = "bibSolr", path = "bibSolr")
+//@RepositoryRestResource(collectionResourceRel = "bibSolr", path = "bibSolr")
 public interface BibSolrCrudRepository extends SolrCrudRepository<Bib, String> {
 
     /**

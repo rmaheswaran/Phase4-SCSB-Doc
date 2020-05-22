@@ -3,12 +3,14 @@ package org.recap.model.solr;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import java.util.Date;
 
 /**
  * Created by rajeshbabuk on 13/9/16.
  */
+@SolrDocument
 public class Holdings {
 
     @Id

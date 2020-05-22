@@ -79,7 +79,7 @@ public class MatchingBibInfoDetailService {
             logger.info("Current page ---> {}", pageNum);
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
-            Page<Integer> recordNumbers = getReportDetailRepository().getRecordNumByTypeAndFileNameAndDateRange(new PageRequest(pageNum, getBatchSize()), typeList,
+            Page<Integer> recordNumbers = getReportDetailRepository().getRecordNumByTypeAndFileNameAndDateRange(PageRequest.of(pageNum, getBatchSize()), typeList,
                     RecapConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate);
             List<Integer> recordNumberList = recordNumbers.getContent();
             logger.info("recordNumberList size -----> {}", recordNumberList.size());
@@ -87,7 +87,7 @@ public class MatchingBibInfoDetailService {
             List<ReportDataEntity> reportDataEntityList = getReportDataDetailsRepository().getRecordsForMatchingBibInfo(stringList,headerNameList);
             Map<String,List<ReportDataEntity>> reportDataEntityMap = getRecordNumReportDataEntityMap(reportDataEntityList);
             List<MatchingBibInfoDetail> matchingBibInfoDetailList = findAndPopulateMatchingBibInfoDetail(reportDataEntityMap);
-            getMatchingBibInfoDetailRepository().save(matchingBibInfoDetailList);
+            getMatchingBibInfoDetailRepository().saveAll(matchingBibInfoDetailList);
             getMatchingBibInfoDetailRepository().flush();
             stopWatch.stop();
             logger.info("Time taken to save ---> {}", stopWatch.getTotalTimeSeconds());
@@ -121,13 +121,13 @@ public class MatchingBibInfoDetailService {
             logger.info("Current page---> {}", count);
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
-            Page<Integer> recordNumbers = getReportDetailRepository().getRecordNumByType(new PageRequest(count, getBatchSize()),typeList);
+            Page<Integer> recordNumbers = getReportDetailRepository().getRecordNumByType(PageRequest.of(count, getBatchSize()),typeList);
             List<Integer> recordNumberList = recordNumbers.getContent();
             logger.info("recordNumberList size-----> {}", recordNumberList.size());
             List<ReportDataEntity> reportDataEntityList = getReportDataDetailsRepository().getRecordsForMatchingBibInfo(getStringList(recordNumberList),headerNameList);
             Map<String,List<ReportDataEntity>> reportDataEntityMap = getRecordNumReportDataEntityMap(reportDataEntityList);
             List<MatchingBibInfoDetail> matchingBibInfoDetailList = populateMatchingBibInfoDetail(reportDataEntityMap);
-            getMatchingBibInfoDetailRepository().save(matchingBibInfoDetailList);
+            getMatchingBibInfoDetailRepository().saveAll(matchingBibInfoDetailList);
             getMatchingBibInfoDetailRepository().flush();
             stopWatch.stop();
             logger.info("Time taken to save--> {}", stopWatch.getTotalTimeSeconds());

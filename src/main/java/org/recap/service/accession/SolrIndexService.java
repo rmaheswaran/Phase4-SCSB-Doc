@@ -30,6 +30,9 @@ public class SolrIndexService {
 
     private static final Logger logger = LoggerFactory.getLogger(SolrIndexService.class);
 
+    @Value("${solr.parent.core}")
+    private String solrCore;
+
     @Autowired
     private ProducerTemplate producerTemplate;
 
@@ -122,7 +125,7 @@ public class SolrIndexService {
         if (solrInputDocument !=null) {
             StopWatch stopWatchIndexDocument = new StopWatch();
             stopWatchIndexDocument.start();
-            getSolrTemplate().saveDocument(solrInputDocument,1);
+            getSolrTemplate().saveDocument(solrCore, solrInputDocument);
             stopWatchIndexDocument.stop();
             logger.info("Time taken to index the doc--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
         }
@@ -163,7 +166,7 @@ public class SolrIndexService {
      */
     public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
         solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue,1);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
     }
 
     /**
@@ -175,6 +178,6 @@ public class SolrIndexService {
      */
     public void deleteBySolrQuery(String query) throws IOException, SolrServerException {
         solrTemplate.getSolrClient().deleteByQuery(query,1);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
     }
 }
