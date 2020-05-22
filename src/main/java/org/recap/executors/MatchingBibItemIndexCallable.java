@@ -79,7 +79,7 @@ public class MatchingBibItemIndexCallable implements Callable {
 
         Page<BibliographicEntity> bibliographicEntities;
 
-        bibliographicEntities = bibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(new PageRequest(pageNum, docsPerPage), operationType, from, to);
+        bibliographicEntities = bibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(PageRequest.of(pageNum, docsPerPage), operationType, from, to);
 
         logger.info("Num Bibs Fetched : " + bibliographicEntities.getNumberOfElements());
         Iterator<BibliographicEntity> iterator = bibliographicEntities.iterator();

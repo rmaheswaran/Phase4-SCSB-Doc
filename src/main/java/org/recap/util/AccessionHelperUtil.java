@@ -364,7 +364,7 @@ public class AccessionHelperUtil {
 
         reportEntity.setReportDataEntities(reportDataEntities);
         reportEntityList.add(reportEntity);
-        reportDetailRepository.save(reportEntityList);
+        reportDetailRepository.saveAll(reportEntityList);
     }
 
     public void processException(Set<AccessionResponse> accessionResponsesList, AccessionRequest accessionRequest,
@@ -427,7 +427,7 @@ public class AccessionHelperUtil {
     }
 
     @Async
-    private void reAccessionedCheckin(List<ItemEntity> itemEntityList) {
+    void reAccessionedCheckin(List<ItemEntity> itemEntityList) {
         if (itemEntityList != null && !itemEntityList.isEmpty()) {
             for (ItemEntity itemEntity : itemEntityList) {
                 if(itemEntity.getInstitutionEntity().getInstitutionCode().equalsIgnoreCase(RecapConstants.PRINCETON) || itemEntity.getInstitutionEntity().getInstitutionCode().equalsIgnoreCase(RecapConstants.COLUMBIA)) {

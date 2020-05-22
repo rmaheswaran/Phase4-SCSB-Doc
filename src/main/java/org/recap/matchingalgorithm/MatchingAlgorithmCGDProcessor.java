@@ -125,7 +125,7 @@ public class MatchingAlgorithmCGDProcessor {
         CollectionGroupEntity collectionGroupEntity = null;
         Integer collectionGroupId = (Integer) collectionGroupMap.get(RecapConstants.REPORTS_OPEN);
         if(matchingType.equalsIgnoreCase(RecapConstants.ONGOING_MATCHING_ALGORITHM)) {
-            collectionGroupEntity = collectionGroupDetailsRepository.findOne(collectionGroupId);
+            collectionGroupEntity = collectionGroupDetailsRepository.findById(collectionGroupId).orElse(null);
         }
         for (Iterator<ItemEntity> iterator = itemEntityMap.values().iterator(); iterator.hasNext(); ) {
             // Items which needs to be changed to open status
@@ -145,11 +145,11 @@ public class MatchingAlgorithmCGDProcessor {
         }
         if(CollectionUtils.isNotEmpty(itemEntitiesToUpdate) && CollectionUtils.isNotEmpty(itemChangeLogEntities)) {
             if(matchingType.equalsIgnoreCase(RecapConstants.ONGOING_MATCHING_ALGORITHM)) {
-                itemDetailsRepository.save(itemEntitiesToUpdate);
+                itemDetailsRepository.saveAll(itemEntitiesToUpdate);
             } else {
                 producerTemplate.sendBody("scsbactivemq:queue:updateItemsQ", itemEntitiesToUpdate);
             }
-            itemChangeLogDetailsRepository.save(itemChangeLogEntities);
+            itemChangeLogDetailsRepository.saveAll(itemChangeLogEntities);
         }
     }
 

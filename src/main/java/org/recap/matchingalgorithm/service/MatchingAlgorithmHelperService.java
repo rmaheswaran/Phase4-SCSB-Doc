@@ -566,7 +566,7 @@ public class MatchingAlgorithmHelperService {
         Integer culMatchingCount = 0;
         Integer nyplMatchingCount = 0;
 
-        Page<MatchingBibEntity> matchingBibEntities = getMatchingBibDetailsRepository().findByStatus(new PageRequest(0, batchSize), RecapConstants.PENDING);
+        Page<MatchingBibEntity> matchingBibEntities = getMatchingBibDetailsRepository().findByStatus(PageRequest.of(0, batchSize), RecapConstants.PENDING);
         int totalPages = matchingBibEntities.getTotalPages();
         List<MatchingBibEntity> matchingBibEntityList = matchingBibEntities.getContent();
         Set<Integer> matchingBibIds = new HashSet<>();
@@ -576,7 +576,7 @@ public class MatchingAlgorithmHelperService {
         nyplMatchingCount = nyplMatchingCount + countsMap.get("nyplMatchingCount");
 
         for(int pageNum=1; pageNum < totalPages; pageNum++) {
-            matchingBibEntities = getMatchingBibDetailsRepository().findByStatus(new PageRequest(pageNum, batchSize), RecapConstants.PENDING);
+            matchingBibEntities = getMatchingBibDetailsRepository().findByStatus(PageRequest.of(pageNum, batchSize), RecapConstants.PENDING);
             matchingBibEntityList = matchingBibEntities.getContent();
             countsMap = getMatchingAlgorithmUtil().processPendingMatchingBibs(matchingBibEntityList, matchingBibIds);
             pulMatchingCount = pulMatchingCount + countsMap.get("pulMatchingCount");
