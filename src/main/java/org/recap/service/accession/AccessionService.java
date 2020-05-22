@@ -275,7 +275,7 @@ public class AccessionService {
         for(AccessionEntity accessionEntity : accessionEntities) {
             accessionEntity.setAccessionStatus(status);
         }
-        getAccessionDetailsRepository().save(accessionEntities);
+        getAccessionDetailsRepository().saveAll(accessionEntities);
     }
 
 
@@ -659,7 +659,7 @@ public class AccessionService {
             itemChangeLogEntity.setNotes(message);
             itemChangeLogEntityList.add(itemChangeLogEntity);
         }
-        itemChangeLogDetailsRepository.save(itemChangeLogEntityList);
+        itemChangeLogDetailsRepository.saveAll(itemChangeLogEntityList);
     }
 
     /**
@@ -687,7 +687,7 @@ public class AccessionService {
      * @return
      */
     @Transactional
-    private synchronized String updateData(Object record, String owningInstitution, List<Map<String, String>> responseMapList, AccessionRequest accessionRequest, boolean isValidBoundWithRecord,boolean isFirstRecord){
+    synchronized String updateData(Object record, String owningInstitution, List<Map<String, String>> responseMapList, AccessionRequest accessionRequest, boolean isValidBoundWithRecord,boolean isFirstRecord){
         String response = null;
         XmlToBibEntityConverterInterface xmlToBibEntityConverterInterface = getConverter(owningInstitution);
         if (null != xmlToBibEntityConverterInterface) {
@@ -890,7 +890,7 @@ public class AccessionService {
                     bibliographicEntity.setLastUpdatedBy(RecapConstants.REACCESSION);
                 }
             }
-            itemDetailsRepository.save(itemEntityList);
+            itemDetailsRepository.saveAll(itemEntityList);
             itemDetailsRepository.flush();
         } catch (Exception e) {
             logger.error(RecapConstants.EXCEPTION,e);

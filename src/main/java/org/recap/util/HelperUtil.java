@@ -73,7 +73,7 @@ public class HelperUtil {
             itemChangeLogEntity.setNotes(message);
             itemChangeLogEntityList.add(itemChangeLogEntity);
         }
-        itemChangeLogDetailsRepository.save(itemChangeLogEntityList);
+        itemChangeLogDetailsRepository.saveAll(itemChangeLogEntityList);
     }
 
     public String getJsonString(Object object) {

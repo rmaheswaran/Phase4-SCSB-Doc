@@ -13,6 +13,7 @@ import org.recap.util.BibJSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
@@ -27,6 +28,9 @@ import java.util.List;
 public class DeAccessSolrDocumentService {
 
     private static final Logger logger = LoggerFactory.getLogger(DeAccessSolrDocumentService.class);
+
+    @Value("${solr.parent.core}")
+    private String solrCore;
 
     @Autowired
     private BibliographicDetailsRepository bibliographicDetailsRepository;
@@ -98,7 +102,7 @@ public class DeAccessSolrDocumentService {
                 SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
                 StopWatch stopWatchIndexDocument = new StopWatch();
                 stopWatchIndexDocument.start();
-                getSolrTemplate().saveDocument(bibSolrInputDocument,1);
+                getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);
                 stopWatchIndexDocument.stop();
                 logger.info("Time taken to index the doc for updateIsDeletedBibByBibId--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
             }
@@ -124,7 +128,7 @@ public class DeAccessSolrDocumentService {
                         SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
                         StopWatch stopWatchIndexDocument = new StopWatch();
                         stopWatchIndexDocument.start();
-                        getSolrTemplate().saveDocument(bibSolrInputDocument,1);
+                        getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);
                         stopWatchIndexDocument.stop();
                         logger.info("Time taken to index the doc for updateIsDeletedHoldingsByHoldingsId--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
                     }
@@ -152,7 +156,7 @@ public class DeAccessSolrDocumentService {
                         SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
                         StopWatch stopWatchIndexDocument = new StopWatch();
                         stopWatchIndexDocument.start();
-                        getSolrTemplate().saveDocument(bibSolrInputDocument,1);
+                        getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);
                         stopWatchIndexDocument.stop();
                         logger.info("Time taken to index the doc for updateIsDeletedItemByItemIds--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
                     }

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+//import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Created by hemalathas on 21/6/16.
  */
-@RepositoryRestResource(collectionResourceRel = "holdings", path = "holdings")
+//@RepositoryRestResource(collectionResourceRel = "holdings", path = "holdings")
 public interface HoldingsDetailsRepository extends JpaRepository<HoldingsEntity, HoldingsPK> {
 
     /**
