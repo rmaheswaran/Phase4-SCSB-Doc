@@ -32,8 +32,8 @@ public class SolrRouteBuilderAT extends BaseTestCase {
     @Test
     public void testSolrRouteBuilder() throws Exception {
 
-        solrTemplate.delete(new SimpleQuery("*:*"));
-        solrTemplate.commit();
+        solrTemplate.delete(solrCore, new SimpleQuery("*:*"));
+        solrTemplate.commit(solrCore);
 
         SolrInputDocument solrInputDocument = new SolrInputDocument();
         solrInputDocument.setField("id", "123");

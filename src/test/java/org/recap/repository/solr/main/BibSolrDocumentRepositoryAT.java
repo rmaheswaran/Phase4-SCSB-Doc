@@ -22,6 +22,7 @@ import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.solr.impl.BibSolrDocumentRepositoryImpl;
 import org.recap.util.BibJSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.RequestMethod;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.Criteria;
@@ -68,6 +69,9 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
     @Autowired
     HoldingsDetailsRepository holdingsDetailsRepository;
 
+    @Value("${solr.parent.core}")
+    String solrCore;
+
     @Test
     public void search() throws Exception {
         Random random = new Random();
@@ -95,8 +99,8 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         SolrInputDocument solrInputDocument = new BibJSONUtil().generateBibAndItemsForIndex(fetchedBibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingDetailRepository);
         assertNotNull(solrInputDocument);
 
-        solrTemplate.saveDocument(solrInputDocument);
-        solrTemplate.softCommit();
+        solrTemplate.saveDocument(solrCore, solrInputDocument);
+        solrTemplate.softCommit(solrCore);
 
         SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
         searchRecordsRequest.setFieldName("BibId");
@@ -107,7 +111,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         assertNotNull(bibItems);
         assertTrue(bibItems.size() > 0);
         assertEquals(bibliographicEntity.getOwningInstitutionBibId(), bibItems.get(0).getOwningInstitutionBibId());
-        solrTemplate.rollback();
+        solrTemplate.rollback(solrCore);
 
         deleteByDocId("BibId",savedBibliographicEntity.getBibliographicId().toString());
         deleteByDocId("HoldingId",savedBibliographicEntity.getHoldingsEntities().get(0).getHoldingsId().toString());
@@ -116,7 +120,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
 
     public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
         UpdateResponse updateResponse = solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
     }
 
     public File getUnicodeContentFile() throws URISyntaxException {
@@ -163,7 +167,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         SolrInputDocument solrInputDocument = new BibJSONUtil().generateBibAndItemsForIndex(fetchedBibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository);
         assertNotNull(solrInputDocument);
 
-        solrTemplate.saveDocument(solrInputDocument);
+        solrTemplate.saveDocument(solrCore, solrInputDocument);
 
         SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
         searchRecordsRequest.setFieldName(null); // All fields.
@@ -177,7 +181,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         assertTrue(bibliographicEntity.getItemEntities().size() > 0);
         assertTrue(bibItems.get(0).getItems().size() > 0);
         assertEquals(bibliographicEntity.getItemEntities().get(0).getBarcode(), bibItems.get(0).getItems().get(0).getBarcode());
-        solrTemplate.rollback();
+        solrTemplate.rollback(solrCore);
 
         deleteByDocId("BibId",savedBibliographicEntity.getBibliographicId().toString());
         deleteByDocId("HoldingId",savedBibliographicEntity.getHoldingsEntities().get(0).getHoldingsId().toString());
@@ -213,7 +217,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         SolrInputDocument solrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(fetchedBibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository);
         assertNotNull(solrInputDocument);
 
-        solrTemplate.saveDocument(solrInputDocument);
+        solrTemplate.saveDocument(solrCore, solrInputDocument);
 
         SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
         searchRecordsRequest.setFieldName(null); // All fields.
@@ -232,7 +236,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         String sourceTitle245a = bibJSONUtil.getTitleDisplay(records.get(0));
         assertNotNull(sourceTitle245a);
         assertEquals(sourceTitle245a, "al-Ḥuṭayʼah : fī sīratihi wa-nafsīyatihi wa-shiʻrihi /");
-        solrTemplate.rollback();
+        solrTemplate.rollback(solrCore);
 
         deleteByDocId("BibId",savedBibliographicEntity.getBibliographicId().toString());
         deleteByDocId("HoldingId",savedBibliographicEntity.getHoldingsEntities().get(0).getHoldingsId().toString());
@@ -290,7 +294,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         }
         SimpleQuery query = new SimpleQuery(new Criteria(RecapConstants.ITEM_ID).in(itemIds));
         query.setRows(itemIds.size());
-        solrTemplate.queryForPage(query, Item.class, RequestMethod.POST);
+        solrTemplate.queryForPage(solrCore, query, Item.class, RequestMethod.POST);
     }
 
     @Test
@@ -304,7 +308,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         for (List<Integer> partitionItemIds : partitions) {
             SimpleQuery query = new SimpleQuery(new Criteria(RecapConstants.ITEM_ID).in(partitionItemIds));
             query.setRows(partitionItemIds.size());
-            ScoredPage<Item> itemsPage = solrTemplate.queryForPage(query, Item.class, RequestMethod.POST);
+            ScoredPage<Item> itemsPage = solrTemplate.queryForPage(solrCore, query, Item.class, RequestMethod.POST);
             assertNotNull(itemsPage);
         }
     }
@@ -422,7 +426,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         bibSolrCrudRepository.save(bib1);
         itemCrudRepository.save(item1);
         bibSolrCrudRepository.save(bib2);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
         Thread.sleep(2000);
 
         map.put("Bibs", Arrays.asList(bib1, bib2));
@@ -481,7 +485,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         bib.setBibItemIdList(Arrays.asList(itemId));
 
         bibSolrCrudRepository.save(bib);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
         Thread.sleep(2000);
         return bib;
     }

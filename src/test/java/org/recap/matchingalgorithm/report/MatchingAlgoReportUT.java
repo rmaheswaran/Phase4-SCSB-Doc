@@ -55,13 +55,13 @@ public class MatchingAlgoReportUT extends BaseTestCase {
         Integer count = 0;
         logger.info("Item Ids which are not Updated : ");
         String operationType = RecapConstants.INITIAL_MATCHING_OPERATION_TYPE;
-        Page<Integer> recordIdList = itemChangeLogDetailsRepository.getRecordIdByOperationType(new PageRequest(0, batchSize), operationType);
+        Page<Integer> recordIdList = itemChangeLogDetailsRepository.getRecordIdByOperationType(PageRequest.of(0, batchSize), operationType);
         int totalPages = recordIdList.getTotalPages();
         List<Integer> recordIds = recordIdList.getContent();
         List<ItemEntity> itemEntities = itemDetailsRepository.findByItemIdIn(recordIds);
         count = count + compareItemsFromDBToSolr(itemEntities);
         for(int i=1; i<totalPages; i++) {
-            recordIdList = itemChangeLogDetailsRepository.getRecordIdByOperationType(new PageRequest(i, batchSize), operationType);
+            recordIdList = itemChangeLogDetailsRepository.getRecordIdByOperationType(PageRequest.of(i, batchSize), operationType);
             recordIds = recordIdList.getContent();
             itemEntities = itemDetailsRepository.findByItemIdIn(recordIds);
             count = count + compareItemsFromDBToSolr(itemEntities);

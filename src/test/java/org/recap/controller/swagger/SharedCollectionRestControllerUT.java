@@ -1,5 +1,6 @@
 package org.recap.controller.swagger;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -79,6 +80,9 @@ public class SharedCollectionRestControllerUT extends BaseControllerUT {
     @Mock
     private ProducerTemplate producerTemplate;
 
+    @Mock
+    private Exchange exchange;
+
     @Before
     public void setup()throws Exception{
         MockitoAnnotations.initMocks(this);
@@ -135,8 +139,8 @@ public class SharedCollectionRestControllerUT extends BaseControllerUT {
         Mockito.when(accessionService.getProducerTemplate()).thenReturn(producerTemplate);
         Mockito.when(mockedSharedCollectionRestController.getAccessionService().processRequest(accessionRequestList)).thenReturn(accessionResponseList);
         Mockito.doCallRealMethod().when(bulkAccessionService).createSummaryReport(Mockito.any(),Mockito.any());
-        Mockito.when(mockedSharedCollectionRestController.accession(accessionRequestList)).thenCallRealMethod();
-        ResponseEntity responseEntity = mockedSharedCollectionRestController.accession(accessionRequestList);
+        Mockito.when(mockedSharedCollectionRestController.accession(accessionRequestList, exchange)).thenCallRealMethod();
+        ResponseEntity responseEntity = mockedSharedCollectionRestController.accession(accessionRequestList, exchange);
         assertNotNull(responseEntity);
     }
 
@@ -161,8 +165,8 @@ public class SharedCollectionRestControllerUT extends BaseControllerUT {
         Mockito.when(mockedSharedCollectionRestController.getAccessionService()).thenReturn(accessionService);
         Mockito.when(mockedSharedCollectionRestController.getBulkAccessionService().getAccessionEntities(RecapConstants.PENDING)).thenReturn(Arrays.asList(accessionEntity));
         Mockito.when(mockedSharedCollectionRestController.getBulkAccessionService().getAccessionRequest(Mockito.any())).thenReturn(accessionRequestList);
-        Mockito.when(mockedSharedCollectionRestController.ongoingAccessionJob()).thenCallRealMethod();
-        String response = mockedSharedCollectionRestController.ongoingAccessionJob();
+        Mockito.when(mockedSharedCollectionRestController.ongoingAccessionJob(exchange)).thenCallRealMethod();
+        String response = mockedSharedCollectionRestController.ongoingAccessionJob(exchange);
         assertNotNull(response);
 
     }
