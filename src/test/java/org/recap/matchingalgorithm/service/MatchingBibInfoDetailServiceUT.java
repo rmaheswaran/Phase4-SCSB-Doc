@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -84,8 +85,8 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
         Mockito.when(matchingBibInfoDetailService.getPageCount(matchingCount,batchSize)).thenCallRealMethod();
         Mockito.when(matchingBibInfoDetailService.getReportDetailRepository().getCountByType(typeList)).thenReturn(batchSize);
         Mockito.when(matchingBibInfoDetailService.getReportDetailRepository().getCountByTypeAndFileNameAndDateRange(typeList, RecapConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate)).thenReturn(batchSize);
-        Mockito.when(matchingBibInfoDetailService.getReportDetailRepository().getRecordNumByTypeAndFileNameAndDateRange(new PageRequest(pageNum, batchSize), typeList, RecapConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate)).thenReturn(getRecordNumber());
-        Mockito.when(matchingBibInfoDetailService.getReportDetailRepository().getRecordNumByType(new PageRequest(count, batchSize),typeList)).thenReturn(getRecordNumber());
+        Mockito.when(matchingBibInfoDetailService.getReportDetailRepository().getRecordNumByTypeAndFileNameAndDateRange(PageRequest.of(pageNum, batchSize), typeList, RecapConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate)).thenReturn(getRecordNumber());
+        Mockito.when(matchingBibInfoDetailService.getReportDetailRepository().getRecordNumByType(PageRequest.of(count, batchSize),typeList)).thenReturn(getRecordNumber());
         Mockito.when(matchingBibInfoDetailService.getReportDataDetailsRepository().getRecordsForMatchingBibInfo(Mockito.any(),Mockito.any())).thenReturn(reportDataEntityList);
         Mockito.when(matchingBibInfoDetailService.getMatchingBibInfoDetailRepository().findRecordNumByBibIds(Mockito.any())).thenReturn(new ArrayList<Integer>(1));
         Mockito.when(matchingBibInfoDetailService.getMatchingBibInfoDetailRepository().findByRecordNumIn(Mockito.any())).thenReturn(Arrays.asList(matchingBibInfoDetail));
@@ -123,7 +124,7 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
             }
 
             @Override
-            public <S> Page<S> map(Converter<? super Integer, ? extends S> converter) {
+            public <U> Page<U> map(Function<? super Integer, ? extends U> converter) {
                 return null;
             }
 
@@ -144,12 +145,12 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
 
             @Override
             public List<Integer> getContent() {
-                return new ArrayList<>(1);
+                return null;
             }
 
             @Override
             public boolean hasContent() {
-                return true;
+                return false;
             }
 
             @Override
