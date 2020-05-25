@@ -114,6 +114,9 @@ public class AccessionServiceUT extends BaseTestCase {
     @Mock
     MarcUtil marcUtil;
 
+    @Value("${solr.parent.core}")
+    String solrCore;
+
     @Test
     public void processForPUL() throws Exception {
         List<AccessionRequest> accessionRequestList = new ArrayList<>();
@@ -215,7 +218,7 @@ public class AccessionServiceUT extends BaseTestCase {
 
     public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
         UpdateResponse updateResponse = solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
     }
 
     @Test

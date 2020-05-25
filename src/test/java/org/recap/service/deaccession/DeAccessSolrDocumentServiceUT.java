@@ -18,6 +18,7 @@ import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.util.BibJSONUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 
 import java.io.File;
@@ -58,6 +59,9 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
 
     @Mock
     ItemDetailsRepository mockItemDetailsRepository;
+
+    @Value("${solr.parent.core}")
+    String solrCore;
 
 
     @Before
@@ -214,7 +218,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
 
     public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
         UpdateResponse updateResponse = solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
     }
 
     private File getBibContentFile() throws URISyntaxException {

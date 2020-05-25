@@ -21,6 +21,7 @@ import org.recap.repository.solr.impl.BibSolrDocumentRepositoryImpl;
 import org.recap.repository.solr.main.BibSolrDocumentRepository;
 import org.recap.util.BibJSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 
 import javax.persistence.EntityManager;
@@ -49,6 +50,9 @@ public class BibAT extends BaseTestCase {
 
     @Autowired
     BibSolrDocumentRepositoryImpl bibSolrDocumentRepositoryImpl;
+
+    @Value("${solr.parent.core}")
+    String solrCore;
 
 
     @Test
@@ -122,7 +126,7 @@ public class BibAT extends BaseTestCase {
 
     public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
         UpdateResponse updateResponse = solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
     }
 
     @Test
@@ -190,8 +194,8 @@ public class BibAT extends BaseTestCase {
         List<Bib> bibs = new ArrayList<>();
         bibs.add(bib);
         bibs.add(bib1);
-        Iterable<Bib> indexedBibs = bibSolrCrudRepository.save(bibs);
-        solrTemplate.softCommit();
+        Iterable<Bib> indexedBibs = bibSolrCrudRepository.saveAll(bibs);
+        solrTemplate.softCommit(solrCore);
         int count = 0;
         for(Bib indexedBib: indexedBibs){
             if(count==0){
@@ -319,7 +323,7 @@ public class BibAT extends BaseTestCase {
         itemCrudRepository.save(item1);
         bibSolrCrudRepository.save(bib2);
         itemCrudRepository.save(item2);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
         Thread.sleep(2000);
 
         Long countByItemId = itemCrudRepository.countByItemId(itemId1);
@@ -427,8 +431,8 @@ public class BibAT extends BaseTestCase {
 
         BibJSONUtil bibJSONUtil = new BibJSONUtil();
         SolrInputDocument solrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(savedBibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingDetailRepository);
-        solrTemplate.saveDocument(solrInputDocument);
-        solrTemplate.commit();
+        solrTemplate.saveDocument(solrCore, solrInputDocument);
+        solrTemplate.commit(solrCore);
 
         Bib fetchedBibFromSolr = bibSolrCrudRepository.findByBibId(bibliographicId);
         assertNotNull(fetchedBibFromSolr);

@@ -112,7 +112,7 @@ public class AccessionReportGeneratorUT extends BaseTestCase{
 
         reportEntity.setReportDataEntities(reportDataEntities);
         reportEntityList.add(reportEntity);
-        return reportDetailRepository.save(reportEntityList);
+        return reportDetailRepository.saveAll(reportEntityList);
 
     }
 

@@ -102,7 +102,7 @@ public class GenerateReportControllerUT extends BaseControllerUT{
 
         reportEntity.setReportDataEntities(reportDataEntities);
         reportEntityList.add(reportEntity);
-        return reportDetailRepository.save(reportEntityList);
+        return reportDetailRepository.saveAll(reportEntityList);
 
     }
 }

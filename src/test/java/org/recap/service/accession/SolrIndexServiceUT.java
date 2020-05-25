@@ -20,6 +20,7 @@ import org.recap.service.accession.SolrIndexService;
 import org.recap.util.BibJSONUtil;
 import org.recap.util.ItemJSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 
 import javax.persistence.EntityManager;
@@ -65,6 +66,8 @@ public class SolrIndexServiceUT extends BaseTestCase {
     @Mock
     BibJSONUtil bibJSONUtil;
 
+    @Value("${solr.parent.core}")
+    String solrCore;
 
 
     public SolrIndexService getSolrIndexService() {
@@ -130,7 +133,7 @@ public class SolrIndexServiceUT extends BaseTestCase {
 
     public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
         UpdateResponse updateResponse = solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
     }
 
     @Test
