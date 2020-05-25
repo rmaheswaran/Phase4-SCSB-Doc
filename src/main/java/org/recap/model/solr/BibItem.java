@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 8/7/16.
  */
-@SolrDocument
+@SolrDocument(collection = "recap")
 public class BibItem {
 
     @Id
