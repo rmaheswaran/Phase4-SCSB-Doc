@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by pvsubrah on 6/11/16.
  */
-@SolrDocument
+@SolrDocument(collection = "recap")
 public class Bib {
     @Id
     @Field("id")

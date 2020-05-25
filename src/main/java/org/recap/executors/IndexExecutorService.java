@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.convert.MappingSolrConverter;
 import org.springframework.data.solr.core.mapping.SimpleSolrMappingContext;
+import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.util.StopWatch;
 
 import java.io.File;
@@ -373,10 +374,14 @@ public abstract class IndexExecutorService {
      * @param solrUrl
      */
     private void deleteTempIndexes(List<String> coreNames, String solrUrl) {
+        SolrTemplate solrTemplate = new SolrTemplate(new HttpSolrClient.Builder(solrUrl + File.separator).build());
+        solrTemplate.setSolrConverter(new MappingSolrConverter(new SimpleSolrMappingContext()) {});
         for (Iterator<String> iterator = coreNames.iterator(); iterator.hasNext(); ) {
             String coreName = iterator.next();
-            BibCrudRepositoryMultiCoreSupport bibCrudRepositoryMultiCoreSupport = getBibCrudRepositoryMultiCoreSupport(solrUrl, coreName);
-            bibCrudRepositoryMultiCoreSupport.deleteAll();
+            solrTemplate.delete(coreName, new SimpleQuery("*:*"));
+            solrTemplate.commit(coreName);
+            //BibCrudRepositoryMultiCoreSupport bibCrudRepositoryMultiCoreSupport = getBibCrudRepositoryMultiCoreSupport(solrUrl, coreName);
+            //bibCrudRepositoryMultiCoreSupport.deleteAll();
         }
     }
 

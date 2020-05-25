@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by angelind on 15/6/16.
  */
-@SolrDocument
+@SolrDocument(collection = "recap")
 public class Item {
 
     @Id

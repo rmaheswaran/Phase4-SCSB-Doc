@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * Created by rajeshbabuk on 13/9/16.
  */
-@SolrDocument
+@SolrDocument(collection = "recap")
 public class Holdings {
 
     @Id
