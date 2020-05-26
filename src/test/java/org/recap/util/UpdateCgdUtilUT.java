@@ -17,6 +17,7 @@ import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.solr.main.ItemCrudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 
 import javax.persistence.EntityManager;
@@ -54,6 +55,9 @@ public class UpdateCgdUtilUT extends BaseTestCase {
 
     @Mock
     ItemCrudRepository MockedItemCrudRepository;
+
+    @Value("${solr.parent.core}")
+    String solrCore;
 
     @Test
     public void updateCGDForItemInDB() throws Exception {
@@ -94,8 +98,8 @@ public class UpdateCgdUtilUT extends BaseTestCase {
 
         BibJSONUtil bibJSONUtil = new BibJSONUtil();
         SolrInputDocument solrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(savedBibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingDetailRepository);
-        mockedSolrTemplate.saveDocument(solrInputDocument);
-        mockedSolrTemplate.commit();
+        mockedSolrTemplate.saveDocument(solrCore, solrInputDocument);
+        mockedSolrTemplate.commit(solrCore);
 
         String itemBarcode = savedBibliographicEntity.getItemEntities().get(0).getBarcode();
         List<Item> itemList = new ArrayList<>();
@@ -117,7 +121,7 @@ public class UpdateCgdUtilUT extends BaseTestCase {
         updateCgdUtil.updateCGDForItemInDB(itemBarcode, "Open", "guest", new Date());
         List<ItemEntity> itemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
         mockedUpdateCgdUtil.updateCGDForItemInSolr(itemEntities);
-        mockedSolrTemplate.commit();
+        mockedSolrTemplate.commit(solrCore);
         Mockito.when(MockedItemCrudRepository.findByBarcode(itemBarcode)).thenReturn(itemList);
         List<Item> fetchedItemsSolrAfterUpdate = MockedItemCrudRepository.findByBarcode(itemBarcode);
         assertNotNull(fetchedItemsSolrAfterUpdate);
@@ -132,7 +136,7 @@ public class UpdateCgdUtilUT extends BaseTestCase {
 
     public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
         UpdateResponse updateResponse = solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
     }
 
     @Test
@@ -153,8 +157,8 @@ public class UpdateCgdUtilUT extends BaseTestCase {
 
         BibJSONUtil bibJSONUtil = new BibJSONUtil();
         SolrInputDocument solrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(savedBibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingDetailRepository);
-        mockedSolrTemplate.saveDocument(solrInputDocument);
-        mockedSolrTemplate.commit();
+        mockedSolrTemplate.saveDocument(solrCore, solrInputDocument);
+        mockedSolrTemplate.commit(solrCore);
 
         String itemBarcode = savedBibliographicEntity.getItemEntities().get(0).getBarcode();
         List<Item> itemList = new ArrayList<>();

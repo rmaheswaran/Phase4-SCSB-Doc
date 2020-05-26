@@ -62,7 +62,7 @@ public class ReportDetailRepositoryUT extends BaseTestCase {
     public void findAndUpdateReportEntity() {
         ReportEntity savedReportEntity = saveReportEntity();
         assertNotNull(savedReportEntity.getRecordNumber());
-        ReportEntity entity = reportDetailRepository.findOne(savedReportEntity.getRecordNumber());
+        ReportEntity entity = reportDetailRepository.findById(savedReportEntity.getRecordNumber()).orElse(null);
         assertNotNull(entity);
         ReportDataEntity reportDataEntity = entity.getReportDataEntities().get(0);
         assertNotNull(reportDataEntity);
@@ -250,7 +250,7 @@ public class ReportDetailRepositoryUT extends BaseTestCase {
         List<String> typeList = new ArrayList<>();
         typeList.add(RecapConstants.SINGLE_MATCH);
         typeList.add(RecapConstants.MULTI_MATCH);
-        Page<Integer> recordNumbers = reportDetailRepository.getRecordNumByType(new PageRequest(0, 10),typeList);
+        Page<Integer> recordNumbers = reportDetailRepository.getRecordNumByType(PageRequest.of(0, 10),typeList);
         List<Integer> recordNumList = recordNumbers.getContent();
         assertNotNull(recordNumList);
     }
@@ -276,7 +276,7 @@ public class ReportDetailRepositoryUT extends BaseTestCase {
         typeList.add(RecapConstants.MULTI_MATCH);
         Date from = dateUtil.getFromDate(reportEntity.getCreatedDate());
         Date to = dateUtil.getToDate(reportEntity.getCreatedDate());
-        Page<Integer> recordNumByTypeAndDateRange = reportDetailRepository.getRecordNumByTypeAndFileNameAndDateRange(new PageRequest(0, 10), typeList, RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, from, to);
+        Page<Integer> recordNumByTypeAndDateRange = reportDetailRepository.getRecordNumByTypeAndFileNameAndDateRange(PageRequest.of(0, 10), typeList, RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, from, to);
         assertNotNull(recordNumByTypeAndDateRange);
         assertNotNull(recordNumByTypeAndDateRange.getContent());
         assertTrue(recordNumByTypeAndDateRange.getTotalElements() > 0);
