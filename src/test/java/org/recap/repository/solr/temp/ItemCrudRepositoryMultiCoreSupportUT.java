@@ -2,6 +2,7 @@ package org.recap.repository.solr.temp;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
+import org.recap.model.solr.Item;
 import org.springframework.beans.factory.annotation.Value;
 
 import static junit.framework.TestCase.assertNotNull;
@@ -16,6 +17,6 @@ public class ItemCrudRepositoryMultiCoreSupportUT extends BaseTestCase{
 
     @Test
     public void instantiateItemCrudRepositoryMultiCoreSupport(){
-        assertNotNull(new ItemCrudRepositoryMultiCoreSupport("temp",solrUrl));
+        assertNotNull(new ItemCrudRepositoryMultiCoreSupport(solrTemplate, Item.class));
     }
 }

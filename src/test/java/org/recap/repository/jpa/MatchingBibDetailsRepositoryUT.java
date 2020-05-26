@@ -25,7 +25,7 @@ public class MatchingBibDetailsRepositoryUT extends BaseTestCase{
     public void saveMatchingBibEntity() throws Exception {
         MatchingBibEntity savedMatchingBibEntity = saveMatchingBibEntity(RecapConstants.MATCH_POINT_FIELD_OCLC);
         assertNotNull(savedMatchingBibEntity.getId());
-        MatchingBibEntity bibEntity = matchingBibDetailsRepository.findOne(savedMatchingBibEntity.getId());
+        MatchingBibEntity bibEntity = matchingBibDetailsRepository.findById(savedMatchingBibEntity.getId()).orElse(null);
         assertNotNull(bibEntity);
     }
 
@@ -116,14 +116,14 @@ public class MatchingBibDetailsRepositoryUT extends BaseTestCase{
         MatchingBibEntity matchingBibEntity = saveMatchingBibEntity(RecapConstants.MATCH_POINT_FIELD_OCLC);
         assertNotNull(matchingBibEntity);
         assertNotNull(matchingBibEntity.getId());
-        Page<MatchingBibEntity> byStatus = matchingBibDetailsRepository.findByStatus(new PageRequest(0, 10), RecapConstants.PENDING);
+        Page<MatchingBibEntity> byStatus = matchingBibDetailsRepository.findByStatus(PageRequest.of(0, 10), RecapConstants.PENDING);
         assertNotNull(byStatus);
         MatchingBibEntity matchingBibEntity1 = byStatus.getContent().get(0);
         assertNotNull(matchingBibEntity1);
         assertEquals(matchingBibEntity.getId(), matchingBibEntity1.getId());
         int updateStatus = matchingBibDetailsRepository.updateStatusBasedOnBibs(RecapConstants.COMPLETE_STATUS, Arrays.asList(matchingBibEntity.getBibId()));
         assertTrue(updateStatus > 0);
-        Page<MatchingBibEntity> matchingBibEntities = matchingBibDetailsRepository.findByStatus(new PageRequest(0, 10), RecapConstants.COMPLETE_STATUS);
+        Page<MatchingBibEntity> matchingBibEntities = matchingBibDetailsRepository.findByStatus(PageRequest.of(0, 10), RecapConstants.COMPLETE_STATUS);
         assertNotNull(matchingBibEntities);
         List<MatchingBibEntity> matchingBibEntityList = matchingBibEntities.getContent();
         assertTrue(matchingBibEntityList.size() > 0);

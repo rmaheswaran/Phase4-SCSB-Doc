@@ -18,6 +18,7 @@ import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 
 import javax.persistence.EntityManager;
@@ -44,6 +45,9 @@ public class ReportsServiceUtilUT extends BaseTestCase {
 
     @Mock
     SolrTemplate mockedSolrTemplate;
+
+    @Value("${solr.parent.core}")
+    String solrCore;
 
     @Test
     public void populateAccessionDeaccessionItemCounts() throws Exception {
@@ -181,7 +185,7 @@ public class ReportsServiceUtilUT extends BaseTestCase {
 
     public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
         UpdateResponse updateResponse = solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
     }
 
     public ReportsResponse getReportsResponseForPopulateCGDItemCounts(){
@@ -317,8 +321,8 @@ public class ReportsServiceUtilUT extends BaseTestCase {
     private void indexBibHoldingItem(BibliographicEntity savedBibliographicEntity) {
         BibJSONUtil bibJSONUtil = new BibJSONUtil();
         SolrInputDocument solrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(savedBibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingDetailRepository);
-        mockedSolrTemplate.saveDocument(solrInputDocument);
-        mockedSolrTemplate.commit();
+        mockedSolrTemplate.saveDocument(solrCore, solrInputDocument);
+        mockedSolrTemplate.commit(solrCore);
     }
 
     public File getBibContentFile() throws URISyntaxException {

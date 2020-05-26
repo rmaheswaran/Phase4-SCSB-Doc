@@ -26,6 +26,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.SolrTemplate;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -337,8 +338,8 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCase{
         Mockito.when(matchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1000, RecapConstants.MATCH_POINT_FIELD_ISSN)).thenReturn(countMap);
         Mockito.when(matchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1000, RecapConstants.MATCH_POINT_FIELD_LCCN)).thenReturn(countMap);
         Mockito.when(matchingAlgoHelperService.populateReportsForPendingMatches(1000)).thenCallRealMethod();
-        Mockito.when(matchingBibDetailsRepository.findByStatus(new PageRequest(0,1000), RecapConstants.PENDING)).thenReturn(getMatchingBibEntity(matchingBibEntities));
-        Mockito.when(matchingBibDetailsRepository.findByStatus(new PageRequest(1,1000), RecapConstants.PENDING)).thenReturn(getMatchingBibEntity(matchingBibEntities));
+        Mockito.when(matchingBibDetailsRepository.findByStatus(PageRequest.of(0,1000), RecapConstants.PENDING)).thenReturn(getMatchingBibEntity(matchingBibEntities));
+        Mockito.when(matchingBibDetailsRepository.findByStatus(PageRequest.of(1,1000), RecapConstants.PENDING)).thenReturn(getMatchingBibEntity(matchingBibEntities));
         Mockito.when(matchingAlgorithmUtil.processPendingMatchingBibs(matchingBibEntities, matchingBibIds)).thenReturn(countMap);
         Mockito.when(matchingAlgoHelperService.populateReportsForSingleMatch(1000)).thenCallRealMethod();
         Map<String, Integer> countsMap = matchingAlgoHelperService.populateReportsForSingleMatch(1000);
@@ -369,7 +370,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCase{
         Page<MatchingBibEntity> matchingBibEntityPage = new Page<MatchingBibEntity>() {
             @Override
             public int getTotalPages() {
-                return 2;
+                return 0;
             }
 
             @Override
@@ -378,7 +379,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCase{
             }
 
             @Override
-            public <S> Page<S> map(Converter<? super MatchingBibEntity, ? extends S> converter) {
+            public <U> Page<U> map(Function<? super MatchingBibEntity, ? extends U> converter) {
                 return null;
             }
 
@@ -399,7 +400,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCase{
 
             @Override
             public List<MatchingBibEntity> getContent() {
-                return matchingBibEntities;
+                return null;
             }
 
             @Override

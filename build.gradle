@@ -46,11 +46,11 @@ test {
 }
 
 jar {
-	baseName = 'phase4-scsb-doc'
-	version = '0.0.1-SNAPSHOT'
+	archiveBaseName = 'phase4-scsb-doc'
+	archiveVersion = '0.0.1-SNAPSHOT'
 }
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
 
 repositories {
 	mavenCentral()
@@ -89,6 +89,7 @@ dependencies {
 	implementation 'net.sourceforge.javacsv:javacsv:2.0'
 	implementation 'commons-codec:commons-codec:1.14'
 	implementation 'org.codehaus.jettison:jettison:1.4.1'
+	implementation 'junit:junit:4.13'
 	//implementation 'org.springframework.plugin:spring-plugin-core:2.0.0.RELEASE'
 	implementation('com.google.guava:guava:23.0') { exclude module: 'solr-solrj' }
 	runtimeOnly 'mysql:mysql-connector-java'
@@ -119,15 +120,15 @@ test {
 	}
 }
 
-/*jacocoTestReport {
+jacocoTestReport {
 	group = "Reporting"
 	reports {
 		xml.enabled true
 		csv.enabled false
 		html.enabled = true
-		html.destination "${buildDir}/jacocoHtml"
+		//html.destination "${buildDir}/jacocoHtml"
 	}
-}*/
+}
 
 task scsbDocJavadocs(type: Javadoc) {
 	source = sourceSets.main.java

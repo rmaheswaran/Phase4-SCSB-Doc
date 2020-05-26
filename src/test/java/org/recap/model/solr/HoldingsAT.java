@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.recap.BaseTestCase;
+import org.springframework.beans.factory.annotation.Value;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -13,6 +14,9 @@ import static org.junit.Assert.assertNotNull;
  */
 @Ignore
 public class HoldingsAT extends BaseTestCase {
+
+    @Value("${solr.parent.core}")
+    String solrCore;
 
     @Before
     public void setUp() throws Exception {
@@ -29,7 +33,7 @@ public class HoldingsAT extends BaseTestCase {
         holdings.setOwningInstitution("NYPL");
 
         Holdings indexedHoldings = holdingsSolrCrudRepository.save(holdings);
-        solrTemplate.softCommit();
+        solrTemplate.softCommit(solrCore);
 
         Holdings fetchedHoldings = holdingsSolrCrudRepository.findByHoldingsId(indexedHoldings.getHoldingsId());
         assertNotNull(fetchedHoldings);

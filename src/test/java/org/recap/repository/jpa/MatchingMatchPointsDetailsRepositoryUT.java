@@ -26,7 +26,7 @@ public class MatchingMatchPointsDetailsRepositoryUT extends BaseTestCase{
     public void saveMatchingMatchPointsEntity() throws Exception {
         MatchingMatchPointsEntity savedMatchingMatchPointsEntity = saveMatchingMatchPointEntity(RecapConstants.MATCH_POINT_FIELD_OCLC, "129282");
         assertNotNull(savedMatchingMatchPointsEntity.getId());
-        MatchingMatchPointsEntity matchPointsEntity = matchingMatchPointsDetailsRepository.findOne(savedMatchingMatchPointsEntity.getId());
+        MatchingMatchPointsEntity matchPointsEntity = matchingMatchPointsDetailsRepository.findById(savedMatchingMatchPointsEntity.getId()).orElse(null);
         assertNotNull(matchPointsEntity);
     }
 
@@ -71,7 +71,7 @@ public class MatchingMatchPointsDetailsRepositoryUT extends BaseTestCase{
         MatchingMatchPointsEntity matchingMatchPointsEntity = saveMatchingMatchPointEntity(RecapConstants.MATCH_POINT_FIELD_OCLC, "25001781 /\\");
         assertNotNull(matchingMatchPointsEntity);
         assertNotNull(matchingMatchPointsEntity.getId());
-        MatchingMatchPointsEntity matchPointsEntity = matchingMatchPointsDetailsRepository.findOne(matchingMatchPointsEntity.getId());
+        MatchingMatchPointsEntity matchPointsEntity = matchingMatchPointsDetailsRepository.findById(matchingMatchPointsEntity.getId()).orElse(null);
         assertNotNull(matchPointsEntity);
         SolrQueryBuilder solrQueryBuilder = new SolrQueryBuilder();
         List<String> matchingCriterias = new ArrayList<>();

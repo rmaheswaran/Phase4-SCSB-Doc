@@ -92,7 +92,7 @@ public class DeAccessionReportGeneratorUT extends BaseTestCase{
 
         reportEntity.setReportDataEntities(reportDataEntities);
         reportEntities.add(reportEntity);
-        return reportDetailRepository.save(reportEntities);
+        return reportDetailRepository.saveAll(reportEntities);
     }
 
 }

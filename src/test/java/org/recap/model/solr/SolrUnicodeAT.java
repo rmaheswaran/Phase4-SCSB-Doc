@@ -65,6 +65,9 @@ public class SolrUnicodeAT extends BaseTestCase {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Value("${solr.parent.core}")
+    String solrCore;
+
     @Test
     public void fetchUnicodeBibRecordSaveAndMatchWithSolr() throws Exception {
         Random random = new Random();
@@ -96,7 +99,7 @@ public class SolrUnicodeAT extends BaseTestCase {
         assertNotNull(solrInputDocument);
 
         //bibSolrCrudRepository = new BibCrudRepositoryMultiCoreSupport("recap", solrUrl);
-        solrTemplate.saveDocument(solrInputDocument);
+        solrTemplate.saveDocument(solrCore, solrInputDocument);
         Bib solrBib = bibSolrCrudRepository.findByBibId(fetchedBibliographicEntity.getBibliographicId());
         assertNotNull(solrBib);
 
@@ -125,6 +128,6 @@ public class SolrUnicodeAT extends BaseTestCase {
 
     public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
         UpdateResponse updateResponse = solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
     }
 }
