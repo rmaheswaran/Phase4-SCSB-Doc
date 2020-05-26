@@ -105,7 +105,7 @@ public class ItemDetailsRepositoryUT extends BaseTestCase {
         ItemEntity byOwningInstitutionItemId = itemDetailsRepository.findByOwningInstitutionItemId(owningInstitutionItemId);
         assertNotNull(byOwningInstitutionItemId);
 
-        Page<ItemEntity> pageByOwningInstitutionId = itemDetailsRepository.findByOwningInstitutionIdAndIsDeletedFalse(new PageRequest(0, 10), owningInstitutionId);
+        Page<ItemEntity> pageByOwningInstitutionId = itemDetailsRepository.findByOwningInstitutionIdAndIsDeletedFalse(PageRequest.of(0, 10), owningInstitutionId);
         assertNotNull(pageByOwningInstitutionId);
         assertTrue(countAfterAdd == pageByOwningInstitutionId.getTotalElements());
 
@@ -278,7 +278,7 @@ public class ItemDetailsRepositoryUT extends BaseTestCase {
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
-        Page<ItemEntity> byLastUpdatedDate = itemDetailsRepository.findByLastUpdatedDate(new PageRequest(0, 10), cal.getTime(), new Date());
+        Page<ItemEntity> byLastUpdatedDate = itemDetailsRepository.findByLastUpdatedDate(PageRequest.of(0, 10), cal.getTime(), new Date());
         assertNotNull(byLastUpdatedDate.getContent());
     }
 

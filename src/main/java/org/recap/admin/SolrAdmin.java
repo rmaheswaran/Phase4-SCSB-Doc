@@ -105,7 +105,7 @@ public class SolrAdmin {
         String[] tempCoreNamesObjectArray = tempCoreNames.toArray(new String[tempCores.size()]);
         try {
             getCoreAdminRequest().mergeIndexes(solrParentCore, indexDirs, tempCoreNamesObjectArray, solrAdminClient);
-            solrClient.commit();
+            solrClient.commit(solrParentCore);
         } catch (SolrServerException | IOException e) {
             logger.error(RecapConstants.LOG_ERROR,e);
         }

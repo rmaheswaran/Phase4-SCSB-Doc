@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
@@ -60,7 +61,7 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCase {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         bibliographicEntity = saveBibSingleHoldingsSingleItem();
-        Mockito.when(mockedBibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(new PageRequest(pageNum, docsPerPage), operationType, from, to)).thenReturn(getBibliographicPagableObject(Arrays.asList(bibliographicEntity)));
+        Mockito.when(mockedBibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(PageRequest.of(pageNum, docsPerPage), operationType, from, to)).thenReturn(getBibliographicPagableObject(Arrays.asList(bibliographicEntity)));
         Mockito.when(mockedBibliographicDetailsRepository.getCountOfBibliographicEntitiesForChangedItems(operationType, from, to)).thenReturn(new Long(1));
     }
 
@@ -156,7 +157,7 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCase {
             }
 
             @Override
-            public <S> Page<S> map(Converter<? super BibliographicEntity, ? extends S> converter) {
+            public <U> Page<U> map(Function<? super BibliographicEntity, ? extends U> converter) {
                 return null;
             }
 
@@ -177,7 +178,7 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCase {
 
             @Override
             public List<BibliographicEntity> getContent() {
-                return bibliographicEntityList;
+                return null;
             }
 
             @Override
@@ -222,8 +223,7 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCase {
 
             @Override
             public Iterator<BibliographicEntity> iterator() {
-                Iterator<BibliographicEntity> bibliographicEntityIterator = bibliographicEntityList.iterator();
-                return bibliographicEntityIterator;
+                return null;
             }
         };
         return bibliographicEntityPageObject;

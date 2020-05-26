@@ -38,7 +38,7 @@ public class ItemChangeLogDetailsRepositoryUT extends BaseTestCase {
     @Test
     public void getRecordIdByOperationType() throws Exception {
         ItemChangeLogEntity itemChangeLogEntity = saveDeaccessionNotes();
-        Page<Integer> recordIdByOperationType = itemChangeLogDetailsRepository.getRecordIdByOperationType(new PageRequest(0,10), itemChangeLogEntity.getOperationType());
+        Page<Integer> recordIdByOperationType = itemChangeLogDetailsRepository.getRecordIdByOperationType(PageRequest.of(0,10), itemChangeLogEntity.getOperationType());
         assertNotNull(recordIdByOperationType);
         assertTrue(recordIdByOperationType.getTotalElements() > 0);
         assertNotNull(recordIdByOperationType.getContent());

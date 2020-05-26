@@ -51,7 +51,7 @@ public class BibliographicDetailsRepositoryUT extends BaseTestCase {
         String owningInstitutionBibId = String.valueOf(random.nextInt());
         int owningInstitutionId = 1;
 
-        Page<BibliographicEntity> byOwningInstitutionId = bibliographicDetailsRepository.findByOwningInstitutionIdAndIsDeletedFalse(new PageRequest(0, 10), owningInstitutionId);
+        Page<BibliographicEntity> byOwningInstitutionId = bibliographicDetailsRepository.findByOwningInstitutionIdAndIsDeletedFalse(PageRequest.of(0, 10), owningInstitutionId);
 
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
         bibliographicEntity.setContent("Mock Bib Content".getBytes());
@@ -137,14 +137,14 @@ public class BibliographicDetailsRepositoryUT extends BaseTestCase {
     @Test
     public void findByLastUpdatedDateAfter() throws Exception {
         Date fromDate = DateUtils.addDays(new Date(), -1);
-        Page<BibliographicEntity> byCreatedDateAfterAndIsDeletedFalse = bibliographicDetailsRepository.findByLastUpdatedDateAfter(new PageRequest(0, 10), fromDate);
+        Page<BibliographicEntity> byCreatedDateAfterAndIsDeletedFalse = bibliographicDetailsRepository.findByLastUpdatedDateAfter(PageRequest.of(0, 10), fromDate);
         assertNotNull(byCreatedDateAfterAndIsDeletedFalse);
     }
 
     @Test
     public void findByOwningInstitutionIdAndLastUpdatedDateAfter() throws Exception {
         Date fromDate = DateUtils.addDays(new Date(), -1);
-        Page<BibliographicEntity> byCreatedDateAfterAndIsDeletedFalse = bibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(new PageRequest(0, 10), 1, fromDate);
+        Page<BibliographicEntity> byCreatedDateAfterAndIsDeletedFalse = bibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(PageRequest.of(0, 10), 1, fromDate);
         assertNotNull(byCreatedDateAfterAndIsDeletedFalse);
     }
 
@@ -179,15 +179,15 @@ public class BibliographicDetailsRepositoryUT extends BaseTestCase {
         Integer fromBibId = 1;
         Integer toBibId = 10;
 
-        Page<BibliographicEntity> bibsBasedOnBibId = bibliographicDetailsRepository.getBibsBasedOnBibIds(new PageRequest(0, 10), bibIds);
+        Page<BibliographicEntity> bibsBasedOnBibId = bibliographicDetailsRepository.getBibsBasedOnBibIds(PageRequest.of(0, 10), bibIds);
         assertNotNull(bibsBasedOnBibId);
         assertTrue(bibsBasedOnBibId.getContent().size() > 0);
 
-        Page<BibliographicEntity> bibsBasedOnBibIdRange = bibliographicDetailsRepository.getBibsBasedOnBibIdRange(new PageRequest(0, 10), fromBibId, toBibId);
+        Page<BibliographicEntity> bibsBasedOnBibIdRange = bibliographicDetailsRepository.getBibsBasedOnBibIdRange(PageRequest.of(0, 10), fromBibId, toBibId);
         assertNotNull(bibsBasedOnBibIdRange);
         assertTrue(bibsBasedOnBibIdRange.getContent().size() > 0);
 
-        Page<BibliographicEntity> bibsBasedOnBibIdRangeAndInst = bibliographicDetailsRepository.getBibsBasedOnDateRange(new PageRequest(0, 10), dateUtil.getFromDate(new Date()), dateUtil.getToDate(new Date()));
+        Page<BibliographicEntity> bibsBasedOnBibIdRangeAndInst = bibliographicDetailsRepository.getBibsBasedOnDateRange(PageRequest.of(0, 10), dateUtil.getFromDate(new Date()), dateUtil.getToDate(new Date()));
         assertNotNull(bibsBasedOnBibIdRangeAndInst);
         assertTrue(bibsBasedOnBibIdRangeAndInst.getContent().size() > 0);
     }

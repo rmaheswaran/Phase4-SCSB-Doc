@@ -44,6 +44,9 @@ public class ExecutorAT extends BaseTestCase {
     @Value("${solr.url}")
     String solrUrl;
 
+    @Value("${solr.parent.core}")
+    String solrCore;
+
     @Autowired
     SolrTemplate solrTemplate;
 
@@ -152,7 +155,7 @@ public class ExecutorAT extends BaseTestCase {
         bibSolrCrudRepository.deleteAll();
         itemCrudRepository.deleteAll();
         indexDocuments(solrIndexRequest);
-        solrTemplate.commit();
+        solrTemplate.commit(solrCore);
         Thread.sleep(5000);
         long solrCount = bibSolrCrudRepository.countByDocType("Bib");
         assertEquals(dbCount, solrCount);

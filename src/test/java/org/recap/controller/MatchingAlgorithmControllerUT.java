@@ -31,6 +31,7 @@ import javax.persistence.PersistenceContext;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
@@ -416,7 +417,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
             }
 
             @Override
-            public <S> Page<S> map(Converter<? super Integer, ? extends S> converter) {
+            public <U> Page<U> map(Function<? super Integer, ? extends U> converter) {
                 return null;
             }
 
@@ -437,7 +438,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
 
             @Override
             public List<Integer> getContent() {
-                return new ArrayList<>(12);
+                return null;
             }
 
             @Override
