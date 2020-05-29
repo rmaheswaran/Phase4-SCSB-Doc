@@ -1,6 +1,5 @@
 package org.recap.model.solr;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.SolrDocument;
@@ -47,7 +46,6 @@ public class Holdings {
     @Field("IsDeletedHoldings")
     private boolean isDeletedHoldings = false;
 
-    @Ignore
     private String root;
 
     /**
