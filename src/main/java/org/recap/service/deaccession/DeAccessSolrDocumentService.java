@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -41,7 +42,7 @@ public class DeAccessSolrDocumentService {
     @Autowired
     private ItemDetailsRepository itemDetailsRepository;
 
-    @Autowired
+    @Resource(name = "recapSolrTemplate")
     private SolrTemplate solrTemplate;
 
     /**

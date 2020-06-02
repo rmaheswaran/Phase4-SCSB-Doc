@@ -48,7 +48,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
 
     private String or = " OR ";
 
-    @Resource
+    @Resource(name = "recapSolrTemplate")
     private SolrTemplate solrTemplate;
 
     @Autowired
