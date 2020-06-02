@@ -28,6 +28,7 @@ import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.*;
@@ -49,7 +50,7 @@ public class MatchingAlgorithmUtil {
     @Autowired
     private MatchingBibDetailsRepository matchingBibDetailsRepository;
 
-    @Autowired
+    @Resource(name = "recapSolrTemplate")
     private SolrTemplate solrTemplate;
 
     @Autowired

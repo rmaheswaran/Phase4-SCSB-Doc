@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -40,7 +41,7 @@ import java.util.*;
 @Service
 public class ReportsServiceUtil {
 
-    @Autowired
+    @Resource(name = "recapSolrTemplate")
     private SolrTemplate solrTemplate;
 
     @Autowired
