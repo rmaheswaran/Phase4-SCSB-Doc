@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.concurrent.Callable;
 
@@ -21,7 +22,7 @@ public class MatchingBibItemIndexExecutorService extends MatchingIndexExecutorSe
     @Autowired
     private HoldingsDetailsRepository holdingsDetailsRepository;
 
-    @Autowired
+    @Resource(name = "recapSolrTemplate")
     private SolrTemplate solrTemplate;
 
     /**

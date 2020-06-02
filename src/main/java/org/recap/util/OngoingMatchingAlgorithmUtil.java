@@ -25,6 +25,7 @@ import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -42,7 +43,7 @@ public class OngoingMatchingAlgorithmUtil {
     @Autowired
     private SolrQueryBuilder solrQueryBuilder;
 
-    @Autowired
+    @Resource(name = "recapSolrTemplate")
     private SolrTemplate solrTemplate;
 
     @Autowired

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/accessionReconcilationService")
 public class AccessionReconcilationRestController {
 
-    @Autowired
+    @Resource(name = "recapSolrTemplate")
     private SolrTemplate solrTemplate;
 
     /**
