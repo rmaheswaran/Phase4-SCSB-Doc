@@ -79,10 +79,11 @@ public class Main {
      * @return the solr template
      * @throws Exception the exception
      */
-    /*@Bean
-	public SolrTemplate solrTemplate(SolrClient solrClient) throws Exception {
-		return new SolrTemplate(solrClient);
-	}*/
+	@Bean
+	public SolrTemplate recapSolrTemplate(SolrClient solrClient) throws Exception {
+		String baseURLForParentCore = solrServerProtocol + solrUrl + File.separator + solrParentCore;
+		return new SolrTemplate(new HttpSolrClient.Builder(baseURLForParentCore).build());
+	}
 
     /**
      * Gets tomcat embedded servlet container factory.
