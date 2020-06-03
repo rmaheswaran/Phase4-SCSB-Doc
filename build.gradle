@@ -92,6 +92,10 @@ dependencies {
 	implementation 'junit:junit:4.13'
 	//implementation 'org.springframework.plugin:spring-plugin-core:2.0.0.RELEASE'
 	implementation('com.google.guava:guava:23.0') { exclude module: 'solr-solrj' }
+	implementation 'org.projectlombok:lombok:1.18.12'
+	annotationProcessor 'org.projectlombok:lombok:1.18.12'
+	testImplementation 'org.projectlombok:lombok:1.18.12'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {

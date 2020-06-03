@@ -1,25 +1,12 @@
 package org.recap.model.transfer;
 
+import lombok.Data;
+
 /**
  * Created by sheiks on 12/07/17.
  */
+@Data
 public class Source {
     private String owningInstitutionBibId;
     private String owningInstitutionHoldingsId;
-
-    public String getOwningInstitutionBibId() {
-        return owningInstitutionBibId;
-    }
-
-    public void setOwningInstitutionBibId(String owningInstitutionBibId) {
-        this.owningInstitutionBibId = owningInstitutionBibId;
-    }
-
-    public String getOwningInstitutionHoldingsId() {
-        return owningInstitutionHoldingsId;
-    }
-
-    public void setOwningInstitutionHoldingsId(String owningInstitutionHoldingsId) {
-        this.owningInstitutionHoldingsId = owningInstitutionHoldingsId;
-    }
 }

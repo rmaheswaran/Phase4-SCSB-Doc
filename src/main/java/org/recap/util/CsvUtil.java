@@ -80,10 +80,10 @@ public class CsvUtil {
         csvOutput.write(titleExceptionReport.getBibId());
         csvOutput.write(titleExceptionReport.getOwningInstitutionBibId());
         csvOutput.write(titleExceptionReport.getMaterialType());
-        csvOutput.write(titleExceptionReport.getOCLC());
-        csvOutput.write(titleExceptionReport.getISBN());
-        csvOutput.write(titleExceptionReport.getISSN());
-        csvOutput.write(titleExceptionReport.getLCCN());
+        csvOutput.write(titleExceptionReport.getOclc());
+        csvOutput.write(titleExceptionReport.getIsbn());
+        csvOutput.write(titleExceptionReport.getIssn());
+        csvOutput.write(titleExceptionReport.getLccn());
         for(String title : titleExceptionReport.getTitleList()) {
             csvOutput.write(title);
         }
