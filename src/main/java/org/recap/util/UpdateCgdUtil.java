@@ -20,6 +20,7 @@ import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,7 +54,7 @@ public class UpdateCgdUtil {
     @Autowired
     private ItemCrudRepository itemSolrCrudRepository;
 
-    @Autowired
+    @Resource(name = "recapSolrTemplate")
     private SolrTemplate solrTemplate;
 
     @Autowired
