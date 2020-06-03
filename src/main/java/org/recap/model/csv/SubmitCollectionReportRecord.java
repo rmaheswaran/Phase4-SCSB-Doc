@@ -1,5 +1,6 @@
 package org.recap.model.csv;
 
+import lombok.Data;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
@@ -8,6 +9,7 @@ import java.io.Serializable;
 /**
  * Created by hemalathas on 20/12/16.
  */
+@Data
 @CsvRecord(generateHeaderColumns = true, separator = ",", quoting = true, crlf = "UNIX")
 public class SubmitCollectionReportRecord implements Serializable {
 
@@ -25,84 +27,4 @@ public class SubmitCollectionReportRecord implements Serializable {
 
     @DataField(pos = 5, columnName = "Message")
     private String message;
-
-    /**
-     * Gets item barcode.
-     *
-     * @return the item barcode
-     */
-    public String getItemBarcode() {
-        return itemBarcode;
-    }
-
-    /**
-     * Sets item barcode.
-     *
-     * @param itemBarcode the item barcode
-     */
-    public void setItemBarcode(String itemBarcode) {
-        this.itemBarcode = itemBarcode;
-    }
-
-    /**
-     * Gets customer code.
-     *
-     * @return the customer code
-     */
-    public String getCustomerCode() {
-        return customerCode;
-    }
-
-    /**
-     * Sets customer code.
-     *
-     * @param customerCode the customer code
-     */
-    public void setCustomerCode(String customerCode) {
-        this.customerCode = customerCode;
-    }
-
-    /**
-     * Gets owning institution.
-     *
-     * @return the owning institution
-     */
-    public String getOwningInstitution() {
-        return owningInstitution;
-    }
-
-    /**
-     * Sets owning institution.
-     *
-     * @param owningInstitution the owning institution
-     */
-    public void setOwningInstitution(String owningInstitution) {
-        this.owningInstitution = owningInstitution;
-    }
-
-    public String getReportType() {
-        return reportType;
-    }
-
-    public void setReportType(String reportType) {
-        this.reportType = reportType;
-    }
-
-    /**
-     * Gets message.
-     *
-     * @return the message
-     */
-    public String getMessage() {
-        return message;
-    }
-
-    /**
-     * Sets message.
-     *
-     * @param message the message
-     */
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

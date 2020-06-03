@@ -121,7 +121,7 @@ public class TransferService {
                         transferValidationResponse.setMessage(RecapConstants.TRANSFER.RELINKED_FAILED);
                     }
                 }
-                ItemTransferResponse itemTransferResponse = new ItemTransferResponse(transferValidationResponse.getMessage(), itemTransferRequest, transferValidationResponse.isValid());
+                ItemTransferResponse itemTransferResponse = new ItemTransferResponse(transferValidationResponse.getMessage(), transferValidationResponse.isValid(), itemTransferRequest);
                 itemTransferResponses.add(itemTransferResponse);
 
                 String requestString = getHelperUtil().getJsonString(itemTransferRequest);
@@ -344,7 +344,7 @@ public class TransferService {
                     }
 
                 }
-                HoldingTransferResponse holdingTransferResponse = new HoldingTransferResponse(transferValidationResponse.getMessage(), holdingsTransferRequest, transferValidationResponse.isValid());
+                HoldingTransferResponse holdingTransferResponse = new HoldingTransferResponse(transferValidationResponse.getMessage(), transferValidationResponse.isValid(), holdingsTransferRequest);
                 holdingTransferResponses.add(holdingTransferResponse);
 
                 String requestString = getHelperUtil().getJsonString(holdingsTransferRequest);
