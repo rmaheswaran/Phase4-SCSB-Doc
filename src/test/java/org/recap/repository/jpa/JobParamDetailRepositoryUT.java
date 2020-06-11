@@ -25,11 +25,11 @@ public class JobParamDetailRepositoryUT extends BaseTestCase{
     public void findByJobName() throws Exception {
         JobParamEntity jobParamEntity = saveJobParamEntity();
         assertNotNull(jobParamEntity);
-        assertNotNull(jobParamEntity.getRecordNumber());
+        assertNotNull(jobParamEntity.getId());
 
         JobParamEntity byJobName = jobParamDetailRepository.findByJobName(jobParamEntity.getJobName());
         assertNotNull(byJobName);
-        assertEquals(byJobName.getRecordNumber(), jobParamEntity.getRecordNumber());
+        assertEquals(byJobName.getId(), jobParamEntity.getId());
         assertEquals(byJobName.getJobParamDataEntities().size(), jobParamEntity.getJobParamDataEntities().size());
     }
 
@@ -53,11 +53,11 @@ public class JobParamDetailRepositoryUT extends BaseTestCase{
     @Test
     public void testJobParamEntity(){
         JobParamEntity jobparamEntity = new JobParamEntity();
-        jobparamEntity.setRecordNumber(1);
+        jobparamEntity.setId(1);
         jobparamEntity.setJobName("Test");
         jobparamEntity.setJobParamDataEntities(Arrays.asList(new JobParamDataEntity()));
         assertNotNull(jobparamEntity.getJobName());
-        assertNotNull(jobparamEntity.getRecordNumber());
+        assertNotNull(jobparamEntity.getId());
         assertNotNull(jobparamEntity.getJobParamDataEntities());
 
     }

@@ -23,7 +23,7 @@ public interface ReportDetailRepository extends JpaRepository<ReportEntity, Inte
      * @param recordNumbers the record numbers
      * @return the list
      */
-    List<ReportEntity> findByRecordNumberIn(List<Integer> recordNumbers);
+    List<ReportEntity> findByIdIn(List<Integer> recordNumbers);
 
     /**
      * Finds ReportEntity based on the given file name.
@@ -189,7 +189,7 @@ public interface ReportDetailRepository extends JpaRepository<ReportEntity, Inte
      * @param typeList the type list
      * @return the count by type
      */
-    @Query(value = "SELECT COUNT(recordNumber) FROM ReportEntity WHERE TYPE IN (?1)")
+    @Query(value = "SELECT COUNT(id) FROM ReportEntity WHERE TYPE IN (?1)")
     Integer getCountByType(List<String> typeList);
 
     /**
@@ -201,7 +201,7 @@ public interface ReportDetailRepository extends JpaRepository<ReportEntity, Inte
      * @param to       the to
      * @return the count by type and file name and date range
      */
-    @Query(value = "SELECT COUNT(recordNumber) FROM ReportEntity WHERE type IN (?1) AND fileName = ?2 AND createdDate between ?3 and ?4")
+    @Query(value = "SELECT COUNT(id) FROM ReportEntity WHERE type IN (?1) AND fileName = ?2 AND createdDate between ?3 and ?4")
     Integer getCountByTypeAndFileNameAndDateRange(List<String> typeList, String fileName, Date from, Date to);
 
     /**
@@ -211,7 +211,7 @@ public interface ReportDetailRepository extends JpaRepository<ReportEntity, Inte
      * @param typeList the type list
      * @return the record num by type
      */
-    @Query(value = "SELECT recordNumber FROM ReportEntity WHERE TYPE IN (?1)")
+    @Query(value = "SELECT id FROM ReportEntity WHERE TYPE IN (?1)")
     Page<Integer> getRecordNumByType(Pageable pageable,List<String> typeList);
 
     /**
@@ -224,7 +224,7 @@ public interface ReportDetailRepository extends JpaRepository<ReportEntity, Inte
      * @param to       the to
      * @return the record num by type and file name and date range
      */
-    @Query(value = "SELECT recordNumber from ReportEntity WHERE type IN (?1) AND fileName = ?2 AND createdDate between ?3 and ?4")
+    @Query(value = "SELECT id from ReportEntity WHERE type IN (?1) AND fileName = ?2 AND createdDate between ?3 and ?4")
     Page<Integer> getRecordNumByTypeAndFileNameAndDateRange(Pageable pageable, List<String> typeList, String fileName, Date from, Date to);
 
     /**

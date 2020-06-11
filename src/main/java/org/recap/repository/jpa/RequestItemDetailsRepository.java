@@ -18,14 +18,6 @@ import java.util.List;
 public interface RequestItemDetailsRepository extends JpaRepository<RequestItemEntity, Integer>, JpaSpecificationExecutor {
 
     /**
-     * Finds RequestItemEntity based on the given request id.
-     *
-      * @param requestId the request id
-     * @return the request item entity
-     */
-    RequestItemEntity findByRequestId(@Param("requestId") Integer requestId);
-
-    /**
      * Finds a list of request item entities based on the given item id.
      *
      * @param itemId the item id

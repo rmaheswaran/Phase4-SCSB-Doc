@@ -62,7 +62,7 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCase{
     public void testCollectionGroupMap(){
         CollectionGroupEntity collectionGroupEntity = new CollectionGroupEntity();
         collectionGroupEntity.setCollectionGroupCode("Shared");
-        collectionGroupEntity.setCollectionGroupId(1);
+        collectionGroupEntity.setId(1);
         List<CollectionGroupEntity> collectionGroupEntityList = new ArrayList<>();
         collectionGroupEntityList.add(collectionGroupEntity);
         Iterable<CollectionGroupEntity> collectionGroupEntityIterable = collectionGroupEntityList;
@@ -79,7 +79,7 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCase{
     public void testInstitutionEntityMap(){
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setInstitutionCode("PUL");
-        institutionEntity.setInstitutionId(1);
+        institutionEntity.setId(1);
         List<InstitutionEntity> institutionEntityList = new ArrayList<>();
         institutionEntityList.add(institutionEntity);
         Iterable<InstitutionEntity> institutionEntityIterable = institutionEntityList;

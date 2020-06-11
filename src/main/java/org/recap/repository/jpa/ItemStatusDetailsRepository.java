@@ -18,12 +18,4 @@ public interface ItemStatusDetailsRepository extends PagingAndSortingRepository<
      * @return the item status entity
      */
     ItemStatusEntity findByStatusCode(String statusCode);
-
-    /**
-     * Finds item status entity by using item status id.
-     *
-     * @param itemStatusId the item status id
-     * @return the item status entity
-     */
-    ItemStatusEntity findByItemStatusId(@Param("itemStatusId") Integer itemStatusId);
 }

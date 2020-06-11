@@ -1,6 +1,5 @@
 package org.recap.util;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.recap.BaseTestCase;
 import org.recap.model.jpa.BibliographicEntity;
@@ -36,12 +35,12 @@ public class ItemJSONUtilUT extends BaseTestCase {
         itemEntity.setVolumePartYear("Bd. 1, Lfg. 7-10");
         itemEntity.setCallNumber("JFN 73-43");
         ItemStatusEntity itemStatusEntity = new ItemStatusEntity();
-        itemStatusEntity.setItemStatusId(1);
+        itemStatusEntity.setId(1);
         itemStatusEntity.setStatusCode("Available");
         itemStatusEntity.setStatusDescription("Available");
         itemEntity.setItemStatusEntity(itemStatusEntity);
         CollectionGroupEntity collectionGroupEntity = new CollectionGroupEntity();
-        collectionGroupEntity.setCollectionGroupId(1);
+        collectionGroupEntity.setId(1);
         collectionGroupEntity.setCollectionGroupCode("Shared");
         collectionGroupEntity.setCollectionGroupDescription("collectionGroupEntity");
         itemEntity.setCollectionGroupEntity(collectionGroupEntity);

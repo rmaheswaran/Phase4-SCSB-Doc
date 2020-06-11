@@ -151,7 +151,7 @@ public class SharedCollectionRestControllerUT extends BaseControllerUT {
         String accessionType = RecapConstants.BULK_ACCESSION_SUMMARY;
         accessionEntity.setAccessionStatus("Complete");
         accessionEntity.setAccessionRequest("Test");
-        accessionEntity.setAccessionId(1);
+        accessionEntity.setId(1);
         AccessionRequest accessionRequest = new AccessionRequest();
         List<AccessionRequest> accessionRequestList = new ArrayList<>();
         accessionRequestList.add(accessionRequest);
