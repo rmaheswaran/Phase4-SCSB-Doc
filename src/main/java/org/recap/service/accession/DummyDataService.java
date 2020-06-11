@@ -126,7 +126,7 @@ public class DummyDataService {
                 Iterable<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
                 for (Iterator iterator = collectionGroupEntities.iterator(); iterator.hasNext(); ) {
                     CollectionGroupEntity collectionGroupEntity = (CollectionGroupEntity) iterator.next();
-                    collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getCollectionGroupId());
+                    collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getId());
                 }
             } catch (Exception e) {
                 logger.error(RecapConstants.EXCEPTION,e);
@@ -142,7 +142,7 @@ public class DummyDataService {
                 Iterable<ItemStatusEntity> itemStatusEntities = itemStatusDetailsRepository.findAll();
                 for (Iterator iterator = itemStatusEntities.iterator(); iterator.hasNext(); ) {
                     ItemStatusEntity itemStatusEntity = (ItemStatusEntity) iterator.next();
-                    itemStatusMap.put(itemStatusEntity.getStatusCode(), itemStatusEntity.getItemStatusId());
+                    itemStatusMap.put(itemStatusEntity.getStatusCode(), itemStatusEntity.getId());
                 }
             } catch (Exception e) {
                 logger.error(RecapConstants.EXCEPTION,e);

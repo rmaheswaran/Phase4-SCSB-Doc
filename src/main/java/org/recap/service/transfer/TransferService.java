@@ -79,7 +79,7 @@ public class TransferService {
         if(CollectionUtils.isNotEmpty(itemTransfers)) {
             for (Iterator<ItemTransferRequest> iterator = itemTransfers.iterator(); iterator.hasNext(); ) {
                 ItemTransferRequest itemTransferRequest = iterator.next();
-                TransferValidationResponse transferValidationResponse = validateItemTransferRequest(itemTransferRequest, institutionEntity.getInstitutionId());
+                TransferValidationResponse transferValidationResponse = validateItemTransferRequest(itemTransferRequest, institutionEntity.getId());
                 if(transferValidationResponse.isValid()) {
                     try {
                         Date currentDate = new Date();
@@ -87,8 +87,8 @@ public class TransferService {
                         HoldingsEntity sourceHoldings = transferValidationResponse.getSourceHoldings();
                         ItemEntity sourceItem = transferValidationResponse.getSourceItem();
 
-                        BibliographicEntity destBib = getDestinationBib(transferValidationResponse, currentDate,institutionEntity.getInstitutionId());
-                        HoldingsEntity destHoldings = getDestinationHoldings(transferValidationResponse, currentDate, institutionEntity.getInstitutionId());
+                        BibliographicEntity destBib = getDestinationBib(transferValidationResponse, currentDate,institutionEntity.getId());
+                        HoldingsEntity destHoldings = getDestinationHoldings(transferValidationResponse, currentDate, institutionEntity.getId());
 
 
                         // todo : unlink from source
@@ -121,7 +121,7 @@ public class TransferService {
                         transferValidationResponse.setMessage(RecapConstants.TRANSFER.RELINKED_FAILED);
                     }
                 }
-                ItemTransferResponse itemTransferResponse = new ItemTransferResponse(transferValidationResponse.getMessage(), transferValidationResponse.isValid(), itemTransferRequest);
+                ItemTransferResponse itemTransferResponse = new ItemTransferResponse(transferValidationResponse.getMessage(), itemTransferRequest, transferValidationResponse.isValid());
                 itemTransferResponses.add(itemTransferResponse);
 
                 String requestString = getHelperUtil().getJsonString(itemTransferRequest);
@@ -160,9 +160,9 @@ public class TransferService {
     private void validDestinationBibAndHoldingsAndItem(ItemDestination destination, Integer owningInstitutionId, TransferValidationResponse transferValidationResponse) {
         String owningInstitutionBibId = destination.getOwningInstitutionBibId();
         String owningInstitutionHoldingsId;
-        InstitutionEntity fetchedInstitutionEntity = institutionDetailsRepository.findByInstitutionId(owningInstitutionId);
+        Optional<InstitutionEntity> fetchedInstitutionEntity = institutionDetailsRepository.findById(owningInstitutionId);
         String[] nonHoldingIdInstitutionArray = nonHoldingIdInstitutionForTransferApi.split(",");
-        boolean isNonHoldingIdInstitution = Arrays.asList(nonHoldingIdInstitutionArray).contains(fetchedInstitutionEntity.getInstitutionCode());
+        boolean isNonHoldingIdInstitution = Arrays.asList(nonHoldingIdInstitutionArray).contains(fetchedInstitutionEntity.get().getInstitutionCode());
         if(StringUtils.isNotBlank(owningInstitutionBibId)) {
             BibliographicEntity fetchedBibliographicEntity = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
             if(fetchedBibliographicEntity==null && StringUtils.isBlank(destination.getOwningInstitutionHoldingsId()) && isNonHoldingIdInstitution){
@@ -280,7 +280,7 @@ public class TransferService {
         if(CollectionUtils.isNotEmpty(holdingTransfers)) {
             for (Iterator<HoldingsTransferRequest> iterator = holdingTransfers.iterator(); iterator.hasNext(); ) {
                 HoldingsTransferRequest holdingsTransferRequest = iterator.next();
-                Integer institutionId = institutionEntity.getInstitutionId();
+                Integer institutionId = institutionEntity.getId();
                 TransferValidationResponse transferValidationResponse =
                         validateHoldingTransferRequest(holdingsTransferRequest, institutionId);
                 if(transferValidationResponse.isValid()) {
@@ -344,7 +344,7 @@ public class TransferService {
                     }
 
                 }
-                HoldingTransferResponse holdingTransferResponse = new HoldingTransferResponse(transferValidationResponse.getMessage(), transferValidationResponse.isValid(), holdingsTransferRequest);
+                HoldingTransferResponse holdingTransferResponse = new HoldingTransferResponse(transferValidationResponse.getMessage(), holdingsTransferRequest, transferValidationResponse.isValid());
                 holdingTransferResponses.add(holdingTransferResponse);
 
                 String requestString = getHelperUtil().getJsonString(holdingsTransferRequest);

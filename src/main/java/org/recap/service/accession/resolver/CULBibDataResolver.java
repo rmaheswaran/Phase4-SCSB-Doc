@@ -1,23 +1,16 @@
 package org.recap.service.accession.resolver;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.marc4j.marc.Record;
 import org.recap.RecapConstants;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.accession.AccessionResponse;
-import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.marc.BibMarcRecord;
-import org.recap.model.marc.HoldingsMarcRecord;
-import org.recap.model.marc.ItemMarcRecord;
 import org.recap.service.accession.BulkAccessionService;
 import org.recap.service.partnerservice.ColumbiaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

@@ -23,7 +23,7 @@ public class MatchingBibInfoDetailRepositoryUT extends BaseTestCase {
     public void findByBibId() throws Exception {
         MatchingBibInfoDetail matchingBibInfoDetail = saveMatchingBibInfoDetail(1, "1");
         assertNotNull(matchingBibInfoDetail);
-        assertNotNull(matchingBibInfoDetail.getMatchingBibInfoDetailId());
+        assertNotNull(matchingBibInfoDetail.getId());
         List<MatchingBibInfoDetail> byBibId = matchingBibInfoDetailRepository.findByBibId(matchingBibInfoDetail.getBibId());
         assertNotNull(byBibId);
         assertTrue(byBibId.size() == 1);

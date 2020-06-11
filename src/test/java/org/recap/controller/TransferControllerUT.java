@@ -14,7 +14,6 @@ import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.service.transfer.TransferService;
 import org.recap.util.HelperUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -82,7 +81,7 @@ public class TransferControllerUT extends BaseTestCase{
         transferRequest.setHoldingTransfers(Arrays.asList(getHoldingsTransferRequest()));
         transferRequest.setItemTransfers(Arrays.asList(getItemTransferRequest()));
         InstitutionEntity institutionEntity = new InstitutionEntity();
-        institutionEntity.setInstitutionId(1);
+        institutionEntity.setId(1);
         Mockito.when(transferController.getHelperUtil()).thenReturn(helperUtil);
         Mockito.when(transferController.getTransferService()).thenReturn(transferService);
         Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
@@ -119,7 +118,7 @@ public class TransferControllerUT extends BaseTestCase{
     @Test
     public void testItemTransferResponse(){
         ItemTransferResponse itemTransferResponse = new ItemTransferResponse();
-        ItemTransferResponse itemTransferResponse1 = new ItemTransferResponse("Success",new ItemTransferRequest(),true);
+        ItemTransferResponse itemTransferResponse1 = new ItemTransferResponse("Success",new ItemTransferRequest(), true);
         itemTransferResponse.setItemTransferRequest(new ItemTransferRequest());
         assertNotNull(itemTransferResponse.getItemTransferRequest());
     }

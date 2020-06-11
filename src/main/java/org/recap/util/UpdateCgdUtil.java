@@ -99,7 +99,7 @@ public class UpdateCgdUtil {
      */
     public void updateCGDForItemInDB(String itemBarcode, String newCollectionGroupDesignation, String username, Date lastUpdatedDate) {
         CollectionGroupEntity collectionGroupEntity = collectionGroupDetailsRepository.findByCollectionGroupCode(newCollectionGroupDesignation);
-        itemDetailsRepository.updateCollectionGroupIdByItemBarcode(collectionGroupEntity.getCollectionGroupId(), itemBarcode, username, lastUpdatedDate);
+        itemDetailsRepository.updateCollectionGroupIdByItemBarcode(collectionGroupEntity.getId(), itemBarcode, username, lastUpdatedDate);
     }
 
     /**

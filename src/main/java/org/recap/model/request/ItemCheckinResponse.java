@@ -1,13 +1,15 @@
 package org.recap.model.request;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 /**
  * Created by sudhishk on 16/12/16.
  */
-@Data
+@Getter
+@Setter
 public class ItemCheckinResponse {
     private String itemBarcode;
     private String screenMessage;
