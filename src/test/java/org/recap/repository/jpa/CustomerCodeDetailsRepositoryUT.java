@@ -27,7 +27,7 @@ public class CustomerCodeDetailsRepositoryUT extends BaseTestCase {
         CustomerCodeEntity saveCustomerCodeEntity = customerCodeDetailsRepository.saveAndFlush(customerCodeEntity);
         entityManager.refresh(saveCustomerCodeEntity);
         assertNotNull(saveCustomerCodeEntity);
-        assertNotNull(saveCustomerCodeEntity.getCustomerCodeId());
+        assertNotNull(saveCustomerCodeEntity.getId());
         assertNotNull(saveCustomerCodeEntity.getCustomerCode());
 
         CustomerCodeEntity byCustomerCode = customerCodeDetailsRepository.findByCustomerCode(saveCustomerCodeEntity.getCustomerCode());
@@ -43,14 +43,14 @@ public class CustomerCodeDetailsRepositoryUT extends BaseTestCase {
         CustomerCodeEntity saveCustomerCodeEntity1 = customerCodeDetailsRepository.saveAndFlush(customerCodeEntity1);
         entityManager.refresh(saveCustomerCodeEntity1);
         assertNotNull(saveCustomerCodeEntity1);
-        assertNotNull(saveCustomerCodeEntity1.getCustomerCodeId());
+        assertNotNull(saveCustomerCodeEntity1.getId());
         assertNotNull(saveCustomerCodeEntity1.getCustomerCode());
 
         CustomerCodeEntity customerCodeEntity2 = getCustomerCodeEntity("YY", "Desc YY", 3, "ZZ,YY");
         CustomerCodeEntity saveCustomerCodeEntity2 = customerCodeDetailsRepository.saveAndFlush(customerCodeEntity2);
         entityManager.refresh(saveCustomerCodeEntity2);
         assertNotNull(saveCustomerCodeEntity2);
-        assertNotNull(saveCustomerCodeEntity2.getCustomerCodeId());
+        assertNotNull(saveCustomerCodeEntity2.getId());
         assertNotNull(saveCustomerCodeEntity2.getCustomerCode());
 
         List<CustomerCodeEntity> byCustomerCodeIn = customerCodeDetailsRepository.findByCustomerCodeIn(Arrays.asList("ZZ", "YY"));
@@ -69,13 +69,13 @@ public class CustomerCodeDetailsRepositoryUT extends BaseTestCase {
     @Test
     public void testCustomerCodeEntity(){
         CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-        customerCodeEntity.setCustomerCodeId(1);
+        customerCodeEntity.setId(1);
         customerCodeEntity.setCustomerCode("AD");
         customerCodeEntity.setDescription("AD");
         customerCodeEntity.setOwningInstitutionId(2);
         customerCodeEntity.setDeliveryRestrictions("test");
         assertNotNull(customerCodeEntity.getOwningInstitutionId());
-        assertNotNull(customerCodeEntity.getCustomerCodeId());
+        assertNotNull(customerCodeEntity.getId());
         assertNotNull(customerCodeEntity.getCustomerCode());
         assertNotNull(customerCodeEntity.getDescription());
         assertNotNull(customerCodeEntity.getDeliveryRestrictions());

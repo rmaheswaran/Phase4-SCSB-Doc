@@ -8,9 +8,6 @@ import org.recap.model.accession.AccessionResponse;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.marc.BibMarcRecord;
-import org.recap.model.marc.HoldingsMarcRecord;
-import org.recap.model.marc.ItemMarcRecord;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.service.accession.BulkAccessionService;
 import org.recap.util.MarcUtil;
@@ -44,8 +41,8 @@ public abstract class BibDataResolver {
     public abstract ItemEntity getItemEntityFromRecord(Object object,Integer owningInstitutionId);
 
     public abstract String processXml(Set<AccessionResponse> accessionResponses, Object object,
-                                              List<Map<String, String>> responseMapList, String owningInstitution,
-                                              List<ReportDataEntity> reportDataEntityList, AccessionRequest accessionRequest) throws Exception ;
+                                      List<Map<String, String>> responseMapList, String owningInstitution,
+                                      List<ReportDataEntity> reportDataEntityList, AccessionRequest accessionRequest) throws Exception ;
 
     public Object marcRecordConvert(String bibDataResponse) {
         List<Record> records = new ArrayList<>();

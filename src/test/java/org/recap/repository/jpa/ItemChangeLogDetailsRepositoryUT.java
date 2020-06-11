@@ -9,7 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -32,7 +31,7 @@ public class ItemChangeLogDetailsRepositoryUT extends BaseTestCase {
         ItemChangeLogEntity savedItemChangeLogEntity = itemChangeLogDetailsRepository.save(itemChangeLogEntity);
         entityManager.refresh(savedItemChangeLogEntity);
         assertNotNull(savedItemChangeLogEntity);
-        assertNotNull(savedItemChangeLogEntity.getChangeLogId());
+        assertNotNull(savedItemChangeLogEntity.getId());
     }
 
     @Test

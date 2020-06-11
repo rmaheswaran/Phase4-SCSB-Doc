@@ -93,7 +93,7 @@ public class ItemAvailabilityService {
                 bibliographicEntity = bibliographicDetailsRepository.findByBibliographicId(Integer.parseInt(bibItemAvailabityStatusRequest.getBibliographicId()));
             } else {
                 InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(bibItemAvailabityStatusRequest.getInstitutionId());
-                bibliographicEntity = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(institutionEntity.getInstitutionId(), bibItemAvailabityStatusRequest.getBibliographicId());
+                bibliographicEntity = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(institutionEntity.getId(), bibItemAvailabityStatusRequest.getBibliographicId());
             }
             if (bibliographicEntity != null) {
                 for (ItemEntity itemEntity : bibliographicEntity.getItemEntities()) {
