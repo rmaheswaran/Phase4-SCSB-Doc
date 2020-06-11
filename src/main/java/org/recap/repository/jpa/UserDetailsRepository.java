@@ -33,15 +33,7 @@ public interface UserDetailsRepository extends JpaRepository<UsersEntity,Integer
      * @param institutionId the institution id
      * @return the UsersEntity
      */
-    UsersEntity findByLoginIdAndInstitutionEntity(String loginId,InstitutionEntity institutionId);
-
-    /**
-     * Finds UsersEntity based on the given user id.
-     *
-     * @param userId the user id
-     * @return the UsersEntity
-     */
-    UsersEntity findByUserId(Integer userId);
+    UsersEntity findByLoginIdAndInstitutionEntity(String loginId, InstitutionEntity institutionId);
 
     /**
      * Gets user's password for validating the user based on the given login id.

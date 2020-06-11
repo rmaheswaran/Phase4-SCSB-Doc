@@ -849,7 +849,7 @@ public class MatchingAlgorithmUtil {
         if(CollectionUtils.isNotEmpty(exceptionRecordNums)) {
             List<List<Integer>> exceptionRecordNumbers = Lists.partition(exceptionRecordNums, batchSize);
             for(List<Integer> exceptionRecordNumberList : exceptionRecordNumbers) {
-                List<ReportEntity> reportEntities = reportDetailRepository.findByRecordNumberIn(exceptionRecordNumberList);
+                List<ReportEntity> reportEntities = reportDetailRepository.findByIdIn(exceptionRecordNumberList);
                 for(ReportEntity reportEntity : reportEntities) {
                     reportEntity.setType(RecapConstants.MATERIAL_TYPE_EXCEPTION);
                 }

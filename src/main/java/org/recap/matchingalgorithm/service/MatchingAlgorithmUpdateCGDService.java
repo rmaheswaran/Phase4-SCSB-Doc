@@ -367,7 +367,7 @@ public class MatchingAlgorithmUpdateCGDService {
             Iterable<CollectionGroupEntity> collectionGroupEntities = getCollectionGroupDetailsRepository().findAll();
             for (Iterator<CollectionGroupEntity> iterator = collectionGroupEntities.iterator(); iterator.hasNext(); ) {
                 CollectionGroupEntity collectionGroupEntity = iterator.next();
-                collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getCollectionGroupId());
+                collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getId());
             }
         }
         return collectionGroupMap;
@@ -384,7 +384,7 @@ public class MatchingAlgorithmUpdateCGDService {
             Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().findAll();
             for (Iterator<InstitutionEntity> iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
                 InstitutionEntity institutionEntity = iterator.next();
-                institutionMap.put(institutionEntity.getInstitutionCode(), institutionEntity.getInstitutionId());
+                institutionMap.put(institutionEntity.getInstitutionCode(), institutionEntity.getId());
             }
         }
         return institutionMap;

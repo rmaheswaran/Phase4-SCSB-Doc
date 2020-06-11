@@ -112,7 +112,7 @@ public class MatchingAlgoReportUT extends BaseTestCase {
             Iterable<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
             for (Iterator<CollectionGroupEntity> iterator = collectionGroupEntities.iterator(); iterator.hasNext(); ) {
                 CollectionGroupEntity collectionGroupEntity = iterator.next();
-                collectionGroupMap.put(collectionGroupEntity.getCollectionGroupId(), collectionGroupEntity.getCollectionGroupCode());
+                collectionGroupMap.put(collectionGroupEntity.getId(), collectionGroupEntity.getCollectionGroupCode());
             }
         }
         return collectionGroupMap;

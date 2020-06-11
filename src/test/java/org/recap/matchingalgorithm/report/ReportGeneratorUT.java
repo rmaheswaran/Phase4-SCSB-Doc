@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StopWatch;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -65,25 +64,25 @@ public class ReportGeneratorUT extends BaseTestCase{
     @Test
     public void testReportDataEntity(){
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setRecordNumber(1);
+        reportEntity.setId(1);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
         reportEntity.setFileName("Accession");
         reportEntity.setType("Accession");
         ReportDataEntity reportDataEntity = new ReportDataEntity();
-        reportDataEntity.setReportDataId(1);
+        reportDataEntity.setId(1);
         reportDataEntity.setRecordNum("10");
         reportDataEntity.setHeaderName("ItemBarcode");
         reportDataEntity.setHeaderValue("3328456458454714");
         reportEntity.setReportDataEntities(Arrays.asList(reportDataEntity));
-        assertNotNull(reportEntity.getRecordNumber());
+        assertNotNull(reportEntity.getId());
         assertNotNull(reportEntity.getFileName());
         assertNotNull(reportEntity.getReportDataEntities());
         assertNotNull(reportEntity.getType());
         assertNotNull(reportEntity.getCreatedDate());
         assertNotNull(reportEntity.getInstitutionName());
         assertNotNull(reportDataEntity.getRecordNum());
-        assertNotNull(reportDataEntity.getReportDataId());
+        assertNotNull(reportDataEntity.getId());
         assertNotNull(reportDataEntity.getHeaderName());
         assertNotNull(reportDataEntity.getHeaderValue());
     }

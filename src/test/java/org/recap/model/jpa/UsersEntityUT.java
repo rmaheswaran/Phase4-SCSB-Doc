@@ -28,7 +28,7 @@ public class UsersEntityUT extends BaseTestCase{
 
         UsersEntity usersEntity = new UsersEntity();
         usersEntity.setLoginId("123");
-        usersEntity.setInstitutionId(entity.getInstitutionId());
+        usersEntity.setInstitutionId(entity.getId());
         usersEntity.setUserDescription("test");
         usersEntity.setCreatedBy("test");
         usersEntity.setCreatedDate(new Date());
@@ -36,16 +36,16 @@ public class UsersEntityUT extends BaseTestCase{
         usersEntity.setLastUpdatedBy("test");
         UsersEntity savedUserEntity = userDetailsRepository.save(usersEntity);
         assertNotNull(savedUserEntity);
-        assertNotNull(savedUserEntity.getUserId());
+        assertNotNull(savedUserEntity.getId());
 
     }
 
     public void testUsers(){
         InstitutionEntity entity = getInstitutionEntity();
         UsersEntity usersEntity = new UsersEntity();
-        usersEntity.setUserId(1);
+        usersEntity.setId(1);
         usersEntity.setLoginId("123");
-        usersEntity.setInstitutionId(entity.getInstitutionId());
+        usersEntity.setInstitutionId(entity.getId());
         usersEntity.setUserDescription("test");
         usersEntity.setEmailId("hemalatha.s@htcindia.com");
         usersEntity.setCreatedBy("test");
@@ -55,7 +55,7 @@ public class UsersEntityUT extends BaseTestCase{
         usersEntity.setUserRole(Arrays.asList(new RoleEntity()));
         usersEntity.setInstitutionEntity(entity);
 
-        assertNotNull(usersEntity.getUserId());
+        assertNotNull(usersEntity.getId());
         assertNotNull(usersEntity.getLoginId());
         assertNotNull(usersEntity.getUserRole());
         assertNotNull(usersEntity.getInstitutionEntity());

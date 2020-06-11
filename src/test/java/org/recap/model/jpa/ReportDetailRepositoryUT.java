@@ -38,7 +38,7 @@ public class ReportDetailRepositoryUT extends BaseTestCase {
         ReportEntity savedReportEntity = saveReportEntity();
 
         assertNotNull(savedReportEntity);
-        assertNotNull(savedReportEntity.getRecordNumber());
+        assertNotNull(savedReportEntity.getId());
         List<ReportDataEntity> savedReportDataEntities = savedReportEntity.getReportDataEntities();
         for (Iterator<ReportDataEntity> iterator = savedReportDataEntities.iterator(); iterator.hasNext(); ) {
             ReportDataEntity savedReportDataEntity = iterator.next();
@@ -61,18 +61,18 @@ public class ReportDetailRepositoryUT extends BaseTestCase {
     @Test
     public void findAndUpdateReportEntity() {
         ReportEntity savedReportEntity = saveReportEntity();
-        assertNotNull(savedReportEntity.getRecordNumber());
-        ReportEntity entity = reportDetailRepository.findById(savedReportEntity.getRecordNumber()).orElse(null);
+        assertNotNull(savedReportEntity.getId());
+        ReportEntity entity = reportDetailRepository.findById(savedReportEntity.getId()).orElse(null);
         assertNotNull(entity);
         ReportDataEntity reportDataEntity = entity.getReportDataEntities().get(0);
         assertNotNull(reportDataEntity);
         entity.setType("Test");
         ReportEntity savedEntity = reportDetailRepository.save(entity);
         assertNotNull(savedEntity);
-        assertEquals(savedEntity.getRecordNumber(), entity.getRecordNumber());
+        assertEquals(savedEntity.getId(), entity.getId());
         ReportDataEntity dataEntity = savedEntity.getReportDataEntities().get(0);
         assertNotNull(dataEntity);
-        assertEquals(reportDataEntity.getReportDataId(), dataEntity.getReportDataId());
+        assertEquals(reportDataEntity.getId(), dataEntity.getId());
     }
 
     private ReportEntity saveReportEntity() {
@@ -223,8 +223,8 @@ public class ReportDetailRepositoryUT extends BaseTestCase {
     public void testFindByRecordNumberIn() throws Exception {
         ArrayList<ReportEntity> reportEntities = new ArrayList<>();
         reportEntities.add(new ReportEntity());
-        Mockito.when(getReportDetailRepository.findByRecordNumberIn(Arrays.asList(1, 2, 3, 4, 5))).thenReturn(reportEntities);
-        List<ReportEntity> byRecordNumberIn = getReportDetailRepository.findByRecordNumberIn(Arrays.asList(1, 2, 3, 4, 5));
+        Mockito.when(getReportDetailRepository.findByIdIn(Arrays.asList(1, 2, 3, 4, 5))).thenReturn(reportEntities);
+        List<ReportEntity> byRecordNumberIn = getReportDetailRepository.findByIdIn(Arrays.asList(1, 2, 3, 4, 5));
         assertNotNull(byRecordNumberIn);
         assertTrue(byRecordNumberIn.size() >= 1);
     }
