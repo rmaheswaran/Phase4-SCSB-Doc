@@ -981,7 +981,7 @@ public class AccessionService {
                 Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().findAll();
                 for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
                     InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
-                    institutionEntityMap.put( institutionEntity.getInstitutionCode(),institutionEntity.getInstitutionId());
+                    institutionEntityMap.put( institutionEntity.getInstitutionCode(),institutionEntity.getId());
                 }
             } catch (Exception e) {
                 logger.error(RecapConstants.EXCEPTION,e);

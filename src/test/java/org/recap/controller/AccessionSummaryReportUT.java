@@ -23,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;

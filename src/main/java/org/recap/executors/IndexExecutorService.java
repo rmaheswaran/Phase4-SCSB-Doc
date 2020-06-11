@@ -116,7 +116,7 @@ public abstract class IndexExecutorService {
             if (StringUtils.isNotBlank(owningInstitutionCode)) {
                 InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(owningInstitutionCode);
                 if (null != institutionEntity) {
-                    owningInstitutionId = institutionEntity.getInstitutionId();
+                    owningInstitutionId = institutionEntity.getId();
                 }
             }
             if (isIncremental) {

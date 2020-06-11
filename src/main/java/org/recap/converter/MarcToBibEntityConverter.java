@@ -401,7 +401,7 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
                 Iterable<ItemStatusEntity> itemStatusEntities = itemStatusDetailsRepository.findAll();
                 for (Iterator iterator = itemStatusEntities.iterator(); iterator.hasNext(); ) {
                     ItemStatusEntity itemStatusEntity = (ItemStatusEntity) iterator.next();
-                    itemStatusMap.put(itemStatusEntity.getStatusCode(), itemStatusEntity.getItemStatusId());
+                    itemStatusMap.put(itemStatusEntity.getStatusCode(), itemStatusEntity.getId());
                 }
             } catch (Exception e) {
                 logger.error(RecapConstants.LOG_ERROR,e);
@@ -422,7 +422,7 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
                 Iterable<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
                 for (Iterator iterator = collectionGroupEntities.iterator(); iterator.hasNext(); ) {
                     CollectionGroupEntity collectionGroupEntity = (CollectionGroupEntity) iterator.next();
-                    collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getCollectionGroupId());
+                    collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getId());
                 }
             } catch (Exception e) {
                 logger.error(RecapConstants.LOG_ERROR,e);
@@ -443,7 +443,7 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
                 Iterable<InstitutionEntity> institutionEntities = institutionDetailsRepository.findAll();
                 for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
                     InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
-                    institutionEntityMap.put(institutionEntity.getInstitutionCode(), institutionEntity.getInstitutionId());
+                    institutionEntityMap.put(institutionEntity.getInstitutionCode(), institutionEntity.getId());
                 }
             } catch (Exception e) {
                 logger.error(RecapConstants.LOG_ERROR,e);

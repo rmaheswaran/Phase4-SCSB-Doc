@@ -2,16 +2,13 @@ package org.recap.controller;
 
 import org.junit.Test;
 import org.mockito.Mock;
-import org.recap.BaseTestCase;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
-import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 

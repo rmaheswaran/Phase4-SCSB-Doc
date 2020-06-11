@@ -210,7 +210,7 @@ public class ReportGenerator {
     }
 
     private List<ReportEntity> getReportEntityList(List<Integer> reportRecordNumberList) {
-        return reportDetailRepository.findByRecordNumberIn(reportRecordNumberList);
+        return reportDetailRepository.findByIdIn(reportRecordNumberList);
     }
 
     private String getFileNameLike(String fileName) {

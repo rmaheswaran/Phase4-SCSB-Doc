@@ -1,6 +1,5 @@
 package org.recap.service.accession.resolver;
 
-import org.apache.commons.lang3.StringUtils;
 import org.marc4j.marc.Record;
 import org.recap.RecapConstants;
 import org.recap.model.accession.AccessionRequest;
@@ -12,7 +11,6 @@ import org.recap.service.partnerservice.PrincetonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

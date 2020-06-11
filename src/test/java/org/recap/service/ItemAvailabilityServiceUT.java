@@ -105,7 +105,7 @@ public class ItemAvailabilityServiceUT extends BaseTestCase {
         bibliographicEntity.setLastUpdatedDate(new Date());
         bibliographicEntity.setCreatedBy("tst");
         bibliographicEntity.setLastUpdatedBy("tst");
-        bibliographicEntity.setOwningInstitutionId(entity.getInstitutionId());
+        bibliographicEntity.setOwningInstitutionId(entity.getId());
         bibliographicEntity.setOwningInstitutionBibId(String.valueOf(random.nextInt()));
         HoldingsEntity holdingsEntity = new HoldingsEntity();
         holdingsEntity.setContent("mock holdings".getBytes());
