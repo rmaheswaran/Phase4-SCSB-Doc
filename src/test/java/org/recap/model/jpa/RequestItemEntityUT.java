@@ -50,7 +50,7 @@ public class RequestItemEntityUT extends BaseTestCase{
 
         RequestItemEntity requestItemEntity = new RequestItemEntity();
         requestItemEntity.setItemId(bibliographicEntity.getItemEntities().get(0).getItemId());
-        requestItemEntity.setRequestTypeId(savedRequestTypeEntity.getRequestTypeId());
+        requestItemEntity.setRequestTypeId(savedRequestTypeEntity.getId());
         requestItemEntity.setRequestingInstitutionId(1);
         requestItemEntity.setStopCode("test");
         requestItemEntity.setCreatedDate(new Date());
@@ -73,7 +73,7 @@ public class RequestItemEntityUT extends BaseTestCase{
         assertNotNull(entity);
 
         RequestStatusEntity requestStatusEntity = new RequestStatusEntity();
-        requestStatusEntity.setRequestStatusId(1);
+        requestStatusEntity.setId(1);
         requestStatusEntity.setRequestStatusCode("REFILE");
         requestStatusEntity.setRequestStatusDescription("REFILE");
 
@@ -86,9 +86,9 @@ public class RequestItemEntityUT extends BaseTestCase{
         BibliographicEntity bibliographicEntity = saveBibSingleHoldingsSingleItem();
 
         RequestItemEntity requestItemEntity = new RequestItemEntity();
-        requestItemEntity.setRequestId(1);
+        requestItemEntity.setId(1);
         requestItemEntity.setItemId(bibliographicEntity.getItemEntities().get(0).getItemId());
-        requestItemEntity.setRequestTypeId(savedRequestTypeEntity.getRequestTypeId());
+        requestItemEntity.setRequestTypeId(savedRequestTypeEntity.getId());
         requestItemEntity.setRequestingInstitutionId(1);
         requestItemEntity.setStopCode("test");
         requestItemEntity.setCreatedDate(new Date());
@@ -103,7 +103,7 @@ public class RequestItemEntityUT extends BaseTestCase{
         requestItemEntity.setLastUpdatedDate(new Date());
         requestItemEntity.setRequestTypeEntity(requestTypeEntity);
 
-        assertNotNull(requestItemEntity.getRequestId());
+        assertNotNull(requestItemEntity.getId());
         assertNotNull(requestItemEntity.getItemId());
         assertNotNull(requestItemEntity.getRequestTypeId());
         assertNotNull(requestItemEntity.getRequestingInstitutionId());
@@ -119,11 +119,11 @@ public class RequestItemEntityUT extends BaseTestCase{
         assertNotNull(requestItemEntity.getRequestStatusEntity());
         assertNotNull(requestItemEntity.getNotes());
 
-        assertNotNull(requestStatusEntity.getRequestStatusId());
+        assertNotNull(requestStatusEntity.getId());
         assertNotNull(requestStatusEntity.getRequestStatusCode());
         assertNotNull(requestStatusEntity.getRequestStatusDescription());
 
-        assertNotNull(requestTypeEntity.getRequestTypeId());
+        assertNotNull(requestTypeEntity.getId());
         assertNotNull(requestTypeEntity.getRequestTypeCode());
         assertNotNull(requestTypeEntity.getRequestTypeDesc());
     }

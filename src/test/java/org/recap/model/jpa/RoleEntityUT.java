@@ -27,7 +27,7 @@ public class RoleEntityUT extends BaseTestCase{
         roleEntity.setRoleDescription("test role");
         RoleEntity savedRoleEntity = rolesDetailsRepositorty.save(roleEntity);
         assertNotNull(savedRoleEntity);
-        assertNotNull(savedRoleEntity.getRoleId());
+        assertNotNull(savedRoleEntity.getId());
         assertNotNull(savedRoleEntity.getRoleName());
         assertNotNull(savedRoleEntity.getRoleDescription());
     }
@@ -35,13 +35,13 @@ public class RoleEntityUT extends BaseTestCase{
     @Test
     public void testRoles(){
         RoleEntity roleEntity = new RoleEntity();
-        roleEntity.setRoleId(1);
+        roleEntity.setId(1);
         roleEntity.setRoleName("test role");
         roleEntity.setRoleDescription("test role");
         roleEntity.setPermissions(new HashSet<>());
         roleEntity.setUsers(new HashSet<>());
         assertNotNull(roleEntity.getRoleDescription());
-        assertNotNull(roleEntity.getRoleId());
+        assertNotNull(roleEntity.getId());
         assertNotNull(roleEntity.getRoleName());
         assertNotNull(roleEntity.getPermissions());
         assertNotNull(roleEntity.getUsers());

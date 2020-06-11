@@ -1,17 +1,25 @@
 package org.recap.model.transfer;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by sheiks on 12/07/17.
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class HoldingTransferResponse {
     private String message;
     private boolean success;
     private HoldingsTransferRequest holdingsTransferRequest;
+
+    public HoldingTransferResponse() {
+    }
+
+    public HoldingTransferResponse(String message, HoldingsTransferRequest holdingsTransferRequest, boolean success) {
+        this.message = message;
+        this.holdingsTransferRequest = holdingsTransferRequest;
+        this.success = success;
+    }
 }

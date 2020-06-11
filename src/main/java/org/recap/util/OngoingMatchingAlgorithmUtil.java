@@ -680,7 +680,7 @@ public class OngoingMatchingAlgorithmUtil {
             Iterable<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
             for (Iterator<CollectionGroupEntity> iterator = collectionGroupEntities.iterator(); iterator.hasNext(); ) {
                 CollectionGroupEntity collectionGroupEntity = iterator.next();
-                collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getCollectionGroupId());
+                collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getId());
             }
         }
         return collectionGroupMap;
@@ -697,7 +697,7 @@ public class OngoingMatchingAlgorithmUtil {
             Iterable<InstitutionEntity> institutionEntities = institutionDetailsRepository.findAll();
             for (Iterator<InstitutionEntity> iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
                 InstitutionEntity institutionEntity = iterator.next();
-                institutionMap.put(institutionEntity.getInstitutionCode(), institutionEntity.getInstitutionId());
+                institutionMap.put(institutionEntity.getInstitutionCode(), institutionEntity.getId());
             }
         }
         return institutionMap;

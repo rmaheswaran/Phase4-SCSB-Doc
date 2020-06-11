@@ -83,7 +83,7 @@ public class AccessionValidationService {
             }
         }
         InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(owningInstitutionId);
-        HoldingsEntity holdingsEntity = holdingsDetailsRepository.findByOwningInstitutionHoldingsIdAndOwningInstitutionId(owningInstitutionHoldingId,institutionEntity.getInstitutionId());
+        HoldingsEntity holdingsEntity = holdingsDetailsRepository.findByOwningInstitutionHoldingsIdAndOwningInstitutionId(owningInstitutionHoldingId,institutionEntity.getId());
         if(holdingsEntity!=null && holdingsEntity.getBibliographicEntities().size() >= 1) {
             return false;
         }
