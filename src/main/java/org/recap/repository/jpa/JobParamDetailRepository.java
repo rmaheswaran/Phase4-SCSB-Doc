@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Created by angelind on 2/5/2017.
  */
 //@RepositoryRestResource(collectionResourceRel = "jobParam", path = "jobParam")
-public interface JobParamDetailRepository extends JpaRepository<JobParamEntity, Integer> {
+public interface JobParamDetailRepository extends BaseRepository<JobParamEntity> {
 
     /**
      * Finds job param entity by using job name.

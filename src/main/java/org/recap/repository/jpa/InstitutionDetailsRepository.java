@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by hemalathas on 22/6/16.
  */
-public interface InstitutionDetailsRepository extends PagingAndSortingRepository<InstitutionEntity,Integer> {
+public interface InstitutionDetailsRepository extends BaseRepository<InstitutionEntity> {
     /**
      * Finds institution entity by using institution code.
      *

@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by angelind on 31/10/16.
  */
-public interface MatchingBibDetailsRepository extends JpaRepository<MatchingBibEntity, Integer> {
+public interface MatchingBibDetailsRepository extends BaseRepository<MatchingBibEntity> {
 
     /**
      * Gets the count of multiple match unique bibs.
