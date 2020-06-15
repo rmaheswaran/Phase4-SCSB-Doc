@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Created by sheiks on 07/07/17.
  */
-public interface ItemBarcodeHistoryDetailsRepository extends JpaRepository<ItemBarcodeHistoryEntity, Integer> {
+public interface ItemBarcodeHistoryDetailsRepository extends BaseRepository<ItemBarcodeHistoryEntity> {
 }
