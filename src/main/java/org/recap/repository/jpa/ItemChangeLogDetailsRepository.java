@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 /**
  * Created by rajeshbabuk on 18/10/16.
  */
-public interface ItemChangeLogDetailsRepository extends JpaRepository<ItemChangeLogEntity, Integer> {
+public interface ItemChangeLogDetailsRepository extends BaseRepository<ItemChangeLogEntity> {
 
     /**
      * Gets record ids based on the operation type .

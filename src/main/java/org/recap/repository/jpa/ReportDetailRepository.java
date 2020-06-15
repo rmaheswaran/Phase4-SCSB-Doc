@@ -15,7 +15,7 @@ import java.util.List;
  * Created by SheikS on 8/8/2016.
  */
 //@RepositoryRestResource(collectionResourceRel = "report", path = "report")
-public interface ReportDetailRepository extends JpaRepository<ReportEntity, Integer> {
+public interface ReportDetailRepository extends BaseRepository<ReportEntity> {
 
     /**
      * Finds a list of report entities based on the given list of record numbers.

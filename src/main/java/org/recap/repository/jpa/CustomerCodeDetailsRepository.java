@@ -11,7 +11,7 @@ import java.util.List;
  * Created by rajeshbabuk on 18/10/16.
  */
 //@RepositoryRestResource(collectionResourceRel = "customerCode", path = "customerCode")
-public interface CustomerCodeDetailsRepository extends JpaRepository<CustomerCodeEntity, Integer> {
+public interface CustomerCodeDetailsRepository extends BaseRepository<CustomerCodeEntity> {
 
     /**
      * Find the customer code entity by using the customer code.

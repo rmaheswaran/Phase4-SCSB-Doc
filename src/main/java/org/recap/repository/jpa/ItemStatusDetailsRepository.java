@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
  * Created by hemalathas on 22/6/16.
  */
 //@RepositoryRestResource(collectionResourceRel = "itemStatus", path = "itemStatus")
-public interface ItemStatusDetailsRepository extends PagingAndSortingRepository<ItemStatusEntity, Integer> {
+public interface ItemStatusDetailsRepository extends BaseRepository<ItemStatusEntity> {
 
     /**
      * Finds item status entity by using item status code.
