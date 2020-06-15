@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 8/5/17.
  */
-public interface AccessionDetailsRepository extends JpaRepository<AccessionEntity, Integer> {
+public interface AccessionDetailsRepository extends BaseRepository<AccessionEntity> {
 
     /**
      * Gets a list of accession entity using from date, to date and status.

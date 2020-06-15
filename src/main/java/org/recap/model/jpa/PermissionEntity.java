@@ -18,10 +18,7 @@ import java.util.List;
 @AttributeOverride(name = "id", column = @Column(name = "permission_id"))
 @Getter
 @Setter
-public class PermissionEntity implements Serializable{
-    @Id
-    @Column(name="permission_id")
-    private int permissionId;
+public class PermissionEntity extends AbstractEntity<Integer> {
 
     @Column(name="permission_name")
     private String permissionName;

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by angelind on 27/10/16.
  */
-public interface MatchingMatchPointsDetailsRepository extends JpaRepository<MatchingMatchPointsEntity, Integer> {
+public interface MatchingMatchPointsDetailsRepository extends BaseRepository<MatchingMatchPointsEntity> {
 
     /**
      * Counts the number of matching match points based on the given criteria.
