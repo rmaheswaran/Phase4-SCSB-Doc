@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by premkb on 29/1/17.
  */
-public interface MatchingBibInfoDetailRepository extends JpaRepository<MatchingBibInfoDetail, Integer> {
+public interface MatchingBibInfoDetailRepository extends BaseRepository<MatchingBibInfoDetail> {
 
     /**
      * Finds MatchingBibInfoDetail by using bib id.

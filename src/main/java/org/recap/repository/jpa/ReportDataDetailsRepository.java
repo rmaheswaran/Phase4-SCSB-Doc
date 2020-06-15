@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by angelind on 9/1/17.
  */
-public interface ReportDataDetailsRepository extends JpaRepository<ReportDataEntity, Integer> {
+public interface ReportDataDetailsRepository extends BaseRepository<ReportDataEntity> {
 
     /**
      * Gets count of record num for matching monograph based on the given header name.

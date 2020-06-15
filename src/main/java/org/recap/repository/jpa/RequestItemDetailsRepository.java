@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 26/10/16.
  */
-public interface RequestItemDetailsRepository extends JpaRepository<RequestItemEntity, Integer>, JpaSpecificationExecutor {
+public interface RequestItemDetailsRepository extends BaseRepository<RequestItemEntity>, JpaSpecificationExecutor {
 
     /**
      * Finds a list of request item entities based on the given item id.
