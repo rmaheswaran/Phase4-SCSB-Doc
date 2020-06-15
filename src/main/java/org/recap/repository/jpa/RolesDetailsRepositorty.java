@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 /**
  * Created by dharmendrag on 13/12/16.
  */
-public interface RolesDetailsRepositorty extends JpaRepository<RoleEntity, Integer> {
+public interface RolesDetailsRepositorty extends BaseRepository<RoleEntity> {
 
     /**
      * Finds pageable list of RoleEntity based on the given role name.

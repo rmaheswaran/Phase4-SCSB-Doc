@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 /**
  * Created by dharmendrag on 13/12/16.
  */
-public interface PermissionsRepository extends JpaRepository<PermissionEntity,Integer> {
+public interface PermissionsRepository extends BaseRepository<PermissionEntity> {
 
     /**
      * Finds PermissionEntity based on the given permission name.
