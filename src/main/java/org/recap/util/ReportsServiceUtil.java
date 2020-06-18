@@ -20,7 +20,15 @@ import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.resolver.ItemValueResolver;
-import org.recap.model.search.resolver.impl.item.*;
+import org.recap.model.search.resolver.impl.item.BarcodeValueResolver;
+import org.recap.model.search.resolver.impl.item.CollectionGroupDesignationValueResolver;
+import org.recap.model.search.resolver.impl.item.CustomerCodeValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemBibIdValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemCreatedDateValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemIdValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemLastUpdatedByValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemLastUpdatedDateValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemOwningInstitutionValueResolver;
 import org.recap.model.solr.Item;
 import org.recap.repository.jpa.DeaccesionItemChangeLogDetailsRepository;
 import org.recap.repository.solr.impl.BibSolrDocumentRepositoryImpl;
@@ -33,7 +41,14 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.TimeZone;
 
 /**
  * Created by rajeshbabuk on 13/1/17.

@@ -7,7 +7,12 @@ import org.mockito.Mockito;
 import org.recap.BaseTestCase;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.InstitutionEntity;
-import org.recap.repository.jpa.*;
+import org.recap.repository.jpa.BibliographicDetailsRepository;
+import org.recap.repository.jpa.CollectionGroupDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.repository.jpa.ItemDetailsRepository;
+import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
+import org.recap.repository.jpa.ReportDataDetailsRepository;
 import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.MatchingAlgorithmUtil;
 
@@ -15,7 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by hemalathas on 7/7/17.
@@ -67,7 +75,7 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCase{
         collectionGroupEntityList.add(collectionGroupEntity);
         Iterable<CollectionGroupEntity> collectionGroupEntityIterable = collectionGroupEntityList;
         Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository()).thenReturn(collectionGroupDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository().findAll()).thenReturn(collectionGroupEntityIterable);
+        Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository().findAll()).thenReturn((List<CollectionGroupEntity>) collectionGroupEntityIterable);
         Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupMap()).thenCallRealMethod();
         Map map = matchingAlgorithmUpdateCGDService.getCollectionGroupMap();
         assertNotNull(map);
@@ -84,7 +92,7 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCase{
         institutionEntityList.add(institutionEntity);
         Iterable<InstitutionEntity> institutionEntityIterable = institutionEntityList;
         Mockito.when(matchingAlgorithmUpdateCGDService.getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getInstitutionDetailsRepository().findAll()).thenReturn(institutionEntityIterable);
+        Mockito.when(matchingAlgorithmUpdateCGDService.getInstitutionDetailsRepository().findAll()).thenReturn((List<InstitutionEntity>) institutionEntityIterable);
         Mockito.when(matchingAlgorithmUpdateCGDService.getInstitutionEntityMap()).thenCallRealMethod();
         Map map = matchingAlgorithmUpdateCGDService.getInstitutionEntityMap();
         assertNotNull(map);

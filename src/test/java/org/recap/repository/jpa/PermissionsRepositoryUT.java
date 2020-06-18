@@ -5,7 +5,7 @@ import org.recap.BaseTestCase;
 import org.recap.model.jpa.PermissionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 23/12/16.

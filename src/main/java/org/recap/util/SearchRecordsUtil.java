@@ -14,7 +14,12 @@ import org.recap.repository.solr.main.DataDumpSolrDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by sudhish on 14/10/16.

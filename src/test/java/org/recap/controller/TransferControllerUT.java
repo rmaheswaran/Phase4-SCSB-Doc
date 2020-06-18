@@ -8,7 +8,16 @@ import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.transfer.*;
+import org.recap.model.transfer.Source;
+import org.recap.model.transfer.Destination;
+import org.recap.model.transfer.ItemSource;
+import org.recap.model.transfer.HoldingsTransferRequest;
+import org.recap.model.transfer.HoldingTransferResponse;
+import org.recap.model.transfer.ItemDestination;
+import org.recap.model.transfer.ItemTransferRequest;
+import org.recap.model.transfer.ItemTransferResponse;
+import org.recap.model.transfer.TransferRequest;
+import org.recap.model.transfer.TransferResponse;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -21,7 +30,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertEquals;
+
 
 /**
  * Created by hemalathas on 27/7/17.
