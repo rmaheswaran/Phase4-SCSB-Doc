@@ -2,7 +2,8 @@ package org.recap;
 
 import junit.framework.Assert;
 import org.junit.Test;
-import org.marc4j.marc.*;
+import org.marc4j.marc.DataField;
+import org.marc4j.marc.Record;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.util.MarcUtil;
 import java.util.Date;
