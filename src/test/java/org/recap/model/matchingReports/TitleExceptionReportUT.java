@@ -4,9 +4,8 @@ import org.junit.Test;
 import org.recap.BaseTestCase;
 
 import java.util.Arrays;
-import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 4/7/17.

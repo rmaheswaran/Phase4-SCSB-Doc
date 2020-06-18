@@ -6,10 +6,9 @@ import org.recap.repository.jpa.RolesDetailsRepositorty;
 import org.recap.repository.jpa.UserDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
 import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class RoleEntityUT extends BaseTestCase{
 
