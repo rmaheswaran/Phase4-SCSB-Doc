@@ -5,8 +5,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.recap.RecapConstants;
 import org.recap.controller.TransferController;
-import org.recap.model.jpa.*;
-import org.recap.model.transfer.*;
+import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.HoldingsEntity;
+import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.ReportDataEntity;
+import org.recap.model.transfer.Source;
+import org.recap.model.transfer.Destination;
+import org.recap.model.transfer.ItemSource;
+import org.recap.model.transfer.HoldingsTransferRequest;
+import org.recap.model.transfer.HoldingTransferResponse;
+import org.recap.model.transfer.ItemTransferRequest;
+import org.recap.model.transfer.ItemTransferResponse;
+
+import org.recap.model.transfer.ItemDestination;
+import org.recap.model.transfer.TransferRequest;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -24,7 +37,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.Set;
+
 
 /**
  * Created by sheiks on 19/07/17.

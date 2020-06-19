@@ -1,10 +1,9 @@
 package org.recap.model.matchingReports;
 
-import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.junit.Test;
 import org.recap.BaseTestCase;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 4/7/17.

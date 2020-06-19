@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.query.SimpleQuery;
 
-import static org.junit.Assert.*;
 
 /**
  * Created by rajeshbabuk on 29/9/16.

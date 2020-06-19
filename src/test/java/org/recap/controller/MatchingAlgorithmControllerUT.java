@@ -12,14 +12,23 @@ import org.recap.executors.MatchingBibItemIndexExecutorService;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmHelperService;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmUpdateCGDService;
 import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
-import org.recap.model.jpa.*;
+import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.HoldingsEntity;
+import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.ReportDataEntity;
 import org.recap.report.ReportGenerator;
-import org.recap.repository.jpa.*;
+import org.recap.repository.jpa.BibliographicDetailsRepository;
+import org.recap.repository.jpa.CollectionGroupDetailsRepository;
+import org.recap.repository.jpa.ItemDetailsRepository;
+import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
+import org.recap.repository.jpa.MatchingBibInfoDetailRepository;
+import org.recap.repository.jpa.ReportDataDetailsRepository;
+import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,10 +39,19 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Random;
 import java.util.function.Function;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotEquals;
+
 
 /**
  * Created by hemalathas on 1/8/16.
