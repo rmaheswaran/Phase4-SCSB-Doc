@@ -1,6 +1,7 @@
 package org.recap.model.accession;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NonNull;
 
 /**
  * Created by sheiks on 15/06/17.

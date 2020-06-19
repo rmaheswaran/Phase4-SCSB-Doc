@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 25/1/17.
@@ -24,17 +24,17 @@ public class PermissionEntityUT extends BaseTestCase{
         permissionEntity.setPermissionDesc("new admin");
         PermissionEntity savedPermissionEntity = permissionsRepository.save(permissionEntity);
         assertNotNull(savedPermissionEntity);
-        assertNotNull(savedPermissionEntity.getPermissionId());
+        assertNotNull(savedPermissionEntity.getId());
     }
 
     @Test
     public void testPermission(){
         PermissionEntity permissionEntity = new PermissionEntity();
-        permissionEntity.setPermissionId(1);
+        permissionEntity.setId(1);
         permissionEntity.setPermissionName("new admin");
         permissionEntity.setPermissionDesc("new admin");
         permissionEntity.setRoleEntityList(Arrays.asList(new RoleEntity()));
-        assertNotNull(permissionEntity.getPermissionId());
+        assertNotNull(permissionEntity.getId());
         assertNotNull(permissionEntity.getPermissionDesc());
         assertNotNull(permissionEntity.getPermissionName());
         assertNotNull(permissionEntity.getRoleEntityList());

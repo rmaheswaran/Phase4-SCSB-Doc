@@ -1,16 +1,14 @@
 package org.recap.model.solr;
 
-import org.apache.solr.client.solrj.beans.Field;
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 8/6/17.

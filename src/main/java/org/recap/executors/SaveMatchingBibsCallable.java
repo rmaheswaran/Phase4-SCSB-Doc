@@ -12,14 +12,29 @@ import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.search.resolver.BibValueResolver;
 import org.recap.model.search.resolver.impl.Bib.TitleSubFieldAValueResolver;
-import org.recap.model.search.resolver.impl.bib.*;
+import org.recap.model.search.resolver.impl.bib.RootValueResolver;
+import org.recap.model.search.resolver.impl.bib.BibIdValueResolver;
+import org.recap.model.search.resolver.impl.bib.IdValueResolver;
+import org.recap.model.search.resolver.impl.bib.ISBNValueResolver;
+import org.recap.model.search.resolver.impl.bib.ISSNValueResolver;
+import org.recap.model.search.resolver.impl.bib.LCCNValueResolver;
+import org.recap.model.search.resolver.impl.bib.LeaderMaterialTypeValueResolver;
+import org.recap.model.search.resolver.impl.bib.OCLCValueResolver;
+import org.recap.model.search.resolver.impl.bib.OwningInstitutionBibIdValueResolver;
+import org.recap.model.search.resolver.impl.bib.OwningInstitutionValueResolver;
+import org.recap.model.search.resolver.impl.bib.IsDeletedBibValueResolver;
 import org.recap.model.solr.BibItem;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.recap.util.SolrQueryBuilder;
 import org.springframework.data.solr.core.SolrTemplate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
