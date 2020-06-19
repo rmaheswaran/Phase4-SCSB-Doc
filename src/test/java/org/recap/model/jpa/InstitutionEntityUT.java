@@ -4,7 +4,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.junit.Test;
 import org.recap.BaseTestCase;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by hemalathas on 22/6/16.

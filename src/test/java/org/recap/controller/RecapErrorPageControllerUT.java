@@ -4,7 +4,9 @@ import org.junit.Test;
 import org.recap.BaseTestCase;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+
 
 /**
  * Created by hemalathas on 23/2/17.

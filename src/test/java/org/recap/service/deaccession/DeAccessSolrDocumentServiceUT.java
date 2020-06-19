@@ -29,7 +29,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by angelind on 10/11/16.

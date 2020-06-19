@@ -12,7 +12,8 @@ import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by angelind on 9/1/17.
