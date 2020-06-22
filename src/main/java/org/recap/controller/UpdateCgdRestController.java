@@ -1,6 +1,6 @@
 package org.recap.controller;
 
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.util.UpdateCgdUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class UpdateCgdRestController {
         try {
             statusMessage = updateCgdUtil.updateCGDForItem(itemBarcode, owningInstitution, oldCollectionGroupDesignation, newCollectionGroupDesignation, cgdChangeNotes, userName);
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return statusMessage;
     }

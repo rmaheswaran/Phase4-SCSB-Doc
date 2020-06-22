@@ -13,6 +13,7 @@ import org.marc4j.marc.Record;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCase;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.converter.MarcToBibEntityConverter;
 import org.recap.converter.SCSBToBibEntityConverter;
@@ -351,7 +352,7 @@ public class AccessionServiceUT extends BaseTestCase {
         Mockito.when(mockAccessionService.getOwningInstitution(customerCode)).thenCallRealMethod();
         String owningInstitution = mockAccessionService.getOwningInstitution(customerCode);
         assertNotNull(owningInstitution);
-        assertTrue(owningInstitution.equalsIgnoreCase(RecapConstants.PRINCETON));
+        assertTrue(owningInstitution.equalsIgnoreCase(RecapCommonConstants.PRINCETON));
     }
 
     @Test

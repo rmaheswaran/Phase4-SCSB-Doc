@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -183,7 +183,7 @@ public class UpdateCgdUtilUT extends BaseTestCase {
             assertEquals("Shared", fetchedItemSolr.getCollectionGroupDesignation());
         }
 
-        updateCgdUtil.updateCGDForItem(itemBarcode, "PUL", "Shared", "Private", "Notes for updating CGD", RecapConstants.GUEST);
+        updateCgdUtil.updateCGDForItem(itemBarcode, "PUL", "Shared", "Private", "Notes for updating CGD", RecapCommonConstants.GUEST);
         List<Item> itemList1 = new ArrayList<>();
         Item item1 = new Item();
         item.setItemId(1);

@@ -2,7 +2,7 @@ package org.recap.util;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -46,9 +46,9 @@ public class ItemJSONUtil extends MarcUtil{
             item.setItemId(itemId);
             item.setOwningInstitutionItemId(itemEntity.getOwningInstitutionItemId());
             item.setBarcode(itemEntity.getBarcode());
-            item.setDocType(RecapConstants.ITEM);
+            item.setDocType(RecapCommonConstants.ITEM);
             item.setCustomerCode(itemEntity.getCustomerCode());
-            String useRestriction = StringUtils.isNotBlank(itemEntity.getUseRestrictions()) ? itemEntity.getUseRestrictions() : RecapConstants.NO_RESTRICTIONS;
+            String useRestriction = StringUtils.isNotBlank(itemEntity.getUseRestrictions()) ? itemEntity.getUseRestrictions() : RecapCommonConstants.NO_RESTRICTIONS;
             item.setUseRestriction(useRestriction.replaceAll(" ", ""));
             item.setUseRestrictionDisplay(useRestriction);
             item.setVolumePartYear(itemEntity.getVolumePartYear());
@@ -104,36 +104,36 @@ public class ItemJSONUtil extends MarcUtil{
 
         ReportEntity reportEntity = new ReportEntity();
         reportEntity.setCreatedDate(new Date());
-        reportEntity.setType(RecapConstants.SOLR_INDEX_EXCEPTION);
-        reportEntity.setFileName(RecapConstants.SOLR_INDEX_FAILURE_REPORT);
+        reportEntity.setType(RecapCommonConstants.SOLR_INDEX_EXCEPTION);
+        reportEntity.setFileName(RecapCommonConstants.SOLR_INDEX_FAILURE_REPORT);
         InstitutionEntity institutionEntity = null != itemEntity ? itemEntity.getInstitutionEntity() : null;
-        String institutionCode = null != institutionEntity ? institutionEntity.getInstitutionCode() : RecapConstants.NA;
+        String institutionCode = null != institutionEntity ? institutionEntity.getInstitutionCode() : RecapCommonConstants.NA;
         reportEntity.setInstitutionName(institutionCode);
 
         ReportDataEntity docTypeDataEntity = new ReportDataEntity();
-        docTypeDataEntity.setHeaderName(RecapConstants.DOCTYPE);
-        docTypeDataEntity.setHeaderValue(RecapConstants.ITEM);
+        docTypeDataEntity.setHeaderName(RecapCommonConstants.DOCTYPE);
+        docTypeDataEntity.setHeaderValue(RecapCommonConstants.ITEM);
         reportDataEntities.add(docTypeDataEntity);
 
         ReportDataEntity owningInstDataEntity = new ReportDataEntity();
-        owningInstDataEntity.setHeaderName(RecapConstants.OWNING_INSTITUTION);
+        owningInstDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
         owningInstDataEntity.setHeaderValue(institutionCode);
         reportDataEntities.add(owningInstDataEntity);
 
         ReportDataEntity exceptionMsgDataEntity = new ReportDataEntity();
-        exceptionMsgDataEntity.setHeaderName(RecapConstants.EXCEPTION_MSG);
+        exceptionMsgDataEntity.setHeaderName(RecapCommonConstants.EXCEPTION_MSG);
         exceptionMsgDataEntity.setHeaderValue(StringUtils.isNotBlank(e.getMessage()) ? e.getMessage() : e.toString());
         reportDataEntities.add(exceptionMsgDataEntity);
 
         if(itemEntity != null && itemEntity.getItemId() != null) {
             ReportDataEntity itemIdDataEntity = new ReportDataEntity();
-            itemIdDataEntity.setHeaderName(RecapConstants.ITEM_ID);
+            itemIdDataEntity.setHeaderName(RecapCommonConstants.ITEM_ID);
             itemIdDataEntity.setHeaderValue(String.valueOf(itemEntity.getItemId()));
             reportDataEntities.add(itemIdDataEntity);
         }
 
         reportEntity.addAll(reportDataEntities);
-        getProducerTemplate().sendBody(RecapConstants.REPORT_Q, reportEntity);
+        getProducerTemplate().sendBody(RecapCommonConstants.REPORT_Q, reportEntity);
     }
 
     /**

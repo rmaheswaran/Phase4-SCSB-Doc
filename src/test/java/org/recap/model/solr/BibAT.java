@@ -12,7 +12,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -220,7 +220,7 @@ public class BibAT extends BaseTestCase {
         searchRecordsRequest.setFieldValue(searchFieldValue.split(" ")[0]);
 
         Map searchRecordMap = bibSolrDocumentRepository.search(searchRecordsRequest);
-        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapConstants.SEARCH_SUCCESS_RESPONSE);
+        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
         assertNotNull(bibItems.get(0));
     }
 

@@ -1,6 +1,7 @@
 package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.model.jpa.ItemEntity;
@@ -51,7 +52,7 @@ public class MatchingAlgorithmMVMsCGDCallable implements Callable {
     @Override
     public Object call() throws Exception {
         long from = pageNum * Long.valueOf(batchSize);
-        List<ReportDataEntity> reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingMVMs(RecapConstants.BIB_ID, from, batchSize);
+        List<ReportDataEntity> reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingMVMs(RecapCommonConstants.BIB_ID, from, batchSize);
         for(ReportDataEntity reportDataEntity : reportDataEntities) {
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
             String bibId = reportDataEntity.getHeaderValue();

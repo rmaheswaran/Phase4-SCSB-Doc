@@ -4,6 +4,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.camel.EmailPayLoad;
 import org.slf4j.Logger;
@@ -141,11 +142,11 @@ public class EmailService {
     }
 
     private void getCcBasedOnInstitution(EmailPayLoad emailPayLoad) {
-        if (RecapConstants.NYPL.equalsIgnoreCase(institutionCode)) {
+        if (RecapCommonConstants.NYPL.equalsIgnoreCase(institutionCode)) {
             emailPayLoad.setCc(accessionNyplEmailTo);
-        } else if (RecapConstants.COLUMBIA.equalsIgnoreCase(institutionCode)) {
+        } else if (RecapCommonConstants.COLUMBIA.equalsIgnoreCase(institutionCode)) {
             emailPayLoad.setCc(accessionCulEmailTo);
-        } else if (RecapConstants.PRINCETON.equalsIgnoreCase(institutionCode)) {
+        } else if (RecapCommonConstants.PRINCETON.equalsIgnoreCase(institutionCode)) {
             emailPayLoad.setCc(accessionPulEmailTo);
         }
     }

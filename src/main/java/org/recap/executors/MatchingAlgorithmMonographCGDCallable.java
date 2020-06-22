@@ -2,6 +2,7 @@ package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.model.jpa.ItemEntity;
@@ -80,9 +81,9 @@ public class MatchingAlgorithmMonographCGDCallable implements Callable {
         long from = pageNum * Long.valueOf(batchSize);
         List<ReportDataEntity> reportDataEntities;
         if(isPendingMatch) {
-            reportDataEntities = reportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(RecapConstants.BIB_ID, from, batchSize);
+            reportDataEntities = reportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(RecapCommonConstants.BIB_ID, from, batchSize);
         } else {
-            reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(RecapConstants.BIB_ID, from, batchSize);
+            reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(RecapCommonConstants.BIB_ID, from, batchSize);
         }
         List<Integer> nonMonographRecordNums = new ArrayList<>();
         List<Integer> exceptionRecordNums = new ArrayList<>();

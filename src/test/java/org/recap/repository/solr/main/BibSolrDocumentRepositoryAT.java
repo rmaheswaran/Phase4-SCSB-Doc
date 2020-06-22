@@ -9,7 +9,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.marc4j.marc.Record;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -113,7 +113,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         searchRecordsRequest.setFieldValue(String.valueOf(fetchedBibliographicEntity.getBibliographicId()));
 
         Map searchRecordMap = bibSolrDocumentRepository.search(searchRecordsRequest);
-        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapConstants.SEARCH_SUCCESS_RESPONSE);
+        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
         assertNotNull(bibItems);
         assertTrue(bibItems.size() > 0);
         assertEquals(bibliographicEntity.getOwningInstitutionBibId(), bibItems.get(0).getOwningInstitutionBibId());
@@ -137,10 +137,10 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
     @Test
     public void searchBibItemsBasedOnTitleStartsWithField() throws Exception {
         SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-        searchRecordsRequest.setFieldName(RecapConstants.TITLE_STARTS_WITH);
+        searchRecordsRequest.setFieldName(RecapCommonConstants.TITLE_STARTS_WITH);
         searchRecordsRequest.setFieldValue("Semiznachnye tabli︠t︡sy");
         Map searchRecordMap = bibSolrDocumentRepository.search(searchRecordsRequest);
-        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapConstants.SEARCH_SUCCESS_RESPONSE);
+        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
         assertNotNull(bibItems);
     }
 
@@ -180,7 +180,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         searchRecordsRequest.setFieldValue(barcode);
 
         Map searchRecordMap = bibSolrDocumentRepository.search(searchRecordsRequest);
-        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapConstants.SEARCH_SUCCESS_RESPONSE);
+        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
         assertNotNull(bibItems);
         assertTrue(bibItems.size() > 0);
         assertEquals(bibliographicEntity.getOwningInstitutionBibId(), bibItems.get(0).getOwningInstitutionBibId());
@@ -230,7 +230,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         searchRecordsRequest.setFieldValue("al-Ḥuṭayʼah :");
 
         Map searchRecordMap = bibSolrDocumentRepository.search(searchRecordsRequest);
-        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapConstants.SEARCH_SUCCESS_RESPONSE);
+        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
         assertNotNull(bibItems);
         assertTrue(bibItems.size() > 0);
         assertTrue(bibliographicEntity.getItemEntities().size() > 0);
@@ -298,7 +298,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         for (int i = 1; i <= 2000; i++) {
             itemIds.add(i);
         }
-        SimpleQuery query = new SimpleQuery(new Criteria(RecapConstants.ITEM_ID).in(itemIds));
+        SimpleQuery query = new SimpleQuery(new Criteria(RecapCommonConstants.ITEM_ID).in(itemIds));
         query.setRows(itemIds.size());
         solrTemplate.queryForPage(solrCore, query, Item.class, RequestMethod.POST);
     }
@@ -312,7 +312,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         }
         List<List<Integer>> partitions = Lists.partition(new ArrayList<Integer>(itemIds), 1000);
         for (List<Integer> partitionItemIds : partitions) {
-            SimpleQuery query = new SimpleQuery(new Criteria(RecapConstants.ITEM_ID).in(partitionItemIds));
+            SimpleQuery query = new SimpleQuery(new Criteria(RecapCommonConstants.ITEM_ID).in(partitionItemIds));
             query.setRows(partitionItemIds.size());
             ScoredPage<Item> itemsPage = solrTemplate.queryForPage(solrCore, query, Item.class, RequestMethod.POST);
             assertNotNull(itemsPage);
@@ -344,7 +344,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         searchRecordsRequest.getOwningInstitutions().add("CUL");
 
         Map searchRecordMap = bibSolrDocumentRepository.search(searchRecordsRequest);
-        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapConstants.SEARCH_SUCCESS_RESPONSE);
+        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
         assertNotNull(bibItems);
         assertEquals(bibItems.size(), 2);
     }
@@ -451,7 +451,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         searchRecordsRequest.getOwningInstitutions().add("CUL");
 
         Map searchRecordMap = bibSolrDocumentRepository.search(searchRecordsRequest);
-        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapConstants.SEARCH_SUCCESS_RESPONSE);
+        List<BibItem> bibItems = (List<BibItem>) searchRecordMap.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
         assertNotNull(bibItems);
         assertEquals(bibItems.size(), 1);
 
@@ -461,7 +461,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         searchRecordsRequest.getOwningInstitutions().add("CUL");
 
         searchRecordMap = bibSolrDocumentRepository.search(searchRecordsRequest);
-        bibItems = (List<BibItem>) searchRecordMap.get(RecapConstants.SEARCH_SUCCESS_RESPONSE);
+        bibItems = (List<BibItem>) searchRecordMap.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
         assertNotNull(bibItems);
         assertEquals(bibItems.size(), 1);
 
@@ -503,7 +503,7 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         searchRecordsRequest.setFieldValue("33433009087036, 33433021391382");
 
         Map<String, Object> searchMap = bibSolrDocumentRepository.search(searchRecordsRequest);
-        List<BibItem> bibItems = (List<BibItem>) searchMap.get(RecapConstants.SEARCH_SUCCESS_RESPONSE);
+        List<BibItem> bibItems = (List<BibItem>) searchMap.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
         assertNotNull(bibItems);
     }
 

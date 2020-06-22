@@ -2,6 +2,7 @@ package org.recap.util;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.DeAccessionSummaryRecord;
 import org.recap.model.jpa.ReportDataEntity;
@@ -36,8 +37,8 @@ public class DeAccessionSummaryRecordGeneratorUT extends BaseTestCase{
     private ReportEntity getReportEntity(){
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapConstants.DEACCESSION_REPORT);
-        reportEntity.setType(RecapConstants.DEACCESSION_SUMMARY_REPORT);
+        reportEntity.setFileName(RecapCommonConstants.DEACCESSION_REPORT);
+        reportEntity.setType(RecapCommonConstants.DEACCESSION_SUMMARY_REPORT);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 

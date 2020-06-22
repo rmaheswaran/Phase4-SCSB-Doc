@@ -4,6 +4,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.common.SolrInputDocument;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
@@ -135,7 +136,7 @@ public class BibItemIndexCallable implements Callable {
                 if(solrInputDocument != null)
                     solrInputDocumentsToIndex.add(solrInputDocument);
             } catch (Exception e) {
-                logger.error(RecapConstants.LOG_ERROR,e);
+                logger.error(RecapCommonConstants.LOG_ERROR,e);
             }
         }
 
