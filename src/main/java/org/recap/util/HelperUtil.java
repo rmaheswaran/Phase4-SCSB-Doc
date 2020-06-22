@@ -3,6 +3,7 @@ package org.recap.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.ProducerTemplate;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ItemChangeLogEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -47,7 +48,7 @@ public class HelperUtil {
         ReportEntity reportEntity;
         reportEntity = getReportEntity(owningInstitution!=null ? owningInstitution : RecapConstants.UNKNOWN_INSTITUTION, fileName, reportType);
         reportEntity.setReportDataEntities(reportDataEntityList);
-        producerTemplate.sendBody(RecapConstants.REPORT_Q, reportEntity);
+        producerTemplate.sendBody(RecapCommonConstants.REPORT_Q, reportEntity);
     }
 
 
@@ -80,7 +81,7 @@ public class HelperUtil {
         try {
             return getObjectMapper().writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
             return e.getMessage();
         }
     }

@@ -4,6 +4,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.camel.EmailPayLoad;
 import org.recap.model.jpa.BibliographicEntity;
@@ -75,7 +76,7 @@ public class UpdateCgdUtil {
      * @return the string
      */
     public String updateCGDForItem(String itemBarcode, String owningInstitution, String oldCollectionGroupDesignation, String newCollectionGroupDesignation, String cgdChangeNotes, String username) {
-        String userName = StringUtils.isBlank(username) ? RecapConstants.GUEST : username;
+        String userName = StringUtils.isBlank(username) ? RecapCommonConstants.GUEST : username;
         List<ItemEntity> itemEntities = new ArrayList<>();
         Date lastUpdatedDate = new Date();
         String cgdChangeLog = oldCollectionGroupDesignation + RecapConstants.TO + newCollectionGroupDesignation;
@@ -84,12 +85,12 @@ public class UpdateCgdUtil {
             itemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
             setCGDChangeLogToItemEntity(cgdChangeLog,itemEntities);
             updateCGDForItemInSolr(itemEntities);
-            saveItemChangeLogEntity(itemEntities, userName, lastUpdatedDate, RecapConstants.UPDATE_CGD, cgdChangeNotes);
+            saveItemChangeLogEntity(itemEntities, userName, lastUpdatedDate, RecapCommonConstants.UPDATE_CGD, cgdChangeNotes);
             sendEmail(itemBarcode, owningInstitution, oldCollectionGroupDesignation, newCollectionGroupDesignation, cgdChangeNotes);
-            return RecapConstants.SUCCESS;
+            return RecapCommonConstants.SUCCESS;
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
-            return RecapConstants.FAILURE + "-" + e.getMessage();
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            return RecapCommonConstants.FAILURE + "-" + e.getMessage();
         }
     }
 

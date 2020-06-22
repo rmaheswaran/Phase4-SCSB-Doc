@@ -1,14 +1,16 @@
 package org.recap.util;
 
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.AccessionSummaryRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.springframework.util.StringUtils;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Created by hemalathas on 22/11/16.
@@ -33,19 +35,19 @@ public class AccessionSummaryRecordGenerator {
 
         for(ReportEntity reportEntity : reportEntityList){
             for(ReportDataEntity reportDataEntity : reportEntity.getReportDataEntities()){
-                if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapConstants.BIB_SUCCESS_COUNT)){
+                if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapCommonConstants.BIB_SUCCESS_COUNT)){
                     bibSuccessCount = bibSuccessCount + Integer.parseInt(reportDataEntity.getHeaderValue());
                 }
-                if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapConstants.ITEM_SUCCESS_COUNT)){
+                if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapCommonConstants.ITEM_SUCCESS_COUNT)){
                     itemSuccessCount = itemSuccessCount + Integer.parseInt(reportDataEntity.getHeaderValue());
                 }
-                if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapConstants.BIB_FAILURE_COUNT)){
+                if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapCommonConstants.BIB_FAILURE_COUNT)){
                     bibFailureCount = Integer.parseInt(reportDataEntity.getHeaderValue());
                 }
-                if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapConstants.ITEM_FAILURE_COUNT)){
+                if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapCommonConstants.ITEM_FAILURE_COUNT)){
                     itemFailureCount = Integer.parseInt(reportDataEntity.getHeaderValue());
                 }
-                if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapConstants.NUMBER_OF_BIB_MATCHES)){
+                if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapCommonConstants.NUMBER_OF_BIB_MATCHES)){
                     existingBibCount = existingBibCount + Integer.parseInt(reportDataEntity.getHeaderValue());
                 }
                 if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapConstants.FAILURE_BIB_REASON) && !StringUtils.isEmpty(reportDataEntity.getHeaderValue())){

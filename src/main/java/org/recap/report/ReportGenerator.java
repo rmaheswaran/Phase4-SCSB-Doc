@@ -1,6 +1,7 @@
 package org.recap.report;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.repository.jpa.ReportDetailRepository;
@@ -101,18 +102,18 @@ public class ReportGenerator {
 
         if(CollectionUtils.isNotEmpty(reportEntityList)) {
             String actualFileName = fileName;
-            if(reportType.equalsIgnoreCase(RecapConstants.ACCESSION_SUMMARY_REPORT) || reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_SUMMARY)){
+            if(reportType.equalsIgnoreCase(RecapCommonConstants.ACCESSION_SUMMARY_REPORT) || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY)){
                 actualFileName = fileName+"-"+institutionName;
             } else if (reportType.equalsIgnoreCase(RecapConstants.ONGOING_ACCESSION_REPORT)){
                 actualFileName = RecapConstants.ONGOING_ACCESSION_REPORT+"-"+institutionName;
-            } else if(reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)){
-                actualFileName = RecapConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT+"-"+institutionName;
-            } else if(reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_REJECTION_REPORT)){
-                actualFileName = RecapConstants.SUBMIT_COLLECTION_REJECTION_REPORT+"-"+institutionName;
-            } else if(reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)){
-                actualFileName = RecapConstants.SUBMIT_COLLECTION_SUCCESS_REPORT+"-"+institutionName;
-            } else if(reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_FAILURE_REPORT)){
-                actualFileName = RecapConstants.SUBMIT_COLLECTION_FAILURE_REPORT+"-"+institutionName;
+            } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)){
+                actualFileName = RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT+"-"+institutionName;
+            } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT)){
+                actualFileName = RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT+"-"+institutionName;
+            } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)){
+                actualFileName = RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT+"-"+institutionName;
+            } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT)){
+                actualFileName = RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT+"-"+institutionName;
             } else if(reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT)){
                 actualFileName = RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT+"-"+institutionName;
             }
@@ -136,21 +137,21 @@ public class ReportGenerator {
 
     private List<ReportEntity> getReportEntities(String fileName, String institutionName, String reportType, Date from, Date to) {
         List<ReportEntity> reportEntityList;
-        if(!institutionName.equalsIgnoreCase(RecapConstants.ALL_INST) && (reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)
-                || reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_REJECTION_REPORT)
-                || reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)
-                || reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_FAILURE_REPORT))){
+        if(!institutionName.equalsIgnoreCase(RecapCommonConstants.LCCN_CRITERIA) && (reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)
+                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT)
+                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)
+                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT))){
             fileName = getFileNameLike(fileName);
             reportEntityList = reportDetailRepository.findByFileLikeAndInstitutionAndTypeAndDateRange(fileName,institutionName,reportType,from,to);
-        }else if(institutionName.equalsIgnoreCase(RecapConstants.ALL_INST) && (reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)
-                || reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_REJECTION_REPORT)
-                || reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)
-                || reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_FAILURE_REPORT))){
+        }else if(institutionName.equalsIgnoreCase(RecapCommonConstants.LCCN_CRITERIA) && (reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)
+                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT)
+                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)
+                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT))){
             fileName = getFileNameLike(fileName);
             reportEntityList = reportDetailRepository.findByFileLikeAndTypeAndDateRange(fileName,reportType,from,to);
-        } else if(reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_SUMMARY)){
+        } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY)){
             reportEntityList = reportDetailRepository.findByFileName(fileName);
-        } else if(institutionName.equalsIgnoreCase(RecapConstants.ALL_INST)) {
+        } else if(institutionName.equalsIgnoreCase(RecapCommonConstants.LCCN_CRITERIA)) {
             reportEntityList = reportDetailRepository.findByFileLikeAndTypeAndDateRange(fileName, reportType, from, to);
         } else {
             reportEntityList = reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(fileName, institutionName, reportType, from, to);

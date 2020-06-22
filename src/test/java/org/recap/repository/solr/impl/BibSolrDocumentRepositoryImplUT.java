@@ -2,7 +2,7 @@ package org.recap.repository.solr.impl;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.search.resolver.BibValueResolver;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.search.resolver.ItemValueResolver;
@@ -105,7 +105,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCase{
         bibResolverMap.put("Title_display","test");
         bibResolverMap.put("Title_search","test");
         bibResolverMap.put("Title_sort","test");
-        bibResolverMap.put(RecapConstants.IS_DELETED_BIB,false);
+        bibResolverMap.put(RecapCommonConstants.IS_DELETED_BIB,false);
         return bibResolverMap;
     }
 
@@ -126,7 +126,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCase{
         itemResolverMap.put("_root_","root");
         itemResolverMap.put("ItemId",1);
         itemResolverMap.put("id","1236598");
-        itemResolverMap.put(RecapConstants.IS_DELETED_ITEM,false);
+        itemResolverMap.put(RecapCommonConstants.IS_DELETED_ITEM,false);
         return itemResolverMap;
     }
 
@@ -137,7 +137,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCase{
         holdingResolverMap.put("DocType","holdingId");
         holdingResolverMap.put("id","565456456");
         holdingResolverMap.put("HoldingsId",534541);
-        holdingResolverMap.put(RecapConstants.IS_DELETED_HOLDINGS,false);
+        holdingResolverMap.put(RecapCommonConstants.IS_DELETED_HOLDINGS,false);
         return holdingResolverMap;
     }
 

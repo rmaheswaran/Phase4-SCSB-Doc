@@ -1,6 +1,6 @@
 package org.recap.controller;
 
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.JobEntity;
 import org.recap.repository.jpa.JobDetailsRepository;
 import org.slf4j.Logger;
@@ -32,6 +32,6 @@ public class UpdateJobController {
     @RequestMapping(value="/updateJob", method = RequestMethod.POST)
     public String updateJob(@RequestBody JobEntity jobEntity) {
         jobDetailsRepository.save(jobEntity);
-        return RecapConstants.SUCCESS;
+        return RecapCommonConstants.SUCCESS;
     }
 }

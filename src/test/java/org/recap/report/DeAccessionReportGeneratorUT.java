@@ -2,7 +2,7 @@ package org.recap.report;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.repository.jpa.ReportDetailRepository;
@@ -34,7 +34,7 @@ public class DeAccessionReportGeneratorUT extends BaseTestCase{
     public void FSDeAccessionReportGenerator() throws InterruptedException {
         List<ReportEntity> reportEntities = getReportEntity();
         Date createdDate = reportEntities.get(0).getCreatedDate();
-        String generatedReportFileNameInFileSyatem = reportGenerator.generateReport(RecapConstants.DEACCESSION_REPORT, RecapConstants.PRINCETON, RecapConstants.DEACCESSION_SUMMARY_REPORT, RecapConstants.FILE_SYSTEM, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
+        String generatedReportFileNameInFileSyatem = reportGenerator.generateReport(RecapCommonConstants.DEACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.DEACCESSION_SUMMARY_REPORT, RecapCommonConstants.FILE_SYSTEM, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
         Thread.sleep(1000);
         assertNotNull(generatedReportFileNameInFileSyatem);
     }
@@ -43,7 +43,7 @@ public class DeAccessionReportGeneratorUT extends BaseTestCase{
     public void FTPDeAccessionReportGenerator() throws InterruptedException {
         List<ReportEntity> reportEntities = getReportEntity();
         Date createdDate = reportEntities.get(0).getCreatedDate();
-        String generatedReportFileNameInFileSystem = reportGenerator.generateReport(RecapConstants.DEACCESSION_REPORT, RecapConstants.PRINCETON, RecapConstants.DEACCESSION_SUMMARY_REPORT, RecapConstants.FTP, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
+        String generatedReportFileNameInFileSystem = reportGenerator.generateReport(RecapCommonConstants.DEACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.DEACCESSION_SUMMARY_REPORT, RecapCommonConstants.FTP, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
         Thread.sleep(1000);
         assertNotNull(generatedReportFileNameInFileSystem);
     }
@@ -53,40 +53,40 @@ public class DeAccessionReportGeneratorUT extends BaseTestCase{
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapConstants.DEACCESSION_REPORT);
-        reportEntity.setType(RecapConstants.DEACCESSION_SUMMARY_REPORT);
-        reportEntity.setInstitutionName(RecapConstants.PRINCETON);
+        reportEntity.setFileName(RecapCommonConstants.DEACCESSION_REPORT);
+        reportEntity.setType(RecapCommonConstants.DEACCESSION_SUMMARY_REPORT);
+        reportEntity.setInstitutionName(RecapCommonConstants.PRINCETON);
         reportEntity.setCreatedDate(new Date());
 
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
 
         ReportDataEntity dateReportDataEntity = new ReportDataEntity();
-        dateReportDataEntity.setHeaderName(RecapConstants.DATE_OF_DEACCESSION);
+        dateReportDataEntity.setHeaderName(RecapCommonConstants.DATE_OF_DEACCESSION);
         dateReportDataEntity.setHeaderValue(formatter.format(new Date()));
         reportDataEntities.add(dateReportDataEntity);
 
         ReportDataEntity owningInstitutionReportDataEntity = new ReportDataEntity();
-        owningInstitutionReportDataEntity.setHeaderName(RecapConstants.OWNING_INSTITUTION);
-        owningInstitutionReportDataEntity.setHeaderValue(RecapConstants.PRINCETON);
+        owningInstitutionReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
+        owningInstitutionReportDataEntity.setHeaderValue(RecapCommonConstants.PRINCETON);
         reportDataEntities.add(owningInstitutionReportDataEntity);
 
         ReportDataEntity barcodeReportDataEntity = new ReportDataEntity();
-        barcodeReportDataEntity.setHeaderName(RecapConstants.BARCODE);
+        barcodeReportDataEntity.setHeaderName(RecapCommonConstants.BARCODE);
         barcodeReportDataEntity.setHeaderValue("123");
         reportDataEntities.add(barcodeReportDataEntity);
 
         ReportDataEntity owningInstitutionBibIdReportDataEntity = new ReportDataEntity();
-        owningInstitutionBibIdReportDataEntity.setHeaderName(RecapConstants.OWNING_INST_BIB_ID);
+        owningInstitutionBibIdReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INST_BIB_ID);
         owningInstitutionBibIdReportDataEntity.setHeaderValue("3456");
         reportDataEntities.add(owningInstitutionBibIdReportDataEntity);
 
         ReportDataEntity collectionGroupCodeReportDataEntity = new ReportDataEntity();
-        collectionGroupCodeReportDataEntity.setHeaderName(RecapConstants.COLLECTION_GROUP_CODE);
+        collectionGroupCodeReportDataEntity.setHeaderName(RecapCommonConstants.COLLECTION_GROUP_CODE);
         collectionGroupCodeReportDataEntity.setHeaderValue("Private");
         reportDataEntities.add(collectionGroupCodeReportDataEntity);
 
         ReportDataEntity statusReportDataEntity = new ReportDataEntity();
-        statusReportDataEntity.setHeaderName(RecapConstants.STATUS);
+        statusReportDataEntity.setHeaderName(RecapCommonConstants.STATUS);
         statusReportDataEntity.setHeaderValue("Success");
         reportDataEntities.add(statusReportDataEntity);
 

@@ -2,7 +2,7 @@ package org.recap.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.solr.SolrIndexRequest;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -20,7 +20,7 @@ public class OngoingMatchingAlgorithmJobRestControllerUT extends BaseControllerU
     @Test
     public void testStartMatchingAlgorithmJob() throws Exception {
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
-        solrIndexRequest.setProcessType(RecapConstants.ONGOING_MATCHING_ALGORITHM_JOB);
+        solrIndexRequest.setProcessType(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB);
         solrIndexRequest.setCreatedDate(new Date());
         ObjectMapper objectMapper = new ObjectMapper();
         MvcResult mvcResult = this.mockMvc.perform(post("/ongoingMatchingAlgorithmService/ongoingMatchingAlgorithmJob")

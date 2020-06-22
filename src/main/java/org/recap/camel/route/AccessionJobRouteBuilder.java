@@ -4,6 +4,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.camel.processor.AccessionJobProcessor;
 import org.recap.controller.SharedCollectionRestController;
@@ -36,8 +37,8 @@ public class AccessionJobRouteBuilder {
                     onException(Exception.class)
                             .log("Exception caught during ongoing Accession Job")
                             .handled(true)
-                            .to(RecapConstants.DIRECT_ROUTE_FOR_EXCEPTION);
-                    from(RecapConstants.ACCESSION_JOB_INITIATE_QUEUE)
+                            .to(RecapCommonConstants.DIRECT_ROUTE_FOR_EXCEPTION);
+                    from(RecapCommonConstants.ACCESSION_JOB_INITIATE_QUEUE)
                             .routeId(RecapConstants.ACCESSION_JOB_INITIATE_ROUTE_ID)
                             .process(new Processor() {
                                 @Override
@@ -52,12 +53,12 @@ public class AccessionJobRouteBuilder {
                                         exchange.getIn().setBody("JobId:" + jobId + "|" + accessionJobStatus);
                                     } catch (Exception ex) {
                                         exchange.getIn().setBody("JobId:" + jobId + "|" + ex.getMessage());
-                                        logger.info(RecapConstants.LOG_ERROR, ex);
+                                        logger.info(RecapCommonConstants.LOG_ERROR, ex);
                                     }
                                 }
                             })
                             .onCompletion()
-                            .to(RecapConstants.ACCESSION_JOB_COMPLETION_OUTGOING_QUEUE)
+                            .to(RecapCommonConstants.ACCESSION_JOB_COMPLETION_OUTGOING_QUEUE)
                             .end();
                 }
             });
@@ -65,11 +66,11 @@ public class AccessionJobRouteBuilder {
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapConstants.DIRECT_ROUTE_FOR_EXCEPTION)
+                    from(RecapCommonConstants.DIRECT_ROUTE_FOR_EXCEPTION)
                             .log("Calling direct route for exception")
                             .bean(applicationContext.getBean(AccessionJobProcessor.class), RecapConstants.ACCESSION__CAUGHT_EXCEPTION_METHOD)
                             .onCompletion()
-                            .to(RecapConstants.ACCESSION_JOB_COMPLETION_OUTGOING_QUEUE);
+                            .to(RecapCommonConstants.ACCESSION_JOB_COMPLETION_OUTGOING_QUEUE);
                 }
             });
         } catch (Exception ex) {

@@ -1,6 +1,6 @@
 package org.recap.controller;
 
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.util.DateUtil;
@@ -50,7 +50,7 @@ public class OngoingMatchingAlgorithmJobRestController {
         Integer rows = Integer.valueOf(batchSize);
         try {
             status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(dateUtil.getFromDate(date), rows);
-            if(RecapConstants.SUCCESS.equalsIgnoreCase(status)) {
+            if(RecapCommonConstants.SUCCESS.equalsIgnoreCase(status)) {
                 status = matchingBibInfoDetailService.populateMatchingBibInfo(dateUtil.getFromDate(date), dateUtil.getToDate(date));
             }
         } catch (Exception e) {

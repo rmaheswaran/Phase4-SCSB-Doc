@@ -2,6 +2,7 @@ package org.recap.repository.jpa;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.JobParamDataEntity;
 import org.recap.model.jpa.JobParamEntity;
@@ -44,7 +45,7 @@ public class JobParamDetailRepositoryUT extends BaseTestCase{
         jobParamDataEntityList.add(reportTypeDataEntity);
         JobParamDataEntity transmissionTypeDataEntity = new JobParamDataEntity();
         transmissionTypeDataEntity.setParamName("TransmissionType");
-        transmissionTypeDataEntity.setParamValue(RecapConstants.FTP);
+        transmissionTypeDataEntity.setParamValue(RecapCommonConstants.FTP);
         jobParamDataEntityList.add(transmissionTypeDataEntity);
         jobParamEntity.addAll(jobParamDataEntityList);
 

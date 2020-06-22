@@ -2,6 +2,7 @@ package org.recap.matchingalgorithm.report;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
@@ -18,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by angelind on 23/8/16.
@@ -42,7 +42,7 @@ public class ReportGeneratorUT extends BaseTestCase{
         saveAccessionSummaryReportEntity();
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        String generatedReportFileName = reportGenerator.generateReport(RecapConstants.ACCESSION_REPORT, RecapConstants.PRINCETON, RecapConstants.ACCESSION_SUMMARY_REPORT, RecapConstants.FILE_SYSTEM, dateUtil.getFromDate(new Date()), dateUtil.getToDate(new Date()));
+        String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FILE_SYSTEM, dateUtil.getFromDate(new Date()), dateUtil.getToDate(new Date()));
         Thread.sleep(1000);
         stopWatch.stop();
         System.out.println("Total Time taken to generate matching report : " + stopWatch.getTotalTimeSeconds());
@@ -54,7 +54,7 @@ public class ReportGeneratorUT extends BaseTestCase{
         saveAccessionSummaryReportEntity();
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        String generatedReportFileName = reportGenerator.generateReport(RecapConstants.ACCESSION_REPORT, RecapConstants.PRINCETON, RecapConstants.ACCESSION_SUMMARY_REPORT, RecapConstants.FTP, dateUtil.getFromDate(new Date()), dateUtil.getToDate(new Date()));
+        String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FTP, dateUtil.getFromDate(new Date()), dateUtil.getToDate(new Date()));
         Thread.sleep(1000);
         stopWatch.stop();
         System.out.println("Total Time taken to generate matching report : " + stopWatch.getTotalTimeSeconds());
@@ -91,28 +91,28 @@ public class ReportGeneratorUT extends BaseTestCase{
         List<ReportEntity> reportEntityList = new ArrayList<>();
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapConstants.ACCESSION_REPORT);
-        reportEntity.setType(RecapConstants.ACCESSION_SUMMARY_REPORT);
+        reportEntity.setFileName(RecapCommonConstants.ACCESSION_REPORT);
+        reportEntity.setType(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 
         ReportDataEntity successBibCountReportDataEntity = new ReportDataEntity();
-        successBibCountReportDataEntity.setHeaderName(RecapConstants.BIB_SUCCESS_COUNT);
+        successBibCountReportDataEntity.setHeaderName(RecapCommonConstants.BIB_SUCCESS_COUNT);
         successBibCountReportDataEntity.setHeaderValue(String.valueOf(1));
         reportDataEntities.add(successBibCountReportDataEntity);
 
         ReportDataEntity successItemCountReportDataEntity = new ReportDataEntity();
-        successItemCountReportDataEntity.setHeaderName(RecapConstants.ITEM_SUCCESS_COUNT);
+        successItemCountReportDataEntity.setHeaderName(RecapCommonConstants.ITEM_SUCCESS_COUNT);
         successItemCountReportDataEntity.setHeaderValue(String.valueOf(1));
         reportDataEntities.add(successItemCountReportDataEntity);
 
         ReportDataEntity failedBibCountReportDataEntity = new ReportDataEntity();
-        failedBibCountReportDataEntity.setHeaderName(RecapConstants.BIB_FAILURE_COUNT);
+        failedBibCountReportDataEntity.setHeaderName(RecapCommonConstants.BIB_FAILURE_COUNT);
         failedBibCountReportDataEntity.setHeaderValue(String.valueOf(0));
         reportDataEntities.add(failedBibCountReportDataEntity);
 
         ReportDataEntity failedItemCountReportDataEntity = new ReportDataEntity();
-        failedItemCountReportDataEntity.setHeaderName(RecapConstants.ITEM_FAILURE_COUNT);
+        failedItemCountReportDataEntity.setHeaderName(RecapCommonConstants.ITEM_FAILURE_COUNT);
         failedItemCountReportDataEntity.setHeaderValue(String.valueOf(0));
         reportDataEntities.add(failedItemCountReportDataEntity);
 

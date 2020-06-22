@@ -2,6 +2,7 @@ package org.recap.repository.jpa;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
@@ -28,14 +29,14 @@ public class ReportDataDetailsRepositoryUT extends BaseTestCase{
     @Test
     public void getCountOfRecordNumForMatchingMonographTest() throws Exception {
         saveReportEntity("Monograph,Monograph");
-        long countOfRecordNumForMatchingMonograph = reportDataDetailsRepository.getCountOfRecordNumForMatchingMonograph(RecapConstants.BIB_ID);
+        long countOfRecordNumForMatchingMonograph = reportDataDetailsRepository.getCountOfRecordNumForMatchingMonograph(RecapCommonConstants.BIB_ID);
         assertTrue(countOfRecordNumForMatchingMonograph > 0);
     }
 
     @Test
     public void getReportDataEntityForMatchingMonographsTest() throws Exception {
         saveReportEntity("Monograph,Monograph");
-        List<ReportDataEntity> reportDataEntities = reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(RecapConstants.BIB_ID, 0, 100);
+        List<ReportDataEntity> reportDataEntities = reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(RecapCommonConstants.BIB_ID, 0, 100);
         assertNotNull(reportDataEntities);
     }
 
@@ -43,13 +44,13 @@ public class ReportDataDetailsRepositoryUT extends BaseTestCase{
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
 
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapConstants.MATCHING_ALGO_FULL_FILE_NAME);
+        reportEntity.setFileName(RecapCommonConstants.MATCHING_ALGO_FULL_FILE_NAME);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setType(RecapConstants.MULTI_MATCH);
-        reportEntity.setInstitutionName(RecapConstants.ALL_INST);
+        reportEntity.setInstitutionName(RecapCommonConstants.ALL_INST);
 
         ReportDataEntity reportDataEntity1 = new ReportDataEntity();
-        reportDataEntity1.setHeaderName(RecapConstants.BIB_ID);
+        reportDataEntity1.setHeaderName(RecapCommonConstants.BIB_ID);
         reportDataEntity1.setHeaderValue("1,2");
         reportDataEntities.add(reportDataEntity1);
 
@@ -67,9 +68,9 @@ public class ReportDataDetailsRepositoryUT extends BaseTestCase{
         List<String> recordNumList = new ArrayList<>();
         recordNumList.add("1");
         List<String> headerNameList = new ArrayList<>();
-        headerNameList.add(RecapConstants.BIB_ID);
-        headerNameList.add(RecapConstants.OWNING_INSTITUTION);
-        headerNameList.add(RecapConstants.OWNING_INSTITUTION_BIB_ID);
+        headerNameList.add(RecapCommonConstants.BIB_ID);
+        headerNameList.add(RecapCommonConstants.OWNING_INSTITUTION);
+        headerNameList.add(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
         List<ReportDataEntity> reportDataEntityList = reportDataDetailsRepository.getRecordsForMatchingBibInfo(recordNumList,headerNameList);
         assertNotNull(reportDataEntityList);
     }

@@ -2,7 +2,7 @@ package org.recap.service.accession.resolver;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.accession.AccessionResponse;
 import org.recap.model.jaxb.BibRecord;
@@ -46,7 +46,7 @@ public class NYPLBibDataResolver extends BibDataResolver {
 
     @Override
     public boolean isInterested(String institution) {
-        return RecapConstants.NYPL.equals(institution);
+        return RecapCommonConstants.NYPL.equals(institution);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class NYPLBibDataResolver extends BibDataResolver {
         try {
             bibRecords = (BibRecords) JAXBHandler.getInstance().unmarshal(bibDataResponse, BibRecords.class);
         } catch (JAXBException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return bibRecords;
     }

@@ -1,7 +1,7 @@
 package org.recap.service.accession.resolver;
 
 import org.marc4j.marc.Record;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.accession.AccessionResponse;
 import org.recap.model.jpa.ItemEntity;
@@ -30,7 +30,7 @@ public class CULBibDataResolver extends BibDataResolver {
 
     @Override
     public boolean isInterested(String institution) {
-        return RecapConstants.COLUMBIA.equals(institution);
+        return RecapCommonConstants.COLUMBIA.equals(institution);
     }
 
     @Override

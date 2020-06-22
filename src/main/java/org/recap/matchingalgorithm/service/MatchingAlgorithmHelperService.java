@@ -5,6 +5,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.executors.SaveMatchingBibsCallable;
 import org.recap.model.jpa.MatchingBibEntity;
@@ -150,19 +151,19 @@ public class MatchingAlgorithmHelperService {
         List<MatchingMatchPointsEntity> matchingMatchPointsEntities;
         long count = 0;
 
-        matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(RecapConstants.MATCH_POINT_FIELD_OCLC);
+        matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
         count = count + matchingMatchPointsEntities.size();
         getMatchingAlgorithmUtil().saveMatchingMatchPointEntities(matchingMatchPointsEntities);
 
-        matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(RecapConstants.MATCH_POINT_FIELD_ISBN);
+        matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
         count = count + matchingMatchPointsEntities.size();
         getMatchingAlgorithmUtil().saveMatchingMatchPointEntities(matchingMatchPointsEntities);
 
-        matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(RecapConstants.MATCH_POINT_FIELD_ISSN);
+        matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
         count = count + matchingMatchPointsEntities.size();
         getMatchingAlgorithmUtil().saveMatchingMatchPointEntities(matchingMatchPointsEntities);
 
-        matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(RecapConstants.MATCH_POINT_FIELD_LCCN);
+        matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
         count = count + matchingMatchPointsEntities.size();
         getMatchingAlgorithmUtil().saveMatchingMatchPointEntities(matchingMatchPointsEntities);
 
@@ -188,10 +189,10 @@ public class MatchingAlgorithmHelperService {
      */
     public long populateMatchingBibEntities() throws IOException, SolrServerException, InterruptedException {
         Integer count = 0;
-        count = count + fetchAndSaveMatchingBibs(RecapConstants.MATCH_POINT_FIELD_OCLC);
-        count = count + fetchAndSaveMatchingBibs(RecapConstants.MATCH_POINT_FIELD_ISBN);
-        count = count + fetchAndSaveMatchingBibs(RecapConstants.MATCH_POINT_FIELD_ISSN);
-        count = count + fetchAndSaveMatchingBibs(RecapConstants.MATCH_POINT_FIELD_LCCN);
+        count = count + fetchAndSaveMatchingBibs(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
+        count = count + fetchAndSaveMatchingBibs(RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
+        count = count + fetchAndSaveMatchingBibs(RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
+        count = count + fetchAndSaveMatchingBibs(RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
         Integer saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("saveMatchingBibsQ");
         if(saveMatchingBibsQ != null) {
             while (saveMatchingBibsQ != 0) {
@@ -219,9 +220,9 @@ public class MatchingAlgorithmHelperService {
 
         getLogger().info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST , multipleMatchBibIds.size());
         for(List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapConstants.MATCH_POINT_FIELD_OCLC, RecapConstants.MATCH_POINT_FIELD_ISBN);
+            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
             if(org.apache.commons.collections.CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(oclcAndBibIdMap, bibEntitiesBasedOnBibIds, RecapConstants.MATCH_POINT_FIELD_OCLC, bibEntityMap);
+                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(oclcAndBibIdMap, bibEntitiesBasedOnBibIds, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, bibEntityMap);
             }
         }
 
@@ -240,9 +241,9 @@ public class MatchingAlgorithmHelperService {
                     oclcNumbers.append(StringUtils.isNotBlank(oclcNumbers.toString()) ? "," : "").append(matchingBibEntity.getOclc());
                     isbns.append(StringUtils.isNotBlank(isbns.toString()) ? "," : "").append(matchingBibEntity.getIsbn());
                     String[] oclcList = oclcNumbers.toString().split(",");
-                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(oclcAndBibIdMap, oclcNumberSet, oclc, RecapConstants.MATCH_POINT_FIELD_OCLC, oclcList, bibEntityMap, oclcNumbers));
+                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(oclcAndBibIdMap, oclcNumberSet, oclc, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, oclcList, bibEntityMap, oclcNumbers));
                 }
-                Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapConstants.OCLC_CRITERIA, RecapConstants.ISBN_CRITERIA, oclcNumbers.toString(), isbns.toString());
+                Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.OCLC_CRITERIA, RecapCommonConstants.ISBN_CRITERIA, oclcNumbers.toString(), isbns.toString());
                 pulMatchingCount = pulMatchingCount + matchingCountsMap.get(RecapConstants.PUL_MATCHING_COUNT);
                 culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
                 nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
@@ -273,9 +274,9 @@ public class MatchingAlgorithmHelperService {
 
         logger.info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST , multipleMatchBibIds.size());
         for(List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapConstants.MATCH_POINT_FIELD_OCLC, RecapConstants.MATCH_POINT_FIELD_ISSN);
+            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
             if(org.apache.commons.collections.CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(oclcAndBibIdMap, bibEntitiesBasedOnBibIds, RecapConstants.MATCH_POINT_FIELD_OCLC, bibEntityMap);
+                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(oclcAndBibIdMap, bibEntitiesBasedOnBibIds, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, bibEntityMap);
             }
         }
 
@@ -294,9 +295,9 @@ public class MatchingAlgorithmHelperService {
                     oclcNumbers.append(StringUtils.isNotBlank(oclcNumbers.toString()) ? "," : "").append(matchingBibEntity.getOclc());
                     issns.append(StringUtils.isNotBlank(issns.toString()) ? "," : "").append(matchingBibEntity.getIssn());
                     String[] oclcList = oclcNumbers.toString().split(",");
-                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(oclcAndBibIdMap, oclcNumberSet, oclc, RecapConstants.MATCH_POINT_FIELD_OCLC, oclcList, bibEntityMap, oclcNumbers));
+                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(oclcAndBibIdMap, oclcNumberSet, oclc, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, oclcList, bibEntityMap, oclcNumbers));
                 }
-                Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapConstants.OCLC_CRITERIA, RecapConstants.ISSN_CRITERIA, oclcNumbers.toString(), issns.toString());
+                Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.OCLC_CRITERIA, RecapCommonConstants.ISSN_CRITERIA, oclcNumbers.toString(), issns.toString());
                 pulMatchingCount = pulMatchingCount + matchingCountsMap.get(RecapConstants.PUL_MATCHING_COUNT);
                 culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
                 nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
@@ -326,9 +327,9 @@ public class MatchingAlgorithmHelperService {
 
         logger.info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST , multipleMatchBibIds.size());
         for(List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapConstants.MATCH_POINT_FIELD_OCLC, RecapConstants.MATCH_POINT_FIELD_LCCN);
+            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
             if(CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(oclcAndBibIdMap, bibEntitiesBasedOnBibIds, RecapConstants.MATCH_POINT_FIELD_OCLC, bibEntityMap);
+                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(oclcAndBibIdMap, bibEntitiesBasedOnBibIds, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, bibEntityMap);
             }
         }
 
@@ -347,9 +348,9 @@ public class MatchingAlgorithmHelperService {
                     oclcNumbers.append(StringUtils.isNotBlank(oclcNumbers.toString()) ? "," : "").append(matchingBibEntity.getOclc());
                     lccns.append(StringUtils.isNotBlank(lccns.toString()) ? "," : "").append(matchingBibEntity.getLccn());
                     String[] oclcList = oclcNumbers.toString().split(",");
-                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(oclcAndBibIdMap, oclcNumberSet, oclc, RecapConstants.MATCH_POINT_FIELD_OCLC, oclcList, bibEntityMap, oclcNumbers));
+                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(oclcAndBibIdMap, oclcNumberSet, oclc, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, oclcList, bibEntityMap, oclcNumbers));
                 }
-                Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapConstants.OCLC_CRITERIA, RecapConstants.LCCN_CRITERIA, oclcNumbers.toString(), lccns.toString());
+                Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.OCLC_CRITERIA, RecapCommonConstants.LCCN_CRITERIA, oclcNumbers.toString(), lccns.toString());
                 pulMatchingCount = pulMatchingCount + matchingCountsMap.get(RecapConstants.PUL_MATCHING_COUNT);
                 culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
                 nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
@@ -379,9 +380,9 @@ public class MatchingAlgorithmHelperService {
 
         logger.info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST , multipleMatchBibIds.size());
         for(List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapConstants.MATCH_POINT_FIELD_ISBN, RecapConstants.MATCH_POINT_FIELD_ISSN);
+            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
             if(CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(isbnAndBibIdMap, bibEntitiesBasedOnBibIds, RecapConstants.MATCH_POINT_FIELD_ISBN, bibEntityMap);
+                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(isbnAndBibIdMap, bibEntitiesBasedOnBibIds, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, bibEntityMap);
             }
         }
 
@@ -400,9 +401,9 @@ public class MatchingAlgorithmHelperService {
                     isbns.append(StringUtils.isNotBlank(isbns.toString()) ? "," : "").append(matchingBibEntity.getIsbn());
                     issns.append(StringUtils.isNotBlank(issns.toString()) ? "," : "").append(matchingBibEntity.getIssn());
                     String[] isbnList = isbns.toString().split(",");
-                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(isbnAndBibIdMap, isbnSet, isbn, RecapConstants.MATCH_POINT_FIELD_ISBN, isbnList, bibEntityMap, isbns));
+                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(isbnAndBibIdMap, isbnSet, isbn, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, isbnList, bibEntityMap, isbns));
                 }
-                Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapConstants.ISBN_CRITERIA, RecapConstants.ISSN_CRITERIA, isbns.toString(), issns.toString());
+                Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.ISBN_CRITERIA, RecapCommonConstants.ISSN_CRITERIA, isbns.toString(), issns.toString());
                 pulMatchingCount = pulMatchingCount + matchingCountsMap.get(RecapConstants.PUL_MATCHING_COUNT);
                 culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
                 nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
@@ -432,9 +433,9 @@ public class MatchingAlgorithmHelperService {
 
         logger.info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST , multipleMatchBibIds.size());
         for(List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapConstants.MATCH_POINT_FIELD_ISBN, RecapConstants.MATCH_POINT_FIELD_LCCN);
+            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
             if(CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(isbnAndBibIdMap, bibEntitiesBasedOnBibIds, RecapConstants.MATCH_POINT_FIELD_ISBN, bibEntityMap);
+                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(isbnAndBibIdMap, bibEntitiesBasedOnBibIds, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, bibEntityMap);
             }
         }
 
@@ -453,9 +454,9 @@ public class MatchingAlgorithmHelperService {
                     isbns.append(StringUtils.isNotBlank(isbns.toString()) ? "," : "").append(matchingBibEntity.getIsbn());
                     lccns.append(StringUtils.isNotBlank(lccns.toString()) ? "," : "").append(matchingBibEntity.getLccn());
                     String[] isbnList = isbns.toString().split(",");
-                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(isbnAndBibIdMap, isbnSet, isbn, RecapConstants.MATCH_POINT_FIELD_ISBN, isbnList, bibEntityMap, isbns));
+                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(isbnAndBibIdMap, isbnSet, isbn, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, isbnList, bibEntityMap, isbns));
                 }
-                Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapConstants.ISBN_CRITERIA, RecapConstants.LCCN_CRITERIA, isbns.toString(), lccns.toString());
+                Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.ISBN_CRITERIA, RecapCommonConstants.LCCN_CRITERIA, isbns.toString(), lccns.toString());
                 pulMatchingCount = pulMatchingCount + matchingCountsMap.get(RecapConstants.PUL_MATCHING_COUNT);
                 culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
                 nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
@@ -485,9 +486,9 @@ public class MatchingAlgorithmHelperService {
 
         logger.info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST , multipleMatchBibIds.size());
         for(List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapConstants.MATCH_POINT_FIELD_ISSN, RecapConstants.MATCH_POINT_FIELD_LCCN);
+            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
             if(CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(issnAndBibIdMap, bibEntitiesBasedOnBibIds, RecapConstants.MATCH_POINT_FIELD_ISSN, bibEntityMap);
+                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(issnAndBibIdMap, bibEntitiesBasedOnBibIds, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, bibEntityMap);
             }
         }
 
@@ -506,9 +507,9 @@ public class MatchingAlgorithmHelperService {
                     issns.append(StringUtils.isNotBlank(issns.toString()) ? "," : "").append(matchingBibEntity.getIssn());
                     lccns.append(StringUtils.isNotBlank(lccns.toString()) ? "," : "").append(matchingBibEntity.getLccn());
                     String[] issnList = issns.toString().split(",");
-                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(issnAndBibIdMap, issnSet, issn, RecapConstants.MATCH_POINT_FIELD_ISSN, issnList, bibEntityMap, issns));
+                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(issnAndBibIdMap, issnSet, issn, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, issnList, bibEntityMap, issns));
                 }
-                Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapConstants.ISSN_CRITERIA, RecapConstants.LCCN_CRITERIA, issns.toString(), lccns.toString());
+                Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.ISSN_CRITERIA, RecapCommonConstants.LCCN_CRITERIA, issns.toString(), lccns.toString());
                 pulMatchingCount = pulMatchingCount + matchingCountsMap.get(RecapConstants.PUL_MATCHING_COUNT);
                 culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
                 nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
@@ -531,19 +532,19 @@ public class MatchingAlgorithmHelperService {
         Integer pulMatchingCount = 0;
         Integer culMatchingCount = 0;
         Integer nyplMatchingCount = 0;
-        Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, RecapConstants.MATCH_POINT_FIELD_OCLC);
+        Map<String, Integer> matchingCountsMap = getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
         pulMatchingCount = pulMatchingCount + matchingCountsMap.get(RecapConstants.PUL_MATCHING_COUNT);
         culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
         nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
-        matchingCountsMap = getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, RecapConstants.MATCH_POINT_FIELD_ISBN);
+        matchingCountsMap = getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
         pulMatchingCount = pulMatchingCount + matchingCountsMap.get(RecapConstants.PUL_MATCHING_COUNT);
         culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
         nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
-        matchingCountsMap = getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, RecapConstants.MATCH_POINT_FIELD_ISSN);
+        matchingCountsMap = getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
         pulMatchingCount = pulMatchingCount + matchingCountsMap.get(RecapConstants.PUL_MATCHING_COUNT);
         culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
         nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
-        matchingCountsMap = getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, RecapConstants.MATCH_POINT_FIELD_LCCN);
+        matchingCountsMap = getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
         pulMatchingCount = pulMatchingCount + matchingCountsMap.get(RecapConstants.PUL_MATCHING_COUNT);
         culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
         nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
@@ -598,7 +599,7 @@ public class MatchingAlgorithmHelperService {
             nyplMatchingCount = nyplMatchingCount + countsMap.get("nyplMatchingCount");
         }
 
-        getMatchingBibDetailsRepository().updateStatus(RecapConstants.COMPLETE_STATUS, RecapConstants.PENDING);
+        getMatchingBibDetailsRepository().updateStatus(RecapCommonConstants.COMPLETE_STATUS, RecapConstants.PENDING);
 
         countsMap = new HashMap();
         countsMap.put("pulMatchingCount", pulMatchingCount);
@@ -619,7 +620,7 @@ public class MatchingAlgorithmHelperService {
         reportEntity.setType("MatchingCount");
         reportEntity.setCreatedDate(new Date());
         reportEntity.setFileName("MatchingSummaryCount");
-        reportEntity.setInstitutionName(RecapConstants.ALL_INST);
+        reportEntity.setInstitutionName(RecapCommonConstants.LCCN_CRITERIA);
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
 
         ReportDataEntity pulCountReportDataEntity = new ReportDataEntity();
@@ -673,7 +674,7 @@ public class MatchingAlgorithmHelperService {
         try {
             futures = getFutures(executorService, callables, futures);
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
 
         if(futures != null) {
@@ -682,7 +683,7 @@ public class MatchingAlgorithmHelperService {
                 try {
                     size += (Integer) future.get();
                 } catch (InterruptedException | ExecutionException e) {
-                    logger.error(RecapConstants.LOG_ERROR,e);
+                    logger.error(RecapCommonConstants.LOG_ERROR,e);
                 }
             }
         }

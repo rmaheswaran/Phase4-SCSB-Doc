@@ -2,6 +2,7 @@ package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.common.SolrInputDocument;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
@@ -103,14 +104,14 @@ public class MatchingBibItemIndexCallable implements Callable {
                 if(solrInputDocument != null)
                     solrInputDocumentsToIndex.add(solrInputDocument);
             } catch (Exception e) {
-                logger.error(RecapConstants.LOG_ERROR,e);
+                logger.error(RecapCommonConstants.LOG_ERROR,e);
             }
         }
 
         executorService.shutdown();
 
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
-            producerTemplate.sendBodyAndHeader(RecapConstants.SOLR_QUEUE, solrInputDocumentsToIndex, RecapConstants.SOLR_CORE, coreName);
+            producerTemplate.sendBodyAndHeader(RecapCommonConstants.SOLR_QUEUE, solrInputDocumentsToIndex, RecapCommonConstants.SOLR_CORE, coreName);
         }
         return solrInputDocumentsToIndex.size();
     }
