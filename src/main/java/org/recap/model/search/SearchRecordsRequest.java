@@ -2,7 +2,7 @@ package org.recap.model.search;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ public class SearchRecordsRequest implements Serializable {
         this.setFieldValue("");
         this.setSelectAllFacets(true);
         this.setDeleted(false);
-        this.setCatalogingStatus(RecapConstants.COMPLETE_STATUS);
+        this.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
 
         this.getOwningInstitutions().add("NYPL");
         this.getOwningInstitutions().add("CUL");

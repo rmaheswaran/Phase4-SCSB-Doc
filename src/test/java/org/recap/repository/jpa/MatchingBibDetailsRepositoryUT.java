@@ -2,6 +2,7 @@ package org.recap.repository.jpa;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class MatchingBibDetailsRepositoryUT extends BaseTestCase{
 
     @Test
     public void saveMatchingBibEntity() throws Exception {
-        MatchingBibEntity savedMatchingBibEntity = saveMatchingBibEntity(RecapConstants.MATCH_POINT_FIELD_OCLC);
+        MatchingBibEntity savedMatchingBibEntity = saveMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
         assertNotNull(savedMatchingBibEntity.getId());
         MatchingBibEntity bibEntity = matchingBibDetailsRepository.findById(savedMatchingBibEntity.getId()).orElse(null);
         assertNotNull(bibEntity);
@@ -80,8 +81,8 @@ public class MatchingBibDetailsRepositoryUT extends BaseTestCase{
 
     @Test
     public void getMultipleMatchPointBibEntity() throws Exception {
-        saveMatchingBibEntity(RecapConstants.MATCH_POINT_FIELD_OCLC);
-        saveMatchingBibEntity(RecapConstants.MATCH_POINT_FIELD_ISBN);
+        saveMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
+        saveMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
         List<MatchingBibEntity> multipleMatchPointBibEntity = matchingBibDetailsRepository.getBibEntityBasedOnBibIds(Arrays.asList(1));
         assertNotNull(multipleMatchPointBibEntity);
         assertTrue(multipleMatchPointBibEntity.size() > 1);
@@ -89,8 +90,8 @@ public class MatchingBibDetailsRepositoryUT extends BaseTestCase{
 
     @Test
     public void getMultipleMatchedBibIdsBasedOnLimit() throws Exception {
-        saveMatchingBibEntity(RecapConstants.MATCH_POINT_FIELD_OCLC);
-        saveMatchingBibEntity(RecapConstants.MATCH_POINT_FIELD_ISBN);
+        saveMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
+        saveMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
         List<Integer> multipleMatchedBibIdsBasedOnLimit = matchingBibDetailsRepository.getMultipleMatchedBibIdsBasedOnLimit(0, 1);
         assertNotNull(multipleMatchedBibIdsBasedOnLimit);
         assertTrue(multipleMatchedBibIdsBasedOnLimit.size() == 1);
@@ -98,8 +99,8 @@ public class MatchingBibDetailsRepositoryUT extends BaseTestCase{
 
     @Test
     public void getMultipleMatchUniqueBibCount() throws Exception {
-        saveMatchingBibEntity(RecapConstants.MATCH_POINT_FIELD_OCLC);
-        saveMatchingBibEntity(RecapConstants.MATCH_POINT_FIELD_ISBN);
+        saveMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
+        saveMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
         long multipleMatchUniqueBibCount = matchingBibDetailsRepository.getMultipleMatchUniqueBibCount();
         assertNotNull(multipleMatchUniqueBibCount);
         assertTrue(multipleMatchUniqueBibCount > 0);
@@ -107,15 +108,15 @@ public class MatchingBibDetailsRepositoryUT extends BaseTestCase{
 
     @Test
     public void getSingleMatchBibCountBasedOnMatching() throws Exception {
-        saveMatchingBibEntity(RecapConstants.MATCH_POINT_FIELD_OCLC);
-        long multipleMatchUniqueBibCount = matchingBibDetailsRepository.getSingleMatchBibCountBasedOnMatching(RecapConstants.MATCH_POINT_FIELD_OCLC);
+        saveMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
+        long multipleMatchUniqueBibCount = matchingBibDetailsRepository.getSingleMatchBibCountBasedOnMatching(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
         assertNotNull(multipleMatchUniqueBibCount);
         assertTrue(multipleMatchUniqueBibCount > 0);
     }
 
     @Test
     public void updateAndFetchMatchingBibByStatus() throws Exception {
-        MatchingBibEntity matchingBibEntity = saveMatchingBibEntity(RecapConstants.MATCH_POINT_FIELD_OCLC);
+        MatchingBibEntity matchingBibEntity = saveMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
         assertNotNull(matchingBibEntity);
         assertNotNull(matchingBibEntity.getId());
         Page<MatchingBibEntity> byStatus = matchingBibDetailsRepository.findByStatus(PageRequest.of(0, 10), RecapConstants.PENDING);
@@ -123,9 +124,9 @@ public class MatchingBibDetailsRepositoryUT extends BaseTestCase{
         MatchingBibEntity matchingBibEntity1 = byStatus.getContent().get(0);
         assertNotNull(matchingBibEntity1);
         assertEquals(matchingBibEntity.getId(), matchingBibEntity1.getId());
-        int updateStatus = matchingBibDetailsRepository.updateStatusBasedOnBibs(RecapConstants.COMPLETE_STATUS, Arrays.asList(matchingBibEntity.getBibId()));
+        int updateStatus = matchingBibDetailsRepository.updateStatusBasedOnBibs(RecapCommonConstants.COMPLETE_STATUS, Arrays.asList(matchingBibEntity.getBibId()));
         assertTrue(updateStatus > 0);
-        Page<MatchingBibEntity> matchingBibEntities = matchingBibDetailsRepository.findByStatus(PageRequest.of(0, 10), RecapConstants.COMPLETE_STATUS);
+        Page<MatchingBibEntity> matchingBibEntities = matchingBibDetailsRepository.findByStatus(PageRequest.of(0, 10), RecapCommonConstants.COMPLETE_STATUS);
         assertNotNull(matchingBibEntities);
         List<MatchingBibEntity> matchingBibEntityList = matchingBibEntities.getContent();
         assertTrue(matchingBibEntityList.size() > 0);

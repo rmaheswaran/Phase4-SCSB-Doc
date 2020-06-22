@@ -1,6 +1,6 @@
 package org.recap.controller;
 
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.reports.ReportDataRequest;
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
@@ -42,7 +42,7 @@ public class ReportsRestController {
         try {
             reportsResponse = reportsServiceUtil.populateAccessionDeaccessionItemCounts(reportsRequest);
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
             reportsResponse.setMessage(e.getMessage());
         }
         return reportsResponse;
@@ -60,7 +60,7 @@ public class ReportsRestController {
         try {
             reportsResponse = reportsServiceUtil.populateCgdItemCounts(reportsRequest);
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
             reportsResponse.setMessage(e.getMessage());
         }
         return reportsResponse;
@@ -78,7 +78,7 @@ public class ReportsRestController {
         try {
             reportsResponse = reportsServiceUtil.populateDeaccessionResults(reportsRequest);
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
             reportsResponse.setMessage(e.getMessage());
         }
         return reportsResponse;
@@ -96,7 +96,7 @@ public class ReportsRestController {
         try {
             reportsResponse = reportsServiceUtil.populateIncompleteRecordsReport(reportsRequest);
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
             reportsResponse.setMessage(e.getMessage());
         }
         return reportsResponse;

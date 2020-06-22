@@ -3,7 +3,7 @@ package org.recap.repository.jpa;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.util.SolrQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class MatchingMatchPointsDetailsRepositoryUT extends BaseTestCase{
 
     @Test
     public void saveMatchingMatchPointsEntity() throws Exception {
-        MatchingMatchPointsEntity savedMatchingMatchPointsEntity = saveMatchingMatchPointEntity(RecapConstants.MATCH_POINT_FIELD_OCLC, "129282");
+        MatchingMatchPointsEntity savedMatchingMatchPointsEntity = saveMatchingMatchPointEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC, "129282");
         assertNotNull(savedMatchingMatchPointsEntity.getId());
         MatchingMatchPointsEntity matchPointsEntity = matchingMatchPointsDetailsRepository.findById(savedMatchingMatchPointsEntity.getId()).orElse(null);
         assertNotNull(matchPointsEntity);
@@ -41,15 +41,15 @@ public class MatchingMatchPointsDetailsRepositoryUT extends BaseTestCase{
 
     @Test
     public void countBasedOnCriteria() throws Exception {
-        saveMatchingMatchPointEntity(RecapConstants.MATCH_POINT_FIELD_OCLC, "3093949");
-        long countBasedOnCriteria = matchingMatchPointsDetailsRepository.countBasedOnCriteria(RecapConstants.MATCH_POINT_FIELD_OCLC);
+        saveMatchingMatchPointEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC, "3093949");
+        long countBasedOnCriteria = matchingMatchPointsDetailsRepository.countBasedOnCriteria(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
         assertTrue(countBasedOnCriteria > 0);
     }
 
     @Test
     public void getMatchPointEntityBasedOnCriterias() throws Exception {
-        saveMatchingMatchPointEntity(RecapConstants.MATCH_POINT_FIELD_OCLC, "3093949");
-        List<MatchingMatchPointsEntity> byFirstMatchCriteriaAndSecondMatchCriteria = matchingMatchPointsDetailsRepository.getMatchPointEntityByCriteria(RecapConstants.MATCH_POINT_FIELD_OCLC, 0, 1000);
+        saveMatchingMatchPointEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC, "3093949");
+        List<MatchingMatchPointsEntity> byFirstMatchCriteriaAndSecondMatchCriteria = matchingMatchPointsDetailsRepository.getMatchPointEntityByCriteria(RecapCommonConstants.MATCH_POINT_FIELD_OCLC, 0, 1000);
         assertNotNull(byFirstMatchCriteriaAndSecondMatchCriteria);
         assertTrue(byFirstMatchCriteriaAndSecondMatchCriteria.size() > 0);
     }
@@ -59,7 +59,7 @@ public class MatchingMatchPointsDetailsRepositoryUT extends BaseTestCase{
         MatchingMatchPointsEntity matchingMatchPointsEntity = new MatchingMatchPointsEntity();
         matchingMatchPointsEntity.setId(1);
         matchingMatchPointsEntity.setCriteriaValue("3093949");
-        matchingMatchPointsEntity.setMatchCriteria(RecapConstants.MATCH_POINT_FIELD_OCLC);
+        matchingMatchPointsEntity.setMatchCriteria(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
         matchingMatchPointsEntity.setCriteriaValueCount(1);
         assertNotNull(matchingMatchPointsEntity.getId());
         assertNotNull(matchingMatchPointsEntity.getCriteriaValue());
@@ -69,14 +69,14 @@ public class MatchingMatchPointsDetailsRepositoryUT extends BaseTestCase{
 
     @Test
     public void verifyMatchingCriteriaValue() throws Exception {
-        MatchingMatchPointsEntity matchingMatchPointsEntity = saveMatchingMatchPointEntity(RecapConstants.MATCH_POINT_FIELD_OCLC, "25001781 /\\");
+        MatchingMatchPointsEntity matchingMatchPointsEntity = saveMatchingMatchPointEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC, "25001781 /\\");
         assertNotNull(matchingMatchPointsEntity);
         assertNotNull(matchingMatchPointsEntity.getId());
         MatchingMatchPointsEntity matchPointsEntity = matchingMatchPointsDetailsRepository.findById(matchingMatchPointsEntity.getId()).orElse(null);
         assertNotNull(matchPointsEntity);
         SolrQueryBuilder solrQueryBuilder = new SolrQueryBuilder();
         List<String> matchingCriterias = new ArrayList<>();
-        SolrQuery solrQuery = solrQueryBuilder.solrQueryToFetchBibDetails(Arrays.asList(matchPointsEntity), matchingCriterias, RecapConstants.MATCH_POINT_FIELD_LCCN);
+        SolrQuery solrQuery = solrQueryBuilder.solrQueryToFetchBibDetails(Arrays.asList(matchPointsEntity), matchingCriterias, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
         assertNotNull(solrQuery);
     }
 

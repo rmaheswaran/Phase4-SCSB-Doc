@@ -1,6 +1,7 @@
 package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.jpa.ReportEntity;
@@ -25,12 +26,12 @@ public class FTPSubmitCollectionSummaryReportGenerator implements ReportGenerato
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_SUMMARY) ? true : false;
+        return reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY) ? true : false;
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapConstants.FTP) ? true : false;
+        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP) ? true : false;
     }
 
     @Override

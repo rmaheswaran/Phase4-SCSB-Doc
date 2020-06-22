@@ -1,7 +1,7 @@
 package org.recap.util;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.matchingReports.TitleExceptionReport;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public class OngoingMatchingAlgorithmReportGenerator {
                 try {
                     setterMethod.invoke(titleExceptionReport, headerValue);
                 } catch (Exception e) {
-                    logger.error(RecapConstants.LOG_ERROR,e.getMessage());
+                    logger.error(RecapCommonConstants.LOG_ERROR,e.getMessage());
                 }
             }
         }
@@ -57,7 +57,7 @@ public class OngoingMatchingAlgorithmReportGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, TitleExceptionReport.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

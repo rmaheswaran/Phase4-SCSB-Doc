@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.marc4j.marc.Leader;
 import org.marc4j.marc.Record;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.jpa.BibliographicEntity;
@@ -94,12 +95,12 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
         Integer owningInstitutionId = (Integer) getInstitutionEntityMap().get(institutionName);
         Date currentDate = new Date();
         Map<String, Object> bibMap = processAndValidateBibliographicEntity(bibRecord, owningInstitutionId, currentDate,errorMessage);
-        BibliographicEntity bibliographicEntity = (BibliographicEntity) bibMap.get(RecapConstants.BIBLIOGRAPHICENTITY);
+        BibliographicEntity bibliographicEntity = (BibliographicEntity) bibMap.get(RecapCommonConstants.BIBLIOGRAPHICENTITY);
 
-        map.put(RecapConstants.FAILED_BIB_COUNT,(int)bibMap.get(RecapConstants.FAILED_BIB_COUNT));
-        map.put(RecapConstants.SUCCESS_BIB_COUNT , (int)bibMap.get(RecapConstants.SUCCESS_BIB_COUNT));
-        map.put(RecapConstants.REASON_FOR_BIB_FAILURE ,(String)bibMap.get(RecapConstants.REASON_FOR_BIB_FAILURE));
-        map.put(RecapConstants.EXIST_BIB_COUNT ,(int)bibMap.get(RecapConstants.EXIST_BIB_COUNT));
+        map.put(RecapCommonConstants.FAILED_BIB_COUNT,(int)bibMap.get(RecapCommonConstants.FAILED_BIB_COUNT));
+        map.put(RecapCommonConstants.SUCCESS_BIB_COUNT , (int)bibMap.get(RecapCommonConstants.SUCCESS_BIB_COUNT));
+        map.put(RecapCommonConstants.REASON_FOR_BIB_FAILURE ,(String)bibMap.get(RecapCommonConstants.REASON_FOR_BIB_FAILURE));
+        map.put(RecapCommonConstants.EXIST_BIB_COUNT ,(int)bibMap.get(RecapCommonConstants.EXIST_BIB_COUNT));
 
         if (errorMessage.length()==0) {
             List<HoldingsMarcRecord> holdingsMarcRecords = bibMarcRecord.getHoldingsMarcRecords();
@@ -122,28 +123,28 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
                         for (ItemMarcRecord itemMarcRecord : itemMarcRecordList) {
                             Record itemRecord = itemMarcRecord.getItemRecord();
                             Map<String, Object> itemMap = processAndValidateItemEntity(bibliographicEntity, owningInstitutionId,accessionRequest.getCustomerCode(), holdingsCallNumber, holdingsCallNumberType, itemRecord, institutionName, bibRecord, currentDate,errorMessage);
-                            if(itemMap.containsKey(RecapConstants.FAILED_ITEM_COUNT)){
-                                failedItemCount = failedItemCount + (int) itemMap.get(RecapConstants.FAILED_ITEM_COUNT);
+                            if(itemMap.containsKey(RecapCommonConstants.FAILED_ITEM_COUNT)){
+                                failedItemCount = failedItemCount + (int) itemMap.get(RecapCommonConstants.FAILED_ITEM_COUNT);
                             }
-                            if(itemMap.containsKey(RecapConstants.ITEMBARCODE)){
-                                map.put(RecapConstants.ITEMBARCODE,(String)itemMap.get(RecapConstants.ITEMBARCODE));
+                            if(itemMap.containsKey(RecapCommonConstants.ITEMBARCODE)){
+                                map.put(RecapCommonConstants.ITEMBARCODE,(String)itemMap.get(RecapCommonConstants.ITEMBARCODE));
                             }
-                            if(itemMap.containsKey(RecapConstants.REASON_FOR_ITEM_FAILURE)){
-                                String reason = (String)itemMap.get(RecapConstants.REASON_FOR_ITEM_FAILURE);
+                            if(itemMap.containsKey(RecapCommonConstants.REASON_FOR_ITEM_FAILURE)){
+                                String reason = (String)itemMap.get(RecapCommonConstants.REASON_FOR_ITEM_FAILURE);
                                 if(!StringUtils.isEmpty(reason)){
                                     if(StringUtils.isEmpty(reasonForFailureItem)){
-                                        reasonForFailureItem = (String) itemMap.get(RecapConstants.REASON_FOR_ITEM_FAILURE);
+                                        reasonForFailureItem = (String) itemMap.get(RecapCommonConstants.REASON_FOR_ITEM_FAILURE);
                                     }else{
                                         StringBuilder stringBuilder = new StringBuilder();
-                                        stringBuilder.append(itemMap.get(RecapConstants.REASON_FOR_ITEM_FAILURE));
+                                        stringBuilder.append(itemMap.get(RecapCommonConstants.REASON_FOR_ITEM_FAILURE));
                                         stringBuilder.append(",");
                                         stringBuilder.append(reasonForFailureItem);
                                         reasonForFailureItem=stringBuilder.toString();
                                     }
                                 }
                             }
-                            if(itemMap.containsKey(RecapConstants.SUCCESS_ITEM_COUNT)){
-                                successItemCount = successItemCount + (int) itemMap.get(RecapConstants.SUCCESS_ITEM_COUNT);
+                            if(itemMap.containsKey(RecapCommonConstants.SUCCESS_ITEM_COUNT)){
+                                successItemCount = successItemCount + (int) itemMap.get(RecapCommonConstants.SUCCESS_ITEM_COUNT);
                             }
                             ItemEntity itemEntity = (ItemEntity) itemMap.get("itemEntity");
                             if (errorMessage.length() == 0) {
@@ -153,8 +154,8 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
                                 holdingsEntity.getItemEntities().add(itemEntity);
                                 itemEntities.add(itemEntity);
                             }
-                            if(RecapConstants.INCOMPLETE_STATUS.equalsIgnoreCase(itemEntity.getCatalogingStatus())){
-                                incompleteResponse = RecapConstants.INCOMPLETE_STATUS;
+                            if(RecapCommonConstants.INCOMPLETE_STATUS.equalsIgnoreCase(itemEntity.getCatalogingStatus())){
+                                incompleteResponse = RecapCommonConstants.INCOMPLETE_STATUS;
                             }
                         }
                     }
@@ -166,11 +167,11 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
         }
 
         if (errorMessage.length()==0) {
-            map.put(RecapConstants.BIBLIOGRAPHICENTITY, bibliographicEntity);
+            map.put(RecapCommonConstants.BIBLIOGRAPHICENTITY, bibliographicEntity);
         }
-        map.put(RecapConstants.FAILED_ITEM_COUNT,failedItemCount);
-        map.put(RecapConstants.SUCCESS_ITEM_COUNT,successItemCount);
-        map.put(RecapConstants.REASON_FOR_ITEM_FAILURE,reasonForFailureItem);
+        map.put(RecapCommonConstants.FAILED_ITEM_COUNT,failedItemCount);
+        map.put(RecapCommonConstants.SUCCESS_ITEM_COUNT,successItemCount);
+        map.put(RecapCommonConstants.REASON_FOR_ITEM_FAILURE,reasonForFailureItem);
         map.put(RecapConstants.INCOMPLETE_RESPONSE,incompleteResponse);
         if(errorMessage.length()>0) {//Added to remove "," from the error message
             errorMessage = new StringBuilder(errorMessage.substring(0,errorMessage.length()-1));
@@ -209,9 +210,9 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
         }
         bibliographicEntity.setDeleted(false);
         bibliographicEntity.setCreatedDate(currentDate);
-        bibliographicEntity.setCreatedBy(RecapConstants.ACCESSION);
+        bibliographicEntity.setCreatedBy(RecapCommonConstants.ACCESSION);
         bibliographicEntity.setLastUpdatedDate(currentDate);
-        bibliographicEntity.setLastUpdatedBy(RecapConstants.ACCESSION);
+        bibliographicEntity.setLastUpdatedBy(RecapCommonConstants.ACCESSION);
 
         String bibContent = marcUtil.writeMarcXml(bibRecord);
         if (StringUtils.isNotBlank(bibContent)) {
@@ -248,18 +249,18 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
             reasonForFailureBib = errorMessage.toString();
             reportDataEntities = getDbReportUtil().generateBibFailureReportEntity(bibliographicEntity, bibRecord);
             ReportDataEntity errorReportDataEntity = new ReportDataEntity();
-            errorReportDataEntity.setHeaderName(RecapConstants.ERROR_DESCRIPTION);
+            errorReportDataEntity.setHeaderName(RecapCommonConstants.ERROR_DESCRIPTION);
             errorReportDataEntity.setHeaderValue(errorMessage.toString());
             reportDataEntities.add(errorReportDataEntity);
         }else if(exitsBibCount == 0){
             successBibCount = successBibCount+1;
         }
 
-        map.put(RecapConstants.FAILED_BIB_COUNT , failedBibCount);
-        map.put(RecapConstants.REASON_FOR_BIB_FAILURE , reasonForFailureBib);
-        map.put(RecapConstants.BIBLIOGRAPHICENTITY, bibliographicEntity);
-        map.put(RecapConstants.SUCCESS_BIB_COUNT,successBibCount);
-        map.put(RecapConstants.EXIST_BIB_COUNT,exitsBibCount);
+        map.put(RecapCommonConstants.FAILED_BIB_COUNT , failedBibCount);
+        map.put(RecapCommonConstants.REASON_FOR_BIB_FAILURE , reasonForFailureBib);
+        map.put(RecapCommonConstants.BIBLIOGRAPHICENTITY, bibliographicEntity);
+        map.put(RecapCommonConstants.SUCCESS_BIB_COUNT,successBibCount);
+        map.put(RecapCommonConstants.EXIST_BIB_COUNT,exitsBibCount);
         return map;
     }
 
@@ -283,9 +284,9 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
         }
         holdingsEntity.setDeleted(false);
         holdingsEntity.setCreatedDate(currentDate);
-        holdingsEntity.setCreatedBy(RecapConstants.ACCESSION);
+        holdingsEntity.setCreatedBy(RecapCommonConstants.ACCESSION);
         holdingsEntity.setLastUpdatedDate(currentDate);
-        holdingsEntity.setLastUpdatedBy(RecapConstants.ACCESSION);
+        holdingsEntity.setLastUpdatedBy(RecapCommonConstants.ACCESSION);
         Integer owningInstitutionId = bibliographicEntity.getOwningInstitutionId();
         holdingsEntity.setOwningInstitutionId(owningInstitutionId);
         String owningInstitutionHoldingsId = marcUtil.getDataFieldValue(holdingsRecord, "852", '0');
@@ -321,9 +322,9 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
         int successItemCount = 0;
         boolean isComplete = true;
         String reasonForFailureItem = "";
-        map.put(RecapConstants.FAILED_ITEM_COUNT,failedItemCount);
-        map.put(RecapConstants.SUCCESS_ITEM_COUNT,successItemCount);
-        map.put(RecapConstants.REASON_FOR_ITEM_FAILURE,reasonForFailureItem);
+        map.put(RecapCommonConstants.FAILED_ITEM_COUNT,failedItemCount);
+        map.put(RecapCommonConstants.SUCCESS_ITEM_COUNT,successItemCount);
+        map.put(RecapCommonConstants.REASON_FOR_ITEM_FAILURE,reasonForFailureItem);
         String itemBarcode = marcUtil.getDataFieldValue(itemRecord, "876", 'p');
         if (StringUtils.isNotBlank(itemBarcode)) {
             itemEntity.setBarcode(itemBarcode);
@@ -349,13 +350,13 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
             itemEntity.setCollectionGroupId((Integer) getCollectionGroupMap().get(collectionGroupCode));
         } else {
             isComplete = false;
-            itemEntity.setCollectionGroupId((Integer) getCollectionGroupMap().get(RecapConstants.NOT_AVAILABLE_CGD));
+            itemEntity.setCollectionGroupId((Integer) getCollectionGroupMap().get(RecapCommonConstants.NOT_AVAILABLE_CGD));
         }
         itemEntity.setDeleted(false);
         itemEntity.setCreatedDate(currentDate);
-        itemEntity.setCreatedBy(RecapConstants.ACCESSION);
+        itemEntity.setCreatedBy(RecapCommonConstants.ACCESSION);
         itemEntity.setLastUpdatedDate(currentDate);
-        itemEntity.setLastUpdatedBy(RecapConstants.ACCESSION);
+        itemEntity.setLastUpdatedBy(RecapCommonConstants.ACCESSION);
 
         String useRestrictions = marcUtil.getDataFieldValue(itemRecord, "876", 'h');
         if (StringUtils.isNotBlank(useRestrictions) && ("In Library Use".equalsIgnoreCase(useRestrictions) || "Supervised Use".equalsIgnoreCase(useRestrictions))) {
@@ -373,28 +374,28 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
         }
 
         if(isComplete){
-            bibliographicEntity.setCatalogingStatus(RecapConstants.COMPLETE_STATUS);
+            bibliographicEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
             itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get("Available"));
-            itemEntity.setCatalogingStatus(RecapConstants.COMPLETE_STATUS);
+            itemEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
         } else {
             itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get("Not Available"));
-            bibliographicEntity.setCatalogingStatus(RecapConstants.INCOMPLETE_STATUS);
-            itemEntity.setCatalogingStatus(RecapConstants.INCOMPLETE_STATUS);
+            bibliographicEntity.setCatalogingStatus(RecapCommonConstants.INCOMPLETE_STATUS);
+            itemEntity.setCatalogingStatus(RecapCommonConstants.INCOMPLETE_STATUS);
         }
         if (errorMessage.toString().length() > 1) {
-            if(map.containsKey(RecapConstants.FAILED_ITEM_COUNT)){
-                failedItemCount = ((int) map.get(RecapConstants.FAILED_ITEM_COUNT)) + 1;
-                map.put(RecapConstants.FAILED_ITEM_COUNT,failedItemCount);
+            if(map.containsKey(RecapCommonConstants.FAILED_ITEM_COUNT)){
+                failedItemCount = ((int) map.get(RecapCommonConstants.FAILED_ITEM_COUNT)) + 1;
+                map.put(RecapCommonConstants.FAILED_ITEM_COUNT,failedItemCount);
             }
-            if(map.containsKey(RecapConstants.REASON_FOR_ITEM_FAILURE)){
+            if(map.containsKey(RecapCommonConstants.REASON_FOR_ITEM_FAILURE)){
                 reasonForFailureItem = errorMessage.toString();
-                map.put(RecapConstants.REASON_FOR_ITEM_FAILURE,reasonForFailureItem);
+                map.put(RecapCommonConstants.REASON_FOR_ITEM_FAILURE,reasonForFailureItem);
             }
 
         }else{
-            if(map.containsKey(RecapConstants.SUCCESS_ITEM_COUNT)){
-                successItemCount = (int) map.get(RecapConstants.SUCCESS_ITEM_COUNT) + 1;
-                map.put(RecapConstants.SUCCESS_ITEM_COUNT,successItemCount);
+            if(map.containsKey(RecapCommonConstants.SUCCESS_ITEM_COUNT)){
+                successItemCount = (int) map.get(RecapCommonConstants.SUCCESS_ITEM_COUNT) + 1;
+                map.put(RecapCommonConstants.SUCCESS_ITEM_COUNT,successItemCount);
             }
         }
         map.put("itemEntity", itemEntity);
@@ -416,7 +417,7 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
                     itemStatusMap.put(itemStatusEntity.getStatusCode(), itemStatusEntity.getId());
                 }
             } catch (Exception e) {
-                logger.error(RecapConstants.LOG_ERROR,e);
+                logger.error(RecapCommonConstants.LOG_ERROR,e);
             }
         }
         return itemStatusMap;
@@ -437,7 +438,7 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
                     collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getId());
                 }
             } catch (Exception e) {
-                logger.error(RecapConstants.LOG_ERROR,e);
+                logger.error(RecapCommonConstants.LOG_ERROR,e);
             }
         }
         return collectionGroupMap;
@@ -458,7 +459,7 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
                     institutionEntityMap.put(institutionEntity.getInstitutionCode(), institutionEntity.getId());
                 }
             } catch (Exception e) {
-                logger.error(RecapConstants.LOG_ERROR,e);
+                logger.error(RecapCommonConstants.LOG_ERROR,e);
             }
         }
         return institutionEntityMap;

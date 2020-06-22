@@ -1,6 +1,7 @@
 package org.recap.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.request.ReplaceRequest;
 import org.recap.spring.SwaggerAPIProvider;
@@ -48,16 +49,16 @@ public class ResubmitRequestController {
             RestTemplate restTemplate = new RestTemplate();
             HttpEntity request = new HttpEntity<>(replaceRequest, getHttpHeadersAuth());
             Map resultMap = restTemplate.postForObject(scsbUrl + RecapConstants.SERVICE_PATH.REPLACE_REQUEST, request, Map.class);
-            if (resultMap.containsKey(RecapConstants.TOTAL_REQUESTS_FOUND)) {
-                responseMessage = RecapConstants.TOTAL_REQUESTS_FOUND + ":" + resultMap.get(RecapConstants.TOTAL_REQUESTS_FOUND);
-                resultMap.remove(RecapConstants.TOTAL_REQUESTS_FOUND);
+            if (resultMap.containsKey(RecapCommonConstants.TOTAL_REQUESTS_FOUND)) {
+                responseMessage = RecapCommonConstants.TOTAL_REQUESTS_FOUND + ":" + resultMap.get(RecapCommonConstants.TOTAL_REQUESTS_FOUND);
+                resultMap.remove(RecapCommonConstants.TOTAL_REQUESTS_FOUND);
             }
-            if (resultMap.containsKey(RecapConstants.TOTAL_REQUESTS_IDS)) {
+            if (resultMap.containsKey(RecapCommonConstants.TOTAL_REQUESTS_IDS)) {
                 responseMessage = StringUtils.isNotBlank(responseMessage) ? responseMessage + "\n" : null;
-                responseMessage = responseMessage + RecapConstants.TOTAL_REQUESTS_IDS + ":" + resultMap.get(RecapConstants.TOTAL_REQUESTS_IDS);
-                resultMap.remove(RecapConstants.TOTAL_REQUESTS_IDS);
+                responseMessage = responseMessage + RecapCommonConstants.TOTAL_REQUESTS_IDS + ":" + resultMap.get(RecapCommonConstants.TOTAL_REQUESTS_IDS);
+                resultMap.remove(RecapCommonConstants.TOTAL_REQUESTS_IDS);
             }
-            if (!resultMap.containsKey(RecapConstants.INVALID_REQUEST) && !resultMap.containsKey(RecapConstants.FAILURE)) {
+            if (!resultMap.containsKey(RecapCommonConstants.INVALID_REQUEST) && !resultMap.containsKey(RecapCommonConstants.FAILURE)) {
                 Map<String, String> sortedResultMap = new TreeMap<>(Comparator.comparingInt(Integer::parseInt));
                 sortedResultMap.putAll(resultMap);
                 responseMessage = responseMessage + "\n" + sortedResultMap.toString();
@@ -65,8 +66,8 @@ public class ResubmitRequestController {
                 responseMessage = resultMap.toString();
             }
         } catch (Exception exception) {
-            logger.error(RecapConstants.LOG_ERROR, exception);
-            responseMessage = RecapConstants.FAILURE + ":" + exception.getMessage();
+            logger.error(RecapCommonConstants.LOG_ERROR, exception);
+            responseMessage = RecapCommonConstants.FAILURE + ":" + exception.getMessage();
         }
         logger.info("Resubmit requests status : {}", responseMessage);
         return responseMessage;
@@ -79,7 +80,7 @@ public class ResubmitRequestController {
     private HttpHeaders getHttpHeadersAuth() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set(RecapConstants.API_KEY, SwaggerAPIProvider.getInstance().getSwaggerApiKey());
+        headers.set(RecapCommonConstants.API_KEY, SwaggerAPIProvider.getInstance().getSwaggerApiKey());
         return headers;
     }
 }

@@ -2,7 +2,7 @@ package org.recap.service.deaccession;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.solr.common.SolrInputDocument;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -109,7 +109,7 @@ public class DeAccessSolrDocumentService {
             }
             return "Bib documents updated successfully.";
         }catch(Exception ex){
-            logger.error(RecapConstants.LOG_ERROR,ex);
+            logger.error(RecapCommonConstants.LOG_ERROR,ex);
             return "Bib documents failed to update.";
         }
     }
@@ -137,7 +137,7 @@ public class DeAccessSolrDocumentService {
             }
             return "Holdings documents updated successfully.";
         }catch(Exception ex){
-            logger.error(RecapConstants.LOG_ERROR,ex);
+            logger.error(RecapCommonConstants.LOG_ERROR,ex);
             return "Holdings documents failed to update.";
         }
     }
@@ -165,7 +165,7 @@ public class DeAccessSolrDocumentService {
             }
             return "Item documents updated successfully.";
         }catch(Exception ex){
-            logger.error(RecapConstants.LOG_ERROR,ex);
+            logger.error(RecapCommonConstants.LOG_ERROR,ex);
             return "Item documents failed to update.";
         }
     }

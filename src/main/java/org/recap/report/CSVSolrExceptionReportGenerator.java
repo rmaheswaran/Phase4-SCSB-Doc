@@ -1,6 +1,7 @@
 package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.SolrExceptionReportReCAPCSVRecord;
 import org.recap.model.jpa.ReportEntity;
@@ -31,12 +32,12 @@ public class CSVSolrExceptionReportGenerator implements ReportGeneratorInterface
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapConstants.SOLR_INDEX_EXCEPTION) ? true : false;
+        return reportType.equalsIgnoreCase(RecapCommonConstants.SOLR_INDEX_EXCEPTION) ? true : false;
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapConstants.FILE_SYSTEM) ? true : false;
+        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FILE_SYSTEM) ? true : false;
     }
 
     @Override
@@ -57,7 +58,7 @@ public class CSVSolrExceptionReportGenerator implements ReportGeneratorInterface
         logger.info("Total Num of CSVRecords Prepared : {}  ",solrExceptionReportReCAPCSVRecords.size());
 
         if(!CollectionUtils.isEmpty(solrExceptionReportReCAPCSVRecords)) {
-            producer.sendBodyAndHeader(RecapConstants.CSV_SOLR_EXCEPTION_REPORT_Q, solrExceptionReportReCAPCSVRecords, RecapConstants.REPORT_FILE_NAME, fileName);
+            producer.sendBodyAndHeader(RecapCommonConstants.CSV_SOLR_EXCEPTION_REPORT_Q, solrExceptionReportReCAPCSVRecords, RecapCommonConstants.REPORT_FILE_NAME, fileName);
             DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
             return fileName + "-" + df.format(new Date()) + ".csv";
         }

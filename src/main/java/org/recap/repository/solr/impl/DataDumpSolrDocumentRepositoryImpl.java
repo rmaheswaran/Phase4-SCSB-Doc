@@ -9,6 +9,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -83,16 +84,16 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         Map<String, Object> response = new HashMap<>();
         try {
             searchRecordsRequest.setShowTotalCount(true);
-            searchRecordsRequest.setFieldName(StringUtils.isEmpty(searchRecordsRequest.getFieldName()) ? RecapConstants.ALL_FIELDS : searchRecordsRequest.getFieldName());
+            searchRecordsRequest.setFieldName(StringUtils.isEmpty(searchRecordsRequest.getFieldName()) ? RecapCommonConstants.ALL_FIELDS : searchRecordsRequest.getFieldName());
             if(searchRecordsRequest.isDeleted()) {
                 bibItems = searchByItemForDeleted(searchRecordsRequest);
             } else {
                 bibItems = searchByBib(searchRecordsRequest);
             }
-            response.put(RecapConstants.SEARCH_SUCCESS_RESPONSE, bibItems);
+            response.put(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE, bibItems);
         } catch (IOException|SolrServerException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
-            response.put(RecapConstants.SEARCH_ERROR_RESPONSE, e.getMessage());
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            response.put(RecapCommonConstants.SEARCH_ERROR_RESPONSE, e.getMessage());
         }
         return response;
     }
@@ -102,7 +103,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         SolrQuery queryForParentAndChildCriteria = solrQueryBuilder.getQueryForParentAndChildCriteriaForDataDump(searchRecordsRequest);
         queryForParentAndChildCriteria.setStart(searchRecordsRequest.getPageNumber() * searchRecordsRequest.getPageSize());
         queryForParentAndChildCriteria.setRows(searchRecordsRequest.getPageSize());
-        queryForParentAndChildCriteria.setSort(RecapConstants.TITLE_SORT, SolrQuery.ORDER.asc);
+        queryForParentAndChildCriteria.setSort(RecapCommonConstants.TITLE_SORT, SolrQuery.ORDER.asc);
         logger.info("Search by bib query string : {}", queryForParentAndChildCriteria);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(queryForParentAndChildCriteria);
         SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
@@ -234,7 +235,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         SolrQuery queryForChildAndParentCriteria = solrQueryBuilder.getDeletedQueryForDataDump(searchRecordsRequest,isCGDChangedToPrivate);
         queryForChildAndParentCriteria.setStart(searchRecordsRequest.getPageNumber() * searchRecordsRequest.getPageSize());
         queryForChildAndParentCriteria.setRows(searchRecordsRequest.getPageSize());
-        queryForChildAndParentCriteria.setSort(RecapConstants.TITLE_SORT, SolrQuery.ORDER.asc);
+        queryForChildAndParentCriteria.setSort(RecapCommonConstants.TITLE_SORT, SolrQuery.ORDER.asc);
         logger.info("Search by item query string : {}", queryForChildAndParentCriteria);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(queryForChildAndParentCriteria);
         SolrDocumentList itemSolrDocumentList = queryResponse.getResults();
@@ -262,9 +263,9 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         boolean nonFullTreeInst = isIncrementalNonFullTreeInstitution(searchRecordsRequest);
         logger.info("nonFullTreeInst---->{}",nonFullTreeInst);
         String queryStringForMatchParentReturnChild = solrQueryBuilder.getQueryStringForMatchParentReturnChild(searchRecordsRequest);
-        String querForItemString = "_root_:" + getRootIds(bibItems) + and + RecapConstants.DOCTYPE + ":" + RecapConstants.ITEM + and
-                + queryStringForMatchParentReturnChild + and + RecapConstants.IS_DELETED_ITEM + ":" + searchRecordsRequest.isDeleted() + and + RecapConstants.ITEM_CATALOGING_STATUS + ":"
-                + RecapConstants.COMPLETE_STATUS;
+        String querForItemString = "_root_:" + getRootIds(bibItems) + and + RecapCommonConstants.DOCTYPE + ":" + RecapCommonConstants.ITEM + and
+                + queryStringForMatchParentReturnChild + and + RecapCommonConstants.IS_DELETED_ITEM + ":" + searchRecordsRequest.isDeleted() + and + RecapConstants.ITEM_CATALOGING_STATUS + ":"
+                + RecapCommonConstants.COMPLETE_STATUS;
         if((nonFullTreeInst && !isPartialFullDump(searchRecordsRequest.getFieldValue())) && searchRecordsRequest.getFieldName().contains(RecapConstants.BIBITEM_LASTUPDATED_DATE)){
             querForItemString = querForItemString + and + RecapConstants.ITEM_LASTUPDATED_DATE + ":["+searchRecordsRequest.getFieldValue()+"]";
         }
@@ -291,7 +292,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
                 }
             }
         } catch (IOException|SolrServerException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
     }
 
@@ -349,7 +350,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
                 }
             }
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
     }
 

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.converter.MarcToBibEntityConverter;
 import org.recap.converter.SCSBToBibEntityConverter;
@@ -256,8 +257,8 @@ public class AccessionService {
             accessionDetailsRepository.save(accessionEntity);
             status = RecapConstants.ACCESSION_SAVE_SUCCESS_STATUS;
         } catch (Exception ex) {
-            logger.error(RecapConstants.LOG_ERROR, ex);
-            status = RecapConstants.ACCESSION_SAVE_FAILURE_STATUS + RecapConstants.EXCEPTION_MSG + " : " + ex.getMessage();
+            logger.error(RecapCommonConstants.LOG_ERROR, ex);
+            status = RecapConstants.ACCESSION_SAVE_FAILURE_STATUS + RecapCommonConstants.EXCEPTION_MSG + " : " + ex.getMessage();
         }
         return status;
     }
@@ -287,7 +288,7 @@ public class AccessionService {
                     accessionRequestList.addAll(new ObjectMapper().readValue(accessionEntity.getAccessionRequest(), typeReference));
                 }
             } catch(Exception e) {
-                logger.error(RecapConstants.LOG_ERROR, e);
+                logger.error(RecapCommonConstants.LOG_ERROR, e);
             }
         }
         return accessionRequestList;
@@ -372,7 +373,7 @@ public class AccessionService {
         } else {
             String owningInstitution = getOwningInstitution(customerCode);
             if(StringUtils.isBlank(owningInstitution)) {
-                return getAccessionValidationResponse(false, RecapConstants.CUSTOMER_CODE_DOESNOT_EXIST);
+                return getAccessionValidationResponse(false, RecapCommonConstants.CUSTOMER_CODE_DOESNOT_EXIST);
             }
             AccessionValidationResponse accessionValidationResponse = getAccessionValidationResponse(true, "");
             accessionValidationResponse.setOwningInstitution(owningInstitution);
@@ -413,28 +414,28 @@ public class AccessionService {
                 reportDataEntityList.addAll(accessionHelperUtil.createReportDataEntityList(accessionRequest, RecapConstants.ITEM_BARCODE_EMPTY));
             } else if (!itemExists) {
                 if (owningInstitution == null) {
-                    accessionHelperUtil.setAccessionResponse(accessionResponsesList, accessionRequest.getItemBarcode(), accessionRequest.getCustomerCode() + " " + RecapConstants.CUSTOMER_CODE_DOESNOT_EXIST);
-                    reportDataEntityList.addAll(accessionHelperUtil.createReportDataEntityList(accessionRequest, RecapConstants.CUSTOMER_CODE_DOESNOT_EXIST));
+                    accessionHelperUtil.setAccessionResponse(accessionResponsesList, accessionRequest.getItemBarcode(), accessionRequest.getCustomerCode() + " " + RecapCommonConstants.CUSTOMER_CODE_DOESNOT_EXIST);
+                    reportDataEntityList.addAll(accessionHelperUtil.createReportDataEntityList(accessionRequest, RecapCommonConstants.CUSTOMER_CODE_DOESNOT_EXIST));
                 } else if (accessionRequest.getItemBarcode().length() > 45) {
                     accessionHelperUtil.setAccessionResponse(accessionResponsesList, accessionRequest.getItemBarcode(), RecapConstants.INVALID_BARCODE_LENGTH);
                     reportDataEntityList.addAll(accessionHelperUtil.createReportDataEntityList(accessionRequest, RecapConstants.INVALID_BARCODE_LENGTH));
                 } else {
                     try {
-                        if (owningInstitution != null && owningInstitution.equalsIgnoreCase(RecapConstants.PRINCETON)) {
+                        if (owningInstitution != null && owningInstitution.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
                             StopWatch stopWatch = new StopWatch();
                             stopWatch.start();
                             bibDataResponse = getPrincetonService().getBibData(accessionRequest.getItemBarcode());
                             stopWatch.stop();
                             logger.info("Time taken to get bib data from ils : {}" ,stopWatch.getTotalTimeSeconds());
                             response = processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
-                        } else if (owningInstitution != null && owningInstitution.equalsIgnoreCase(RecapConstants.COLUMBIA)) {
+                        } else if (owningInstitution != null && owningInstitution.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
                             StopWatch stopWatch = new StopWatch();
                             stopWatch.start();
                             bibDataResponse = getColumbiaService().getBibData(accessionRequest.getItemBarcode());
                             stopWatch.stop();
                             logger.info("Time taken to get bib data from ils : {}", stopWatch.getTotalTimeSeconds());
                             response = processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
-                        } else if (owningInstitution != null && owningInstitution.equalsIgnoreCase(RecapConstants.NYPL)) {
+                        } else if (owningInstitution != null && owningInstitution.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
                             StopWatch stopWatch1 = new StopWatch();
                             stopWatch1.start();
                             bibDataResponse = getNyplService().getBibData(accessionRequest.getItemBarcode(), accessionRequest.getCustomerCode());
@@ -449,7 +450,7 @@ public class AccessionService {
                 }
             } else if (isDeaccessionedItem) {
                 response = reAccessionItem(itemEntityList);
-                if (response.equals(RecapConstants.SUCCESS)) {
+                if (response.equals(RecapCommonConstants.SUCCESS)) {
                     response = indexReaccessionedItem(itemEntityList);
                     saveItemChangeLogEntity(RecapConstants.REACCESSION,RecapConstants.ITEM_ISDELETED_TRUE_TO_FALSE,itemEntityList);
                 }
@@ -658,12 +659,12 @@ public class AccessionService {
         ReportEntity reportEntity;
         reportEntity = getReportEntity(owningInstitution!=null ? owningInstitution : RecapConstants.UNKNOWN_INSTITUTION);
         reportEntity.setReportDataEntities(reportDataEntityList);
-        getProducerTemplate().sendBody(RecapConstants.REPORT_Q, reportEntity);
+        getProducerTemplate().sendBody(RecapCommonConstants.REPORT_Q, reportEntity);
     }
 
     private ReportEntity getReportEntity(String owningInstitution){
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapConstants.ACCESSION_REPORT);
+        reportEntity.setFileName(RecapCommonConstants.ACCESSION_REPORT);
         reportEntity.setType(RecapConstants.ONGOING_ACCESSION_REPORT);
         reportEntity.setInstitutionName(owningInstitution);
         reportEntity.setCreatedDate(new Date());
@@ -674,7 +675,7 @@ public class AccessionService {
         List<ItemChangeLogEntity> itemChangeLogEntityList = new ArrayList<>();
         for (ItemEntity itemEntity:itemEntityList) {
             ItemChangeLogEntity itemChangeLogEntity = new ItemChangeLogEntity();
-            itemChangeLogEntity.setOperationType(RecapConstants.ACCESSION);
+            itemChangeLogEntity.setOperationType(RecapCommonConstants.ACCESSION);
             itemChangeLogEntity.setUpdatedBy(operationType);
             itemChangeLogEntity.setUpdatedDate(new Date());
             itemChangeLogEntity.setRecordId(itemEntity.getItemId());
@@ -716,7 +717,7 @@ public class AccessionService {
             Map responseMap = xmlToBibEntityConverterInterface.convert(record, owningInstitution,accessionRequest);
             responseMapList.add(responseMap);
             StringBuilder errorMessage = (StringBuilder)responseMap.get("errorMessage");
-            BibliographicEntity bibliographicEntity = (BibliographicEntity) responseMap.get(RecapConstants.BIBLIOGRAPHICENTITY);
+            BibliographicEntity bibliographicEntity = (BibliographicEntity) responseMap.get(RecapCommonConstants.BIBLIOGRAPHICENTITY);
             String incompleteResponse = (String) responseMap.get(RecapConstants.INCOMPLETE_RESPONSE);
             if (errorMessage != null && errorMessage.length()==0) {//Valid bibliographic entity is returned for further processing
                 if (bibliographicEntity != null) {
@@ -730,11 +731,11 @@ public class AccessionService {
                         response = errorMessage.toString();
                     }
                 }
-                if (StringUtils.isNotEmpty(response) && StringUtils.isNotEmpty(incompleteResponse) && RecapConstants.SUCCESS.equalsIgnoreCase(response)){
+                if (StringUtils.isNotEmpty(response) && StringUtils.isNotEmpty(incompleteResponse) && RecapCommonConstants.SUCCESS.equalsIgnoreCase(response)){
                     return RecapConstants.SUCCESS_INCOMPLETE_RECORD;
                 }
             } else{
-                return RecapConstants.FAILED+RecapConstants.HYPHEN+errorMessage.toString();
+                return RecapConstants.FAILED+RecapCommonConstants.HYPHEN+errorMessage.toString();
             }
 
         }
@@ -749,7 +750,7 @@ public class AccessionService {
     private String indexBibliographicRecord(Integer bibliographicId) {
         String response;
         getSolrIndexService().indexByBibliographicId(bibliographicId);
-        response = RecapConstants.SUCCESS;
+        response = RecapCommonConstants.SUCCESS;
         return response;
     }
 
@@ -770,7 +771,7 @@ public class AccessionService {
             fetchBibliographicEntity.setLastUpdatedBy(bibliographicEntity.getLastUpdatedBy());
             fetchBibliographicEntity.setLastUpdatedDate(bibliographicEntity.getLastUpdatedDate());
             fetchBibliographicEntity.setDeleted(bibliographicEntity.isDeleted());
-            if (fetchBibliographicEntity.getCatalogingStatus().equals(RecapConstants.INCOMPLETE_STATUS)) {
+            if (fetchBibliographicEntity.getCatalogingStatus().equals(RecapCommonConstants.INCOMPLETE_STATUS)) {
                 fetchBibliographicEntity.setCatalogingStatus(bibliographicEntity.getCatalogingStatus());
             }
 
@@ -916,9 +917,9 @@ public class AccessionService {
             itemDetailsRepository.flush();
         } catch (Exception e) {
             logger.error(RecapConstants.EXCEPTION,e);
-            return RecapConstants.FAILURE;
+            return RecapCommonConstants.FAILURE;
         }
-        return RecapConstants.SUCCESS;
+        return RecapCommonConstants.SUCCESS;
     }
 
     /**
@@ -936,9 +937,9 @@ public class AccessionService {
             }
         } catch (Exception e) {
             logger.error(RecapConstants.EXCEPTION,e);
-            return RecapConstants.FAILURE;
+            return RecapCommonConstants.FAILURE;
         }
-        return RecapConstants.SUCCESS;
+        return RecapCommonConstants.SUCCESS;
     }
 
     /**
@@ -988,9 +989,9 @@ public class AccessionService {
     }
 
     private XmlToBibEntityConverterInterface getConverter(String institutionId){
-        if(institutionId.equalsIgnoreCase(RecapConstants.PRINCETON) || institutionId.equalsIgnoreCase(RecapConstants.COLUMBIA)){
+        if(institutionId.equalsIgnoreCase(RecapCommonConstants.PRINCETON) || institutionId.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)){
             return getMarcToBibEntityConverter();
-        } else if(institutionId.equalsIgnoreCase(RecapConstants.NYPL)){
+        } else if(institutionId.equalsIgnoreCase(RecapCommonConstants.NYPL)){
             return getScsbToBibEntityConverter();
         }
         return null;
@@ -1023,7 +1024,7 @@ public class AccessionService {
         try {
             strJson = objectMapper.writeValueAsString(objJson);
         } catch (JsonProcessingException ex) {
-            logger.error(RecapConstants.LOG_ERROR, ex);
+            logger.error(RecapCommonConstants.LOG_ERROR, ex);
         }
         return strJson;
     }
@@ -1066,7 +1067,7 @@ public class AccessionService {
     }
 
     protected void addCountToSummary(AccessionSummary accessionSummary, String message) {
-        if(message.contains(RecapConstants.SUCCESS)) {
+        if(message.contains(RecapCommonConstants.SUCCESS)) {
             accessionSummary.addSuccessRecord(1);
         }else if(message.contains(RecapConstants.ITEM_ALREADY_ACCESSIONED)) {
             accessionSummary.addAlreadyAccessioned(1);
@@ -1082,7 +1083,7 @@ public class AccessionService {
             accessionSummary.addEmptyBarcodes(1);
         } else if(StringUtils.equalsIgnoreCase(RecapConstants.CUSTOMER_CODE_EMPTY, message)) {
             accessionSummary.addEmptyCustomerCode(1);
-        }  else if(StringUtils.equalsIgnoreCase(RecapConstants.CUSTOMER_CODE_DOESNOT_EXIST, message)) {
+        }  else if(StringUtils.equalsIgnoreCase(RecapCommonConstants.CUSTOMER_CODE_DOESNOT_EXIST, message)) {
             accessionSummary.addCustomerCodeDoesNotExist(1);
         } else {
             accessionSummary.addFailure(1);

@@ -2,6 +2,7 @@ package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.OngoingAccessionReportRecord;
 import org.recap.model.jpa.ReportEntity;
@@ -33,7 +34,7 @@ public class FTPOngoingAccessionReportGenerator implements ReportGeneratorInterf
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapConstants.FTP) ? true : false;
+        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP) ? true : false;
     }
 
     @Override

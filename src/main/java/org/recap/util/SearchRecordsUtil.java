@@ -1,6 +1,7 @@
 package org.recap.util;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.search.DataDumpSearchResult;
 import org.recap.model.search.SearchItemResultRow;
@@ -68,11 +69,11 @@ public final class SearchRecordsUtil {
      */
     public List<SearchResultRow> searchAndBuildResults(SearchRecordsRequest searchRecordsRequest) throws Exception{
         Map<String, Object> searchResponse = bibSolrDocumentRepository.search(searchRecordsRequest);
-        String errorResponse = (String) searchResponse.get(RecapConstants.SEARCH_ERROR_RESPONSE);
+        String errorResponse = (String) searchResponse.get(RecapCommonConstants.SEARCH_ERROR_RESPONSE);
         if(errorResponse != null) {
             searchRecordsRequest.setErrorMessage(RecapConstants.SERVER_ERROR_MSG);
         } else {
-            List<BibItem> bibItems = (List<BibItem>) searchResponse.get(RecapConstants.SEARCH_SUCCESS_RESPONSE);
+            List<BibItem> bibItems = (List<BibItem>) searchResponse.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
             return buildGeneralResults(bibItems);
         }
 
@@ -89,11 +90,11 @@ public final class SearchRecordsUtil {
     public List<DataDumpSearchResult> searchRecordsForDataDump(SearchRecordsRequest searchRecordsRequest) throws Exception{
         if (!isEmptySearch(searchRecordsRequest)) {
             Map<String, Object> searchResponse = getDataDumpSolrDocumentRepository().search(searchRecordsRequest);
-            String errorResponse = (String) searchResponse.get(RecapConstants.SEARCH_ERROR_RESPONSE);
+            String errorResponse = (String) searchResponse.get(RecapCommonConstants.SEARCH_ERROR_RESPONSE);
             if(errorResponse != null) {
                 searchRecordsRequest.setErrorMessage(RecapConstants.SERVER_ERROR_MSG);
             } else {
-                List<BibItem> bibItems = (List<BibItem>) searchResponse.get(RecapConstants.SEARCH_SUCCESS_RESPONSE);
+                List<BibItem> bibItems = (List<BibItem>) searchResponse.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
                 return buildResultsForDataDump(bibItems);
             }
         }
@@ -124,7 +125,7 @@ public final class SearchRecordsUtil {
                 String authorSearch = CollectionUtils.isNotEmpty(bibItem.getAuthorSearch()) ? bibItem.getAuthorSearch().get(0) : " ";
                 searchResultRow.setAuthorSearch(authorSearch);
                 Holdings holdings = CollectionUtils.isEmpty(bibItem.getHoldingsList()) ? new Holdings() : bibItem.getHoldingsList().get(0);
-                if (null != bibItem.getItems() && bibItem.getItems().size() == 1 && !RecapConstants.SERIAL.equals(bibItem.getLeaderMaterialType())) {
+                if (null != bibItem.getItems() && bibItem.getItems().size() == 1 && !RecapCommonConstants.SERIAL.equals(bibItem.getLeaderMaterialType())) {
                     Item item = bibItem.getItems().get(0);
                     if (null != item) {
                         searchResultRow.setItemId(item.getItemId());
@@ -160,7 +161,7 @@ public final class SearchRecordsUtil {
                             }
                         }
                         for (String status:mixedStatus){
-                            if (RecapConstants.NOT_AVAILABLE.equals(status) && (mixedStatus.size()==2)){
+                            if (RecapCommonConstants.NOT_AVAILABLE.equals(status) && (mixedStatus.size()==2)){
                                 searchResultRow.setAvailability(RecapConstants.MIXED_STATUS);
                             }
                         }

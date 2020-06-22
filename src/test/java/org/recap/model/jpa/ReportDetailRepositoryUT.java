@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCase;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.DateUtil;
@@ -86,10 +87,10 @@ public class ReportDetailRepositoryUT extends BaseTestCase {
         reportEntity.setFileName(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setType(RecapConstants.MULTI_MATCH);
-        reportEntity.setInstitutionName(RecapConstants.ALL_INST);
+        reportEntity.setInstitutionName(RecapCommonConstants.ALL_INST);
 
         ReportDataEntity reportDataEntity1 = new ReportDataEntity();
-        reportDataEntity1.setHeaderName(RecapConstants.BIB_ID);
+        reportDataEntity1.setHeaderName(RecapCommonConstants.BIB_ID);
         reportDataEntity1.setHeaderValue("1");
         reportDataEntities.add(reportDataEntity1);
 
@@ -239,7 +240,7 @@ public class ReportDetailRepositoryUT extends BaseTestCase {
         reportEntity.setFileName("OCLC,ISBN");
         reportEntity.setCreatedDate(new Date());
         reportEntity.setType(RecapConstants.MULTI_MATCH);
-        reportEntity.setInstitutionName(RecapConstants.ALL_INST);
+        reportEntity.setInstitutionName(RecapCommonConstants.ALL_INST);
         reportDetailRepository.saveAndFlush(reportEntity);
 
         List<String> typeList = new ArrayList<>();

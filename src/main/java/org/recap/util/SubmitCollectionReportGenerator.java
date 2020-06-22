@@ -1,6 +1,7 @@
 package org.recap.util;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.jpa.ReportDataEntity;
@@ -47,7 +48,7 @@ public class SubmitCollectionReportGenerator {
                 try {
                     setterMethod.invoke(submitCollectionReportRecord, headerValue);
                 } catch (Exception e) {
-                    logger.error(RecapConstants.LOG_ERROR,e);
+                    logger.error(RecapCommonConstants.LOG_ERROR,e);
                 }
                 if(isReportRecordFullyUpdated(submitCollectionReportRecord) ) {
                     submitCollectionReportRecordList.add(submitCollectionReportRecord);
@@ -68,13 +69,13 @@ public class SubmitCollectionReportGenerator {
     }
 
     private String getReportType(String type){
-        if(type.equals(RecapConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)){
-            return RecapConstants.SUCCESS;
-        } else if(type.equals(RecapConstants.SUBMIT_COLLECTION_FAILURE_REPORT)){
-            return RecapConstants.FAIL;
-        } else if(type.equals(RecapConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)){
+        if(type.equals(RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)){
+            return RecapCommonConstants.SUCCESS;
+        } else if(type.equals(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT)){
+            return RecapCommonConstants.FAIL;
+        } else if(type.equals(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)){
             return RecapConstants.SC_EXCEPTION;
-        } else if(type.equals(RecapConstants.SUBMIT_COLLECTION_REJECTION_REPORT)){
+        } else if(type.equals(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT)){
             return RecapConstants.REJECTION;
         }
         return null;
@@ -90,7 +91,7 @@ public class SubmitCollectionReportGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, SubmitCollectionReportRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
@@ -106,7 +107,7 @@ public class SubmitCollectionReportGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SubmitCollectionReportRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
