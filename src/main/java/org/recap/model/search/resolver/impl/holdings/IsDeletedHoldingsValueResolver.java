@@ -1,6 +1,6 @@
 package org.recap.model.search.resolver.impl.holdings;
 
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.solr.Holdings;
 
@@ -10,7 +10,7 @@ import org.recap.model.solr.Holdings;
 public class IsDeletedHoldingsValueResolver implements HoldingsValueResolver {
     @Override
     public Boolean isInterested(String field) {
-        return field.equalsIgnoreCase(RecapConstants.IS_DELETED_HOLDINGS);
+        return field.equalsIgnoreCase(RecapCommonConstants.IS_DELETED_HOLDINGS);
     }
 
     @Override

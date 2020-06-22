@@ -2,6 +2,7 @@ package org.recap.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.admin.SolrAdmin;
 import org.recap.executors.BibItemIndexExecutorService;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -115,7 +115,7 @@ public class SolrIndexController {
             try {
                 solrAdmin.unloadTempCores();
             } catch (IOException | SolrServerException e) {
-                logger.error(RecapConstants.LOG_ERROR,e);
+                logger.error(RecapCommonConstants.LOG_ERROR,e);
             }
         }
 
@@ -180,10 +180,10 @@ public class SolrIndexController {
             for (Integer bibliographicId : bibliographicIdList) {
                 getSolrIndexService().indexByBibliographicId(bibliographicId);
             }
-            response = RecapConstants.SUCCESS;
+            response = RecapCommonConstants.SUCCESS;
         } catch (Exception e) {
-            response = RecapConstants.FAILURE;
-            logger.error(RecapConstants.LOG_ERROR,e);
+            response = RecapCommonConstants.FAILURE;
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return response;
     }
@@ -198,14 +198,14 @@ public class SolrIndexController {
         logger.info("ownInstbibliographicIdListString--->{}",ownInstbibliographicIdListString);
         String[] ownInstbibliographicIdArray = ownInstbibliographicIdListString.split(",");
         List<String> ownInstbibliographicIdList = Arrays.asList(ownInstbibliographicIdArray);
-        Integer owningInstId = Integer.valueOf((String) requestParameters.get(RecapConstants.OWN_INSTITUTION_ID));
+        Integer owningInstId = Integer.valueOf((String) requestParameters.get(RecapCommonConstants.OWN_INSTITUTION_ID));
         String response = null;
         try {
             getSolrIndexService().indexByOwnInstBibId(ownInstbibliographicIdList,owningInstId);
-            response = RecapConstants.SUCCESS;
+            response = RecapCommonConstants.SUCCESS;
         } catch (Exception e) {
-            response = RecapConstants.FAILURE;
-            logger.error(RecapConstants.LOG_ERROR,e);
+            response = RecapCommonConstants.FAILURE;
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return response;
     }
@@ -236,18 +236,18 @@ public class SolrIndexController {
             try {
                 if (StringUtils.isNotBlank(root)) {
                     logger.info("deleting unlinked holding and item record from solr holding id - {}, item id - {}, root - {}",holdingId,itemId,root);
-                    getSolrIndexService().deleteBySolrQuery(RecapConstants.HOLDING_ID + ":" + holdingId + " " + RecapConstants.AND + " " + RecapConstants.ROOT + ":" + root);
-                    getSolrIndexService().deleteBySolrQuery(RecapConstants.ITEM_ID + ":" + itemId + " " + RecapConstants.AND + " " + RecapConstants.ROOT + ":" + root);
+                    getSolrIndexService().deleteBySolrQuery(RecapCommonConstants.HOLDING_ID + ":" + holdingId + " " + RecapCommonConstants.AND + " " + RecapCommonConstants.ROOT + ":" + root);
+                    getSolrIndexService().deleteBySolrQuery(RecapCommonConstants.ITEM_ID + ":" + itemId + " " + RecapCommonConstants.AND + " " + RecapCommonConstants.ROOT + ":" + root);
                 } else {
                     logger.info("deleting dummy record from solr bib id - {}, holding id - {}, item id - {}",bibliographicId,holdingId,itemId);
-                    getSolrIndexService().deleteByDocId(RecapConstants.BIB_ID, bibliographicId);
-                    getSolrIndexService().deleteByDocId(RecapConstants.HOLDING_ID, holdingId);
-                    getSolrIndexService().deleteByDocId(RecapConstants.ITEM_ID, itemId);
+                    getSolrIndexService().deleteByDocId(RecapCommonConstants.BIB_ID, bibliographicId);
+                    getSolrIndexService().deleteByDocId(RecapCommonConstants.HOLDING_ID, holdingId);
+                    getSolrIndexService().deleteByDocId(RecapCommonConstants.ITEM_ID, itemId);
                 }
-                response = RecapConstants.SUCCESS;
+                response = RecapCommonConstants.SUCCESS;
             } catch (Exception e) {
-                response = RecapConstants.FAILURE;
-                logger.error(RecapConstants.LOG_ERROR,e);
+                response = RecapCommonConstants.FAILURE;
+                logger.error(RecapCommonConstants.LOG_ERROR,e);
             }
             stopWatchDeleteDummyRec.stop();
             logger.info("Time taken to delete  bib id - {}, holding id - {}, item id {}--> is {} milli sec",bibliographicId,holdingId,itemId,stopWatchDeleteDummyRec.getTotalTimeMillis());
@@ -273,15 +273,15 @@ public class SolrIndexController {
         for (Map<String,String> bibIdMapToRemoveIndex : bibIdMapToRemoveIndexList) {
             StopWatch stopWatchDeleteRec = new StopWatch();
             stopWatchDeleteRec.start();
-            String bibliographicId = bibIdMapToRemoveIndex.get(RecapConstants.BIB_ID);
-            String isDeletedBib = bibIdMapToRemoveIndex.get(RecapConstants.IS_DELETED_BIB);
+            String bibliographicId = bibIdMapToRemoveIndex.get(RecapCommonConstants.BIB_ID);
+            String isDeletedBib = bibIdMapToRemoveIndex.get(RecapCommonConstants.IS_DELETED_BIB);
             try {
                 logger.info("deleting linked existing bib record from solr bib id - {}, is Deleted Bib - {}", bibliographicId, isDeletedBib);
-                getSolrIndexService().deleteBySolrQuery(RecapConstants.BIB_ID + ":" + bibliographicId + " " + RecapConstants.AND + " " + RecapConstants.IS_DELETED_BIB + ":" + isDeletedBib);
-                response = RecapConstants.SUCCESS;
+                getSolrIndexService().deleteBySolrQuery(RecapCommonConstants.BIB_ID + ":" + bibliographicId + " " + RecapCommonConstants.AND + " " + RecapCommonConstants.IS_DELETED_BIB + ":" + isDeletedBib);
+                response = RecapCommonConstants.SUCCESS;
             } catch (Exception e) {
-                response = RecapConstants.FAILURE;
-                logger.error(RecapConstants.LOG_ERROR, e);
+                response = RecapCommonConstants.FAILURE;
+                logger.error(RecapCommonConstants.LOG_ERROR, e);
             }
             stopWatchDeleteRec.stop();
             logger.info("Time taken to delete  bib id - {} --> is {} milli sec", bibliographicId, stopWatchDeleteRec.getTotalTimeMillis());

@@ -1,6 +1,7 @@
 package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.DeAccessionSummaryRecord;
 import org.recap.model.jpa.ReportEntity;
@@ -25,12 +26,12 @@ public class FSDeAccessionReportGenerator implements ReportGeneratorInterface {
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapConstants.DEACCESSION_SUMMARY_REPORT) ? true : false;
+        return reportType.equalsIgnoreCase(RecapCommonConstants.DEACCESSION_SUMMARY_REPORT) ? true : false;
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapConstants.FILE_SYSTEM) ? true : false;
+        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FILE_SYSTEM) ? true : false;
     }
 
     @Override
@@ -44,7 +45,7 @@ public class FSDeAccessionReportGenerator implements ReportGeneratorInterface {
             deAccessionSummaryRecordList.add(deAccessionSummaryRecord);
         }
 
-        producerTemplate.sendBodyAndHeader(RecapConstants.FS_DE_ACCESSION_SUMMARY_REPORT_Q, deAccessionSummaryRecordList, "fileName", fileName);
+        producerTemplate.sendBodyAndHeader(RecapCommonConstants.FS_DE_ACCESSION_SUMMARY_REPORT_Q, deAccessionSummaryRecordList, "fileName", fileName);
 
         DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
         generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";

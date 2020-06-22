@@ -3,6 +3,7 @@ package org.recap.camel.route;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.BindyType;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class FSSubmitCollectionSuccessReportRouteBuilder {
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
     }
 }

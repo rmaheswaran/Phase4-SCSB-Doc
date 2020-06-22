@@ -3,6 +3,7 @@ package org.recap.camel.route;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.BindyType;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.camel.processor.EmailService;
 import org.recap.camel.processor.StopRouteProcessor;
@@ -43,14 +44,14 @@ public class FTPMatchingReportsRouteBuilder {
                     from(RecapConstants.FILE + matchingReportsDirectory + RecapConstants.DELETE_FILE_OPTION)
                             .routeId(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID)
                             .noAutoStartup()
-                            .to(RecapConstants.SFTP+ ftpUserName +  RecapConstants.AT + ftpMatchingReportsDirectory + RecapConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapConstants.KNOWN_HOST_FILE + ftpKnownHost)
+                            .to(RecapCommonConstants.SFTP+ ftpUserName +  RecapCommonConstants.AT + ftpMatchingReportsDirectory + RecapCommonConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapCommonConstants.KNOWN_HOST_FILE + ftpKnownHost)
                             .onCompletion()
                             .process(new StopRouteProcessor(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID))
                             .log("Title_Exception report generated and uploaded to ftp successfully.");
                 }
             });
         } catch (Exception e) {
-            logger.info(RecapConstants.LOG_ERROR+e);
+            logger.info(RecapCommonConstants.LOG_ERROR+e);
         }
 
         try {
@@ -61,7 +62,7 @@ public class FTPMatchingReportsRouteBuilder {
                             .routeId(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID)
                             .noAutoStartup()
                             .marshal().bindy(BindyType.Csv, MatchingSerialAndMVMReports.class)
-                            .to(RecapConstants.SFTP+ ftpUserName +  RecapConstants.AT + ftpMatchingReportsDirectory + RecapConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapConstants.KNOWN_HOST_FILE + ftpKnownHost + "&fileName=${in.header.fileName}_${date:now:yyyyMMdd_HHmmss}.csv")
+                            .to(RecapCommonConstants.SFTP+ ftpUserName +  RecapCommonConstants.AT + ftpMatchingReportsDirectory + RecapCommonConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapCommonConstants.KNOWN_HOST_FILE + ftpKnownHost + "&fileName=${in.header.fileName}_${date:now:yyyyMMdd_HHmmss}.csv")
                             .onCompletion()
                             .process(new StopRouteProcessor(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID))
                             .log("Matching Serial_MVM reports generated and uploaded to ftp successfully.");
@@ -69,7 +70,7 @@ public class FTPMatchingReportsRouteBuilder {
                 }
             });
         } catch (Exception e) {
-            logger.info(RecapConstants.LOG_ERROR+e);
+            logger.info(RecapCommonConstants.LOG_ERROR+e);
         }
 
         try {
@@ -80,7 +81,7 @@ public class FTPMatchingReportsRouteBuilder {
                             .routeId(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID)
                             .noAutoStartup()
                             .marshal().bindy(BindyType.Csv, MatchingSummaryReport.class)
-                            .to(RecapConstants.SFTP+ ftpUserName +  RecapConstants.AT + ftpMatchingReportsDirectory + RecapConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapConstants.KNOWN_HOST_FILE + ftpKnownHost + "&fileName=${in.header.fileName}_${date:now:yyyyMMdd_HHmmss}.csv")
+                            .to(RecapCommonConstants.SFTP+ ftpUserName +  RecapCommonConstants.AT + ftpMatchingReportsDirectory + RecapCommonConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapCommonConstants.KNOWN_HOST_FILE + ftpKnownHost + "&fileName=${in.header.fileName}_${date:now:yyyyMMdd_HHmmss}.csv")
                             .onCompletion()
                             .bean(applicationContext.getBean(EmailService.class),RecapConstants.MATCHING_REPORTS_SEND_EMAIL)
                             .process(new StopRouteProcessor(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID))
@@ -90,7 +91,7 @@ public class FTPMatchingReportsRouteBuilder {
                 }
             });
         } catch (Exception e) {
-            logger.info(RecapConstants.LOG_ERROR+e);
+            logger.info(RecapCommonConstants.LOG_ERROR+e);
         }
     }
 }

@@ -7,6 +7,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.resolver.BibValueResolver;
@@ -110,7 +111,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         try {
             if (isEmptyField(searchRecordsRequest)) {
                 searchRecordsRequest.setShowTotalCount(true);
-                searchRecordsRequest.setFieldName(RecapConstants.ALL_FIELDS);
+                searchRecordsRequest.setFieldName(RecapCommonConstants.ALL_FIELDS);
                 bibItems = searchByBib(searchRecordsRequest);
                 if(CollectionUtils.isEmpty(bibItems)) {
                     bibItems = searchByItem(searchRecordsRequest);
@@ -121,10 +122,10 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             } else {
                 bibItems = searchByBib(searchRecordsRequest);
             }
-            response.put(RecapConstants.SEARCH_SUCCESS_RESPONSE, bibItems);
+            response.put(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE, bibItems);
         } catch (IOException|SolrServerException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
-            response.put(RecapConstants.SEARCH_ERROR_RESPONSE, e.getMessage());
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            response.put(RecapCommonConstants.SEARCH_ERROR_RESPONSE, e.getMessage());
         }
         return response;
     }
@@ -145,7 +146,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             queryForChildAndParentCriteria.setSort(RecapConstants.ITEM_CREATED_DATE, SolrQuery.ORDER.desc);
         }
         else {
-            queryForChildAndParentCriteria.setSort(RecapConstants.TITLE_SORT, SolrQuery.ORDER.asc);
+            queryForChildAndParentCriteria.setSort(RecapCommonConstants.TITLE_SORT, SolrQuery.ORDER.asc);
         }
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(queryForChildAndParentCriteria);
         SolrDocumentList itemSolrDocumentList = queryResponse.getResults();
@@ -165,7 +166,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         SolrQuery queryForParentAndChildCriteria = solrQueryBuilder.getQueryForParentAndChildCriteria(searchRecordsRequest);
         queryForParentAndChildCriteria.setStart(searchRecordsRequest.getPageNumber() * searchRecordsRequest.getPageSize());
         queryForParentAndChildCriteria.setRows(searchRecordsRequest.getPageSize());
-        queryForParentAndChildCriteria.setSort(RecapConstants.TITLE_SORT, SolrQuery.ORDER.asc);
+        queryForParentAndChildCriteria.setSort(RecapCommonConstants.TITLE_SORT, SolrQuery.ORDER.asc);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(queryForParentAndChildCriteria);
         SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
         if(CollectionUtils.isNotEmpty(bibSolrDocumentList)) {
@@ -196,17 +197,17 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             BibItem bibItem = new BibItem();
             for (Iterator<SolrDocument> iterator = solrDocuments.iterator(); iterator.hasNext(); ) {
                 SolrDocument solrDocument = iterator.next();
-                String docType = (String) solrDocument.getFieldValue(RecapConstants.DOCTYPE);
-                if (docType.equalsIgnoreCase(RecapConstants.BIB)) {
-                    boolean isDeletedBib = (boolean) solrDocument.getFieldValue(RecapConstants.IS_DELETED_BIB);
+                String docType = (String) solrDocument.getFieldValue(RecapCommonConstants.DOCTYPE);
+                if (docType.equalsIgnoreCase(RecapCommonConstants.BIB)) {
+                    boolean isDeletedBib = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_BIB);
                     String bibCatalogingStatus = (String) solrDocument.getFieldValue(RecapConstants.BIB_CATALOGING_STATUS);
                     if (isDeletedBib == isDeleted && catalogingStatus.equals(bibCatalogingStatus)) {
                         populateBibItem(solrDocument, bibItem);
                         bibItem.setItems(Arrays.asList(item));
                     }
                 }
-                if(docType.equalsIgnoreCase(RecapConstants.HOLDINGS)) {
-                    boolean isDeletedHoldings = (boolean) solrDocument.getFieldValue(RecapConstants.IS_DELETED_HOLDINGS);
+                if(docType.equalsIgnoreCase(RecapCommonConstants.HOLDINGS)) {
+                    boolean isDeletedHoldings = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_HOLDINGS);
                     if (isDeletedHoldings == isDeleted) {
                         Holdings holdings = getHoldings(solrDocument);
                         bibItem.addHoldings(holdings);
@@ -215,7 +216,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             }
             bibItems.add(bibItem);
         } catch (IOException|SolrServerException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return bibItems;
     }
@@ -240,17 +241,17 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             }
             for (Iterator<SolrDocument> iterator = solrDocuments.iterator(); iterator.hasNext(); ) {
                 SolrDocument solrDocument = iterator.next();
-                String docType = (String) solrDocument.getFieldValue(RecapConstants.DOCTYPE);
-                if(docType.equalsIgnoreCase(RecapConstants.ITEM)) {
-                    boolean isDeletedItem = (boolean) solrDocument.getFieldValue(RecapConstants.IS_DELETED_ITEM);
+                String docType = (String) solrDocument.getFieldValue(RecapCommonConstants.DOCTYPE);
+                if(docType.equalsIgnoreCase(RecapCommonConstants.ITEM)) {
+                    boolean isDeletedItem = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_ITEM);
                     String itemCatalogingStatus = (String) solrDocument.getFieldValue(RecapConstants.ITEM_CATALOGING_STATUS);
                     if (isDeletedItem == isDeleted && catalogingStatus.equals(itemCatalogingStatus)) {
                         Item item = getItem(solrDocument);
                         bibItem.addItem(item);
                     }
                 }
-                if(docType.equalsIgnoreCase(RecapConstants.HOLDINGS)) {
-                    boolean isDeletedHoldings = (boolean) solrDocument.getFieldValue(RecapConstants.IS_DELETED_HOLDINGS);
+                if(docType.equalsIgnoreCase(RecapCommonConstants.HOLDINGS)) {
+                    boolean isDeletedHoldings = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_HOLDINGS);
                     if (isDeletedHoldings == isDeleted) {
                         Holdings holdings = getHoldings(solrDocument);
                         bibItem.addHoldings(holdings);
@@ -258,16 +259,16 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
                 }
             }
         } catch (IOException|SolrServerException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
     }
 
     private boolean isItemField(SearchRecordsRequest searchRecordsRequest) {
         if (StringUtils.isNotBlank(searchRecordsRequest.getFieldName())
-                && (searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapConstants.BARCODE)
-                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapConstants.CALL_NUMBER)
+                && (searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.BARCODE)
+                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.CALL_NUMBER)
                 || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapConstants.ITEM_CATALOGING_STATUS)
-                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapConstants.CUSTOMER_CODE))) {
+                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.CUSTOMER_CODE))) {
             return true;
         }
         return false;
@@ -278,7 +279,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         String totalBibCount = NumberFormat.getNumberInstance().format(numFound);
         searchRecordsRequest.setTotalBibRecordsCount(totalBibCount);
         searchRecordsRequest.setTotalRecordsCount(totalBibCount);
-        if(!searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapConstants.ALL_FIELDS)) {
+        if(!searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.ALL_FIELDS)) {
             String totalItemCount = NumberFormat.getNumberInstance().format(getItemCountsForBib(searchRecordsRequest));
             searchRecordsRequest.setTotalItemRecordsCount(totalItemCount);
         }
@@ -297,7 +298,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         String totalItemCount = NumberFormat.getNumberInstance().format(numFound);
         searchRecordsRequest.setTotalItemRecordsCount(totalItemCount);
         searchRecordsRequest.setTotalRecordsCount(totalItemCount);
-        if(!searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapConstants.ALL_FIELDS)) {
+        if(!searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.ALL_FIELDS)) {
             String totalBibCount = NumberFormat.getNumberInstance().format(getBibCountsForItem(searchRecordsRequest));
             searchRecordsRequest.setTotalBibRecordsCount(totalBibCount);
         }

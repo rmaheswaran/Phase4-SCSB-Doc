@@ -1,9 +1,8 @@
 package org.recap.controller;
 
 import org.junit.Test;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.Assert.assertNotNull;
@@ -25,12 +24,12 @@ public class UpdateCgdRestControllerUT extends BaseControllerUT {
         String username = "guest";
         MvcResult savedResult = this.mockMvc.perform(get("/updateCgdService/updateCgd")
                 .headers(getHttpHeaders())
-                .param(RecapConstants.CGD_UPDATE_ITEM_BARCODE, itemBarcode)
+                .param(RecapCommonConstants.CGD_UPDATE_ITEM_BARCODE, itemBarcode)
                 .param(RecapConstants.OWNING_INST, owningInstitution)
-                .param(RecapConstants.OLD_CGD, oldCollectionGroupDesignation)
-                .param(RecapConstants.NEW_CGD, newCollectionGroupDesignation)
-                .param(RecapConstants.CGD_CHANGE_NOTES, cgdChangeNotes)
-                .param(RecapConstants.USER_NAME, username))
+                .param(RecapCommonConstants.OLD_CGD, oldCollectionGroupDesignation)
+                .param(RecapCommonConstants.NEW_CGD, newCollectionGroupDesignation)
+                .param(RecapCommonConstants.CGD_CHANGE_NOTES, cgdChangeNotes)
+                .param(RecapCommonConstants.USER_NAME, username))
                 .andExpect(status().isOk())
                 .andReturn();
 

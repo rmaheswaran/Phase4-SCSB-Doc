@@ -1,6 +1,6 @@
 package org.recap.model.search.resolver.impl.bib;
 
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.search.resolver.BibValueResolver;
 import org.recap.model.solr.BibItem;
 
@@ -10,7 +10,7 @@ import org.recap.model.solr.BibItem;
 public class IsDeletedBibValueResolver implements BibValueResolver {
     @Override
     public Boolean isInterested(String field) {
-        return field.equalsIgnoreCase(RecapConstants.IS_DELETED_BIB);
+        return field.equalsIgnoreCase(RecapCommonConstants.IS_DELETED_BIB);
     }
 
     @Override

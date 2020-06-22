@@ -8,11 +8,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.controller.BaseControllerUT;
 import org.recap.controller.SharedCollectionRestController;
 import org.recap.model.BibItemAvailabityStatusRequest;
-import org.recap.model.ItemAvailabilityResponse;
 import org.recap.model.ItemAvailabityStatusRequest;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.accession.AccessionResponse;
@@ -102,7 +102,7 @@ public class SharedCollectionRestControllerUT extends BaseControllerUT {
         barcodeList.add(barcode);
         itemAvailabityStatusRequest.setBarcodes(barcodeList);
         Mockito.when(mockedSharedCollectionRestController.getItemAvailabilityService()).thenReturn(itemAvailabilityService);
-        Mockito.when(mockedSharedCollectionRestController.getItemAvailabilityService().getItemStatusByBarcodeAndIsDeletedFalse(itemBarcode)).thenReturn(RecapConstants.AVAILABLE);
+        Mockito.when(mockedSharedCollectionRestController.getItemAvailabilityService().getItemStatusByBarcodeAndIsDeletedFalse(itemBarcode)).thenReturn(RecapCommonConstants.AVAILABLE);
         Mockito.when(mockedSharedCollectionRestController.itemAvailabilityStatus(itemAvailabityStatusRequest)).thenCallRealMethod();
         ResponseEntity responseEntity = mockedSharedCollectionRestController.itemAvailabilityStatus(itemAvailabityStatusRequest);
         assertNotNull(responseEntity);
@@ -118,11 +118,11 @@ public class SharedCollectionRestControllerUT extends BaseControllerUT {
         accessionRequestList.add(accessionRequest);
         Mockito.when(mockedSharedCollectionRestController.getAccessionService()).thenReturn(accessionService);
         Mockito.when(mockedSharedCollectionRestController.getInputLimit()).thenReturn(10);
-        Mockito.when(mockedSharedCollectionRestController.getAccessionService().saveRequest(accessionRequestList)).thenReturn(RecapConstants.SUCCESS);
+        Mockito.when(mockedSharedCollectionRestController.getAccessionService().saveRequest(accessionRequestList)).thenReturn(RecapCommonConstants.SUCCESS);
         Mockito.when(mockedSharedCollectionRestController.accessionBatch(accessionRequestList)).thenCallRealMethod();
         ResponseEntity responseEntity = mockedSharedCollectionRestController.accessionBatch(accessionRequestList);
         assertNotNull(responseEntity);
-        assertEquals(responseEntity.getBody(),RecapConstants.SUCCESS);
+        assertEquals(responseEntity.getBody(),RecapCommonConstants.SUCCESS);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class SharedCollectionRestControllerUT extends BaseControllerUT {
         List<AccessionResponse> accessionResponseList = new ArrayList<>();
         AccessionResponse accessionResponse = new AccessionResponse();
         accessionResponse.setItemBarcode("32101062128309");
-        accessionResponse.setMessage(RecapConstants.SUCCESS);
+        accessionResponse.setMessage(RecapCommonConstants.SUCCESS);
         accessionResponseList.add(accessionResponse);
         Mockito.when(mockedSharedCollectionRestController.getAccessionService()).thenReturn(accessionService);
         Mockito.when(mockedSharedCollectionRestController.getBulkAccessionService()).thenReturn(bulkAccessionService);

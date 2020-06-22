@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.converter.MarcToBibEntityConverter;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.accession.AccessionResponse;
@@ -23,8 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -88,12 +88,12 @@ public class AccessionSummaryReportUT extends BaseTestCase{
         List<AccessionResponse> accessionResponseList = new ArrayList<>();
         AccessionResponse accessionResponse = new AccessionResponse();
         accessionResponse.setItemBarcode("32101058378587");
-        accessionResponse.setMessage(RecapConstants.SUCCESS);
+        accessionResponse.setMessage(RecapCommonConstants.SUCCESS);
         accessionResponseList.add(accessionResponse);
         Mockito.when(accessionService.processRequest(accessionRequestList)).thenReturn(accessionResponseList);
         List<AccessionResponse> accessionResponses  = accessionService.processRequest(accessionRequestList);
         assertNotNull(accessionResponses);
-        assertEquals(RecapConstants.SUCCESS,accessionResponses.get(0).getMessage());
+        assertEquals(RecapCommonConstants.SUCCESS,accessionResponses.get(0).getMessage());
         saveReportEntity();
         String generatedReportFileName = reportGenerator.generateReport("Accession_Report","PUL","Accession_Summary_Report","FileSystem",dateUtil.getFromDate(new Date()), dateUtil.getToDate(new Date()));
         assertNotNull(generatedReportFileName);
@@ -107,7 +107,7 @@ public class AccessionSummaryReportUT extends BaseTestCase{
         reportEntity.setType("Accession_Summary_Report");
 
         ReportDataEntity reportDataEntity = new ReportDataEntity();
-        reportDataEntity.setHeaderName(RecapConstants.BIB_SUCCESS_COUNT);
+        reportDataEntity.setHeaderName(RecapCommonConstants.BIB_SUCCESS_COUNT);
         reportDataEntity.setHeaderValue("1");
 
         reportEntity.addAll(Arrays.asList(reportDataEntity));

@@ -6,8 +6,8 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,7 +54,7 @@ public class AccessionReconcilationRestController {
      * @return
      */
     private Map<String, String> getDifference(QueryResponse queryResponse, Map<String, String> barcodesAndCustomerCodes) {
-        for (Object barcode : queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getDistinctValues()) {
+        for (Object barcode : queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getDistinctValues()) {
             barcodesAndCustomerCodes.entrySet().removeIf(p -> p.getKey().contains(barcode.toString()));
         }
         return barcodesAndCustomerCodes;
@@ -70,11 +70,11 @@ public class AccessionReconcilationRestController {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(RecapConstants.DOC_TYPE_ITEM);
         solrQuery.setRows(rows);
-        solrQuery.addFilterQuery(RecapConstants.BARCODE+":"+ StringEscapeUtils.escapeJava(barcode).replace(",","\" \""));
-        solrQuery.setFields(RecapConstants.BARCODE);
+        solrQuery.addFilterQuery(RecapCommonConstants.BARCODE+":"+ StringEscapeUtils.escapeJava(barcode).replace(",","\" \""));
+        solrQuery.setFields(RecapCommonConstants.BARCODE);
         solrQuery.setGetFieldStatistics(true);
-        solrQuery.setGetFieldStatistics(RecapConstants.BARCODE);
-        solrQuery.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
+        solrQuery.setGetFieldStatistics(RecapCommonConstants.BARCODE);
+        solrQuery.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
         return solrQuery;
     }
 

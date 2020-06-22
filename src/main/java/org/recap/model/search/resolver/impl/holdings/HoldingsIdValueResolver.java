@@ -1,6 +1,6 @@
 package org.recap.model.search.resolver.impl.holdings;
 
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.solr.Holdings;
 
@@ -17,7 +17,7 @@ public class HoldingsIdValueResolver implements HoldingsValueResolver {
      */
     @Override
     public Boolean isInterested(String field) {
-        return RecapConstants.HOLDING_ID.equals(field);
+        return RecapCommonConstants.HOLDING_ID.equals(field);
     }
 
     /**

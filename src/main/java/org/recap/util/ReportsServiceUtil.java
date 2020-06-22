@@ -12,6 +12,7 @@ import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.IncompleteReportBibDetails;
 import org.recap.model.jpa.DeaccessionItemChangeLog;
@@ -107,31 +108,31 @@ public class ReportsServiceUtil {
                 query.setRows(0);
                 query.setGetFieldStatistics(true);
                 query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
-                query.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
+                query.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
                 QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-                long numFound= queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getCountDistinct();
-                if (owningInstitution.equalsIgnoreCase(RecapConstants.PRINCETON)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_OPEN)) {
+                long numFound= queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getCountDistinct();
+                if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
+                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                         reportsResponse.setOpenPulCgdCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_SHARED)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
                         reportsResponse.setSharedPulCgdCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_PRIVATE)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
                         reportsResponse.setPrivatePulCgdCount(numFound);
                     }
-                } else if (owningInstitution.equalsIgnoreCase(RecapConstants.COLUMBIA)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_OPEN)) {
+                } else if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
+                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                         reportsResponse.setOpenCulCgdCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_SHARED)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
                         reportsResponse.setSharedCulCgdCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_PRIVATE)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
                         reportsResponse.setPrivateCulCgdCount(numFound);
                     }
-                } else if (owningInstitution.equalsIgnoreCase(RecapConstants.NYPL)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_OPEN)) {
+                } else if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
+                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                         reportsResponse.setOpenNyplCgdCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_SHARED)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
                         reportsResponse.setSharedNyplCgdCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_PRIVATE)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
                         reportsResponse.setPrivateNyplCgdCount(numFound);
                     }
                 }
@@ -157,10 +158,10 @@ public class ReportsServiceUtil {
         query.setRows(reportsRequest.getPageSize());
         query.setStart(reportsRequest.getPageNumber() * reportsRequest.getPageSize());
         query.set(RecapConstants.GROUP,true);
-        query.set(RecapConstants.GROUP_FIELD,RecapConstants.BARCODE);
+        query.set(RecapConstants.GROUP_FIELD,RecapCommonConstants.BARCODE);
         query.setGetFieldStatistics(true);
         query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
-        query.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
+        query.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
         query.setSort(RecapConstants.ITEM_LAST_UPDATED_DATE, SolrQuery.ORDER.desc);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
         List<GroupCommand> values = queryResponse.getGroupResponse().getValues();
@@ -169,7 +170,7 @@ public class ReportsServiceUtil {
             for (Group group : groupList) {
                 SolrDocumentList result = group.getResult();
                 for (SolrDocument solrDocument : result) {
-                    boolean isDeletedItem = (boolean) solrDocument.getFieldValue(RecapConstants.IS_DELETED_ITEM);
+                    boolean isDeletedItem = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_ITEM);
                     if (isDeletedItem) {
                         Item item = getItem(solrDocument);
                         itemList.add(item);
@@ -180,7 +181,7 @@ public class ReportsServiceUtil {
 
             }
         }
-        long numFound= queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getCountDistinct();
+        long numFound= queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getCountDistinct();
         reportsResponse.setTotalRecordsCount(String.valueOf(numFound));
         int totalPagesCount = (int) Math.ceil((double) numFound / (double) reportsRequest.getPageSize());
         if(totalPagesCount == 0){
@@ -192,14 +193,14 @@ public class ReportsServiceUtil {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(RecapConstants.BIB_DOC_TYPE);
         solrQuery.addFilterQuery(RecapConstants.SOLR_BIB_ID+StringEscapeUtils.escapeJava(bibIdJoin).replace(",","\" \""));
-        solrQuery.setFields(RecapConstants.BIB_ID,RecapConstants.TITLE_DISPLAY);
+        solrQuery.setFields(RecapCommonConstants.BIB_ID,RecapConstants.TITLE_DISPLAY);
         solrQuery.setRows(Integer.MAX_VALUE);
         QueryResponse response = solrTemplate.getSolrClient().query(solrQuery);
         Map<Integer,String> map = new HashMap<>();
         SolrDocumentList list = response.getResults();
         for (Iterator<SolrDocument> iterator = list.iterator(); iterator.hasNext(); ) {
             SolrDocument solrDocument = iterator.next();
-            map.put((Integer) solrDocument.getFieldValue(RecapConstants.BIB_ID),(String)solrDocument.getFieldValue(RecapConstants.TITLE_DISPLAY));
+            map.put((Integer) solrDocument.getFieldValue(RecapCommonConstants.BIB_ID),(String)solrDocument.getFieldValue(RecapConstants.TITLE_DISPLAY));
         }
         SimpleDateFormat simpleDateFormat = getSimpleDateFormatForReports();
         List<DeaccessionItemResultsRow> deaccessionItemResultsRowList = new ArrayList<>();
@@ -213,7 +214,7 @@ public class ReportsServiceUtil {
             deaccessionItemResultsRow.setDeaccessionDate(deaccessionDate);
             deaccessionItemResultsRow.setDeaccessionOwnInst(item.getOwningInstitution());
             deaccessionItemResultsRow.setItemBarcode(item.getBarcode());
-            List<DeaccessionItemChangeLog> itemChangeLogEntityList = deaccesionItemChangeLogDetailsRepository.findByRecordIdAndOperationTypeAndOrderByUpdatedDateDesc(item.getItemId(), RecapConstants.REPORTS_DEACCESSION);
+            List<DeaccessionItemChangeLog> itemChangeLogEntityList = deaccesionItemChangeLogDetailsRepository.findByRecordIdAndOperationTypeAndOrderByUpdatedDateDesc(item.getItemId(), RecapCommonConstants.REPORTS_DEACCESSION);
             if (CollectionUtils.isNotEmpty(itemChangeLogEntityList)) {
                 DeaccessionItemChangeLog itemChangeLogEntity = itemChangeLogEntityList.get(0);
                 deaccessionItemResultsRow.setDeaccessionNotes(itemChangeLogEntity.getNotes());
@@ -245,22 +246,22 @@ public class ReportsServiceUtil {
             solrQuery.setRows(reportsRequest.getIncompletePageSize());
         }
         solrQuery.set(RecapConstants.GROUP,true);
-        solrQuery.set(RecapConstants.GROUP_FIELD,RecapConstants.BARCODE);
+        solrQuery.set(RecapConstants.GROUP_FIELD,RecapCommonConstants.BARCODE);
         solrQuery.setGetFieldStatistics(true);
         solrQuery.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
-        solrQuery.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
+        solrQuery.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
         solrQuery.setSort(RecapConstants.ITEM_CREATED_DATE, SolrQuery.ORDER.desc);
         queryResponse = solrTemplate.getSolrClient().query(solrQuery);
-        long numFound = queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getCountDistinct();
+        long numFound = queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getCountDistinct();
         if (reportsRequest.isExport()){
             solrQuery = solrQueryBuilder.buildSolrQueryForIncompleteReports(reportsRequest.getIncompleteRequestingInstitution());
             solrQuery.setStart(0);
             solrQuery.setRows((int) numFound);
             solrQuery.set(RecapConstants.GROUP,true);
-            solrQuery.set(RecapConstants.GROUP_FIELD,RecapConstants.BARCODE);
+            solrQuery.set(RecapConstants.GROUP_FIELD,RecapCommonConstants.BARCODE);
             solrQuery.setGetFieldStatistics(true);
             solrQuery.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
-            solrQuery.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
+            solrQuery.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
             solrQuery.setSort(RecapConstants.ITEM_CREATED_DATE, SolrQuery.ORDER.desc);
             queryResponse = solrTemplate.getSolrClient().query(solrQuery);
         }
@@ -314,13 +315,13 @@ public class ReportsServiceUtil {
             IncompleteReportBibDetails incompleteReportBibDetails = new IncompleteReportBibDetails();
             incompleteReportBibDetails.setTitle((String)bibDetail.getFieldValue(RecapConstants.TITLE_DISPLAY));
             incompleteReportBibDetails.setAuthorDisplay((String)bibDetail.getFieldValue(RecapConstants.AUTHOR_DISPLAY));
-            bibDetailsMap.put((Integer)bibDetail.getFieldValue(RecapConstants.BIB_ID),incompleteReportBibDetails);
+            bibDetailsMap.put((Integer)bibDetail.getFieldValue(RecapCommonConstants.BIB_ID),incompleteReportBibDetails);
         }
         return bibDetailsMap;
     }
 
     private String getFormattedDates(Date gotDate) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapConstants.SIMPLE_DATE_FORMAT_REPORTS);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
         return simpleDateFormat.format(gotDate);
 
     }
@@ -340,31 +341,31 @@ public class ReportsServiceUtil {
                 query.setRows(0);
                 query.setGetFieldStatistics(true);
                 query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
-                query.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
+                query.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
                 QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-                long numFound= queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getCountDistinct();
-                if (owningInstitution.equalsIgnoreCase(RecapConstants.PRINCETON)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_OPEN)) {
+                long numFound= queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getCountDistinct();
+                if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
+                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                         reportsResponse.setAccessionOpenPulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_SHARED)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
                         reportsResponse.setAccessionSharedPulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_PRIVATE)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
                         reportsResponse.setAccessionPrivatePulCount(numFound);
                     }
-                } else if (owningInstitution.equalsIgnoreCase(RecapConstants.COLUMBIA)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_OPEN)) {
+                } else if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
+                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                         reportsResponse.setAccessionOpenCulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_SHARED)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
                         reportsResponse.setAccessionSharedCulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_PRIVATE)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
                         reportsResponse.setAccessionPrivateCulCount(numFound);
                     }
-                } else if (owningInstitution.equalsIgnoreCase(RecapConstants.NYPL)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_OPEN)) {
+                } else if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
+                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                         reportsResponse.setAccessionOpenNyplCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_SHARED)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
                         reportsResponse.setAccessionSharedNyplCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_PRIVATE)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
                         reportsResponse.setAccessionPrivateNyplCount(numFound);
                     }
                 }
@@ -386,31 +387,31 @@ public class ReportsServiceUtil {
                 query.setRows(0);
                 query.setGetFieldStatistics(true);
                 query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
-                query.addStatsFieldCalcDistinct(RecapConstants.BARCODE, true);
+                query.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
                 QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-                long numFound = queryResponse.getFieldStatsInfo().get(RecapConstants.BARCODE).getCountDistinct();
-                if (ownInstitution.equalsIgnoreCase(RecapConstants.PRINCETON)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_OPEN)) {
+                long numFound = queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getCountDistinct();
+                if (ownInstitution.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
+                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                         reportsResponse.setDeaccessionOpenPulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_SHARED)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
                         reportsResponse.setDeaccessionSharedPulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_PRIVATE)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
                         reportsResponse.setDeaccessionPrivatePulCount(numFound);
                     }
-                } else if (ownInstitution.equalsIgnoreCase(RecapConstants.COLUMBIA)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_OPEN)) {
+                } else if (ownInstitution.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
+                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                         reportsResponse.setDeaccessionOpenCulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_SHARED)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
                         reportsResponse.setDeaccessionSharedCulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_PRIVATE)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
                         reportsResponse.setDeaccessionPrivateCulCount(numFound);
                     }
-                } else if (ownInstitution.equalsIgnoreCase(RecapConstants.NYPL)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_OPEN)) {
+                } else if (ownInstitution.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
+                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                         reportsResponse.setDeaccessionOpenNyplCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_SHARED)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
                         reportsResponse.setDeaccessionSharedNyplCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapConstants.REPORTS_PRIVATE)) {
+                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
                         reportsResponse.setDeaccessionPrivateNyplCount(numFound);
                     }
                 }
@@ -430,16 +431,16 @@ public class ReportsServiceUtil {
     }
 
     private SimpleDateFormat getSimpleDateFormatForReports() {
-        return new SimpleDateFormat(RecapConstants.SIMPLE_DATE_FORMAT_REPORTS);
+        return new SimpleDateFormat(RecapCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
     }
 
     private String getFormattedDateString(Date inputDate) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         String utcStr;
         String dateString = simpleDateFormat.format(inputDate);
         Date date = simpleDateFormat.parse(dateString);
-        DateFormat format = new SimpleDateFormat(RecapConstants.UTC_DATE_FORMAT);
-        format.setTimeZone(TimeZone.getTimeZone(RecapConstants.UTC));
+        DateFormat format = new SimpleDateFormat(RecapCommonConstants.UTC_DATE_FORMAT);
+        format.setTimeZone(TimeZone.getTimeZone(RecapCommonConstants.UTC));
         utcStr = format.format(date);
         return utcStr;
     }

@@ -1,6 +1,7 @@
 package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.jpa.ReportEntity;
@@ -25,12 +26,12 @@ public class FSSubmitCollectionRejectionReportGenerator implements ReportGenerat
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_REJECTION_REPORT) ? true : false;
+        return reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT) ? true : false;
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapConstants.FILE_SYSTEM) ? true : false;
+        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FILE_SYSTEM) ? true : false;
     }
 
     @Override
@@ -42,7 +43,7 @@ public class FSSubmitCollectionRejectionReportGenerator implements ReportGenerat
             List<SubmitCollectionReportRecord> submitCollectionReportRecords = submitCollectionReportGenerator.prepareSubmitCollectionRejectionRecord(reportEntity);
             submitCollectionReportRecordList.addAll(submitCollectionReportRecords);
         }
-        producerTemplate.sendBodyAndHeader(RecapConstants.FS_SUBMIT_COLLECTION_REJECTION_REPORT_Q, submitCollectionReportRecordList, "fileName", fileName);
+        producerTemplate.sendBodyAndHeader(RecapCommonConstants.FS_SUBMIT_COLLECTION_REJECTION_REPORT_Q, submitCollectionReportRecordList, "fileName", fileName);
 
         DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
         generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";

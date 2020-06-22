@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
 import org.recap.model.solr.SolrIndexRequest;
@@ -60,7 +61,7 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseControllerUT{
         List<Integer> bibIds = new ArrayList<>();
         Integer rows = Integer.valueOf(batchSize);
         Date date = solrIndexRequest.getCreatedDate();
-        solrIndexRequest.setProcessType(RecapConstants.ONGOING_MATCHING_ALGORITHM_JOB);
+        solrIndexRequest.setProcessType(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB);
         Mockito.when(ongoingMatchingAlgoJobController.getOngoingMatchingAlgorithmUtil()).thenReturn(ongoingMatchingAlgorithmUtil);
         Mockito.when(ongoingMatchingAlgoJobController.getDateUtil()).thenReturn(dateUtil);
         Mockito.when(ongoingMatchingAlgoJobController.getBatchSize()).thenReturn(batchSize);
@@ -69,11 +70,11 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseControllerUT{
         Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(dateUtil.getFromDate(date), rows)).thenReturn("Success");
         Mockito.when(ongoingMatchingAlgorithmUtil.fetchDataForOngoingMatchingBasedOnDate(processDate.toString(), Integer.valueOf(100), Integer.valueOf(0))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
-        Mockito.when(ongoingMatchingAlgorithmUtil.processMatchingForBib(solrDocument, bibIds)).thenReturn(RecapConstants.SUCCESS);
+        Mockito.when(ongoingMatchingAlgorithmUtil.processMatchingForBib(solrDocument, bibIds)).thenReturn(RecapCommonConstants.SUCCESS);
         Mockito.when(ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest)).thenCallRealMethod();
         Mockito.when(ongoingMatchingAlgorithmUtil.processOngoingMatchingAlgorithm(solrDocumentList, new ArrayList<>())).thenCallRealMethod();
         String status = ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest);
-        assertTrue(status.contains(RecapConstants.SUCCESS));
+        assertTrue(status.contains(RecapCommonConstants.SUCCESS));
         Mockito.when(ongoingMatchingAlgoJobController.getOngoingMatchingAlgorithmUtil()).thenCallRealMethod();
         assertNotEquals(ongoingMatchingAlgorithmUtil, ongoingMatchingAlgoJobController.getOngoingMatchingAlgorithmUtil());
         Mockito.when(ongoingMatchingAlgoJobController.getDateUtil()).thenCallRealMethod();
@@ -91,11 +92,11 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseControllerUT{
         Mockito.when(ongoingMatchingAlgoJobController.getMatchingBibInfoDetailService()).thenReturn(matchingBibInfoDetailService);
         Mockito.when(ongoingMatchingAlgoJobController.getDateUtil()).thenReturn(dateUtil);
         Mockito.when(ongoingMatchingAlgoJobController.getLogger()).thenCallRealMethod();
-        Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo(fromDate, toDate)).thenReturn(RecapConstants.SUCCESS);
+        Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo(fromDate, toDate)).thenReturn(RecapCommonConstants.SUCCESS);
         Mockito.when(ongoingMatchingAlgoJobController.getBatchSize()).thenReturn(batchSize);
         Mockito.when(ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest)).thenCallRealMethod();
         String status = ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest);
-        assertTrue(status.contains(RecapConstants.SUCCESS));
+        assertTrue(status.contains(RecapCommonConstants.SUCCESS));
         Mockito.when(ongoingMatchingAlgoJobController.getMatchingBibInfoDetailService()).thenCallRealMethod();
         assertNotEquals(matchingBibInfoDetailService, ongoingMatchingAlgoJobController.getMatchingBibInfoDetailService());
     }
