@@ -2,6 +2,7 @@ package org.recap.util;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.accession.AccessionResponse;
@@ -95,7 +96,7 @@ public class AccessionHelperUtil {
             boolean isDeaccessionedItem = isItemDeaccessioned(itemEntityList);
             if (isDeaccessionedItem) { // If deacccessioned item make it available
                 String response = accessionService.reAccessionItem(itemEntityList);
-                if (response.equals(RecapConstants.SUCCESS)) {
+                if (response.equals(RecapCommonConstants.SUCCESS)) {
                     response = accessionService.indexReaccessionedItem(itemEntityList);
                     accessionService.saveItemChangeLogEntity(RecapConstants.REACCESSION, RecapConstants.ITEM_ISDELETED_TRUE_TO_FALSE, itemEntityList);
                     reAccessionedCheckin(itemEntityList);
@@ -267,18 +268,18 @@ public class AccessionHelperUtil {
         List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
         if (StringUtils.isNotBlank(accessionRequest.getCustomerCode())) {
             ReportDataEntity reportDataEntityCustomerCode = new ReportDataEntity();
-            reportDataEntityCustomerCode.setHeaderName(RecapConstants.CUSTOMER_CODE);
+            reportDataEntityCustomerCode.setHeaderName(RecapCommonConstants.CUSTOMER_CODE);
             reportDataEntityCustomerCode.setHeaderValue(accessionRequest.getCustomerCode());
             reportDataEntityList.add(reportDataEntityCustomerCode);
         }
         if (StringUtils.isNotBlank(accessionRequest.getItemBarcode())) {
             ReportDataEntity reportDataEntityItemBarcode = new ReportDataEntity();
-            reportDataEntityItemBarcode.setHeaderName(RecapConstants.ITEM_BARCODE);
+            reportDataEntityItemBarcode.setHeaderName(RecapCommonConstants.ITEM_BARCODE);
             reportDataEntityItemBarcode.setHeaderValue(accessionRequest.getItemBarcode());
             reportDataEntityList.add(reportDataEntityItemBarcode);
         }
         ReportDataEntity reportDataEntityMessage = new ReportDataEntity();
-        reportDataEntityMessage.setHeaderName(RecapConstants.MESSAGE);
+        reportDataEntityMessage.setHeaderName(RecapCommonConstants.MESSAGE);
         reportDataEntityMessage.setHeaderValue(response);
         reportDataEntityList.add(reportDataEntityMessage);
         return reportDataEntityList;
@@ -302,28 +303,28 @@ public class AccessionHelperUtil {
         String reasonForFailureItem = "";
 
         for (Map responseMap : responseMapList) {
-            successBibCount = successBibCount + (responseMap.get(RecapConstants.SUCCESS_BIB_COUNT) != null ? (Integer) responseMap.get(RecapConstants.SUCCESS_BIB_COUNT) : 0);
-            failedBibCount = failedBibCount + (responseMap.get(RecapConstants.FAILED_BIB_COUNT) != null ? (Integer) responseMap.get(RecapConstants.FAILED_BIB_COUNT) : 0);
+            successBibCount = successBibCount + (responseMap.get(RecapCommonConstants.SUCCESS_BIB_COUNT) != null ? (Integer) responseMap.get(RecapCommonConstants.SUCCESS_BIB_COUNT) : 0);
+            failedBibCount = failedBibCount + (responseMap.get(RecapCommonConstants.FAILED_BIB_COUNT) != null ? (Integer) responseMap.get(RecapCommonConstants.FAILED_BIB_COUNT) : 0);
             if (failedBibCount == 0) {
-                if (StringUtils.isEmpty((String) responseMap.get(RecapConstants.REASON_FOR_ITEM_FAILURE))) {
+                if (StringUtils.isEmpty((String) responseMap.get(RecapCommonConstants.REASON_FOR_ITEM_FAILURE))) {
                     successItemCount = 1;
                 } else {
                     failedItemCount = 1;
                 }
             }
-            exitsBibCount = exitsBibCount + (responseMap.get(RecapConstants.EXIST_BIB_COUNT) != null ? (Integer) responseMap.get(RecapConstants.EXIST_BIB_COUNT) : 0);
+            exitsBibCount = exitsBibCount + (responseMap.get(RecapCommonConstants.EXIST_BIB_COUNT) != null ? (Integer) responseMap.get(RecapCommonConstants.EXIST_BIB_COUNT) : 0);
 
-            if (!StringUtils.isEmpty((String) responseMap.get(RecapConstants.REASON_FOR_BIB_FAILURE)) && !reasonForFailureBib.contains(responseMap.get(RecapConstants.REASON_FOR_BIB_FAILURE).toString())) {
+            if (!StringUtils.isEmpty((String) responseMap.get(RecapCommonConstants.REASON_FOR_BIB_FAILURE)) && !reasonForFailureBib.contains(responseMap.get(RecapCommonConstants.REASON_FOR_BIB_FAILURE).toString())) {
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(responseMap.get(RecapConstants.REASON_FOR_BIB_FAILURE));
+                stringBuilder.append(responseMap.get(RecapCommonConstants.REASON_FOR_BIB_FAILURE));
                 stringBuilder.append(",");
                 stringBuilder.append(reasonForFailureBib);
                 reasonForFailureBib = stringBuilder.toString();
             }
-            if ((!StringUtils.isEmpty((String) responseMap.get(RecapConstants.REASON_FOR_ITEM_FAILURE))) && StringUtils.isEmpty(reasonForFailureBib) &&
-                    !reasonForFailureItem.contains((String) responseMap.get(RecapConstants.REASON_FOR_ITEM_FAILURE))) {
+            if ((!StringUtils.isEmpty((String) responseMap.get(RecapCommonConstants.REASON_FOR_ITEM_FAILURE))) && StringUtils.isEmpty(reasonForFailureBib) &&
+                    !reasonForFailureItem.contains((String) responseMap.get(RecapCommonConstants.REASON_FOR_ITEM_FAILURE))) {
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(responseMap.get(RecapConstants.REASON_FOR_ITEM_FAILURE));
+                stringBuilder.append(responseMap.get(RecapCommonConstants.REASON_FOR_ITEM_FAILURE));
                 stringBuilder.append(",");
                 stringBuilder.append(reasonForFailureItem);
                 reasonForFailureItem = stringBuilder.toString();
@@ -333,33 +334,33 @@ public class AccessionHelperUtil {
         List<ReportEntity> reportEntityList = new ArrayList<>();
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapConstants.ACCESSION_REPORT);
-        reportEntity.setType(RecapConstants.ACCESSION_SUMMARY_REPORT);
+        reportEntity.setFileName(RecapCommonConstants.ACCESSION_REPORT);
+        reportEntity.setType(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName(owningInstitution);
 
         ReportDataEntity successBibCountReportDataEntity = new ReportDataEntity();
-        successBibCountReportDataEntity.setHeaderName(RecapConstants.BIB_SUCCESS_COUNT);
+        successBibCountReportDataEntity.setHeaderName(RecapCommonConstants.BIB_SUCCESS_COUNT);
         successBibCountReportDataEntity.setHeaderValue(String.valueOf(successBibCount));
         reportDataEntities.add(successBibCountReportDataEntity);
 
         ReportDataEntity successItemCountReportDataEntity = new ReportDataEntity();
-        successItemCountReportDataEntity.setHeaderName(RecapConstants.ITEM_SUCCESS_COUNT);
+        successItemCountReportDataEntity.setHeaderName(RecapCommonConstants.ITEM_SUCCESS_COUNT);
         successItemCountReportDataEntity.setHeaderValue(String.valueOf(successItemCount));
         reportDataEntities.add(successItemCountReportDataEntity);
 
         ReportDataEntity existsBibCountReportDataEntity = new ReportDataEntity();
-        existsBibCountReportDataEntity.setHeaderName(RecapConstants.NUMBER_OF_BIB_MATCHES);
+        existsBibCountReportDataEntity.setHeaderName(RecapCommonConstants.NUMBER_OF_BIB_MATCHES);
         existsBibCountReportDataEntity.setHeaderValue(String.valueOf(exitsBibCount));
         reportDataEntities.add(existsBibCountReportDataEntity);
 
         ReportDataEntity failedBibCountReportDataEntity = new ReportDataEntity();
-        failedBibCountReportDataEntity.setHeaderName(RecapConstants.BIB_FAILURE_COUNT);
+        failedBibCountReportDataEntity.setHeaderName(RecapCommonConstants.BIB_FAILURE_COUNT);
         failedBibCountReportDataEntity.setHeaderValue(String.valueOf(failedBibCount));
         reportDataEntities.add(failedBibCountReportDataEntity);
 
         ReportDataEntity failedItemCountReportDataEntity = new ReportDataEntity();
-        failedItemCountReportDataEntity.setHeaderName(RecapConstants.ITEM_FAILURE_COUNT);
+        failedItemCountReportDataEntity.setHeaderName(RecapCommonConstants.ITEM_FAILURE_COUNT);
         failedItemCountReportDataEntity.setHeaderValue(String.valueOf(failedItemCount));
         reportDataEntities.add(failedItemCountReportDataEntity);
 
@@ -392,9 +393,9 @@ public class AccessionHelperUtil {
                                  List<ReportDataEntity> reportDataEntityList, String owningInstitution, Exception ex) {
         String response = ex.getMessage();
         if (StringUtils.contains(response, RecapConstants.ITEM_BARCODE_NOT_FOUND)) {
-            logger.error(RecapConstants.LOG_ERROR + response);
+            logger.error(RecapCommonConstants.LOG_ERROR + response);
         } else if(StringUtils.contains(response,RecapConstants.MARC_FORMAT_PARSER_ERROR)){
-            logger.error(RecapConstants.LOG_ERROR + response);
+            logger.error(RecapCommonConstants.LOG_ERROR + response);
             response = RecapConstants.INVALID_MARC_XML_ERROR_MSG;
             logger.error(RecapConstants.EXCEPTION,ex);
         } else {
@@ -420,10 +421,10 @@ public class AccessionHelperUtil {
         try {
             itemRequestInfo.setItemBarcodes(Arrays.asList(itemBarcode));
             itemRequestInfo.setItemOwningInstitution(owningInstitutionId);
-            if (RecapConstants.NYPL.equalsIgnoreCase(owningInstitutionId)) {
+            if (RecapCommonConstants.NYPL.equalsIgnoreCase(owningInstitutionId)) {
                 HttpEntity request = new HttpEntity<>(getHttpHeadersAuth());
                 UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(scsbUrl + RecapConstants.SERVICE_PATH.REFILE_ITEM_IN_ILS);
-                builder.queryParam(RecapConstants.ITEMBARCODE, itemBarcode);
+                builder.queryParam(RecapCommonConstants.ITEMBARCODE, itemBarcode);
                 builder.queryParam(RecapConstants.OWNING_INST, owningInstitutionId);
                 StopWatch stopWatch = new StopWatch();
                 stopWatch.start();
@@ -451,7 +452,7 @@ public class AccessionHelperUtil {
     void reAccessionedCheckin(List<ItemEntity> itemEntityList) {
         if (itemEntityList != null && !itemEntityList.isEmpty()) {
             for (ItemEntity itemEntity : itemEntityList) {
-                if(itemEntity.getInstitutionEntity().getInstitutionCode().equalsIgnoreCase(RecapConstants.PRINCETON) || itemEntity.getInstitutionEntity().getInstitutionCode().equalsIgnoreCase(RecapConstants.COLUMBIA)) {
+                if(itemEntity.getInstitutionEntity().getInstitutionCode().equalsIgnoreCase(RecapCommonConstants.PRINCETON) || itemEntity.getInstitutionEntity().getInstitutionCode().equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
                     callCheckin(itemEntity.getBarcode(), itemEntity.getInstitutionEntity().getInstitutionCode());
                 }
             }
@@ -461,7 +462,7 @@ public class AccessionHelperUtil {
     private HttpHeaders getHttpHeadersAuth() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set(RecapConstants.API_KEY, SwaggerAPIProvider.getInstance().getSwaggerApiKey());
+        headers.set(RecapCommonConstants.API_KEY, SwaggerAPIProvider.getInstance().getSwaggerApiKey());
         return headers;
     }
 

@@ -1,5 +1,6 @@
 package org.recap.service.accession;
 
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
@@ -73,26 +74,26 @@ public class DummyDataService {
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
         Date currentDate = new Date();
         try {
-            updateBibWithDummyDetails(owningInstitutionId, bibliographicEntity, currentDate,RecapConstants.ACCESSION, getDummyOwningInstId());
+            updateBibWithDummyDetails(owningInstitutionId, bibliographicEntity, currentDate,RecapCommonConstants.ACCESSION, getDummyOwningInstId());
 
-            HoldingsEntity holdingsEntity = getHoldingsWithDummyDetails(owningInstitutionId, currentDate,RecapConstants.ACCESSION, getDummyOwningInstId());
+            HoldingsEntity holdingsEntity = getHoldingsWithDummyDetails(owningInstitutionId, currentDate,RecapCommonConstants.ACCESSION, getDummyOwningInstId());
 
             ItemEntity itemEntity = new ItemEntity();
             itemEntity.setCallNumberType(RecapConstants.DUMMY_CALL_NUMBER_TYPE);
-            itemEntity.setCallNumber(RecapConstants.DUMMYCALLNUMBER);
+            itemEntity.setCallNumber(RecapCommonConstants.DUMMYCALLNUMBER);
             itemEntity.setCreatedDate(currentDate);
-            itemEntity.setCreatedBy(RecapConstants.ACCESSION);
+            itemEntity.setCreatedBy(RecapCommonConstants.ACCESSION);
             itemEntity.setLastUpdatedDate(currentDate);
-            itemEntity.setLastUpdatedBy(RecapConstants.ACCESSION);
+            itemEntity.setLastUpdatedBy(RecapCommonConstants.ACCESSION);
             itemEntity.setBarcode(itemBarcode);
             itemEntity.setOwningInstitutionItemId(getDummyOwningInstId());
             itemEntity.setOwningInstitutionId(owningInstitutionId);
-            itemEntity.setCollectionGroupId((Integer) getCollectionGroupMap().get(RecapConstants.NOT_AVAILABLE_CGD));
+            itemEntity.setCollectionGroupId((Integer) getCollectionGroupMap().get(RecapCommonConstants.NOT_AVAILABLE_CGD));
             itemEntity.setCustomerCode(customerCode);
-            itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get(RecapConstants.NOT_AVAILABLE));
+            itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get(RecapCommonConstants.NOT_AVAILABLE));
             itemEntity.setDeleted(false);
             itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
-            itemEntity.setCatalogingStatus(RecapConstants.INCOMPLETE_STATUS);
+            itemEntity.setCatalogingStatus(RecapCommonConstants.INCOMPLETE_STATUS);
             List<ItemEntity> itemEntityList = new ArrayList<>();
             itemEntityList.add(itemEntity);
             holdingsEntity.setItemEntities(itemEntityList);
@@ -100,7 +101,7 @@ public class DummyDataService {
             bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
             bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         BibliographicEntity savedBibliographicEntity = accessionDAO.saveBibRecord(bibliographicEntity);
         return savedBibliographicEntity;
@@ -128,7 +129,7 @@ public class DummyDataService {
         bibliographicEntity.setLastUpdatedDate(currentDate);
         bibliographicEntity.setOwningInstitutionId(owningInstitutionId);
         bibliographicEntity.setOwningInstitutionBibId(owningInstitutionBibId);
-        bibliographicEntity.setCatalogingStatus(RecapConstants.INCOMPLETE_STATUS);
+        bibliographicEntity.setCatalogingStatus(RecapCommonConstants.INCOMPLETE_STATUS);
     }
 
     private synchronized Map getCollectionGroupMap() {

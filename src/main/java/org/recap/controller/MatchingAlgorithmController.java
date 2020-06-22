@@ -1,6 +1,7 @@
 package org.recap.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.executors.MatchingBibItemIndexExecutorService;
 import org.recap.matchingalgorithm.MatchingCounter;
@@ -153,7 +154,7 @@ public class MatchingAlgorithmController {
             status.append(RecapConstants.STATUS_DONE ).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "to run full Matching Algorithm Process : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapConstants.LOG_ERROR,e);
+            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
             status.append(RecapConstants.STATUS_FAILED);
         }
         return status.toString();
@@ -192,7 +193,7 @@ public class MatchingAlgorithmController {
             status.append(RecapConstants.STATUS_DONE ).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "for matching and save reports : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapConstants.LOG_ERROR,e);
+            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
             status.append(RecapConstants.STATUS_FAILED);
         }
         return status.toString();
@@ -216,7 +217,7 @@ public class MatchingAlgorithmController {
             status.append(RecapConstants.STATUS_DONE ).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "to save reports only : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapConstants.LOG_ERROR,e);
+            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
             status.append(RecapConstants.STATUS_FAILED);
         }
         return status.toString();
@@ -240,7 +241,7 @@ public class MatchingAlgorithmController {
             status.append(RecapConstants.STATUS_DONE ).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update monograph CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapConstants.LOG_ERROR,e);
+            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
             status.append(RecapConstants.STATUS_FAILED);
         }
         return status.toString();
@@ -264,7 +265,7 @@ public class MatchingAlgorithmController {
             status.append(RecapConstants.STATUS_DONE ).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update Serial CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapConstants.LOG_ERROR,e);
+            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
             status.append(RecapConstants.STATUS_FAILED);
         }
         return status.toString();
@@ -288,7 +289,7 @@ public class MatchingAlgorithmController {
             status.append(RecapConstants.STATUS_DONE ).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update MVM CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapConstants.LOG_ERROR,e);
+            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
             status.append(RecapConstants.STATUS_FAILED);
         }
         return status.toString();
@@ -324,7 +325,7 @@ public class MatchingAlgorithmController {
             status.append(recordsProcessed).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update CGD in solr : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapConstants.LOG_ERROR,e);
+            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
             status.append(RecapConstants.STATUS_FAILED);
         }
         return status.toString();
@@ -342,7 +343,7 @@ public class MatchingAlgorithmController {
         try {
             respone = getMatchingBibInfoDetailService().populateMatchingBibInfo();
         } catch (Exception e) {
-            getLogger().error(RecapConstants.LOG_ERROR,e);
+            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
         }
         return respone;
     }

@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.recap.BaseTestCase;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
@@ -48,9 +49,9 @@ public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCase{
         camelContext.getEndpoint(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q, MockEndpoint.class);
         boolean isInterested = ftpSubmitCollectionReportGenerator.isInterested(RecapConstants.SUBMIT_COLLECTION);
         assertTrue(isInterested);
-        boolean isTransmitted = ftpSubmitCollectionReportGenerator.isTransmitted(RecapConstants.FTP);
+        boolean isTransmitted = ftpSubmitCollectionReportGenerator.isTransmitted(RecapCommonConstants.FTP);
         assertTrue(isTransmitted);
-        String response = ftpSubmitCollectionReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(RecapConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT));
+        String response = ftpSubmitCollectionReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT));
         assertNotNull(response);
         assertEquals("Success",response);
     }
@@ -58,11 +59,11 @@ public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCase{
     @Test
     public void testSubmitCollectionSummaryReportGenerator() throws Exception{
         camelContext.getEndpoint(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q, MockEndpoint.class);
-        boolean isInterested = ftpSubmitCollectionSummaryReportGenerator.isInterested(RecapConstants.SUBMIT_COLLECTION_SUMMARY);
+        boolean isInterested = ftpSubmitCollectionSummaryReportGenerator.isInterested(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY);
         assertTrue(isInterested);
-        boolean isTransmitted = ftpSubmitCollectionSummaryReportGenerator.isTransmitted(RecapConstants.FTP);
+        boolean isTransmitted = ftpSubmitCollectionSummaryReportGenerator.isTransmitted(RecapCommonConstants.FTP);
         assertTrue(isTransmitted);
-        String response = ftpSubmitCollectionSummaryReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(RecapConstants.SUBMIT_COLLECTION_SUMMARY));
+        String response = ftpSubmitCollectionSummaryReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY));
         assertNotNull(response);
     }
 
@@ -70,23 +71,23 @@ public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCase{
         List<ReportEntity> reportEntityList = new ArrayList<>();
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapConstants.SUBMIT_COLLECTION_REPORT);
+        reportEntity.setFileName(RecapCommonConstants.SUBMIT_COLLECTION_REPORT);
         reportEntity.setType(reportType);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 
         ReportDataEntity itemBarcodeReportDataEntity = new ReportDataEntity();
-        itemBarcodeReportDataEntity.setHeaderName(RecapConstants.SUBMIT_COLLECTION_ITEM_BARCODE);
+        itemBarcodeReportDataEntity.setHeaderName(RecapCommonConstants.SUBMIT_COLLECTION_ITEM_BARCODE);
         itemBarcodeReportDataEntity.setHeaderValue("123");
         reportDataEntities.add(itemBarcodeReportDataEntity);
 
         ReportDataEntity customerCodeReportDataEntity = new ReportDataEntity();
-        customerCodeReportDataEntity.setHeaderName(RecapConstants.SUBMIT_COLLECTION_CUSTOMER_CODE);
+        customerCodeReportDataEntity.setHeaderName(RecapCommonConstants.SUBMIT_COLLECTION_CUSTOMER_CODE);
         customerCodeReportDataEntity.setHeaderValue("PB");
         reportDataEntities.add(customerCodeReportDataEntity);
 
         ReportDataEntity owningInstitutionReportDataEntity = new ReportDataEntity();
-        owningInstitutionReportDataEntity.setHeaderName(RecapConstants.OWNING_INSTITUTION);
+        owningInstitutionReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
         owningInstitutionReportDataEntity.setHeaderValue("1");
         reportDataEntities.add(owningInstitutionReportDataEntity);
 

@@ -2,6 +2,7 @@ package org.recap.controller;
 
 import org.junit.Test;
 import org.mockito.Mock;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
@@ -44,9 +45,9 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setCreatedDate(createdDate);
-        solrIndexRequest.setReportType(RecapConstants.ACCESSION_SUMMARY_REPORT);
+        solrIndexRequest.setReportType(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
-        solrIndexRequest.setTransmissionType(RecapConstants.FILE_SYSTEM);
+        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         Thread.sleep(1000);
         assertNotNull(reponse);
@@ -56,33 +57,33 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         List<ReportEntity> reportEntityList = new ArrayList<>();
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapConstants.ACCESSION_REPORT);
-        reportEntity.setType(RecapConstants.ACCESSION_SUMMARY_REPORT);
+        reportEntity.setFileName(RecapCommonConstants.ACCESSION_REPORT);
+        reportEntity.setType(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 
         ReportDataEntity successBibCountReportDataEntity = new ReportDataEntity();
-        successBibCountReportDataEntity.setHeaderName(RecapConstants.BIB_SUCCESS_COUNT);
+        successBibCountReportDataEntity.setHeaderName(RecapCommonConstants.BIB_SUCCESS_COUNT);
         successBibCountReportDataEntity.setHeaderValue(String.valueOf(1));
         reportDataEntities.add(successBibCountReportDataEntity);
 
         ReportDataEntity successItemCountReportDataEntity = new ReportDataEntity();
-        successItemCountReportDataEntity.setHeaderName(RecapConstants.ITEM_SUCCESS_COUNT);
+        successItemCountReportDataEntity.setHeaderName(RecapCommonConstants.ITEM_SUCCESS_COUNT);
         successItemCountReportDataEntity.setHeaderValue(String.valueOf(1));
         reportDataEntities.add(successItemCountReportDataEntity);
 
         ReportDataEntity existsBibCountReportDataEntity = new ReportDataEntity();
-        existsBibCountReportDataEntity.setHeaderName(RecapConstants.NUMBER_OF_BIB_MATCHES);
+        existsBibCountReportDataEntity.setHeaderName(RecapCommonConstants.NUMBER_OF_BIB_MATCHES);
         existsBibCountReportDataEntity.setHeaderValue(String.valueOf(0));
         reportDataEntities.add(existsBibCountReportDataEntity);
 
         ReportDataEntity failedBibCountReportDataEntity = new ReportDataEntity();
-        failedBibCountReportDataEntity.setHeaderName(RecapConstants.BIB_FAILURE_COUNT);
+        failedBibCountReportDataEntity.setHeaderName(RecapCommonConstants.BIB_FAILURE_COUNT);
         failedBibCountReportDataEntity.setHeaderValue(String.valueOf(0));
         reportDataEntities.add(failedBibCountReportDataEntity);
 
         ReportDataEntity failedItemCountReportDataEntity = new ReportDataEntity();
-        failedItemCountReportDataEntity.setHeaderName(RecapConstants.ITEM_FAILURE_COUNT);
+        failedItemCountReportDataEntity.setHeaderName(RecapCommonConstants.ITEM_FAILURE_COUNT);
         failedItemCountReportDataEntity.setHeaderValue(String.valueOf(0));
         reportDataEntities.add(failedItemCountReportDataEntity);
 

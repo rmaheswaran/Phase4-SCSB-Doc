@@ -3,6 +3,7 @@ package org.recap.camel.route;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.BindyType;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.slf4j.Logger;
@@ -45,20 +46,20 @@ public class FTPSubmitCollectionSummaryReportRouteBuilder {
                             .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_SUMMARY_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
                             .choice()
-                                .when(header(RecapConstants.FILE_NAME).contains(RecapConstants.PRINCETON))
-                                    .to(RecapConstants.SFTP + ftpUserName + RecapConstants.AT + submitCollectionPULFtpLocation + RecapConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapConstants.KNOWN_HOST_FILE + ftpKnownHost + RecapConstants.SUBMIT_COLLECTION_REPORT_SFTP_OPTIONS)
-                                .when(header(RecapConstants.FILE_NAME).contains(RecapConstants.COLUMBIA))
-                                    .to(RecapConstants.SFTP + ftpUserName + RecapConstants.AT + submitCollectionCULFtpLocation + RecapConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapConstants.KNOWN_HOST_FILE + ftpKnownHost + RecapConstants.SUBMIT_COLLECTION_REPORT_SFTP_OPTIONS)
-                                .when(header(RecapConstants.FILE_NAME).contains(RecapConstants.NYPL))
-                                    .to(RecapConstants.SFTP + ftpUserName + RecapConstants.AT + submitCollectionNYPLFtpLocation + RecapConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapConstants.KNOWN_HOST_FILE + ftpKnownHost + RecapConstants.SUBMIT_COLLECTION_REPORT_SFTP_OPTIONS)
+                                .when(header(RecapConstants.FILE_NAME).contains(RecapCommonConstants.PRINCETON))
+                                    .to(RecapCommonConstants.SFTP + ftpUserName + RecapCommonConstants.AT + submitCollectionPULFtpLocation + RecapCommonConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapCommonConstants.KNOWN_HOST_FILE + ftpKnownHost + RecapConstants.SUBMIT_COLLECTION_REPORT_SFTP_OPTIONS)
+                                .when(header(RecapConstants.FILE_NAME).contains(RecapCommonConstants.COLUMBIA))
+                                    .to(RecapCommonConstants.SFTP + ftpUserName + RecapCommonConstants.AT + submitCollectionCULFtpLocation + RecapCommonConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapCommonConstants.KNOWN_HOST_FILE + ftpKnownHost + RecapConstants.SUBMIT_COLLECTION_REPORT_SFTP_OPTIONS)
+                                .when(header(RecapConstants.FILE_NAME).contains(RecapCommonConstants.NYPL))
+                                    .to(RecapCommonConstants.SFTP + ftpUserName + RecapCommonConstants.AT + submitCollectionNYPLFtpLocation + RecapCommonConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapCommonConstants.KNOWN_HOST_FILE + ftpKnownHost + RecapConstants.SUBMIT_COLLECTION_REPORT_SFTP_OPTIONS)
                                 .otherwise()
-                                    .to(RecapConstants.SFTP + ftpUserName + RecapConstants.AT + submitCollectionFtpLocation + RecapConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapConstants.KNOWN_HOST_FILE + ftpKnownHost + RecapConstants.SUBMIT_COLLECTION_REPORT_SFTP_OPTIONS);
+                                    .to(RecapCommonConstants.SFTP + ftpUserName + RecapCommonConstants.AT + submitCollectionFtpLocation + RecapCommonConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapCommonConstants.KNOWN_HOST_FILE + ftpKnownHost + RecapConstants.SUBMIT_COLLECTION_REPORT_SFTP_OPTIONS);
 
                 }
             });
 
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
     }
 

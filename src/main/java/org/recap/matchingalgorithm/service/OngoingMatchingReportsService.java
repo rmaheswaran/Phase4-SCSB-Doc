@@ -9,6 +9,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.InstitutionEntity;
@@ -136,14 +137,14 @@ public class OngoingMatchingReportsService {
      * @return the string
      */
     public String generateTitleExceptionReport(Date createdDate, Integer batchSize) {
-        Page<ReportEntity> reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(0, batchSize), RecapConstants.ONGOING_MATCHING_ALGORITHM, RecapConstants.TITLE_EXCEPTION_TYPE,
+        Page<ReportEntity> reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(0, batchSize), RecapCommonConstants.ONGOING_MATCHING_ALGORITHM, RecapConstants.TITLE_EXCEPTION_TYPE,
                 getDateUtil().getFromDate(createdDate), getDateUtil().getToDate(createdDate));
         int totalPages = reportEntityPage.getTotalPages();
         List<TitleExceptionReport> titleExceptionReports = new ArrayList<>();
         int maxTitleCount = 0;
         maxTitleCount = getTitleExceptionReport(reportEntityPage.getContent(), titleExceptionReports, maxTitleCount);
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
-            reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(pageNum, batchSize), RecapConstants.ONGOING_MATCHING_ALGORITHM, RecapConstants.TITLE_EXCEPTION_TYPE,
+            reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(pageNum, batchSize), RecapCommonConstants.ONGOING_MATCHING_ALGORITHM, RecapConstants.TITLE_EXCEPTION_TYPE,
                     getDateUtil().getFromDate(createdDate), getDateUtil().getToDate(createdDate));
             maxTitleCount = getTitleExceptionReport(reportEntityPage.getContent(), titleExceptionReports, maxTitleCount);
         }
@@ -200,9 +201,9 @@ public class OngoingMatchingReportsService {
         if(CollectionUtils.isNotEmpty(serialMvmBibIds)) {
             List<List<Integer>> bibIdLists = Lists.partition(serialMvmBibIds, 100);
             for(List<Integer> bibIds : bibIdLists) {
-                String bibIdQuery = RecapConstants.BIB_ID + ":" + "(" + StringUtils.join(bibIds, " ") + ")";
+                String bibIdQuery = RecapCommonConstants.BIB_ID + ":" + "(" + StringUtils.join(bibIds, " ") + ")";
                 SolrQuery solrQuery = new SolrQuery(bibIdQuery);
-                String[] fieldNameList = {RecapConstants.TITLE_SUBFIELD_A, RecapConstants.BIB_ID, RecapConstants.BIB_OWNING_INSTITUTION, RecapConstants.OWNING_INST_BIB_ID, RecapConstants.ROOT};
+                String[] fieldNameList = {RecapConstants.TITLE_SUBFIELD_A, RecapCommonConstants.BIB_ID, RecapCommonConstants.BIB_OWNING_INSTITUTION, RecapCommonConstants.OWNING_INST_BIB_ID, RecapCommonConstants.ROOT};
                 solrQuery.setFields(fieldNameList);
                 solrQuery.setRows(100);
                 try {
@@ -230,13 +231,13 @@ public class OngoingMatchingReportsService {
     private List<MatchingSerialAndMVMReports> getMatchingSerialAndMvmReports(SolrDocument solrDocument) {
 
         List<MatchingSerialAndMVMReports> matchingSerialAndMVMReportsList = new ArrayList<>();
-        SolrQuery solrQueryForChildDocuments = getSolrQueryBuilder().getSolrQueryForBibItem(RecapConstants.ROOT + ":" + solrDocument.getFieldValue(RecapConstants.ROOT));
-        solrQueryForChildDocuments.setFilterQueries(RecapConstants.DOCTYPE + ":" + "(\"" + RecapConstants.HOLDINGS + "\" \"" + RecapConstants.ITEM + "\")");
-        String[] fieldNameList = {RecapConstants.VOLUME_PART_YEAR, RecapConstants.HOLDING_ID, RecapConstants.SUMMARY_HOLDINGS, RecapConstants.BARCODE,
-                RecapConstants.USE_RESTRICTION_DISPLAY, RecapConstants.ITEM_ID, RecapConstants.ROOT, RecapConstants.DOCTYPE, RecapConstants.HOLDINGS_ID,
-                RecapConstants.IS_DELETED_ITEM, RecapConstants.ITEM_CATALOGING_STATUS};
+        SolrQuery solrQueryForChildDocuments = getSolrQueryBuilder().getSolrQueryForBibItem(RecapCommonConstants.ROOT + ":" + solrDocument.getFieldValue(RecapCommonConstants.ROOT));
+        solrQueryForChildDocuments.setFilterQueries(RecapCommonConstants.DOCTYPE + ":" + "(\"" + RecapCommonConstants.HOLDINGS + "\" \"" + RecapCommonConstants.ITEM + "\")");
+        String[] fieldNameList = {RecapConstants.VOLUME_PART_YEAR, RecapCommonConstants.HOLDING_ID, RecapConstants.SUMMARY_HOLDINGS, RecapCommonConstants.BARCODE,
+                RecapConstants.USE_RESTRICTION_DISPLAY, RecapCommonConstants.ITEM_ID, RecapCommonConstants.ROOT, RecapCommonConstants.DOCTYPE, RecapCommonConstants.HOLDINGS_ID,
+                RecapCommonConstants.IS_DELETED_ITEM, RecapConstants.ITEM_CATALOGING_STATUS};
         solrQueryForChildDocuments.setFields(fieldNameList);
-        solrQueryForChildDocuments.setSort(RecapConstants.DOCTYPE, SolrQuery.ORDER.asc);
+        solrQueryForChildDocuments.setSort(RecapCommonConstants.DOCTYPE, SolrQuery.ORDER.asc);
         QueryResponse queryResponse = null;
         try {
             queryResponse = getSolrTemplate().getSolrClient().query(solrQueryForChildDocuments);
@@ -249,24 +250,24 @@ public class OngoingMatchingReportsService {
             Map<Integer, String> holdingsMap = new HashMap<>();
             for (Iterator<SolrDocument> iterator = solrDocuments.iterator(); iterator.hasNext(); ) {
                 SolrDocument solrChildDocument =  iterator.next();
-                String docType = (String) solrChildDocument.getFieldValue(RecapConstants.DOCTYPE);
-                if(docType.equalsIgnoreCase(RecapConstants.HOLDINGS)) {
-                    holdingsMap.put((Integer) solrChildDocument.getFieldValue(RecapConstants.HOLDING_ID),
+                String docType = (String) solrChildDocument.getFieldValue(RecapCommonConstants.DOCTYPE);
+                if(docType.equalsIgnoreCase(RecapCommonConstants.HOLDINGS)) {
+                    holdingsMap.put((Integer) solrChildDocument.getFieldValue(RecapCommonConstants.HOLDING_ID),
                             String.valueOf(solrChildDocument.getFieldValue(RecapConstants.SUMMARY_HOLDINGS)));
                 }
-                if(docType.equalsIgnoreCase(RecapConstants.ITEM)) {
-                    boolean isDeletedItem = (boolean) solrChildDocument.getFieldValue(RecapConstants.IS_DELETED_ITEM);
+                if(docType.equalsIgnoreCase(RecapCommonConstants.ITEM)) {
+                    boolean isDeletedItem = (boolean) solrChildDocument.getFieldValue(RecapCommonConstants.IS_DELETED_ITEM);
                     String itemCatalogingStatus = String.valueOf(solrChildDocument.getFieldValue(RecapConstants.ITEM_CATALOGING_STATUS));
-                    if(!isDeletedItem && itemCatalogingStatus.equalsIgnoreCase(RecapConstants.COMPLETE_STATUS)) {
+                    if(!isDeletedItem && itemCatalogingStatus.equalsIgnoreCase(RecapCommonConstants.COMPLETE_STATUS)) {
                         MatchingSerialAndMVMReports matchingSerialAndMVMReports = new MatchingSerialAndMVMReports();
                         matchingSerialAndMVMReports.setTitle(String.valueOf(solrDocument.getFieldValue(RecapConstants.TITLE_SUBFIELD_A)));
-                        matchingSerialAndMVMReports.setBibId(String.valueOf(solrDocument.getFieldValue(RecapConstants.BIB_ID)));
-                        matchingSerialAndMVMReports.setOwningInstitutionId(String.valueOf(solrDocument.getFieldValue(RecapConstants.BIB_OWNING_INSTITUTION)));
-                        matchingSerialAndMVMReports.setOwningInstitutionBibId(String.valueOf(solrDocument.getFieldValue(RecapConstants.OWNING_INST_BIB_ID)));
-                        matchingSerialAndMVMReports.setBarcode(String.valueOf(solrChildDocument.getFieldValue(RecapConstants.BARCODE)));
+                        matchingSerialAndMVMReports.setBibId(String.valueOf(solrDocument.getFieldValue(RecapCommonConstants.BIB_ID)));
+                        matchingSerialAndMVMReports.setOwningInstitutionId(String.valueOf(solrDocument.getFieldValue(RecapCommonConstants.BIB_OWNING_INSTITUTION)));
+                        matchingSerialAndMVMReports.setOwningInstitutionBibId(String.valueOf(solrDocument.getFieldValue(RecapCommonConstants.OWNING_INST_BIB_ID)));
+                        matchingSerialAndMVMReports.setBarcode(String.valueOf(solrChildDocument.getFieldValue(RecapCommonConstants.BARCODE)));
                         matchingSerialAndMVMReports.setVolumePartYear(String.valueOf(solrChildDocument.getFieldValue(RecapConstants.VOLUME_PART_YEAR)));
                         matchingSerialAndMVMReports.setUseRestriction(String.valueOf(solrChildDocument.getFieldValue(RecapConstants.USE_RESTRICTION_DISPLAY)));
-                        List<Integer> holdingsIds = (List<Integer>) solrChildDocument.getFieldValue(RecapConstants.HOLDINGS_ID);
+                        List<Integer> holdingsIds = (List<Integer>) solrChildDocument.getFieldValue(RecapCommonConstants.HOLDINGS_ID);
                         Integer holdingsId = holdingsIds.get(0);
                         matchingSerialAndMVMReports.setSummaryHoldings(holdingsMap.get(holdingsId));
                         matchingSerialAndMVMReportsList.add(matchingSerialAndMVMReports);
@@ -292,13 +293,13 @@ public class OngoingMatchingReportsService {
             String institutionCode = institutionEntity.getInstitutionCode();
             MatchingSummaryReport matchingSummaryReport = new MatchingSummaryReport();
             matchingSummaryReport.setInstitution(institutionCode);
-            if(institutionCode.equalsIgnoreCase(RecapConstants.PRINCETON)) {
+            if(institutionCode.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
                 matchingSummaryReport.setOpenItemsBeforeMatching(String.valueOf(MatchingCounter.getPulOpenCount()));
                 matchingSummaryReport.setSharedItemsBeforeMatching(String.valueOf(MatchingCounter.getPulSharedCount()));
-            } else if(institutionCode.equalsIgnoreCase(RecapConstants.COLUMBIA)) {
+            } else if(institutionCode.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
                 matchingSummaryReport.setSharedItemsBeforeMatching(String.valueOf(MatchingCounter.getCulSharedCount()));
                 matchingSummaryReport.setOpenItemsBeforeMatching(String.valueOf(MatchingCounter.getCulOpenCount()));
-            } else if(institutionCode.equalsIgnoreCase(RecapConstants.NYPL)) {
+            } else if(institutionCode.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
                 matchingSummaryReport.setOpenItemsBeforeMatching(String.valueOf(MatchingCounter.getNyplOpenCount()));
                 matchingSummaryReport.setSharedItemsBeforeMatching(String.valueOf(MatchingCounter.getNyplSharedCount()));
             }
@@ -334,13 +335,13 @@ public class OngoingMatchingReportsService {
                 matchingSummaryReport.setTotalItems(String.valueOf(itemCount));
                 String openItemsAfterMatching = "";
                 String sharedItemsAfterMatching = "";
-                if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapConstants.PRINCETON)) {
+                if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
                     openItemsAfterMatching = String.valueOf(MatchingCounter.getPulOpenCount());
                     sharedItemsAfterMatching = String.valueOf(MatchingCounter.getPulSharedCount());
-                } else if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapConstants.COLUMBIA)) {
+                } else if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
                     openItemsAfterMatching = String.valueOf(MatchingCounter.getCulOpenCount());
                     sharedItemsAfterMatching = String.valueOf(MatchingCounter.getCulSharedCount());
-                } else if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapConstants.NYPL)) {
+                } else if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapCommonConstants.NYPL)) {
                     openItemsAfterMatching = String.valueOf(MatchingCounter.getNyplOpenCount());
                     sharedItemsAfterMatching = String.valueOf(MatchingCounter.getNyplSharedCount());
                 }

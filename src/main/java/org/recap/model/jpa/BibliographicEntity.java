@@ -1,6 +1,6 @@
 package org.recap.model.jpa;
 
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -349,7 +349,7 @@ public class BibliographicEntity implements Serializable {
     public List<ItemEntity> getNonDeletedAndCompleteItemEntities() {
         List<ItemEntity> itemEntityList = new ArrayList<>();
         for(ItemEntity itemEntity : getItemEntities()) {
-            if(!itemEntity.isDeleted() && itemEntity.getCatalogingStatus().equalsIgnoreCase(RecapConstants.COMPLETE_STATUS)) {
+            if(!itemEntity.isDeleted() && itemEntity.getCatalogingStatus().equalsIgnoreCase(RecapCommonConstants.COMPLETE_STATUS)) {
                 itemEntityList.add(itemEntity);
             }
         }

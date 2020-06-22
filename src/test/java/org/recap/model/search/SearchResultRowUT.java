@@ -1,7 +1,7 @@
 package org.recap.model.search;
 
 import org.junit.Test;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.solr.BibItem;
 import org.recap.model.solr.Item;
 import org.springframework.util.CollectionUtils;
@@ -80,7 +80,7 @@ public class SearchResultRowUT {
                 searchResultRow.setPublisherDate(bibItem.getPublicationDate());
                 searchResultRow.setOwningInstitution(bibItem.getOwningInstitution());
                 searchResultRow.setLeaderMaterialType(bibItem.getLeaderMaterialType());
-                if (null != bibItem.getItems() && bibItem.getItems().size() == 1 && !RecapConstants.SERIAL.equals(bibItem.getLeaderMaterialType())) {
+                if (null != bibItem.getItems() && bibItem.getItems().size() == 1 && !RecapCommonConstants.SERIAL.equals(bibItem.getLeaderMaterialType())) {
                     Item item = bibItem.getItems().get(0);
                     searchResultRow.setCustomerCode(item.getCustomerCode());
                     searchResultRow.setCollectionGroupDesignation(item.getCollectionGroupDesignation());

@@ -1,6 +1,7 @@
 package org.recap.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.JobParamDataEntity;
@@ -86,7 +87,7 @@ public class GenerateReportRestController {
     @ResponseBody
     @RequestMapping(value="/generateSubmitCollectionReport", method = RequestMethod.POST)
     public String generateSubmitCollectionReport(@RequestBody List<Integer> reportRecordNumberList) {
-       return reportGenerator.generateReportBasedOnReportRecordNum(reportRecordNumberList,RecapConstants.SUBMIT_COLLECTION,RecapConstants.FTP);
+       return reportGenerator.generateReportBasedOnReportRecordNum(reportRecordNumberList,RecapConstants.SUBMIT_COLLECTION, RecapCommonConstants.FTP);
     }
 
 }
