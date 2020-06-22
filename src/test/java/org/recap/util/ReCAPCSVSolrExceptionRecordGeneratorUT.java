@@ -2,6 +2,7 @@ package org.recap.util;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.SolrExceptionReportReCAPCSVRecord;
 import org.recap.model.jpa.ReportDataEntity;
@@ -40,8 +41,8 @@ public class ReCAPCSVSolrExceptionRecordGeneratorUT extends BaseTestCase{
     private ReportEntity getReportEntity(){
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapConstants.ACCESSION_REPORT);
-        reportEntity.setType(RecapConstants.ACCESSION_SUMMARY_REPORT);
+        reportEntity.setFileName(RecapCommonConstants.ACCESSION_REPORT);
+        reportEntity.setType(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 

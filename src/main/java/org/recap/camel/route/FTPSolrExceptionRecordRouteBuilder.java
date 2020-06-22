@@ -3,7 +3,7 @@ package org.recap.camel.route;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.BindyType;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.csv.SolrExceptionReportReCAPCSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,15 +37,15 @@ public class FTPSolrExceptionRecordRouteBuilder {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapConstants.FTP_SOLR_EXCEPTION_REPORT_Q)
-                            .routeId(RecapConstants.FTP_SOLR_EXCEPTION_REPORT_ROUTE_ID)
+                    from(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q)
+                            .routeId(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_ROUTE_ID)
                             .marshal().bindy(BindyType.Csv, SolrExceptionReportReCAPCSVRecord.class)
                             .to("sftp://" + ftpUserName + "@" + ftpRemoteServer + "?privateKeyFile=" + ftpPrivateKey + "&knownHostsFile=" + ftpKnownHost + "&fileName=${in.header.fileName}-${date:now:ddMMMyyyy}.csv")
                             .onCompletion().log("File has been uploaded to ftp successfully.");
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
     }
 }

@@ -1,7 +1,7 @@
 package org.recap.util;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.csv.SolrExceptionReportReCAPCSVRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
@@ -41,7 +41,7 @@ public class ReCAPCSVSolrExceptionRecordGenerator {
                 try {
                     setterMethod.invoke(solrExceptionReportReCAPCSVRecord, headerValue);
                 } catch (Exception e) {
-                    logger.error(RecapConstants.LOG_ERROR,e);
+                    logger.error(RecapCommonConstants.LOG_ERROR,e);
                 }
             }
         }
@@ -59,7 +59,7 @@ public class ReCAPCSVSolrExceptionRecordGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, SolrExceptionReportReCAPCSVRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
@@ -75,7 +75,7 @@ public class ReCAPCSVSolrExceptionRecordGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SolrExceptionReportReCAPCSVRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

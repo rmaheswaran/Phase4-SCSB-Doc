@@ -2,6 +2,7 @@ package org.recap.controller;
 
 import org.apache.camel.Exchange;
 import org.apache.commons.collections.CollectionUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.BibAvailabilityResponse;
 import org.recap.model.BibItemAvailabityStatusRequest;
@@ -202,15 +203,15 @@ public class SharedCollectionRestController {
                     getBulkAccessionService().doAccession(accessionRequestList, accessionSummary,exchange);
 
                 if (accessionSummary.getSuccessRecords() != 0) {
-                    status = RecapConstants.SUCCESS;
+                    status = RecapCommonConstants.SUCCESS;
                 } else {
-                    status = RecapConstants.FAILURE;
+                    status = RecapCommonConstants.FAILURE;
                 }
             } else {
-                status = RecapConstants.ACCESSION_NO_PENDING_REQUESTS;
+                status = RecapCommonConstants.ACCESSION_NO_PENDING_REQUESTS;
             }
 
-            getAccessionService().updateStatusForAccessionEntities(accessionEntities, RecapConstants.COMPLETE_STATUS);
+            getAccessionService().updateStatusForAccessionEntities(accessionEntities, RecapCommonConstants.COMPLETE_STATUS);
             stopWatch.stop();
             accessionSummary.setTimeElapsed(stopWatch.getTotalTimeSeconds() + " Secs");
 

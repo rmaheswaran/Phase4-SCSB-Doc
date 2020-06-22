@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.search.DataDumpSearchResult;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchRecordsResponse;
@@ -61,7 +61,7 @@ public class SearchRecordRestController {
     @ResponseBody
     public SearchRecordsResponse searchRecordsServiceGetParam(@ApiParam(value = "Paramerters for Searching Records" , required = true, name="requestJson") @RequestBody SearchRecordsRequest searchRecordsRequest) {
         SearchRecordsResponse searchRecordsResponse = new SearchRecordsResponse();
-        if(RecapConstants.CUSTOMER_CODE.equalsIgnoreCase(searchRecordsRequest.getFieldName())){
+        if(RecapCommonConstants.CUSTOMER_CODE.equalsIgnoreCase(searchRecordsRequest.getFieldName())){
             searchRecordsRequest.setFieldValue(searchRecordsRequest.getFieldValue().toUpperCase());
         }
         try {
@@ -74,7 +74,7 @@ public class SearchRecordRestController {
             searchRecordsResponse.setShowTotalCount(searchRecordsRequest.isShowTotalCount());
             searchRecordsResponse.setErrorMessage(searchRecordsRequest.getErrorMessage());
         } catch (Exception e) {
-            logger.info(RecapConstants.LOG_ERROR,e);
+            logger.info(RecapCommonConstants.LOG_ERROR,e);
             searchRecordsResponse.setErrorMessage(e.getMessage());
         }
         return searchRecordsResponse;
@@ -98,7 +98,7 @@ public class SearchRecordRestController {
             responseMap.put("totalRecordsCount", searchRecordsRequest.getTotalRecordsCount());
             responseMap.put("dataDumpSearchResults", dataDumpSearchResults);
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return responseMap;
     }
@@ -158,7 +158,7 @@ public class SearchRecordRestController {
             searchResultRows = searchRecordsUtil.searchRecords(searchRecordsRequest);
         } catch (Exception e) {
             searchResultRows = new ArrayList<>();
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return searchResultRows;
     }

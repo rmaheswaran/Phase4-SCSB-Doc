@@ -1,6 +1,7 @@
 package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.AccessionSummaryRecord;
 import org.recap.model.jpa.ReportEntity;
@@ -24,12 +25,12 @@ public class FTPAccessionReportGenerator implements ReportGeneratorInterface{
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapConstants.ACCESSION_SUMMARY_REPORT) ? true : false;
+        return reportType.equalsIgnoreCase(RecapCommonConstants.ACCESSION_SUMMARY_REPORT) ? true : false;
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapConstants.FTP) ? true : false;
+        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP) ? true : false;
     }
 
     @Override
@@ -38,7 +39,7 @@ public class FTPAccessionReportGenerator implements ReportGeneratorInterface{
         List<AccessionSummaryRecord> accessionSummaryRecordList;
         AccessionSummaryRecordGenerator accessionSummaryRecordGenerator = new AccessionSummaryRecordGenerator();
         accessionSummaryRecordList = accessionSummaryRecordGenerator.prepareAccessionSummaryReportRecord(reportEntityList);
-        producerTemplate.sendBodyAndHeader(RecapConstants.FTP_ACCESSION_SUMMARY_REPORT_Q, accessionSummaryRecordList, "fileName", fileName);
+        producerTemplate.sendBodyAndHeader(RecapCommonConstants.FTP_ACCESSION_SUMMARY_REPORT_Q, accessionSummaryRecordList, "fileName", fileName);
         DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
         generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";
         return generatedFileName;

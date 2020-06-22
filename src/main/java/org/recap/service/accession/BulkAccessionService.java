@@ -2,7 +2,7 @@ package org.recap.service.accession;
 
 import com.google.common.collect.Lists;
 import org.apache.camel.Exchange;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.accession.AccessionResponse;
 import org.recap.model.accession.AccessionSummary;
@@ -102,7 +102,7 @@ public class BulkAccessionService extends AccessionService{
                         }
 
                     } catch (Exception e) {
-                        logger.error(RecapConstants.LOG_ERROR, e);
+                        logger.error(RecapCommonConstants.LOG_ERROR, e);
                         exhange.setException(e);
                     }
                 }
@@ -120,7 +120,7 @@ public class BulkAccessionService extends AccessionService{
                         Object o = submit.get();
                         prepareSummary(accessionSummary, o);
                     } catch (Exception e) {
-                        logger.error(RecapConstants.LOG_ERROR, e);
+                        logger.error(RecapCommonConstants.LOG_ERROR, e);
                         exhange.setException(e);
                         accessionSummary.addException(1);
                     }

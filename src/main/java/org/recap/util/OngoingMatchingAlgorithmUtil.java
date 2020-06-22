@@ -8,6 +8,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.matchingalgorithm.service.OngoingMatchingReportsService;
@@ -160,7 +161,7 @@ public class OngoingMatchingAlgorithmUtil {
             return queryResponse;
 
         } catch (SolrServerException | IOException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
@@ -175,7 +176,7 @@ public class OngoingMatchingAlgorithmUtil {
     public String processOngoingMatchingAlgorithm(SolrDocumentList solrDocumentList, List<Integer> serialMvmBibIds) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        String status = RecapConstants.SUCCESS;
+        String status = RecapCommonConstants.SUCCESS;
         if(CollectionUtils.isNotEmpty(solrDocumentList)) {
             for (Iterator<SolrDocument> iterator = solrDocumentList.iterator(); iterator.hasNext(); ) {
                 SolrDocument solrDocument = iterator.next();
@@ -195,7 +196,7 @@ public class OngoingMatchingAlgorithmUtil {
      * @return the string
      */
     public String processMatchingForBib(SolrDocument solrDocument, List<Integer> serialMvmBibIds) {
-        String status = RecapConstants.SUCCESS;
+        String status = RecapCommonConstants.SUCCESS;
         logger.info("Ongoing Matching Started");
         Map<Integer, BibItem> bibItemMap = new HashMap<>();
         List<Integer> itemIds = new ArrayList<>();
@@ -208,8 +209,8 @@ public class OngoingMatchingAlgorithmUtil {
                 try {
                     itemIds = saveReportAndUpdateCGDForMultiMatch(bibItemMap, serialMvmBibIds);
                 } catch (IOException | SolrServerException e) {
-                    logger.error(RecapConstants.LOG_ERROR,e);
-                    status = RecapConstants.FAILURE;
+                    logger.error(RecapCommonConstants.LOG_ERROR,e);
+                    status = RecapCommonConstants.FAILURE;
                 }
             } else if(matchPointString.size() == 1) {
                 // Single Match
@@ -217,8 +218,8 @@ public class OngoingMatchingAlgorithmUtil {
                 try {
                     itemIds = saveReportAndUpdateCGDForSingleMatch(bibItemMap, matchPointString.iterator().next(), serialMvmBibIds);
                 } catch (Exception e) {
-                    logger.error(RecapConstants.LOG_ERROR,e);
-                    status = RecapConstants.FAILURE;
+                    logger.error(RecapCommonConstants.LOG_ERROR,e);
+                    status = RecapCommonConstants.FAILURE;
                 }
             } else {
                 logger.info("No Match Found.");
@@ -243,19 +244,19 @@ public class OngoingMatchingAlgorithmUtil {
         Map<Integer, BibItem> tempMap;
         Set<String> matchPointString = new HashSet<>();
 
-        tempMap = findMatchingBibs(solrDocument, matchPointString, RecapConstants.OCLC_NUMBER);
+        tempMap = findMatchingBibs(solrDocument, matchPointString, RecapCommonConstants.OCLC_NUMBER);
         if(tempMap != null && tempMap.size() > 0)
             bibItemMap.putAll(tempMap);
 
-        tempMap = findMatchingBibs(solrDocument, matchPointString, RecapConstants.ISBN_CRITERIA);
+        tempMap = findMatchingBibs(solrDocument, matchPointString, RecapCommonConstants.ISBN_CRITERIA);
         if(tempMap != null && tempMap.size() > 0)
             bibItemMap.putAll(tempMap);
 
-        tempMap = findMatchingBibs(solrDocument, matchPointString, RecapConstants.ISSN_CRITERIA);
+        tempMap = findMatchingBibs(solrDocument, matchPointString, RecapCommonConstants.ISSN_CRITERIA);
         if(tempMap != null && tempMap.size() > 0)
             bibItemMap.putAll(tempMap);
 
-        tempMap = findMatchingBibs(solrDocument, matchPointString, RecapConstants.LCCN_CRITERIA);
+        tempMap = findMatchingBibs(solrDocument, matchPointString, RecapCommonConstants.LCCN_CRITERIA);
         if(tempMap != null && tempMap.size() > 0)
             bibItemMap.putAll(tempMap);
         return matchPointString;
@@ -296,18 +297,18 @@ public class OngoingMatchingAlgorithmUtil {
             bibIds.add(bibId);
             materialTypeList.add(bibItem.getLeaderMaterialType());
             materialTypeSet.add(bibItem.getLeaderMaterialType());
-            if(matchPointString.equalsIgnoreCase(RecapConstants.OCLC_NUMBER)) {
+            if(matchPointString.equalsIgnoreCase(RecapCommonConstants.OCLC_NUMBER)) {
                 criteriaValues.addAll(bibItem.getOclcNumber());
-            } else if(matchPointString.equalsIgnoreCase(RecapConstants.ISBN_CRITERIA)) {
+            } else if(matchPointString.equalsIgnoreCase(RecapCommonConstants.ISBN_CRITERIA)) {
                 criteriaValues.addAll(bibItem.getIsbn());
-            } else if(matchPointString.equalsIgnoreCase(RecapConstants.ISSN_CRITERIA)) {
+            } else if(matchPointString.equalsIgnoreCase(RecapCommonConstants.ISSN_CRITERIA)) {
                 criteriaValues.addAll(bibItem.getIssn());
-            } else if(matchPointString.equalsIgnoreCase(RecapConstants.LCCN_CRITERIA)) {
+            } else if(matchPointString.equalsIgnoreCase(RecapCommonConstants.LCCN_CRITERIA)) {
                 criteriaValues.add(bibItem.getLccn());
             }
             index = index + 1;
             if(StringUtils.isNotBlank(bibItem.getTitleSubFieldA())) {
-                String titleHeader = RecapConstants.TITLE + index;
+                String titleHeader = RecapCommonConstants.TITLE + index;
                 matchingAlgorithmUtil.getReportDataEntity(titleHeader, bibItem.getTitleSubFieldA(), reportDataEntities);
                 titleMap.put(titleHeader, bibItem.getTitleSubFieldA());
             }
@@ -315,16 +316,16 @@ public class OngoingMatchingAlgorithmUtil {
 
         if(owningInstSet.size() > 1) {
             ReportEntity reportEntity = new ReportEntity();
-            String fileName = RecapConstants.ONGOING_MATCHING_ALGORITHM;
+            String fileName = RecapCommonConstants.ONGOING_MATCHING_ALGORITHM;
             reportEntity.setFileName(fileName);
-            reportEntity.setInstitutionName(RecapConstants.ALL_INST);
+            reportEntity.setInstitutionName(RecapCommonConstants.ALL_INST);
             reportEntity.setCreatedDate(new Date());
             String criteriaValueString = StringUtils.join(criteriaValues, ",");
             if(materialTypeSet.size() == 1) {
                 Map parameterMap = new HashMap();
-                parameterMap.put(RecapConstants.BIB_ID, bibIds);
+                parameterMap.put(RecapCommonConstants.BIB_ID, bibIds);
                 parameterMap.put(RecapConstants.MATERIAL_TYPE, materialTypeList);
-                parameterMap.put(RecapConstants.OWNING_INST_BIB_ID, owningInstBibIds);
+                parameterMap.put(RecapCommonConstants.OWNING_INST_BIB_ID, owningInstBibIds);
                 parameterMap.put(RecapConstants.OWNING_INST, owningInstList);
                 parameterMap.put(RecapConstants.CRITERIA_VALUES, criteriaValueString);
                 parameterMap.put(RecapConstants.MATCH_POINT, matchPointString);
@@ -332,13 +333,13 @@ public class OngoingMatchingAlgorithmUtil {
                     itemIds = updateCGDBasedOnMaterialTypes(reportEntity, materialTypeSet, serialMvmBibIds, RecapConstants.SINGLE_MATCH, parameterMap, reportEntitiesToSave, titleMap);
                     materialTypeList = (List<String>) parameterMap.get(RecapConstants.MATERIAL_TYPE);
                 } catch (Exception e) {
-                    logger.error(RecapConstants.LOG_ERROR,e);
+                    logger.error(RecapCommonConstants.LOG_ERROR,e);
                 }
             } else {
                 reportEntity.setType(RecapConstants.MATERIAL_TYPE_EXCEPTION);
             }
             matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIds, materialTypeList, owningInstBibIds);
-            matchingAlgorithmUtil.getReportDataEntity(matchPointString.equalsIgnoreCase(RecapConstants.OCLC_NUMBER) ? RecapConstants.OCLC_CRITERIA : matchPointString, criteriaValueString, reportDataEntities);
+            matchingAlgorithmUtil.getReportDataEntity(matchPointString.equalsIgnoreCase(RecapCommonConstants.OCLC_NUMBER) ? RecapCommonConstants.OCLC_CRITERIA : matchPointString, criteriaValueString, reportDataEntities);
             reportEntity.addAll(reportDataEntities);
             reportEntitiesToSave.add(reportEntity);
             producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", reportEntitiesToSave);
@@ -365,7 +366,7 @@ public class OngoingMatchingAlgorithmUtil {
         ReportEntity unMatchReportEntity = new ReportEntity();
         unMatchReportEntity.setType("TitleException");
         unMatchReportEntity.setCreatedDate(new Date());
-        unMatchReportEntity.setInstitutionName(RecapConstants.ALL_INST);
+        unMatchReportEntity.setInstitutionName(RecapCommonConstants.ALL_INST);
         unMatchReportEntity.setFileName(fileName);
         List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
         List<String> bibIdList = new ArrayList<>();
@@ -381,7 +382,7 @@ public class OngoingMatchingAlgorithmUtil {
             bibliographicIds.add(Integer.valueOf(bibId));
         }
         matchingAlgorithmUtil.getReportDataEntityList(reportDataEntityList, owningInstitutionList, bibIdList, materialTypeList, owningInstBibIdList);
-        matchingAlgorithmUtil.getReportDataEntity(matchPointString.equalsIgnoreCase(RecapConstants.OCLC_NUMBER) ? RecapConstants.OCLC_CRITERIA : matchPointString, matchPointValue, reportDataEntityList);
+        matchingAlgorithmUtil.getReportDataEntity(matchPointString.equalsIgnoreCase(RecapCommonConstants.OCLC_NUMBER) ? RecapCommonConstants.OCLC_CRITERIA : matchPointString, matchPointValue, reportDataEntityList);
         unMatchReportEntity.addAll(reportDataEntityList);
         return unMatchReportEntity;
     }
@@ -395,9 +396,9 @@ public class OngoingMatchingAlgorithmUtil {
      */
     private List<Integer> saveReportAndUpdateCGDForMultiMatch(Map<Integer, BibItem> bibItemMap, List<Integer> serialMvmBibIds) throws IOException, SolrServerException {
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapConstants.ONGOING_MATCHING_ALGORITHM);
+        reportEntity.setFileName(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM);
         reportEntity.setCreatedDate(new Date());
-        reportEntity.setInstitutionName(RecapConstants.ALL_INST);
+        reportEntity.setInstitutionName(RecapCommonConstants.ALL_INST);
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         Set<String> owningInstSet = new HashSet<>();
         List<String> owningInstList = new ArrayList<>();
@@ -432,26 +433,26 @@ public class OngoingMatchingAlgorithmUtil {
 
         if(owningInstSet.size() > 1) {
             Map parameterMap = new HashMap();
-            parameterMap.put(RecapConstants.BIB_ID, bibIdList);
+            parameterMap.put(RecapCommonConstants.BIB_ID, bibIdList);
             parameterMap.put(RecapConstants.MATERIAL_TYPE, materialTypeList);
             itemIds = updateCGDBasedOnMaterialTypes(reportEntity, materialTypes, serialMvmBibIds, RecapConstants.MULTI_MATCH, parameterMap, new ArrayList<>(), null);
             materialTypeList = (List<String>) parameterMap.get(RecapConstants.MATERIAL_TYPE);
             matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds);
 
             if(CollectionUtils.isNotEmpty(oclcNumbers)) {
-                ReportDataEntity oclcNumberReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(oclcNumbers, RecapConstants.OCLC_CRITERIA);
+                ReportDataEntity oclcNumberReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(oclcNumbers, RecapCommonConstants.OCLC_CRITERIA);
                 reportDataEntities.add(oclcNumberReportDataEntity);
             }
             if(CollectionUtils.isNotEmpty(isbns)) {
-                ReportDataEntity isbnReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(isbns, RecapConstants.ISBN_CRITERIA);
+                ReportDataEntity isbnReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(isbns, RecapCommonConstants.ISBN_CRITERIA);
                 reportDataEntities.add(isbnReportDataEntity);
             }
             if(CollectionUtils.isNotEmpty(issns)) {
-                ReportDataEntity issnReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(issns, RecapConstants.ISSN_CRITERIA);
+                ReportDataEntity issnReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(issns, RecapCommonConstants.ISSN_CRITERIA);
                 reportDataEntities.add(issnReportDataEntity);
             }
             if(CollectionUtils.isNotEmpty(lccns)) {
-                ReportDataEntity lccnReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(lccns, RecapConstants.LCCN_CRITERIA);
+                ReportDataEntity lccnReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(lccns, RecapCommonConstants.LCCN_CRITERIA);
                 reportDataEntities.add(lccnReportDataEntity);
             }
             reportEntity.addAll(reportDataEntities);
@@ -478,14 +479,14 @@ public class OngoingMatchingAlgorithmUtil {
                                                         List<ReportEntity> reportEntityList, Map<String,String> titleMap) throws IOException, SolrServerException {
         List<Integer> itemIds = new ArrayList<>();
         List<String> materialTypeList = (List<String>) parameterMap.get(RecapConstants.MATERIAL_TYPE);
-        List<Integer> bibIdList = (List<Integer>) parameterMap.get(RecapConstants.BIB_ID);
+        List<Integer> bibIdList = (List<Integer>) parameterMap.get(RecapCommonConstants.BIB_ID);
         MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate,
                 getCollectionGroupMap(), getInstitutionEntityMap(), itemChangeLogDetailsRepository, RecapConstants.ONGOING_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository);
         if(materialTypes.size() == 1) {
             reportEntity.setType(matchType);
             Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap = new HashMap<>();
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
-            if(materialTypes.contains(RecapConstants.MONOGRAPH)) {
+            if(materialTypes.contains(RecapCommonConstants.MONOGRAPH)) {
                 Set<String> materialTypeSet = new HashSet<>();
                 boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, useRestrictionMap, itemEntityMap, bibIdList);
                 if(isMonograph) {
@@ -523,7 +524,7 @@ public class OngoingMatchingAlgorithmUtil {
                         }
                     }
                 }
-            } else if(materialTypes.contains(RecapConstants.SERIAL)) {
+            } else if(materialTypes.contains(RecapCommonConstants.SERIAL)) {
                 if(matchType.equalsIgnoreCase(RecapConstants.SINGLE_MATCH)) {
                     ReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
                     if(reportEntityForTitleException != null) {
@@ -600,7 +601,7 @@ public class OngoingMatchingAlgorithmUtil {
                 }
             }
         } catch (IOException|SolrServerException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return bibItemMap;
     }
@@ -617,7 +618,7 @@ public class OngoingMatchingAlgorithmUtil {
      */
     private ReportEntity titleVerificationForSingleMatch(String fileName, Map<String,String> titleMap, List<Integer> bibIds, List<String> materialTypeList, Map parameterMap) {
         ReportEntity reportEntity = null;
-        List<String> owningInstBibIds = (List<String>) parameterMap.get(RecapConstants.OWNING_INST_BIB_ID);
+        List<String> owningInstBibIds = (List<String>) parameterMap.get(RecapCommonConstants.OWNING_INST_BIB_ID);
         List<String> owningInstList = (List<String>) parameterMap.get(RecapConstants.OWNING_INST);
         String criteriaValues = (String) parameterMap.get(RecapConstants.CRITERIA_VALUES);
         String matchPointString = (String) parameterMap.get(RecapConstants.MATCH_POINT);
@@ -660,18 +661,18 @@ public class OngoingMatchingAlgorithmUtil {
      * @return the formatted date string
      */
     public String getFormattedDateString(Date inputDate) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapConstants.DATE_FORMAT_YYYYMMDDHHMM);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_YYYYMMDDHHMM);
         String utcStr = null;
         try {
             String inputDateString = simpleDateFormat.format(inputDate);
             Date date = simpleDateFormat.parse(inputDateString);
-            DateFormat format = new SimpleDateFormat(RecapConstants.UTC_DATE_FORMAT);
-            format.setTimeZone(TimeZone.getTimeZone(RecapConstants.UTC));
+            DateFormat format = new SimpleDateFormat(RecapCommonConstants.UTC_DATE_FORMAT);
+            format.setTimeZone(TimeZone.getTimeZone(RecapCommonConstants.UTC));
             utcStr = format.format(date);
         } catch (ParseException e) {
             logger.error(e.getMessage());
         }
-        return utcStr + RecapConstants.SOLR_DATE_RANGE_TO_NOW;
+        return utcStr + RecapCommonConstants.SOLR_DATE_RANGE_TO_NOW;
     }
 
     /**

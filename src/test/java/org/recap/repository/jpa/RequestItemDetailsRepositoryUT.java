@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -100,7 +100,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
         Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
-        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,1, RecapConstants.BORROW_DIRECT);
+        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,1, RecapCommonConstants.BORROW_DIRECT);
         assertNotNull(count);
         assertEquals(1,count);
     }
@@ -114,7 +114,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
         Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
-        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,2,RecapConstants.BORROW_DIRECT);
+        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,2,RecapCommonConstants.BORROW_DIRECT);
         assertNotNull(count);
         assertEquals(1,count);
     }
@@ -128,7 +128,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
         Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
-        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,3,RecapConstants.BORROW_DIRECT);
+        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,3,RecapCommonConstants.BORROW_DIRECT);
         assertNotNull(count);
         assertEquals(1,count);
     }
@@ -365,7 +365,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
         Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
-        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,1, RecapConstants.RECALL);
+        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,1, RecapCommonConstants.RECALL);
         assertNotNull(count);
         assertEquals(1,count);
     }
@@ -379,7 +379,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
         Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
-        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,2, RecapConstants.RECALL);
+        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,2, RecapCommonConstants.RECALL);
         assertNotNull(count);
         assertEquals(1,count);
     }
@@ -393,7 +393,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
         Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
-        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,3, RecapConstants.RECALL);
+        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,3, RecapCommonConstants.RECALL);
         assertNotNull(count);
         assertEquals(1,count);
     }
@@ -408,8 +408,8 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
         Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
-        Mockito.when(mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,1, RecapConstants.RETRIEVAL)).thenReturn(new Long(1));
-        long count = mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,1, RecapConstants.RETRIEVAL);
+        Mockito.when(mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,1, RecapCommonConstants.RETRIEVAL)).thenReturn(new Long(1));
+        long count = mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,1, RecapCommonConstants.RETRIEVAL);
         assertNotNull(count);
         assertEquals(1,count);
     }
@@ -423,8 +423,8 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
         Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
-        Mockito.when(mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,2, RecapConstants.RETRIEVAL)).thenReturn(new Long(1));
-        long count = mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,2, RecapConstants.RETRIEVAL);
+        Mockito.when(mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,2, RecapCommonConstants.RETRIEVAL)).thenReturn(new Long(1));
+        long count = mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,2, RecapCommonConstants.RETRIEVAL);
         assertNotNull(count);
         assertEquals(1,count);
     }
@@ -438,7 +438,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
         Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
-        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,3, RecapConstants.RETRIEVAL);
+        long count = requestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,3, RecapCommonConstants.RETRIEVAL);
         assertNotNull(count);
         assertEquals(1,count);
     }

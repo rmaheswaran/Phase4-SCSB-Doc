@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jms.JmsQueueEndpoint;
 import org.apache.camel.component.solr.SolrConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.admin.SolrAdmin;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -133,11 +134,11 @@ public abstract class MatchingIndexExecutorService {
                             logger.info("Num of bibs fetched by thread : {}",entitiesCount);
                             futureCount++;
                         } catch (ExecutionException e) {
-                            logger.error(RecapConstants.LOG_ERROR,e);
+                            logger.error(RecapCommonConstants.LOG_ERROR,e);
                         }
                     }
 
-                    JmsQueueEndpoint solrQJmsEndPoint = (JmsQueueEndpoint) producerTemplate.getCamelContext().getEndpoint(RecapConstants.SOLR_QUEUE);
+                    JmsQueueEndpoint solrQJmsEndPoint = (JmsQueueEndpoint) producerTemplate.getCamelContext().getEndpoint(RecapCommonConstants.SOLR_QUEUE);
                     Integer solrQSize = solrQJmsEndPoint.getExchanges().size();
                     logger.info("Solr Queue size : {}",solrQSize);
                     while (solrQSize != 0) {
@@ -160,7 +161,7 @@ public abstract class MatchingIndexExecutorService {
                 logger.info("No records found to index for the criteria");
             }
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         stopWatch1.stop();
         logger.info("Total time taken: {} secs",stopWatch1.getTotalTimeSeconds());

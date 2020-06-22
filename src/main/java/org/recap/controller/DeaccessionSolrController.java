@@ -1,7 +1,7 @@
 package org.recap.controller;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.deaccession.DeAccessionSolrRequest;
 import org.recap.service.deaccession.DeAccessSolrDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +45,6 @@ public class DeaccessionSolrController {
         if (CollectionUtils.isNotEmpty(itemIds)) {
             deAccessSolrDocumentService.updateIsDeletedItemByItemIds(itemIds);
         }
-        return new ResponseEntity(RecapConstants.SUCCESS, HttpStatus.OK);
+        return new ResponseEntity(RecapCommonConstants.SUCCESS, HttpStatus.OK);
     }
 }

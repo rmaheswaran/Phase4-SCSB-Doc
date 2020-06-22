@@ -3,6 +3,7 @@ package org.recap.camel.route;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.BindyType;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.slf4j.Logger;
@@ -37,19 +38,19 @@ public class FSSubmitCollectionSummaryReportRouteBuilder {
                             .routeId(RecapConstants.FS_SUBMIT_COLLECTION_SUMMARY_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
                             .choice()
-                                .when(header(RecapConstants.FILE_NAME).contains(RecapConstants.PRINCETON))
-                                    .to("file:" + reportsDirectory + File.separator + RecapConstants.PRINCETON + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append")
-                                .when(header(RecapConstants.FILE_NAME).contains(RecapConstants.COLUMBIA))
-                                    .to("file:" + reportsDirectory + File.separator + RecapConstants.COLUMBIA + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append")
-                                .when(header(RecapConstants.FILE_NAME).contains(RecapConstants.NYPL))
-                                    .to("file:" + reportsDirectory + File.separator + RecapConstants.NYPL + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append")
+                                .when(header(RecapConstants.FILE_NAME).contains(RecapCommonConstants.PRINCETON))
+                                    .to("file:" + reportsDirectory + File.separator + RecapCommonConstants.PRINCETON + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append")
+                                .when(header(RecapConstants.FILE_NAME).contains(RecapCommonConstants.COLUMBIA))
+                                    .to("file:" + reportsDirectory + File.separator + RecapCommonConstants.COLUMBIA + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append")
+                                .when(header(RecapConstants.FILE_NAME).contains(RecapCommonConstants.NYPL))
+                                    .to("file:" + reportsDirectory + File.separator + RecapCommonConstants.NYPL + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append")
                                 .otherwise()
                                     .to("file:" + reportsDirectory + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append");
 
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
     }
 }

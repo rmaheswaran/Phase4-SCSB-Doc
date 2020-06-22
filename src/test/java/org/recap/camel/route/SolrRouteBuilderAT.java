@@ -6,7 +6,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.query.SimpleQuery;
@@ -39,7 +39,7 @@ public class SolrRouteBuilderAT extends BaseTestCase {
         solrInputDocument.setField("Title_search", "Title1");
         solrInputDocument.setField("Author_search", "Author1");
 
-        producerTemplate.sendBodyAndHeader(RecapConstants.SOLR_QUEUE, solrInputDocument, RecapConstants.SOLR_CORE, solrCore);
+        producerTemplate.sendBodyAndHeader(RecapCommonConstants.SOLR_QUEUE, solrInputDocument, RecapCommonConstants.SOLR_CORE, solrCore);
         Thread.sleep(1000);
         producerTemplate.asyncRequestBodyAndHeader(solrRouterURI + "://" + solrUri + "/" + solrCore, "", SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT);
         Thread.sleep(1000);

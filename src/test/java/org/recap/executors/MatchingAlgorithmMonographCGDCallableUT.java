@@ -7,20 +7,19 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
+import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -52,7 +51,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCase{
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         from = pageNum * Long.valueOf(batchSize);
-        Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(RecapConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity());
+        Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(RecapCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity());
     }
 
     @Test

@@ -3,6 +3,7 @@ package org.recap.matchingalgorithm;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
@@ -132,8 +133,8 @@ public class MatchingAlgorithmCGDProcessor {
         List<ItemEntity> itemEntitiesToUpdate = new ArrayList<>();
         List<ItemChangeLogEntity> itemChangeLogEntities = new ArrayList<>();
         CollectionGroupEntity collectionGroupEntity = null;
-        Integer collectionGroupId = (Integer) collectionGroupMap.get(RecapConstants.REPORTS_OPEN);
-        if(matchingType.equalsIgnoreCase(RecapConstants.ONGOING_MATCHING_ALGORITHM)) {
+        Integer collectionGroupId = (Integer) collectionGroupMap.get(RecapCommonConstants.REPORTS_OPEN);
+        if(matchingType.equalsIgnoreCase(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM)) {
             collectionGroupEntity = collectionGroupDetailsRepository.findById(collectionGroupId).orElse(null);
         }
         for (Iterator<ItemEntity> iterator = itemEntityMap.values().iterator(); iterator.hasNext(); ) {
@@ -142,9 +143,9 @@ public class MatchingAlgorithmCGDProcessor {
             MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), true);
             Integer oldCgd = itemEntity.getCollectionGroupId();
             itemEntity.setLastUpdatedDate(new Date());
-            itemEntity.setLastUpdatedBy(RecapConstants.GUEST);
+            itemEntity.setLastUpdatedBy(RecapCommonConstants.GUEST);
             itemEntity.setCollectionGroupId(collectionGroupId);
-            if(matchingType.equalsIgnoreCase(RecapConstants.ONGOING_MATCHING_ALGORITHM)) {
+            if(matchingType.equalsIgnoreCase(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM)) {
                 itemEntity.setCollectionGroupEntity(collectionGroupEntity);
             } else {
                 itemEntity.setInitialMatchingDate(null);
@@ -153,7 +154,7 @@ public class MatchingAlgorithmCGDProcessor {
             itemChangeLogEntities.add(getItemChangeLogEntity(oldCgd, itemEntity));
         }
         if(CollectionUtils.isNotEmpty(itemEntitiesToUpdate) && CollectionUtils.isNotEmpty(itemChangeLogEntities)) {
-            if(matchingType.equalsIgnoreCase(RecapConstants.ONGOING_MATCHING_ALGORITHM)) {
+            if(matchingType.equalsIgnoreCase(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM)) {
                 itemDetailsRepository.saveAll(itemEntitiesToUpdate);
             } else {
                 producerTemplate.sendBody("scsbactivemq:queue:updateItemsQ", itemEntitiesToUpdate);
@@ -165,7 +166,7 @@ public class MatchingAlgorithmCGDProcessor {
     private ItemChangeLogEntity getItemChangeLogEntity(Integer oldCgd, ItemEntity itemEntity) {
         ItemChangeLogEntity itemChangeLogEntity = new ItemChangeLogEntity();
         itemChangeLogEntity.setOperationType(matchingType);
-        itemChangeLogEntity.setUpdatedBy(RecapConstants.GUEST);
+        itemChangeLogEntity.setUpdatedBy(RecapCommonConstants.GUEST);
         itemChangeLogEntity.setUpdatedDate(new Date());
         itemChangeLogEntity.setRecordId(itemEntity.getItemId());
         itemChangeLogEntity.setNotes(oldCgd + " - " + itemEntity.getCollectionGroupId());
@@ -189,10 +190,10 @@ public class MatchingAlgorithmCGDProcessor {
             //Check for Monograph - (Single Bib & Single Item)
             if(itemEntities != null && itemEntities.size() == 1) {
                 ItemEntity itemEntity = itemEntities.get(0);
-                if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapConstants.SHARED_CGD))) {
+                if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
                     populateValues(materialTypeSet, useRestrictionMap, itemEntityMap, itemEntity);
                 }
-                materialTypeSet.add(RecapConstants.MONOGRAPH);
+                materialTypeSet.add(RecapCommonConstants.MONOGRAPH);
             } else {
                 if(bibliographicEntity.getOwningInstitutionId().equals(institutionMap.get("NYPL"))) {
                     //NYPL
@@ -202,7 +203,7 @@ public class MatchingAlgorithmCGDProcessor {
                             if(itemEntity.getCopyNumber() != null && itemEntity.getCopyNumber() > 1) {
                                 isMultipleCopy = true;
                             }
-                            if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapConstants.SHARED_CGD))) {
+                            if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
                                 populateValues(materialTypeSet, useRestrictionMap, itemEntityMap, itemEntity);
                             }
                         }
@@ -211,20 +212,20 @@ public class MatchingAlgorithmCGDProcessor {
                         isMonograph = false;
                         materialTypeSet.add(RecapConstants.MONOGRAPHIC_SET);
                     } else {
-                        materialTypeSet.add(RecapConstants.MONOGRAPH);
+                        materialTypeSet.add(RecapCommonConstants.MONOGRAPH);
                     }
                 } else {
                     //CUL & PUL
                     if(bibliographicEntity.getHoldingsEntities().size() > 1) {
                         for(ItemEntity itemEntity : itemEntities) {
-                            if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapConstants.SHARED_CGD))) {
+                            if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
                                 populateValues(materialTypeSet, useRestrictionMap, itemEntityMap, itemEntity);
                             }
                         }
-                        materialTypeSet.add(RecapConstants.MONOGRAPH);
+                        materialTypeSet.add(RecapCommonConstants.MONOGRAPH);
                     } else {
                         for(ItemEntity itemEntity : itemEntities) {
-                            if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapConstants.SHARED_CGD))) {
+                            if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
                                 populateValues(materialTypeSet, useRestrictionMap, itemEntityMap, itemEntity);
                             }
                         }
@@ -248,7 +249,7 @@ public class MatchingAlgorithmCGDProcessor {
         for(BibliographicEntity bibliographicEntity : bibliographicEntities) {
             List<ItemEntity> itemEntities = bibliographicEntity.getNonDeletedAndCompleteItemEntities();
             for(ItemEntity itemEntity : itemEntities) {
-                if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapConstants.SHARED_CGD))) {
+                if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
                     itemEntityMap.put(itemEntity.getItemId(), itemEntity);
                     MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), true);
                 }
@@ -388,9 +389,9 @@ public class MatchingAlgorithmCGDProcessor {
     private Integer getUseRestrictionInNumbers(String useRestrictions) {
         if(StringUtils.isBlank(useRestrictions)) {
             return 0;
-        } else if(useRestrictions.equalsIgnoreCase(RecapConstants.IN_LIBRARY_USE)) {
+        } else if(useRestrictions.equalsIgnoreCase(RecapCommonConstants.IN_LIBRARY_USE)) {
             return 1;
-        } else if(useRestrictions.equalsIgnoreCase(RecapConstants.SUPERVISED_USE)) {
+        } else if(useRestrictions.equalsIgnoreCase(RecapCommonConstants.SUPERVISED_USE)) {
             return 2;
         }
         return 0;

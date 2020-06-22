@@ -2,6 +2,7 @@ package org.recap.util;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.lang3.StringUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.OngoingAccessionReportRecord;
 import org.recap.model.csv.SubmitCollectionReportRecord;
@@ -62,7 +63,7 @@ public class OngoingAccessionReportGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, OngoingAccessionReportRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
@@ -78,7 +79,7 @@ public class OngoingAccessionReportGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SubmitCollectionReportRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

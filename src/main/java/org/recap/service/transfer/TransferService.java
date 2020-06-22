@@ -3,6 +3,7 @@ package org.recap.service.transfer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.controller.TransferController;
 import org.recap.model.jpa.BibliographicEntity;
@@ -127,13 +128,13 @@ public class TransferService {
 
                         Map<String, Set<Integer>> recordToDelete = new HashMap<>();
                         Map<String, Set<Integer>> recordToIndex = new HashMap<>();
-                        addRecordToMap(RecapConstants.ITEM_ID, sourceItem.getItemId(), recordToDelete);
+                        addRecordToMap(RecapCommonConstants.ITEM_ID, sourceItem.getItemId(), recordToDelete);
 
                         List<BibliographicEntity> itemBibEntities = sourceItem.getBibliographicEntities();
                         if(CollectionUtils.isNotEmpty(itemBibEntities)) {
                             for (Iterator<BibliographicEntity> bibliographicEntityIterator = itemBibEntities.iterator(); bibliographicEntityIterator.hasNext(); ) {
                                 BibliographicEntity bibliographicEntity = bibliographicEntityIterator.next();
-                                addRecordToMap(RecapConstants.BIB_ID, bibliographicEntity.getBibliographicId(), recordToIndex);
+                                addRecordToMap(RecapCommonConstants.BIB_ID, bibliographicEntity.getBibliographicId(), recordToIndex);
                             }
                         }
 
@@ -141,7 +142,7 @@ public class TransferService {
 
                         transferValidationResponse.setMessage(RecapConstants.TRANSFER.SUCCESSFULLY_RELINKED);
                     } catch (Exception e) {
-                        logger.error(RecapConstants.LOG_ERROR,e);
+                        logger.error(RecapCommonConstants.LOG_ERROR,e);
                         transferValidationResponse.setMessage(RecapConstants.TRANSFER.RELINKED_FAILED);
                     }
                 }
@@ -332,13 +333,13 @@ public class TransferService {
                         Map<String, Set<Integer>> recordToDelete = new HashMap<>();
                         Map<String, Set<Integer>> recordToIndex = new HashMap<>();
 
-                        addRecordToMap(RecapConstants.HOLDING_ID, sourceHoldings.getHoldingsId(), recordToDelete);
+                        addRecordToMap(RecapCommonConstants.HOLDING_ID, sourceHoldings.getHoldingsId(), recordToDelete);
 
                         List<BibliographicEntity> bibliographicEntities = sourceHoldings.getBibliographicEntities();
                         if(CollectionUtils.isNotEmpty(bibliographicEntities)) {
                             for (Iterator<BibliographicEntity> bibliographicEntityIterator = bibliographicEntities.iterator(); bibliographicEntityIterator.hasNext(); ) {
                                 BibliographicEntity bibliographicEntity = bibliographicEntityIterator.next();
-                                addRecordToMap(RecapConstants.BIB_ID, bibliographicEntity.getBibliographicId(), recordToIndex);
+                                addRecordToMap(RecapCommonConstants.BIB_ID, bibliographicEntity.getBibliographicId(), recordToIndex);
                             }
                         }
 
@@ -346,13 +347,13 @@ public class TransferService {
                         if (CollectionUtils.isNotEmpty(itemEntities)) {
                             for (Iterator<ItemEntity> itemEntityIterator = itemEntities.iterator(); itemEntityIterator.hasNext(); ) {
                                 ItemEntity itemEntity = itemEntityIterator.next();
-                                addRecordToMap(RecapConstants.ITEM_ID, itemEntity.getItemId(), recordToDelete);
+                                addRecordToMap(RecapCommonConstants.ITEM_ID, itemEntity.getItemId(), recordToDelete);
 
                                 List<BibliographicEntity> itemBibEntities = itemEntity.getBibliographicEntities();
                                 if(CollectionUtils.isNotEmpty(itemBibEntities)) {
                                     for (Iterator<BibliographicEntity> bibliographicEntityIterator = itemBibEntities.iterator(); bibliographicEntityIterator.hasNext(); ) {
                                         BibliographicEntity bibliographicEntity = bibliographicEntityIterator.next();
-                                        addRecordToMap(RecapConstants.BIB_ID, bibliographicEntity.getBibliographicId(), recordToIndex);
+                                        addRecordToMap(RecapCommonConstants.BIB_ID, bibliographicEntity.getBibliographicId(), recordToIndex);
                                     }
                                 }
                             }
@@ -363,7 +364,7 @@ public class TransferService {
 
                         transferValidationResponse.setMessage(RecapConstants.TRANSFER.SUCCESSFULLY_RELINKED);
                     } catch (Exception e) {
-                        logger.error(RecapConstants.LOG_ERROR,e);
+                        logger.error(RecapCommonConstants.LOG_ERROR,e);
                         transferValidationResponse.setMessage(RecapConstants.TRANSFER.RELINKED_FAILED);
                     }
 
@@ -400,8 +401,8 @@ public class TransferService {
 
         deleteRecordForRelink(recordToDelete);
 
-        addRecordToMap(RecapConstants.BIB_ID, savevdSourceBibRecord.getBibliographicId(), recordToIndex);
-        addRecordToMap(RecapConstants.BIB_ID, saveBibRecord.getBibliographicId(), recordToIndex);
+        addRecordToMap(RecapCommonConstants.BIB_ID, savevdSourceBibRecord.getBibliographicId(), recordToIndex);
+        addRecordToMap(RecapCommonConstants.BIB_ID, saveBibRecord.getBibliographicId(), recordToIndex);
 
         indexRecordForRelink(recordToIndex);
 
@@ -419,9 +420,9 @@ public class TransferService {
                             logger.info("deleting {} from solr for relink, {} - {}, ",docId,docId,id);
                             solrIndexService.deleteByDocId(docId, String.valueOf(id));
                         } catch (IOException e) {
-                            logger.error(RecapConstants.LOG_ERROR,e);
+                            logger.error(RecapCommonConstants.LOG_ERROR,e);
                         } catch (SolrServerException e) {
-                            logger.error(RecapConstants.LOG_ERROR,e);
+                            logger.error(RecapCommonConstants.LOG_ERROR,e);
                         }
                     }
                 }
@@ -440,7 +441,7 @@ public class TransferService {
                         try {
                             solrIndexService.indexByBibliographicId(id);
                         } catch (Exception e) {
-                            logger.error(RecapConstants.LOG_ERROR,e);
+                            logger.error(RecapCommonConstants.LOG_ERROR,e);
                         }
                     }
                 }

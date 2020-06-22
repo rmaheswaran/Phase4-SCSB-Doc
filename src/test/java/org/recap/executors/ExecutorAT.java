@@ -8,7 +8,7 @@ import org.apache.solr.common.params.CoreAdminParams;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
@@ -148,7 +148,7 @@ public class ExecutorAT extends BaseTestCase {
         solrIndexRequest.setNumberOfDocs(docsPerThread);
         solrIndexRequest.setCommitInterval(commitInterval);
         //solrIndexRequest.setDateFrom("27-10-2016 01:00:00");
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(RecapConstants.INCREMENTAL_DATE_FORMAT);
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(RecapCommonConstants.INCREMENTAL_DATE_FORMAT);
         Date from = DateUtils.addDays(new Date(), -1);
         solrIndexRequest.setDateFrom(dateFormatter.format(from));
         long dbCount = bibliographicDetailsRepository.countByLastUpdatedDateAfter(from);

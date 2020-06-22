@@ -1,10 +1,10 @@
 package org.recap.matchingalgorithm.service;
 
 import com.google.common.collect.Lists;
-import org.apache.activemq.broker.jmx.DestinationViewMBean;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.executors.MatchingAlgorithmMVMsCGDCallable;
 import org.recap.executors.MatchingAlgorithmMonographCGDCallable;
@@ -171,9 +171,9 @@ public class MatchingAlgorithmUpdateCGDService {
         List<Callable<Integer>> callables = new ArrayList<>();
         long countOfRecordNum;
         if(isPendingMatch) {
-            countOfRecordNum = getReportDataDetailsRepository().getCountOfRecordNumForMatchingPendingMonograph(RecapConstants.BIB_ID);
+            countOfRecordNum = getReportDataDetailsRepository().getCountOfRecordNumForMatchingPendingMonograph(RecapCommonConstants.BIB_ID);
         } else {
-            countOfRecordNum = getReportDataDetailsRepository().getCountOfRecordNumForMatchingMonograph(RecapConstants.BIB_ID);
+            countOfRecordNum = getReportDataDetailsRepository().getCountOfRecordNumForMatchingMonograph(RecapCommonConstants.BIB_ID);
         }
         logger.info("Total Records : {}", countOfRecordNum);
         int totalPagesCount = (int) (countOfRecordNum / batchSize);
@@ -207,7 +207,7 @@ public class MatchingAlgorithmUpdateCGDService {
 
         ExecutorService executor = getExecutorService(50);
         List<Callable<Integer>> callables = new ArrayList<>();
-        long countOfRecordNum = getReportDataDetailsRepository().getCountOfRecordNumForMatchingSerials(RecapConstants.BIB_ID);
+        long countOfRecordNum = getReportDataDetailsRepository().getCountOfRecordNumForMatchingSerials(RecapCommonConstants.BIB_ID);
         logger.info("Total Records : {}", countOfRecordNum);
         int totalPagesCount = (int) (countOfRecordNum / batchSize);
         logger.info("Total Pages : {}" , totalPagesCount);
@@ -249,7 +249,7 @@ public class MatchingAlgorithmUpdateCGDService {
 
         ExecutorService executor = getExecutorService(50);
         List<Callable<Integer>> callables = new ArrayList<>();
-        long countOfRecordNum = getReportDataDetailsRepository().getCountOfRecordNumForMatchingMVMs(RecapConstants.BIB_ID);
+        long countOfRecordNum = getReportDataDetailsRepository().getCountOfRecordNumForMatchingMVMs(RecapCommonConstants.BIB_ID);
         logger.info("Total Records : {}", countOfRecordNum);
         int totalPagesCount = (int) (countOfRecordNum / batchSize);
         logger.info("Total Pages : {}" , totalPagesCount);
@@ -307,7 +307,7 @@ public class MatchingAlgorithmUpdateCGDService {
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
     }
 
@@ -325,7 +325,7 @@ public class MatchingAlgorithmUpdateCGDService {
                         }
                     });
         } catch (Exception e) {
-            logger.error(RecapConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return futures;
     }
@@ -343,13 +343,13 @@ public class MatchingAlgorithmUpdateCGDService {
      * @param batchSize the batch size
      */
     public void getItemsCountForSerialsMatching(Integer batchSize) {
-        long countOfRecordNum = getReportDataDetailsRepository().getCountOfRecordNumForMatchingSerials(RecapConstants.BIB_ID);
+        long countOfRecordNum = getReportDataDetailsRepository().getCountOfRecordNumForMatchingSerials(RecapCommonConstants.BIB_ID);
         logger.info("Total Records : {}", countOfRecordNum);
         int totalPagesCount = (int) (countOfRecordNum / batchSize);
         logger.info("Total Pages : {}" , totalPagesCount);
         for(int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
-            List<ReportDataEntity> reportDataEntities =  getReportDataDetailsRepository().getReportDataEntityForMatchingSerials(RecapConstants.BIB_ID, from, batchSize);
+            List<ReportDataEntity> reportDataEntities =  getReportDataDetailsRepository().getReportDataEntityForMatchingSerials(RecapCommonConstants.BIB_ID, from, batchSize);
             List<List<ReportDataEntity>> reportDataEntityList = Lists.partition(reportDataEntities, 1000);
             for(List<ReportDataEntity> dataEntityList : reportDataEntityList) {
                 updateMatchingCounter(pageNum, dataEntityList);
@@ -367,7 +367,7 @@ public class MatchingAlgorithmUpdateCGDService {
         List<BibliographicEntity> bibliographicEntities = getBibliographicDetailsRepository().findByBibliographicIdIn(bibIds);
         for(BibliographicEntity bibliographicEntity : bibliographicEntities) {
             for(ItemEntity itemEntity : bibliographicEntity.getItemEntities()) {
-                if(itemEntity.getCollectionGroupId().equals(getCollectionGroupMap().get(RecapConstants.SHARED_CGD))) {
+                if(itemEntity.getCollectionGroupId().equals(getCollectionGroupMap().get(RecapCommonConstants.SHARED_CGD))) {
                     MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), false);
                 }
             }

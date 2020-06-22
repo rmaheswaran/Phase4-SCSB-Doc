@@ -1,6 +1,7 @@
 package org.recap.controller;
 
 import org.codehaus.plexus.util.StringUtils;
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.report.ReportGenerator;
@@ -63,18 +64,18 @@ public class GenerateReportController {
         String owningInstitutionCode = solrIndexRequest.getOwningInstitutionCode();
         String status;
         String fileName;
-        if (reportType.equalsIgnoreCase(RecapConstants.DEACCESSION_SUMMARY_REPORT)) {
-            fileName = RecapConstants.DEACCESSION_REPORT;
-        } else if (reportType.equalsIgnoreCase(RecapConstants.ACCESSION_SUMMARY_REPORT) || reportType.equalsIgnoreCase(RecapConstants.ONGOING_ACCESSION_REPORT)) {
-            fileName = RecapConstants.ACCESSION_REPORT;
-        } else if (reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_REJECTION_REPORT)
-                || reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)
-                || reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)
-                || reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_FAILURE_REPORT)
+        if (reportType.equalsIgnoreCase(RecapCommonConstants.DEACCESSION_SUMMARY_REPORT)) {
+            fileName = RecapCommonConstants.DEACCESSION_REPORT;
+        } else if (reportType.equalsIgnoreCase(RecapCommonConstants.ACCESSION_SUMMARY_REPORT) || reportType.equalsIgnoreCase(RecapConstants.ONGOING_ACCESSION_REPORT)) {
+            fileName = RecapCommonConstants.ACCESSION_REPORT;
+        } else if (reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT)
+                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)
+                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)
+                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT)
                 || reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT)) {
-            fileName = RecapConstants.SUBMIT_COLLECTION_REPORT;
+            fileName = RecapCommonConstants.SUBMIT_COLLECTION_REPORT;
         } else {
-            fileName = RecapConstants.SOLR_INDEX_FAILURE_REPORT;
+            fileName = RecapCommonConstants.SOLR_INDEX_FAILURE_REPORT;
         }
         generatedReportFileName = reportGenerator.generateReport(fileName, owningInstitutionCode, reportType, solrIndexRequest.getTransmissionType(), dateUtil.getFromDate(createdDate), dateUtil.getToDate(toDate));
         if (StringUtils.isEmpty(generatedReportFileName)) {

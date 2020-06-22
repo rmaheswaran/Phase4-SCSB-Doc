@@ -1,6 +1,6 @@
 package org.recap.model.search.resolver.impl.item;
 
-import org.recap.RecapConstants;
+import org.recap.RecapCommonConstants;
 import org.recap.model.search.resolver.ItemValueResolver;
 import org.recap.model.solr.Item;
 
@@ -19,7 +19,7 @@ public class HoldingsIdsValueResolver implements ItemValueResolver {
      */
     @Override
     public Boolean isInterested(String field) {
-        return RecapConstants.HOLDINGS_ID.equalsIgnoreCase(field);
+        return RecapCommonConstants.HOLDINGS_ID.equalsIgnoreCase(field);
     }
 
     /**
