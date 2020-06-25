@@ -508,13 +508,7 @@ public class AccessionService {
             if (CollectionUtils.isNotEmpty(records)) {
                 int count=1;
                 for (Record record : records) {
-                    boolean isFirstRecord = false;
-                    if(count==1){
-                        isFirstRecord=true;
-                    }
-                    response = updateData(record, owningInstitution, responseMapList, accessionRequest,isValidBoundWithRecord,isFirstRecord);
-                    accessionHelperUtil.setAccessionResponse(accessionResponsesList,accessionRequest.getItemBarcode(),response);
-                    reportDataEntityList.addAll(accessionHelperUtil.createReportDataEntityList(accessionRequest, response));
+                    response = getUpdatedDataResponse(accessionResponsesList, responseMapList, owningInstitution, reportDataEntityList, accessionRequest, isValidBoundWithRecord, count, record);
                     count++;
                 }
             }
@@ -525,6 +519,18 @@ public class AccessionService {
         }
         stopWatch.stop();
         logger.info("Total time taken to save records for accession : {}", stopWatch.getTotalTimeSeconds());
+        return response;
+    }
+
+    private String getUpdatedDataResponse(Set<AccessionResponse> accessionResponsesList, List<Map<String, String>> responseMapList, String owningInstitution, List<ReportDataEntity> reportDataEntityList, AccessionRequest accessionRequest, boolean isValidBoundWithRecord, int count, Object record) {
+        String response;
+        boolean isFirstRecord = false;
+        if(count==1){
+            isFirstRecord=true;
+        }
+        response = updateData(record, owningInstitution, responseMapList, accessionRequest,isValidBoundWithRecord,isFirstRecord);
+        accessionHelperUtil.setAccessionResponse(accessionResponsesList,accessionRequest.getItemBarcode(),response);
+        reportDataEntityList.addAll(accessionHelperUtil.createReportDataEntityList(accessionRequest, response));
         return response;
     }
 
@@ -570,13 +576,7 @@ public class AccessionService {
         if ((!isBoundWithItem) || (isBoundWithItem && isValidBoundWithRecord)) {
             int count = 1;
             for (BibRecord bibRecord : bibRecords.getBibRecordList()) {
-                boolean isFirstRecord = false;
-                if(count==1){
-                    isFirstRecord=true;
-                }
-                response = updateData(bibRecord, owningInstitution, responseMapList, accessionRequest,isValidBoundWithRecord,isFirstRecord);
-                accessionHelperUtil.setAccessionResponse(accessionResponsesList, accessionRequest.getItemBarcode(), response);
-                reportDataEntityList.addAll(accessionHelperUtil.createReportDataEntityList(accessionRequest, response));
+                response = getUpdatedDataResponse(accessionResponsesList, responseMapList, owningInstitution, reportDataEntityList, accessionRequest, isValidBoundWithRecord, count, bibRecord);
             }
         } else {
             response = RecapConstants.INVALID_BOUNDWITH_RECORD;

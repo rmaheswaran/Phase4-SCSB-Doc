@@ -24,7 +24,7 @@ import java.util.concurrent.Callable;
 /**
  * Created by angelind on 6/1/17.
  */
-public class MatchingAlgorithmMonographCGDCallable implements Callable {
+public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable implements Callable {
 
     private ReportDataDetailsRepository reportDataDetailsRepository;
     private BibliographicDetailsRepository bibliographicDetailsRepository;
@@ -91,12 +91,7 @@ public class MatchingAlgorithmMonographCGDCallable implements Callable {
         for(ReportDataEntity reportDataEntity : reportDataEntities) {
             Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap = new HashMap<>();
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
-            String bibId = reportDataEntity.getHeaderValue();
-            String[] bibIds = bibId.split(",");
-            List<Integer> bibIdList = new ArrayList<>();
-            for(int i=0; i< bibIds.length; i++) {
-                bibIdList.add(Integer.valueOf(bibIds[i]));
-            }
+            List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
             Set<String> materialTypeSet = new HashSet<>();
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
                     institutionMap, itemChangeLogDetailsRepository, RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository);

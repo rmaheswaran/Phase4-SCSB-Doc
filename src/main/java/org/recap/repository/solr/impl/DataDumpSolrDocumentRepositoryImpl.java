@@ -29,6 +29,7 @@ import org.recap.model.solr.BibItem;
 import org.recap.model.solr.Item;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.solr.main.CustomDocumentRepository;
+import org.recap.util.CommonUtil;
 import org.recap.util.SolrQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,9 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
 
     @Autowired
     private SolrQueryBuilder solrQueryBuilder;
+
+    @Autowired
+    private CommonUtil commonUtil;
 
     @Autowired
     private BibliographicDetailsRepository bibliographicDetailsRepository;
@@ -108,18 +112,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(queryForParentAndChildCriteria);
         SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
         if(CollectionUtils.isNotEmpty(bibSolrDocumentList)) {
-            long numFound = bibSolrDocumentList.getNumFound();
-            String totalBibCount = String.valueOf(numFound);
-            searchRecordsRequest.setTotalRecordsCount(totalBibCount);
-            int totalPagesCount = (int) Math.ceil((double) numFound / (double) searchRecordsRequest.getPageSize());
-            searchRecordsRequest.setTotalPageCount(totalPagesCount);
-            for (Iterator<SolrDocument> iterator = bibSolrDocumentList.iterator(); iterator.hasNext(); ) {
-                SolrDocument bibSolrDocument = iterator.next();
-                BibItem bibItem = new BibItem();
-                populateBib(bibSolrDocument, bibItem);
-                bibItems.add(bibItem);
-            }
-
+            bibItems = getBibItems(bibSolrDocumentList, searchRecordsRequest);
             List<List<BibItem>> partitionedBibItems = Lists.partition(bibItems, 300);
             for (Iterator<List<BibItem>> iterator = partitionedBibItems.iterator(); iterator.hasNext(); ) {
                 List<BibItem> bibItemList = iterator.next();
@@ -206,17 +199,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(queryForParentAndChildCriteria);
         SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
         if(CollectionUtils.isNotEmpty(bibSolrDocumentList)) {
-            long numFound = bibSolrDocumentList.getNumFound();
-            String totalBibCount = String.valueOf(numFound);
-            searchRecordsRequest.setTotalRecordsCount(totalBibCount);
-            int totalPagesCount = (int) Math.ceil((double) numFound / (double) searchRecordsRequest.getPageSize());
-            searchRecordsRequest.setTotalPageCount(totalPagesCount);
-            for (Iterator<SolrDocument> iterator = bibSolrDocumentList.iterator(); iterator.hasNext(); ) {
-                SolrDocument bibSolrDocument = iterator.next();
-                BibItem bibItem = new BibItem();
-                populateBib(bibSolrDocument, bibItem);
-                bibItems.add(bibItem);
-            }
+            bibItems = getBibItems(bibSolrDocumentList, searchRecordsRequest);
         }
 
         return bibItems;
@@ -271,16 +254,8 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         }
         logger.info("query string for export--->{}",querForItemString);
         SolrQuery solrQueryForItem = solrQueryBuilder.getSolrQueryForBibItem(querForItemString) ;
-        QueryResponse queryResponse = null;
         try {
-            queryResponse = solrTemplate.getSolrClient().query(solrQueryForItem);
-            SolrDocumentList solrDocuments = queryResponse.getResults();
-            if(solrDocuments.getNumFound() > 10 ) {
-                solrQueryForItem.setRows((int) solrDocuments.getNumFound());
-                queryResponse = solrTemplate.getSolrClient().query(solrQueryForItem);
-                solrDocuments = queryResponse.getResults();
-            }
-
+            SolrDocumentList solrDocuments = commonUtil.getSolrDocumentsByDocType(solrQueryForItem, solrTemplate);
             for (Iterator<SolrDocument> iterator = solrDocuments.iterator(); iterator.hasNext(); ) {
                 SolrDocument solrDocument = iterator.next();
                 Item item = getItem(solrDocument);
@@ -454,5 +429,21 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
         } else {
             return false;
         }
+    }
+
+    private List<BibItem>  getBibItems(SolrDocumentList bibSolrDocumentList, SearchRecordsRequest searchRecordsRequest) {
+        List<BibItem> bibItems = new ArrayList<>();
+        long numFound = bibSolrDocumentList.getNumFound();
+        String totalBibCount = String.valueOf(numFound);
+        searchRecordsRequest.setTotalRecordsCount(totalBibCount);
+        int totalPagesCount = (int) Math.ceil((double) numFound / (double) searchRecordsRequest.getPageSize());
+        searchRecordsRequest.setTotalPageCount(totalPagesCount);
+        for (Iterator<SolrDocument> iterator = bibSolrDocumentList.iterator(); iterator.hasNext(); ) {
+            SolrDocument bibSolrDocument = iterator.next();
+            BibItem bibItem = new BibItem();
+            populateBib(bibSolrDocument, bibItem);
+            bibItems.add(bibItem);
+        }
+        return bibItems;
     }
 }

@@ -100,18 +100,22 @@ public class DeAccessSolrDocumentService {
         try{
             for(Integer bibId : bibIds){
                 BibliographicEntity bibEntity = getBibliographicDetailsRepository().findByBibliographicId(bibId);
-                SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
-                StopWatch stopWatchIndexDocument = new StopWatch();
-                stopWatchIndexDocument.start();
-                getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);
-                stopWatchIndexDocument.stop();
-                logger.info("Time taken to index the doc for updateIsDeletedBibByBibId--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
+                updateBibSolrDocument(bibEntity);
             }
             return "Bib documents updated successfully.";
         }catch(Exception ex){
             logger.error(RecapCommonConstants.LOG_ERROR,ex);
             return "Bib documents failed to update.";
         }
+    }
+
+    private void updateBibSolrDocument(BibliographicEntity bibEntity) {
+        SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
+        StopWatch stopWatchIndexDocument = new StopWatch();
+        stopWatchIndexDocument.start();
+        getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);
+        stopWatchIndexDocument.stop();
+        logger.info("Time taken to index the doc for Bib Solr Document from Deaccession Service --->{}sec", stopWatchIndexDocument.getTotalTimeSeconds());
     }
 
     /**
@@ -126,12 +130,7 @@ public class DeAccessSolrDocumentService {
                 HoldingsEntity holdingsEntity = getHoldingDetailRepository().findByHoldingsId(holdingsId);
                 if(holdingsEntity != null && CollectionUtils.isNotEmpty(holdingsEntity.getBibliographicEntities())) {
                     for(BibliographicEntity bibliographicEntity : holdingsEntity.getBibliographicEntities()) {
-                        SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
-                        StopWatch stopWatchIndexDocument = new StopWatch();
-                        stopWatchIndexDocument.start();
-                        getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);
-                        stopWatchIndexDocument.stop();
-                        logger.info("Time taken to index the doc for updateIsDeletedHoldingsByHoldingsId--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
+                        updateBibSolrDocument(bibliographicEntity);
                     }
                 }
             }
@@ -154,12 +153,7 @@ public class DeAccessSolrDocumentService {
                 ItemEntity itemEntity = getItemDetailsRepository().findByItemId(itemId);
                 if(itemEntity != null && CollectionUtils.isNotEmpty(itemEntity.getBibliographicEntities())) {
                     for(BibliographicEntity bibliographicEntity : itemEntity.getBibliographicEntities()) {
-                        SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
-                        StopWatch stopWatchIndexDocument = new StopWatch();
-                        stopWatchIndexDocument.start();
-                        getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);
-                        stopWatchIndexDocument.stop();
-                        logger.info("Time taken to index the doc for updateIsDeletedItemByItemIds--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
+                        updateBibSolrDocument(bibliographicEntity);
                     }
                 }
             }
