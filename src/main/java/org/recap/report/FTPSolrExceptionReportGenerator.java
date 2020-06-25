@@ -1,38 +1,19 @@
 package org.recap.report;
 
-import org.apache.camel.ProducerTemplate;
 import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
-import org.recap.model.csv.SolrExceptionReportReCAPCSVRecord;
 import org.recap.model.jpa.ReportEntity;
-import org.recap.repository.jpa.ReportDetailRepository;
-import org.recap.util.ReCAPCSVSolrExceptionRecordGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StopWatch;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
  * Created by angelind on 30/9/16.
  */
 @Component
-public class FTPSolrExceptionReportGenerator implements ReportGeneratorInterface{
+public class FTPSolrExceptionReportGenerator extends CommonReportGenerator implements ReportGeneratorInterface{
 
     private static final Logger logger = LoggerFactory.getLogger(FTPSolrExceptionReportGenerator.class);
-
-    @Autowired
-    private ReportDetailRepository reportDetailRepository;
-
-    @Autowired
-    private ProducerTemplate producer;
 
     @Override
     public boolean isInterested(String reportType) {
@@ -46,27 +27,6 @@ public class FTPSolrExceptionReportGenerator implements ReportGeneratorInterface
 
     @Override
     public String generateReport(String fileName, List<ReportEntity> reportEntityList) {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-
-        List<SolrExceptionReportReCAPCSVRecord> solrExceptionReportReCAPCSVRecords = new ArrayList<>();
-
-        ReCAPCSVSolrExceptionRecordGenerator reCAPCSVSolrExceptionRecordGenerator = new ReCAPCSVSolrExceptionRecordGenerator();
-        for(ReportEntity reportEntity : reportEntityList) {
-            SolrExceptionReportReCAPCSVRecord solrExceptionReportReCAPCSVRecord = reCAPCSVSolrExceptionRecordGenerator.prepareSolrExceptionReportReCAPCSVRecord(reportEntity, new SolrExceptionReportReCAPCSVRecord());
-            solrExceptionReportReCAPCSVRecords.add(solrExceptionReportReCAPCSVRecord);
-        }
-
-        stopWatch.stop();
-        logger.info("Total time taken to prepare CSVRecords : {} " , stopWatch.getTotalTimeSeconds());
-        logger.info("Total Num of CSVRecords Prepared : {} " , solrExceptionReportReCAPCSVRecords.size());
-
-        if(!CollectionUtils.isEmpty(solrExceptionReportReCAPCSVRecords)) {
-            producer.sendBodyAndHeader(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q, solrExceptionReportReCAPCSVRecords, RecapCommonConstants.REPORT_FILE_NAME, fileName);
-            DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
-            return fileName + "-" + df.format(new Date()) + ".csv";
-        }
-
-        return null;
+        return generateReportForSolrExceptionCsvRecords(fileName, RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q, reportEntityList);
     }
 }

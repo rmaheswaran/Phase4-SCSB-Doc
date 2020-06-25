@@ -685,26 +685,18 @@ public class TransferService {
      */
     public List<ReportDataEntity> createReportDataEntityList(String institution, String requestString, String responseString, String transferType){
         List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
+        addToReportDataEntityList(transferType, reportDataEntityList, RecapConstants.TRANSFER.TRANSFER_TYPE);
+        addToReportDataEntityList(institution, reportDataEntityList, RecapConstants.TRANSFER.INSTITUTION);
+        addToReportDataEntityList(requestString, reportDataEntityList, RecapConstants.TRANSFER.REQUEST);
+        addToReportDataEntityList(responseString, reportDataEntityList, RecapConstants.TRANSFER.RESPONSE);
+        return reportDataEntityList;
+    }
+
+    private void addToReportDataEntityList(String transferType, List<ReportDataEntity> reportDataEntityList, String transferType2) {
         ReportDataEntity reportDataEntityTransferType = new ReportDataEntity();
-        reportDataEntityTransferType.setHeaderName(RecapConstants.TRANSFER.TRANSFER_TYPE);
+        reportDataEntityTransferType.setHeaderName(transferType2);
         reportDataEntityTransferType.setHeaderValue(transferType);
         reportDataEntityList.add(reportDataEntityTransferType);
-
-        ReportDataEntity reportDataEntityInstitution = new ReportDataEntity();
-        reportDataEntityInstitution.setHeaderName(RecapConstants.TRANSFER.INSTITUTION);
-        reportDataEntityInstitution.setHeaderValue(institution);
-        reportDataEntityList.add(reportDataEntityInstitution);
-
-        ReportDataEntity reportDataEntityRequest = new ReportDataEntity();
-        reportDataEntityRequest.setHeaderName(RecapConstants.TRANSFER.REQUEST);
-        reportDataEntityRequest.setHeaderValue(requestString);
-        reportDataEntityList.add(reportDataEntityRequest);
-
-        ReportDataEntity reportDataEntityResponse = new ReportDataEntity();
-        reportDataEntityResponse.setHeaderName(RecapConstants.TRANSFER.RESPONSE);
-        reportDataEntityResponse.setHeaderValue(responseString);
-        reportDataEntityList.add(reportDataEntityResponse);
-        return reportDataEntityList;
     }
 
     public void saveReportForTransfer(String requestString, String responseString, String institution, String transferType) {
