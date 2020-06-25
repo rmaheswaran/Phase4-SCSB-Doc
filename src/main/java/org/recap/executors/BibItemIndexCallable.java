@@ -31,7 +31,7 @@ import java.util.concurrent.Future;
 /**
  * Created by chenchulakshmig on 21/6/16.
  */
-public class BibItemIndexCallable implements Callable {
+public class BibItemIndexCallable extends CommonCallable implements Callable {
 
     private static final Logger logger = LoggerFactory.getLogger(BibItemIndexCallable.class);
 
@@ -114,34 +114,7 @@ public class BibItemIndexCallable implements Callable {
             }
         }
 
-        logger.info("Num Bibs Fetched : " + bibliographicEntities.getNumberOfElements());
-        Iterator<BibliographicEntity> iterator = bibliographicEntities.iterator();
-
-
-        ExecutorService executorService = Executors.newFixedThreadPool(50);
-        List<Future> futures = new ArrayList<>();
-        while (iterator.hasNext()) {
-            BibliographicEntity bibliographicEntity = iterator.next();
-            Future submit = executorService.submit(new BibItemRecordSetupCallable(bibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate));
-            futures.add(submit);
-        }
-
-        logger.info("Num futures to prepare Bib and Associated data : {} ",futures.size());
-
-        List<SolrInputDocument> solrInputDocumentsToIndex = new ArrayList<>();
-        for (Iterator<Future> futureIterator = futures.iterator(); futureIterator.hasNext(); ) {
-            try {
-                Future future = futureIterator.next();
-                SolrInputDocument solrInputDocument = (SolrInputDocument) future.get();
-                if(solrInputDocument != null)
-                    solrInputDocumentsToIndex.add(solrInputDocument);
-            } catch (Exception e) {
-                logger.error(RecapCommonConstants.LOG_ERROR,e);
-            }
-        }
-
-        executorService.shutdown();
-
+        List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, logger);
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
             SolrTemplate templateForSolr = new SolrTemplate(new HttpSolrClient.Builder(solrURL + File.separator).build());
             //templateForSolr.setSolrCore(coreName);

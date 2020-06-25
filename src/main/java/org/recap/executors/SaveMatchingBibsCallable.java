@@ -25,6 +25,7 @@ import org.recap.model.search.resolver.impl.bib.OwningInstitutionValueResolver;
 import org.recap.model.search.resolver.impl.bib.IsDeletedBibValueResolver;
 import org.recap.model.solr.BibItem;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
+import org.recap.util.CommonUtil;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.recap.util.SolrQueryBuilder;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -142,16 +143,7 @@ public class SaveMatchingBibsCallable implements Callable {
      */
     public void populateBibItem(SolrDocument solrDocument, BibItem bibItem) {
         Collection<String> fieldNames = solrDocument.getFieldNames();
-        for (Iterator<String> stringIterator = fieldNames.iterator(); stringIterator.hasNext(); ) {
-            String fieldName = stringIterator.next();
-            Object fieldValue = solrDocument.getFieldValue(fieldName);
-            for (Iterator<BibValueResolver> valueResolverIterator = getBibValueResolvers().iterator(); valueResolverIterator.hasNext(); ) {
-                BibValueResolver valueResolver = valueResolverIterator.next();
-                if (valueResolver.isInterested(fieldName)) {
-                    valueResolver.setValue(bibItem, fieldValue);
-                }
-            }
-        }
+        new CommonUtil().getBibItemFromSolrFieldNames(solrDocument, fieldNames, bibItem);
     }
 
     /**

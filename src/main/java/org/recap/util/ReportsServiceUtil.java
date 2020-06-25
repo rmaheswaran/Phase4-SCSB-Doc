@@ -66,13 +66,8 @@ public class ReportsServiceUtil {
     @Autowired
     private DeaccesionItemChangeLogDetailsRepository deaccesionItemChangeLogDetailsRepository;
 
-    private List<ItemValueResolver> itemValueResolvers;
-
     @Autowired
-    private BibSolrDocumentRepositoryImpl bibSolrDocumentRepository;
-
-    @Autowired
-    private SearchRecordsUtil searchRecordsUtil;
+    private CommonUtil commonUtil;
 
     @Autowired
     private DateUtil dateUtil;
@@ -105,12 +100,7 @@ public class ReportsServiceUtil {
         for (String owningInstitution : reportsRequest.getOwningInstitutions()) {
             for (String collectionGroupDesignation : reportsRequest.getCollectionGroupDesignations()) {
                 SolrQuery query = solrQueryBuilder.buildSolrQueryForCGDReports(owningInstitution, collectionGroupDesignation);
-                query.setRows(0);
-                query.setGetFieldStatistics(true);
-                query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
-                query.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
-                QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-                long numFound= queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getCountDistinct();
+                long numFound = getNumFound(query);
                 if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
                     if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                         reportsResponse.setOpenPulCgdCount(numFound);
@@ -139,6 +129,15 @@ public class ReportsServiceUtil {
             }
         }
         return reportsResponse;
+    }
+
+    private long getNumFound(SolrQuery query) throws SolrServerException, IOException {
+        query.setRows(0);
+        query.setGetFieldStatistics(true);
+        query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
+        query.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
+        QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
+        return queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getCountDistinct();
     }
 
     /**
@@ -172,7 +171,7 @@ public class ReportsServiceUtil {
                 for (SolrDocument solrDocument : result) {
                     boolean isDeletedItem = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_ITEM);
                     if (isDeletedItem) {
-                        Item item = getItem(solrDocument);
+                        Item item = commonUtil.getItem(solrDocument);
                         itemList.add(item);
                         itemIdList.add(item.getItemId());
                         bibIdList.add(item.getItemBibIdList().get(0));
@@ -272,7 +271,7 @@ public class ReportsServiceUtil {
             for (Group group : groupList) {
                 SolrDocumentList result = group.getResult();
                 for (SolrDocument itemDocument : result) {
-                    Item item = getItem(itemDocument);
+                    Item item = commonUtil.getItem(itemDocument);
                     itemList.add(item);
                     bibIdList.add((Integer)item.getItemBibIdList().get(0));
                 }
@@ -338,12 +337,7 @@ public class ReportsServiceUtil {
         for (String owningInstitution : reportsRequest.getOwningInstitutions()) {
             for (String collectionGroupDesignation : reportsRequest.getCollectionGroupDesignations()) {
                 SolrQuery query = solrQueryBuilder.buildSolrQueryForAccessionReports(solrFormattedDate, owningInstitution, false, collectionGroupDesignation);
-                query.setRows(0);
-                query.setGetFieldStatistics(true);
-                query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
-                query.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
-                QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-                long numFound= queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getCountDistinct();
+                long numFound = getNumFound(query);
                 if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
                     if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                         reportsResponse.setAccessionOpenPulCount(numFound);
@@ -384,12 +378,7 @@ public class ReportsServiceUtil {
         for (String ownInstitution : reportsRequest.getOwningInstitutions()) {
             for (String collectionGroupDesignation : reportsRequest.getCollectionGroupDesignations()) {
                 SolrQuery query = solrQueryBuilder.buildSolrQueryForDeaccessionReports(solrFormattedDate, ownInstitution, true, collectionGroupDesignation);
-                query.setRows(0);
-                query.setGetFieldStatistics(true);
-                query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
-                query.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
-                QueryResponse queryResponse = solrTemplate.getSolrClient().query(query);
-                long numFound = queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getCountDistinct();
+                long numFound = getNumFound(query);
                 if (ownInstitution.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
                     if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                         reportsResponse.setDeaccessionOpenPulCount(numFound);
@@ -443,49 +432,5 @@ public class ReportsServiceUtil {
         format.setTimeZone(TimeZone.getTimeZone(RecapCommonConstants.UTC));
         utcStr = format.format(date);
         return utcStr;
-    }
-
-    /**
-     * This method gets item for the given item solr document.
-     *
-     * @param itemSolrDocument the item solr document
-     * @return the item
-     */
-    public Item getItem(SolrDocument itemSolrDocument) {
-        Item item = new Item();
-        Collection<String> fieldNames = itemSolrDocument.getFieldNames();
-        List<ItemValueResolver> itemValueResolvers = getItemValueResolvers();
-        for (Iterator<String> iterator = fieldNames.iterator(); iterator.hasNext(); ) {
-            String fieldName = iterator.next();
-            Object fieldValue = itemSolrDocument.getFieldValue(fieldName);
-            for (Iterator<ItemValueResolver> itemValueResolverIterator = itemValueResolvers.iterator(); itemValueResolverIterator.hasNext(); ) {
-                ItemValueResolver itemValueResolver = itemValueResolverIterator.next();
-                if (itemValueResolver.isInterested(fieldName)) {
-                    itemValueResolver.setValue(item, fieldValue);
-                }
-            }
-        }
-        return item;
-    }
-
-    /**
-     * This method gets item value resolvers.
-     *
-     * @return the item value resolvers
-     */
-    public List<ItemValueResolver> getItemValueResolvers() {
-        if (null == itemValueResolvers) {
-            itemValueResolvers = new ArrayList<>();
-            itemValueResolvers.add(new BarcodeValueResolver());
-            itemValueResolvers.add(new CollectionGroupDesignationValueResolver());
-            itemValueResolvers.add(new ItemOwningInstitutionValueResolver());
-            itemValueResolvers.add(new ItemIdValueResolver());
-            itemValueResolvers.add(new ItemLastUpdatedDateValueResolver());
-            itemValueResolvers.add(new ItemBibIdValueResolver());
-            itemValueResolvers.add(new ItemLastUpdatedByValueResolver());
-            itemValueResolvers.add(new ItemCreatedDateValueResolver());
-            itemValueResolvers.add(new CustomerCodeValueResolver());
-        }
-        return itemValueResolvers;
     }
 }

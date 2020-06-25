@@ -50,22 +50,8 @@ public class AccessionSummaryRecordGenerator {
                 if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapCommonConstants.NUMBER_OF_BIB_MATCHES)){
                     existingBibCount = existingBibCount + Integer.parseInt(reportDataEntity.getHeaderValue());
                 }
-                if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapConstants.FAILURE_BIB_REASON) && !StringUtils.isEmpty(reportDataEntity.getHeaderValue())){
-                    Integer bibCount = bibFailureReasonCountMap.get(reportDataEntity.getHeaderValue());
-                    if(bibCount != null){
-                        bibFailureReasonCountMap.put(reportDataEntity.getHeaderValue(),bibCount+bibFailureCount);
-                    }else{
-                        bibFailureReasonCountMap.put(reportDataEntity.getHeaderValue(),bibFailureCount);
-                    }
-                }
-                if(reportDataEntity.getHeaderName().equalsIgnoreCase(RecapConstants.FAILURE_ITEM_REASON) && !StringUtils.isEmpty(reportDataEntity.getHeaderValue())){
-                    Integer itemCount = itemFailureReasonCountMap.get(reportDataEntity.getHeaderValue());
-                    if(itemCount != null){
-                        itemFailureReasonCountMap.put(reportDataEntity.getHeaderValue(),itemCount+itemFailureCount);
-                    }else{
-                        itemFailureReasonCountMap.put(reportDataEntity.getHeaderValue(),itemFailureCount);
-                    }
-                }
+                addToDocFailureReasonCountMap(bibFailureCount, bibFailureReasonCountMap, reportDataEntity, RecapConstants.FAILURE_BIB_REASON);
+                addToDocFailureReasonCountMap(itemFailureCount, itemFailureReasonCountMap, reportDataEntity, RecapConstants.FAILURE_ITEM_REASON);
             }
         }
 
@@ -74,32 +60,17 @@ public class AccessionSummaryRecordGenerator {
         accessionSummaryRecord.setSuccessItemCount(itemSuccessCount.toString());
         accessionSummaryRecord.setNoOfBibMatches(existingBibCount.toString());
         if(bibFailureReasonCountMap.size() != 0){
-            Map.Entry<String, Integer> bibEntry = bibFailureReasonCountMap.entrySet().iterator().next();
-            accessionSummaryRecord.setReasonForFailureBib(bibEntry.getKey());
-            accessionSummaryRecord.setFailedBibCount(bibEntry.getValue().toString());
-            bibFailureReasonCountMap.remove(bibEntry.getKey());
+            removeFromBibFailureReasonCountMap(bibFailureReasonCountMap, accessionSummaryRecord);
         }
         if(itemFailureReasonCountMap.size() != 0){
-            Map.Entry<String, Integer> ItemEntry = itemFailureReasonCountMap.entrySet().iterator().next();
-            accessionSummaryRecord.setReasonForFailureItem(ItemEntry.getKey());
-            accessionSummaryRecord.setFailedItemCount(ItemEntry.getValue().toString());
-            itemFailureReasonCountMap.remove(ItemEntry.getKey());
+            removeFromItemFailureReasonCountMap(itemFailureReasonCountMap, accessionSummaryRecord);
         }
         accessionSummaryRecordList.add(accessionSummaryRecord);
 
         if(itemFailureReasonCountMap.size() != 0 && bibFailureReasonCountMap.size() <= itemFailureReasonCountMap.size()){
             int count =0;
             while (count < bibFailureReasonCountMap.size()){
-                AccessionSummaryRecord accessionSummaryRec1 = new AccessionSummaryRecord();
-                Map.Entry<String, Integer> bibEntries = bibFailureReasonCountMap.entrySet().iterator().next();
-                accessionSummaryRec1.setReasonForFailureBib(bibEntries.getKey());
-                accessionSummaryRec1.setFailedBibCount(bibEntries.getValue().toString());
-                bibFailureReasonCountMap.remove(bibEntries.getKey());
-                Map.Entry<String, Integer> ItemEntries = itemFailureReasonCountMap.entrySet().iterator().next();
-                accessionSummaryRec1.setReasonForFailureItem(ItemEntries.getKey());
-                accessionSummaryRec1.setFailedItemCount(ItemEntries.getValue().toString());
-                itemFailureReasonCountMap.remove(ItemEntries.getKey());
-                accessionSummaryRecordList.add(accessionSummaryRec1);
+                buildAccessionSummaryRecordList(accessionSummaryRecordList, bibFailureReasonCountMap, itemFailureReasonCountMap);
                 count+=1;
             }
             if(itemFailureReasonCountMap.size() != 0){
@@ -113,16 +84,7 @@ public class AccessionSummaryRecordGenerator {
         }else if(bibFailureReasonCountMap.size() != 0 && bibFailureReasonCountMap.size() > itemFailureReasonCountMap.size()){
             int count =0;
             while (count < itemFailureReasonCountMap.size()){
-                AccessionSummaryRecord accessionSummaryRec2 = new AccessionSummaryRecord();
-                Map.Entry<String, Integer> bibEntries = bibFailureReasonCountMap.entrySet().iterator().next();
-                accessionSummaryRec2.setReasonForFailureBib(bibEntries.getKey());
-                accessionSummaryRec2.setFailedBibCount(bibEntries.getValue().toString());
-                bibFailureReasonCountMap.remove(bibEntries.getKey());
-                Map.Entry<String, Integer> ItemEntries = itemFailureReasonCountMap.entrySet().iterator().next();
-                accessionSummaryRec2.setReasonForFailureItem(ItemEntries.getKey());
-                accessionSummaryRec2.setFailedItemCount(ItemEntries.getValue().toString());
-                itemFailureReasonCountMap.remove(ItemEntries.getKey());
-                accessionSummaryRecordList.add(accessionSummaryRec2);
+                buildAccessionSummaryRecordList(accessionSummaryRecordList, bibFailureReasonCountMap, itemFailureReasonCountMap);
                 count+=1;
             }
             if(bibFailureReasonCountMap.size() != 0){
@@ -135,6 +97,38 @@ public class AccessionSummaryRecordGenerator {
             }
         }
         return accessionSummaryRecordList;
+    }
+
+    private void addToDocFailureReasonCountMap(Integer bibFailureCount, Map<String, Integer> failureReasonCountMap, ReportDataEntity reportDataEntity, String failureBibReason) {
+        if (reportDataEntity.getHeaderName().equalsIgnoreCase(failureBibReason) && !StringUtils.isEmpty(reportDataEntity.getHeaderValue())) {
+            Integer bibCount = failureReasonCountMap.get(reportDataEntity.getHeaderValue());
+            if (bibCount != null) {
+                failureReasonCountMap.put(reportDataEntity.getHeaderValue(), bibCount + bibFailureCount);
+            } else {
+                failureReasonCountMap.put(reportDataEntity.getHeaderValue(), bibFailureCount);
+            }
+        }
+    }
+
+    private void buildAccessionSummaryRecordList(List<AccessionSummaryRecord> accessionSummaryRecordList, Map<String, Integer> bibFailureReasonCountMap, Map<String, Integer> itemFailureReasonCountMap) {
+        AccessionSummaryRecord accessionSummaryRec = new AccessionSummaryRecord();
+        removeFromBibFailureReasonCountMap(bibFailureReasonCountMap, accessionSummaryRec);
+        removeFromItemFailureReasonCountMap(itemFailureReasonCountMap, accessionSummaryRec);
+        accessionSummaryRecordList.add(accessionSummaryRec);
+    }
+
+    private void removeFromBibFailureReasonCountMap(Map<String, Integer> bibFailureReasonCountMap, AccessionSummaryRecord accessionSummaryRecord) {
+        Map.Entry<String, Integer> bibEntry = bibFailureReasonCountMap.entrySet().iterator().next();
+        accessionSummaryRecord.setReasonForFailureBib(bibEntry.getKey());
+        accessionSummaryRecord.setFailedBibCount(bibEntry.getValue().toString());
+        bibFailureReasonCountMap.remove(bibEntry.getKey());
+    }
+
+    private void removeFromItemFailureReasonCountMap(Map<String, Integer> itemFailureReasonCountMap, AccessionSummaryRecord accessionSummaryRecord) {
+        Map.Entry<String, Integer> ItemEntry = itemFailureReasonCountMap.entrySet().iterator().next();
+        accessionSummaryRecord.setReasonForFailureItem(ItemEntry.getKey());
+        accessionSummaryRecord.setFailedItemCount(ItemEntry.getValue().toString());
+        itemFailureReasonCountMap.remove(ItemEntry.getKey());
     }
 
 }

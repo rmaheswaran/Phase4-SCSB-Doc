@@ -64,21 +64,11 @@ public class TransferController {
 
         InstitutionEntity institutionEntity = null;
         if(StringUtils.isBlank(institution)) {
-            transferResponse.setMessage(RecapConstants.TRANSFER.INSTITUION_EMPTY);
-            institution = RecapConstants.UNKNOWN_INSTITUTION;
-            String requestString = getHelperUtil().getJsonString(transferRequest);
-            String responseString = transferResponse.getMessage();
-            getTransferService().saveReportForTransfer(requestString, responseString, institution, RecapConstants.TRANSFER.ROOT);
-            return transferResponse;
+            return getTransferResponse(transferRequest, transferResponse, RecapConstants.TRANSFER.INSTITUION_EMPTY);
         } else {
             institutionEntity = getTransferService().getInstitutionDetailsRepository().findByInstitutionCode(institution);
             if(null == institutionEntity) {
-                transferResponse.setMessage(RecapConstants.TRANSFER.UNKNOWN_INSTITUTION);
-                institution = RecapConstants.UNKNOWN_INSTITUTION;
-                String requestString = getHelperUtil().getJsonString(transferRequest);
-                String responseString = transferResponse.getMessage();
-                getTransferService().saveReportForTransfer(requestString, responseString, institution, RecapConstants.TRANSFER.ROOT);
-                return transferResponse;
+                return getTransferResponse(transferRequest, transferResponse, RecapConstants.TRANSFER.UNKNOWN_INSTITUTION);
             }
         }
 
@@ -124,5 +114,15 @@ public class TransferController {
 
         return transferResponse;
 
+    }
+
+    private TransferResponse getTransferResponse(@RequestBody TransferRequest transferRequest, TransferResponse transferResponse, String instituionEmpty) {
+        String institution;
+        transferResponse.setMessage(instituionEmpty);
+        institution = RecapConstants.UNKNOWN_INSTITUTION;
+        String requestString = getHelperUtil().getJsonString(transferRequest);
+        String responseString = transferResponse.getMessage();
+        getTransferService().saveReportForTransfer(requestString, responseString, institution, RecapConstants.TRANSFER.ROOT);
+        return transferResponse;
     }
 }
