@@ -100,6 +100,9 @@ public class OngoingMatchingAlgorithmUtil {
     private UpdateCgdUtil updateCgdUtil;
 
     @Autowired
+    private CommonUtil commonUtil;
+
+    @Autowired
     private OngoingMatchingReportsService ongoingMatchingReportsService;
 
     private List<BibValueResolver> bibValueResolvers;
@@ -243,23 +246,18 @@ public class OngoingMatchingAlgorithmUtil {
     private Set<String> getMatchingBibsAndMatchPoints(SolrDocument solrDocument, Map<Integer, BibItem> bibItemMap) {
         Map<Integer, BibItem> tempMap;
         Set<String> matchPointString = new HashSet<>();
-
-        tempMap = findMatchingBibs(solrDocument, matchPointString, RecapCommonConstants.OCLC_NUMBER);
-        if(tempMap != null && tempMap.size() > 0)
-            bibItemMap.putAll(tempMap);
-
-        tempMap = findMatchingBibs(solrDocument, matchPointString, RecapCommonConstants.ISBN_CRITERIA);
-        if(tempMap != null && tempMap.size() > 0)
-            bibItemMap.putAll(tempMap);
-
-        tempMap = findMatchingBibs(solrDocument, matchPointString, RecapCommonConstants.ISSN_CRITERIA);
-        if(tempMap != null && tempMap.size() > 0)
-            bibItemMap.putAll(tempMap);
-
-        tempMap = findMatchingBibs(solrDocument, matchPointString, RecapCommonConstants.LCCN_CRITERIA);
-        if(tempMap != null && tempMap.size() > 0)
-            bibItemMap.putAll(tempMap);
+        addToBibItemMap(solrDocument, bibItemMap, matchPointString, RecapCommonConstants.OCLC_NUMBER);
+        addToBibItemMap(solrDocument, bibItemMap, matchPointString, RecapCommonConstants.ISBN_CRITERIA);
+        addToBibItemMap(solrDocument, bibItemMap, matchPointString, RecapCommonConstants.ISSN_CRITERIA);
+        addToBibItemMap(solrDocument, bibItemMap, matchPointString, RecapCommonConstants.LCCN_CRITERIA);
         return matchPointString;
+    }
+
+    private void addToBibItemMap(SolrDocument solrDocument, Map<Integer, BibItem> bibItemMap, Set<String> matchPointString, String oclcNumber) {
+        Map<Integer, BibItem> tempMap;
+        tempMap = findMatchingBibs(solrDocument, matchPointString, oclcNumber);
+        if (tempMap != null && tempMap.size() > 0)
+            bibItemMap.putAll(tempMap);
     }
 
     /**
@@ -363,11 +361,7 @@ public class OngoingMatchingAlgorithmUtil {
      */
     public ReportEntity processCGDAndReportsForUnMatchingTitles(String fileName, Map<String, String> titleMap, List<Integer> bibIds, List<String> materialTypes, List<String> owningInstitutions,
                                                                 List<String> owningInstBibIds, String matchPointValue, Set<String> unMatchingTitleHeaderSet, String matchPointString) {
-        ReportEntity unMatchReportEntity = new ReportEntity();
-        unMatchReportEntity.setType("TitleException");
-        unMatchReportEntity.setCreatedDate(new Date());
-        unMatchReportEntity.setInstitutionName(RecapCommonConstants.ALL_INST);
-        unMatchReportEntity.setFileName(fileName);
+        ReportEntity unMatchReportEntity = matchingAlgorithmUtil.buildReportEntity(fileName);
         List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
         List<String> bibIdList = new ArrayList<>();
         List<String> materialTypeList = new ArrayList<>();
@@ -439,26 +433,21 @@ public class OngoingMatchingAlgorithmUtil {
             materialTypeList = (List<String>) parameterMap.get(RecapConstants.MATERIAL_TYPE);
             matchingAlgorithmUtil.getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds);
 
-            if(CollectionUtils.isNotEmpty(oclcNumbers)) {
-                ReportDataEntity oclcNumberReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(oclcNumbers, RecapCommonConstants.OCLC_CRITERIA);
-                reportDataEntities.add(oclcNumberReportDataEntity);
-            }
-            if(CollectionUtils.isNotEmpty(isbns)) {
-                ReportDataEntity isbnReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(isbns, RecapCommonConstants.ISBN_CRITERIA);
-                reportDataEntities.add(isbnReportDataEntity);
-            }
-            if(CollectionUtils.isNotEmpty(issns)) {
-                ReportDataEntity issnReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(issns, RecapCommonConstants.ISSN_CRITERIA);
-                reportDataEntities.add(issnReportDataEntity);
-            }
-            if(CollectionUtils.isNotEmpty(lccns)) {
-                ReportDataEntity lccnReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(lccns, RecapCommonConstants.LCCN_CRITERIA);
-                reportDataEntities.add(lccnReportDataEntity);
-            }
+            checkAndAddReportEntities(reportDataEntities, oclcNumbers, RecapCommonConstants.OCLC_CRITERIA);
+            checkAndAddReportEntities(reportDataEntities, isbns, RecapCommonConstants.ISBN_CRITERIA);
+            checkAndAddReportEntities(reportDataEntities, issns, RecapCommonConstants.ISSN_CRITERIA);
+            checkAndAddReportEntities(reportDataEntities, lccns, RecapCommonConstants.LCCN_CRITERIA);
             reportEntity.addAll(reportDataEntities);
             producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", Arrays.asList(reportEntity));
         }
         return itemIds;
+    }
+
+    private void checkAndAddReportEntities(List<ReportDataEntity> reportDataEntities, Set<String> oclcNumbers, String oclcCriteria) {
+        if (CollectionUtils.isNotEmpty(oclcNumbers)) {
+            ReportDataEntity oclcNumberReportDataEntity = matchingAlgorithmUtil.getReportDataEntityForCollectionValues(oclcNumbers, oclcCriteria);
+            reportDataEntities.add(oclcNumberReportDataEntity);
+        }
     }
 
     /**
@@ -641,16 +630,7 @@ public class OngoingMatchingAlgorithmUtil {
     public BibItem populateBibItem(SolrDocument solrDocument) {
         Collection<String> fieldNames = solrDocument.getFieldNames();
         BibItem bibItem = new BibItem();
-        for (Iterator<String> stringIterator = fieldNames.iterator(); stringIterator.hasNext(); ) {
-            String fieldName = stringIterator.next();
-            Object fieldValue = solrDocument.getFieldValue(fieldName);
-            for (Iterator<BibValueResolver> valueResolverIterator = getBibValueResolvers().iterator(); valueResolverIterator.hasNext(); ) {
-                BibValueResolver valueResolver = valueResolverIterator.next();
-                if (valueResolver.isInterested(fieldName)) {
-                    valueResolver.setValue(bibItem, fieldValue);
-                }
-            }
-        }
+        commonUtil.getBibItemFromSolrFieldNames(solrDocument, fieldNames, bibItem);
         return bibItem;
     }
 
@@ -673,29 +653,6 @@ public class OngoingMatchingAlgorithmUtil {
             logger.error(e.getMessage());
         }
         return utcStr + RecapCommonConstants.SOLR_DATE_RANGE_TO_NOW;
-    }
-
-    /**
-     * This method gets bib value resolvers.
-     *
-     * @return the bib value resolvers
-     */
-    public List<BibValueResolver> getBibValueResolvers() {
-        if (null == bibValueResolvers) {
-            bibValueResolvers = new ArrayList<>();
-            bibValueResolvers.add(new BibIdValueResolver());
-            bibValueResolvers.add(new IdValueResolver());
-            bibValueResolvers.add(new ISBNValueResolver());
-            bibValueResolvers.add(new ISSNValueResolver());
-            bibValueResolvers.add(new LCCNValueResolver());
-            bibValueResolvers.add(new LeaderMaterialTypeValueResolver());
-            bibValueResolvers.add(new OCLCValueResolver());
-            bibValueResolvers.add(new OwningInstitutionBibIdValueResolver());
-            bibValueResolvers.add(new OwningInstitutionValueResolver());
-            bibValueResolvers.add(new TitleSubFieldAValueResolver());
-            bibValueResolvers.add(new IsDeletedBibValueResolver());
-        }
-        return bibValueResolvers;
     }
 
     /**

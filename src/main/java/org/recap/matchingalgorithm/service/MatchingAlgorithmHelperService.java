@@ -148,35 +148,26 @@ public class MatchingAlgorithmHelperService {
      * @throws Exception the exception
      */
     public long findMatchingAndPopulateMatchPointsEntities() throws Exception {
-        List<MatchingMatchPointsEntity> matchingMatchPointsEntities;
         long count = 0;
-
-        matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
-        count = count + matchingMatchPointsEntities.size();
-        getMatchingAlgorithmUtil().saveMatchingMatchPointEntities(matchingMatchPointsEntities);
-
-        matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
-        count = count + matchingMatchPointsEntities.size();
-        getMatchingAlgorithmUtil().saveMatchingMatchPointEntities(matchingMatchPointsEntities);
-
-        matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
-        count = count + matchingMatchPointsEntities.size();
-        getMatchingAlgorithmUtil().saveMatchingMatchPointEntities(matchingMatchPointsEntities);
-
-        matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
-        count = count + matchingMatchPointsEntities.size();
-        getMatchingAlgorithmUtil().saveMatchingMatchPointEntities(matchingMatchPointsEntities);
-
+        count = loadAndSaveMatchingMatchPointEntities(count, RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
+        count = loadAndSaveMatchingMatchPointEntities(count, RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
+        count = loadAndSaveMatchingMatchPointEntities(count, RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
+        count = loadAndSaveMatchingMatchPointEntities(count, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
         getLogger().info("Total count : {} " , count);
-
         Integer saveMatchingMatchPointsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("saveMatchingMatchPointsQ");
-
         if(saveMatchingMatchPointsQ != null) {
             while (saveMatchingMatchPointsQ != 0) {
                 Thread.sleep(10000);
                 saveMatchingMatchPointsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("saveMatchingMatchPointsQ");
             }
         }
+        return count;
+    }
+
+    private long loadAndSaveMatchingMatchPointEntities(long count, String matchPointFieldOclc) throws Exception {
+        List<MatchingMatchPointsEntity> matchingMatchPointsEntities = getMatchingAlgorithmUtil().getMatchingMatchPointsEntity(matchPointFieldOclc);
+        count = count + matchingMatchPointsEntities.size();
+        getMatchingAlgorithmUtil().saveMatchingMatchPointEntities(matchingMatchPointsEntities);
         return count;
     }
 
@@ -218,13 +209,7 @@ public class MatchingAlgorithmHelperService {
         Map<String, Set<Integer>> oclcAndBibIdMap = new HashMap<>();
         Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
 
-        getLogger().info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST , multipleMatchBibIds.size());
-        for(List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
-            if(org.apache.commons.collections.CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(oclcAndBibIdMap, bibEntitiesBasedOnBibIds, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, bibEntityMap);
-            }
-        }
+        buildBibIdAndBibEntityMap(multipleMatchBibIds, oclcAndBibIdMap, bibEntityMap, getLogger(), RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
 
         Set<String> oclcNumberSet = new HashSet<>();
         for (Iterator<String> iterator = oclcAndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
@@ -272,13 +257,7 @@ public class MatchingAlgorithmHelperService {
         Map<String, Set<Integer>> oclcAndBibIdMap = new HashMap<>();
         Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
 
-        logger.info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST , multipleMatchBibIds.size());
-        for(List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
-            if(org.apache.commons.collections.CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(oclcAndBibIdMap, bibEntitiesBasedOnBibIds, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, bibEntityMap);
-            }
-        }
+        buildBibIdAndBibEntityMap(multipleMatchBibIds, oclcAndBibIdMap, bibEntityMap, logger, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
 
         Set<String> oclcNumberSet = new HashSet<>();
         for (Iterator<String> iterator = oclcAndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
@@ -325,13 +304,7 @@ public class MatchingAlgorithmHelperService {
         Map<String, Set<Integer>> oclcAndBibIdMap = new HashMap<>();
         Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
 
-        logger.info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST , multipleMatchBibIds.size());
-        for(List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
-            if(CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(oclcAndBibIdMap, bibEntitiesBasedOnBibIds, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, bibEntityMap);
-            }
-        }
+        buildBibIdAndBibEntityMap(multipleMatchBibIds, oclcAndBibIdMap, bibEntityMap, logger, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
 
         Set<String> oclcNumberSet = new HashSet<>();
         for (Iterator<String> iterator = oclcAndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
@@ -377,14 +350,8 @@ public class MatchingAlgorithmHelperService {
         List<List<Integer>> multipleMatchBibIds = Lists.partition(multiMatchBibIdsForISBNAndISSN, batchSize);
         Map<String, Set<Integer>> isbnAndBibIdMap = new HashMap<>();
         Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
+        populateBibIds(isbnAndBibIdMap, bibEntityMap,multipleMatchBibIds,  RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
 
-        logger.info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST , multipleMatchBibIds.size());
-        for(List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
-            if(CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(isbnAndBibIdMap, bibEntitiesBasedOnBibIds, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, bibEntityMap);
-            }
-        }
 
         Set<String> isbnSet = new HashSet<>();
         for (Iterator<String> iterator = isbnAndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
@@ -430,14 +397,7 @@ public class MatchingAlgorithmHelperService {
         List<List<Integer>> multipleMatchBibIds = Lists.partition(multiMatchBibIdsForISBNAndLCCN, batchSize);
         Map<String, Set<Integer>> isbnAndBibIdMap = new HashMap<>();
         Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
-
-        logger.info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST , multipleMatchBibIds.size());
-        for(List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
-            if(CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(isbnAndBibIdMap, bibEntitiesBasedOnBibIds, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, bibEntityMap);
-            }
-        }
+        populateBibIds(isbnAndBibIdMap, bibEntityMap,multipleMatchBibIds,  RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
 
         Set<String> isbnSet = new HashSet<>();
         for (Iterator<String> iterator = isbnAndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
@@ -484,13 +444,7 @@ public class MatchingAlgorithmHelperService {
         Map<String, Set<Integer>> issnAndBibIdMap = new HashMap<>();
         Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
 
-        logger.info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST , multipleMatchBibIds.size());
-        for(List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
-            if(CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(issnAndBibIdMap, bibEntitiesBasedOnBibIds, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, bibEntityMap);
-            }
-        }
+        buildBibIdAndBibEntityMap(multipleMatchBibIds, issnAndBibIdMap, bibEntityMap, logger, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
 
         Set<String> issnSet = new HashSet<>();
         for (Iterator<String> iterator = issnAndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
@@ -709,5 +663,19 @@ public class MatchingAlgorithmHelperService {
             executorService = Executors.newFixedThreadPool(numThreads);
         }
         return executorService;
+    }
+
+    private void populateBibIds( Map<String, Set<Integer>> isbnAndBibIdMap ,  Map<Integer, MatchingBibEntity> bibEntityMap, List<List<Integer>> multipleMatchBibIds, String matchPoint) {
+        buildBibIdAndBibEntityMap(multipleMatchBibIds, isbnAndBibIdMap, bibEntityMap, logger, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, matchPoint);
+    }
+
+    private void buildBibIdAndBibEntityMap(List<List<Integer>> multipleMatchBibIds, Map<String, Set<Integer>> oclcAndBibIdMap, Map<Integer, MatchingBibEntity> bibEntityMap, Logger logger, String matchPointFieldOclc, String matchPointFieldLccn) {
+        logger.info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST, multipleMatchBibIds.size());
+        for (List<Integer> bibIds : multipleMatchBibIds) {
+            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, matchPointFieldOclc, matchPointFieldLccn);
+            if (CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
+                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(oclcAndBibIdMap, bibEntitiesBasedOnBibIds, matchPointFieldOclc, bibEntityMap);
+            }
+        }
     }
 }

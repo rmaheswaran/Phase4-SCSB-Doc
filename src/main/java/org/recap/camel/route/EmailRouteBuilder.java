@@ -104,26 +104,15 @@ public class EmailRouteBuilder {
 
                 private void loadEmailBodyForCgdUpdateTemplate() {
                     InputStream inputStream = getClass().getResourceAsStream("updateCgd_email_body.vm");
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                    StringBuilder out = new StringBuilder();
-                    String line;
-                    try {
-                        while ((line = reader.readLine()) != null) {
-                            if (line.isEmpty()) {
-                                out.append("\n");
-                            } else {
-                                out.append(line);
-                                out.append("\n");
-                            }
-                        }
-                    } catch (IOException e) {
-                        logger.error(RecapCommonConstants.LOG_ERROR,e);
-                    }
-                    emailBodyForCgdUpdate = out.toString();
+                    emailBodyForCgdUpdate = getEmailBodyString(inputStream).toString();
                 }
 
                 private void loadEmailBodyForBatchJobTemplate() {
                     InputStream inputStream = getClass().getResourceAsStream("batchJobEmail.vm");
+                    emailBodyForBatchJob = getEmailBodyString(inputStream).toString();
+                }
+
+                private StringBuilder getEmailBodyString(InputStream inputStream) {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                     StringBuilder out = new StringBuilder();
                     String line;
@@ -137,9 +126,9 @@ public class EmailRouteBuilder {
                             }
                         }
                     } catch (IOException e) {
-                        logger.error(RecapCommonConstants.LOG_ERROR,e);
+                        logger.error(RecapCommonConstants.LOG_ERROR, e);
                     }
-                    emailBodyForBatchJob = out.toString();
+                    return out;
                 }
 
                 private void loadEmailPassword() {

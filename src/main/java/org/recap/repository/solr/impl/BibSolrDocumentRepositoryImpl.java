@@ -10,65 +10,16 @@ import org.apache.solr.common.SolrDocumentList;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.search.SearchRecordsRequest;
-import org.recap.model.search.resolver.BibValueResolver;
 import org.recap.model.search.resolver.HoldingsValueResolver;
-import org.recap.model.search.resolver.ItemValueResolver;
-import org.recap.model.search.resolver.impl.bib.AuthorDisplayValueResolver;
-import org.recap.model.search.resolver.impl.bib.AuthorSearchValueResolver;
-import org.recap.model.search.resolver.impl.bib.RootValueResolver;
-import org.recap.model.search.resolver.impl.bib.BibIdValueResolver;
-import org.recap.model.search.resolver.impl.bib.IdValueResolver;
-import org.recap.model.search.resolver.impl.bib.ISBNValueResolver;
-import org.recap.model.search.resolver.impl.bib.ISSNValueResolver;
-import org.recap.model.search.resolver.impl.bib.LCCNValueResolver;
-import org.recap.model.search.resolver.impl.bib.LeaderMaterialTypeValueResolver;
-import org.recap.model.search.resolver.impl.bib.OCLCValueResolver;
-import org.recap.model.search.resolver.impl.bib.OwningInstitutionBibIdValueResolver;
-import org.recap.model.search.resolver.impl.bib.OwningInstitutionValueResolver;
-import org.recap.model.search.resolver.impl.bib.IsDeletedBibValueResolver;
-import org.recap.model.search.resolver.impl.bib.DocTypeValueResolver;
-import org.recap.model.search.resolver.impl.bib.MaterialTypeValueResolver;
-import org.recap.model.search.resolver.impl.bib.NotesValueResolver;
-import org.recap.model.search.resolver.impl.bib.PublicationDateValueResolver;
-import org.recap.model.search.resolver.impl.bib. PublicationPlaceValueResolver;
-import org.recap.model.search.resolver.impl.bib.PublisherValueResolver;
-import org.recap.model.search.resolver.impl.bib.SubjectValueResolver;
-import org.recap.model.search.resolver.impl.bib.TitleDisplayValueResolver;
-import org.recap.model.search.resolver.impl.bib.TitleSearchValueResolver;
-import org.recap.model.search.resolver.impl.bib.TitleSortValueResolver;
-import org.recap.model.search.resolver.impl.bib.BibCreatedDateValueResolver;
-import org.recap.model.search.resolver.impl.bib.ImprintValueResolver;
-import org.recap.model.search.resolver.impl.holdings.HoldingsIdValueResolver;
-import org.recap.model.search.resolver.impl.holdings.HoldingsRootValueResolver;
-import org.recap.model.search.resolver.impl.holdings.IsDeletedHoldingsValueResolver;
-import org.recap.model.search.resolver.impl.holdings.OwningInstitutionHoldingsIdValueResolver;
-import org.recap.model.search.resolver.impl.holdings.SummaryHoldingsValueResolver;
-import org.recap.model.search.resolver.impl.item.AvailabilityDisplayValueResolver;
-import org.recap.model.search.resolver.impl.item.AvailabilitySearchValueResolver;
-import org.recap.model.search.resolver.impl.item.BarcodeValueResolver;
-import org.recap.model.search.resolver.impl.item.CallNumberDisplayValueResolver;
-import org.recap.model.search.resolver.impl.item.CallNumberSearchValueResolver;
-import org.recap.model.search.resolver.impl.item.CollectionGroupDesignationValueResolver;
-import org.recap.model.search.resolver.impl.item.CustomerCodeValueResolver;
-import org.recap.model.search.resolver.impl.item.HoldingsIdsValueResolver;
-import org.recap.model.search.resolver.impl.item.IsDeletedItemValueResolver;
-import org.recap.model.search.resolver.impl.item.ItemCreatedDateValueResolver;
-import org.recap.model.search.resolver.impl.item.ItemIdValueResolver;
-import org.recap.model.search.resolver.impl.item.ItemOwningInstitutionValueResolver;
-import org.recap.model.search.resolver.impl.item.ItemRootValueResolver;
-import org.recap.model.search.resolver.impl.item.OwningInstitutionItemIdValueResolver;
-import org.recap.model.search.resolver.impl.item.UseRestrictionDisplayValueResolver;
-import org.recap.model.search.resolver.impl.item.UseRestrictionSearchValueResolver;
-import org.recap.model.search.resolver.impl.item.VolumePartYearValueResolver;
 import org.recap.model.solr.BibItem;
 import org.recap.model.solr.Holdings;
 import org.recap.model.solr.Item;
 import org.recap.repository.solr.main.CustomDocumentRepository;
+import org.recap.util.CommonUtil;
 import org.recap.util.SolrQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -98,11 +49,8 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
     @Autowired
     private SolrQueryBuilder solrQueryBuilder;
 
-    private List<BibValueResolver> bibValueResolvers;
-
-    private List<ItemValueResolver> itemValueResolvers;
-
-    private List<HoldingsValueResolver> holdingsValueResolvers;
+    @Autowired
+    private CommonUtil commonUtil;
 
     @Override
     public Map<String,Object> search(SearchRecordsRequest searchRecordsRequest) {
@@ -154,7 +102,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             setCountsByItem(searchRecordsRequest, itemSolrDocumentList);
             for (Iterator<SolrDocument> iterator = itemSolrDocumentList.iterator(); iterator.hasNext(); ) {
                 SolrDocument itemSolrDocument = iterator.next();
-                Item item = getItem(itemSolrDocument);
+                Item item = commonUtil.getItem(itemSolrDocument);
                 bibItems.addAll(getBibItemsAndHoldings(item, searchRecordsRequest.isDeleted(), searchRecordsRequest.getCatalogingStatus()));
             }
         }
@@ -185,15 +133,8 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
     private List<BibItem> getBibItemsAndHoldings(Item item, boolean isDeleted, String catalogingStatus) {
         List<BibItem> bibItems = new ArrayList<>();
         SolrQuery solrQueryForBib = solrQueryBuilder.getSolrQueryForBibItem("_root_:" + item.getRoot());
-        QueryResponse queryResponse = null;
         try {
-            queryResponse = solrTemplate.getSolrClient().query(solrQueryForBib);
-            SolrDocumentList solrDocuments = queryResponse.getResults();
-            if(solrDocuments.getNumFound() > 10 ) {
-                solrQueryForBib.setRows((int) solrDocuments.getNumFound());
-                queryResponse = solrTemplate.getSolrClient().query(solrQueryForBib);
-                solrDocuments = queryResponse.getResults();
-            }
+            SolrDocumentList solrDocuments = commonUtil.getSolrDocumentsByDocType(solrQueryForBib, solrTemplate);
             BibItem bibItem = new BibItem();
             for (Iterator<SolrDocument> iterator = solrDocuments.iterator(); iterator.hasNext(); ) {
                 SolrDocument solrDocument = iterator.next();
@@ -206,19 +147,23 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
                         bibItem.setItems(Arrays.asList(item));
                     }
                 }
-                if(docType.equalsIgnoreCase(RecapCommonConstants.HOLDINGS)) {
-                    boolean isDeletedHoldings = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_HOLDINGS);
-                    if (isDeletedHoldings == isDeleted) {
-                        Holdings holdings = getHoldings(solrDocument);
-                        bibItem.addHoldings(holdings);
-                    }
-                }
+                addHoldingsToBibItem(isDeleted, bibItem, solrDocument, docType);
             }
             bibItems.add(bibItem);
         } catch (IOException|SolrServerException e) {
             logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
         return bibItems;
+    }
+
+    private void addHoldingsToBibItem(boolean isDeleted, BibItem bibItem, SolrDocument solrDocument, String docType) {
+        if (docType.equalsIgnoreCase(RecapCommonConstants.HOLDINGS)) {
+            boolean isDeletedHoldings = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_HOLDINGS);
+            if (isDeletedHoldings == isDeleted) {
+                Holdings holdings = getHoldings(solrDocument);
+                bibItem.addHoldings(holdings);
+            }
+        }
     }
 
     /**
@@ -230,15 +175,8 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
      */
     public void populateItemHoldingsInfo(BibItem bibItem, boolean isDeleted, String catalogingStatus) {
         SolrQuery solrQueryForItem = solrQueryBuilder.getSolrQueryForBibItem("_root_:" + bibItem.getRoot());
-        QueryResponse queryResponse = null;
         try {
-            queryResponse = solrTemplate.getSolrClient().query(solrQueryForItem);
-            SolrDocumentList solrDocuments = queryResponse.getResults();
-            if(solrDocuments.getNumFound() > 10 ) {
-                solrQueryForItem.setRows((int) solrDocuments.getNumFound());
-                queryResponse = solrTemplate.getSolrClient().query(solrQueryForItem);
-                solrDocuments = queryResponse.getResults();
-            }
+            SolrDocumentList solrDocuments = commonUtil.getSolrDocumentsByDocType(solrQueryForItem, solrTemplate);
             for (Iterator<SolrDocument> iterator = solrDocuments.iterator(); iterator.hasNext(); ) {
                 SolrDocument solrDocument = iterator.next();
                 String docType = (String) solrDocument.getFieldValue(RecapCommonConstants.DOCTYPE);
@@ -246,17 +184,11 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
                     boolean isDeletedItem = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_ITEM);
                     String itemCatalogingStatus = (String) solrDocument.getFieldValue(RecapConstants.ITEM_CATALOGING_STATUS);
                     if (isDeletedItem == isDeleted && catalogingStatus.equals(itemCatalogingStatus)) {
-                        Item item = getItem(solrDocument);
+                        Item item = commonUtil.getItem(solrDocument);
                         bibItem.addItem(item);
                     }
                 }
-                if(docType.equalsIgnoreCase(RecapCommonConstants.HOLDINGS)) {
-                    boolean isDeletedHoldings = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_HOLDINGS);
-                    if (isDeletedHoldings == isDeleted) {
-                        Holdings holdings = getHoldings(solrDocument);
-                        bibItem.addHoldings(holdings);
-                    }
-                }
+                addHoldingsToBibItem(isDeleted, bibItem, solrDocument, docType);
             }
         } catch (IOException|SolrServerException e) {
             logger.error(RecapCommonConstants.LOG_ERROR,e);
@@ -313,29 +245,6 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
     }
 
     /**
-     * Gets item for the give item solr document.
-     *
-     * @param itemSolrDocument the item solr document
-     * @return the item
-     */
-    public Item getItem(SolrDocument itemSolrDocument) {
-        Item item = new Item();
-        Collection<String> fieldNames = itemSolrDocument.getFieldNames();
-        List<ItemValueResolver> itemValueResolvers = getItemValueResolvers();
-        for (Iterator<String> iterator = fieldNames.iterator(); iterator.hasNext(); ) {
-            String fieldName = iterator.next();
-            Object fieldValue = itemSolrDocument.getFieldValue(fieldName);
-            for (Iterator<ItemValueResolver> itemValueResolverIterator = itemValueResolvers.iterator(); itemValueResolverIterator.hasNext(); ) {
-                ItemValueResolver itemValueResolver = itemValueResolverIterator.next();
-                if (itemValueResolver.isInterested(fieldName)) {
-                    itemValueResolver.setValue(item, fieldValue);
-                }
-            }
-        }
-        return item;
-    }
-
-    /**
      * Gets holdings for the give holdings solr document.
      *
      * @param holdingsSolrDocument the holdings solr document
@@ -344,7 +253,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
     public Holdings getHoldings(SolrDocument holdingsSolrDocument) {
         Holdings holdings = new Holdings();
         Collection<String> fieldNames = holdingsSolrDocument.getFieldNames();
-        List<HoldingsValueResolver> holdingsValueResolvers = getHoldingsValueResolvers();
+        List<HoldingsValueResolver> holdingsValueResolvers = commonUtil.getHoldingsValueResolvers();
         for (Iterator<String> iterator = fieldNames.iterator(); iterator.hasNext(); ) {
             String fieldName = iterator.next();
             Object fieldValue = holdingsSolrDocument.getFieldValue(fieldName);
@@ -366,103 +275,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
      */
     public void populateBibItem(SolrDocument solrDocument, BibItem bibItem) {
         Collection<String> fieldNames = solrDocument.getFieldNames();
-        for (Iterator<String> stringIterator = fieldNames.iterator(); stringIterator.hasNext(); ) {
-            String fieldName = stringIterator.next();
-            Object fieldValue = solrDocument.getFieldValue(fieldName);
-            for (Iterator<BibValueResolver> valueResolverIterator = getBibValueResolvers().iterator(); valueResolverIterator.hasNext(); ) {
-                BibValueResolver valueResolver = valueResolverIterator.next();
-                if (valueResolver.isInterested(fieldName)) {
-                    valueResolver.setValue(bibItem, fieldValue);
-                }
-            }
-        }
-    }
-
-    /**
-     * Gets list of bib value resolvers which is used to set appropriated values in bib .
-     *
-     * @return the bib value resolvers
-     */
-    public List<BibValueResolver> getBibValueResolvers() {
-        if (null == bibValueResolvers) {
-            bibValueResolvers = new ArrayList<>();
-            bibValueResolvers.add(new RootValueResolver());
-            bibValueResolvers.add(new AuthorDisplayValueResolver());
-            bibValueResolvers.add(new AuthorSearchValueResolver());
-            bibValueResolvers.add(new BibIdValueResolver());
-            bibValueResolvers.add(new DocTypeValueResolver());
-            bibValueResolvers.add(new IdValueResolver());
-            bibValueResolvers.add(new ImprintValueResolver());
-            bibValueResolvers.add(new ISBNValueResolver());
-            bibValueResolvers.add(new ISSNValueResolver());
-            bibValueResolvers.add(new LCCNValueResolver());
-            bibValueResolvers.add(new LeaderMaterialTypeValueResolver());
-            bibValueResolvers.add(new MaterialTypeValueResolver());
-            bibValueResolvers.add(new NotesValueResolver());
-            bibValueResolvers.add(new OCLCValueResolver());
-            bibValueResolvers.add(new OwningInstitutionBibIdValueResolver());
-            bibValueResolvers.add(new OwningInstitutionValueResolver());
-            bibValueResolvers.add(new PublicationDateValueResolver());
-            bibValueResolvers.add(new PublicationPlaceValueResolver());
-            bibValueResolvers.add(new PublisherValueResolver());
-            bibValueResolvers.add(new SubjectValueResolver());
-            bibValueResolvers.add(new TitleDisplayValueResolver());
-            bibValueResolvers.add(new TitleSearchValueResolver());
-            bibValueResolvers.add(new TitleSortValueResolver());
-            bibValueResolvers.add(new IsDeletedBibValueResolver());
-            bibValueResolvers.add(new BibCreatedDateValueResolver());
-        }
-        return bibValueResolvers;
-    }
-
-    /**
-     * Gets list of item value resolvers which is used to set appropriated values in item.
-     *
-     * @return the item value resolvers
-     */
-    public List<ItemValueResolver> getItemValueResolvers() {
-        if (null == itemValueResolvers) {
-            itemValueResolvers = new ArrayList<>();
-            itemValueResolvers.add(new AvailabilitySearchValueResolver());
-            itemValueResolvers.add(new AvailabilityDisplayValueResolver());
-            itemValueResolvers.add(new BarcodeValueResolver());
-            itemValueResolvers.add(new CallNumberSearchValueResolver());
-            itemValueResolvers.add(new CallNumberDisplayValueResolver());
-            itemValueResolvers.add(new CollectionGroupDesignationValueResolver());
-            itemValueResolvers.add(new CustomerCodeValueResolver());
-            itemValueResolvers.add(new org.recap.model.search.resolver.impl.item.DocTypeValueResolver());
-            itemValueResolvers.add(new ItemOwningInstitutionValueResolver());
-            itemValueResolvers.add(new UseRestrictionSearchValueResolver());
-            itemValueResolvers.add(new UseRestrictionDisplayValueResolver());
-            itemValueResolvers.add(new VolumePartYearValueResolver());
-            itemValueResolvers.add(new ItemRootValueResolver());
-            itemValueResolvers.add(new ItemIdValueResolver());
-            itemValueResolvers.add(new org.recap.model.search.resolver.impl.item.IdValueResolver());
-            itemValueResolvers.add(new IsDeletedItemValueResolver());
-            itemValueResolvers.add(new ItemCreatedDateValueResolver());
-            itemValueResolvers.add(new OwningInstitutionItemIdValueResolver());
-            itemValueResolvers.add(new HoldingsIdsValueResolver());
-        }
-        return itemValueResolvers;
-    }
-
-    /**
-     * Gets list of holdings value resolvers which is used to set appropriated values in holdings.
-     *
-     * @return the holdings value resolvers
-     */
-    public List<HoldingsValueResolver> getHoldingsValueResolvers() {
-        if(null == holdingsValueResolvers) {
-            holdingsValueResolvers = new ArrayList<>();
-            holdingsValueResolvers.add(new HoldingsRootValueResolver());
-            holdingsValueResolvers.add(new SummaryHoldingsValueResolver());
-            holdingsValueResolvers.add(new org.recap.model.search.resolver.impl.holdings.DocTypeValueResolver());
-            holdingsValueResolvers.add(new org.recap.model.search.resolver.impl.holdings.IdValueResolver());
-            holdingsValueResolvers.add(new HoldingsIdValueResolver());
-            holdingsValueResolvers.add(new IsDeletedHoldingsValueResolver());
-            holdingsValueResolvers.add(new OwningInstitutionHoldingsIdValueResolver());
-        }
-        return holdingsValueResolvers;
+        commonUtil.getBibItemFromSolrFieldNames(solrDocument, fieldNames, bibItem);
     }
 
     @Override
@@ -486,4 +299,5 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         }
         return pageNumber;
     }
+
 }
