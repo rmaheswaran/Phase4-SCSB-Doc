@@ -12,7 +12,6 @@ import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,7 @@ import java.util.concurrent.Callable;
 /**
  * Created by angelind on 31/5/17.
  */
-public class MatchingAlgorithmMVMsCGDCallable implements Callable {
+public class MatchingAlgorithmMVMsCGDCallable extends  CommonCallable implements Callable {
 
     private ReportDataDetailsRepository reportDataDetailsRepository;
     private BibliographicDetailsRepository bibliographicDetailsRepository;
@@ -55,12 +54,7 @@ public class MatchingAlgorithmMVMsCGDCallable implements Callable {
         List<ReportDataEntity> reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingMVMs(RecapCommonConstants.BIB_ID, from, batchSize);
         for(ReportDataEntity reportDataEntity : reportDataEntities) {
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
-            String bibId = reportDataEntity.getHeaderValue();
-            String[] bibIds = bibId.split(",");
-            List<Integer> bibIdList = new ArrayList<>();
-            for(int i=0; i< bibIds.length; i++) {
-                bibIdList.add(Integer.valueOf(bibIds[i]));
-            }
+            List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
                     institutionMap, itemChangeLogDetailsRepository, RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository);
             matchingAlgorithmCGDProcessor.populateItemEntityMap(itemEntityMap, bibIdList);
@@ -68,4 +62,5 @@ public class MatchingAlgorithmMVMsCGDCallable implements Callable {
         }
         return null;
     }
+
 }

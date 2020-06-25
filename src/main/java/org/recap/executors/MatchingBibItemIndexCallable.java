@@ -26,7 +26,7 @@ import java.util.concurrent.Future;
 /**
  * Created by angelind on 30/1/17.
  */
-public class MatchingBibItemIndexCallable implements Callable {
+public class MatchingBibItemIndexCallable extends CommonCallable implements Callable {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchingBibItemIndexCallable.class);
 
@@ -77,39 +77,9 @@ public class MatchingBibItemIndexCallable implements Callable {
      */
     @Override
     public Object call() throws Exception {
-
         Page<BibliographicEntity> bibliographicEntities;
-
         bibliographicEntities = bibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(PageRequest.of(pageNum, docsPerPage), operationType, from, to);
-
-        logger.info("Num Bibs Fetched : " + bibliographicEntities.getNumberOfElements());
-        Iterator<BibliographicEntity> iterator = bibliographicEntities.iterator();
-
-
-        ExecutorService executorService = Executors.newFixedThreadPool(50);
-        List<Future> futures = new ArrayList<>();
-        while (iterator.hasNext()) {
-            BibliographicEntity bibliographicEntity = iterator.next();
-            Future submit = executorService.submit(new BibItemRecordSetupCallable(bibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate));
-            futures.add(submit);
-        }
-
-        logger.info("Num futures to prepare Bib and Associated data : {} ",futures.size());
-
-        List<SolrInputDocument> solrInputDocumentsToIndex = new ArrayList<>();
-        for (Iterator<Future> futureIterator = futures.iterator(); futureIterator.hasNext(); ) {
-            try {
-                Future future = futureIterator.next();
-                SolrInputDocument solrInputDocument = (SolrInputDocument) future.get();
-                if(solrInputDocument != null)
-                    solrInputDocumentsToIndex.add(solrInputDocument);
-            } catch (Exception e) {
-                logger.error(RecapCommonConstants.LOG_ERROR,e);
-            }
-        }
-
-        executorService.shutdown();
-
+        List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, logger);
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
             producerTemplate.sendBodyAndHeader(RecapCommonConstants.SOLR_QUEUE, solrInputDocumentsToIndex, RecapCommonConstants.SOLR_CORE, coreName);
         }
