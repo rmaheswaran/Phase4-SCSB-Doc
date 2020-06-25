@@ -140,18 +140,8 @@ public class MatchingAlgorithmUpdateCGDService {
         ExecutorService executor = getExecutorService(50);
 
         processCallablesForMonographs(batchSize, executor, false);
-
-        Integer updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
-
-        if(updateItemsQ != null) {
-            while (updateItemsQ != 0) {
-                Thread.sleep(10000);
-                updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
-            }
-        }
-
+        Integer updateItemsQ = getUpdatedItemsQ();
         processCallablesForMonographs(batchSize, executor, true);
-
         getMatchingAlgorithmUtil().saveCGDUpdatedSummaryReport(RecapConstants.MATCHING_SUMMARY_MONOGRAPH);
 
         logger.info("PUL Final Counter Value:{} " , MatchingCounter.getPulSharedCount());
@@ -165,6 +155,17 @@ public class MatchingAlgorithmUpdateCGDService {
             }
         }
         executor.shutdown();
+    }
+
+    private Integer getUpdatedItemsQ() throws InterruptedException {
+        Integer updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
+        if (updateItemsQ != null) {
+            while (updateItemsQ != 0) {
+                Thread.sleep(10000);
+                updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
+            }
+        }
+        return updateItemsQ;
     }
 
     private void processCallablesForMonographs(Integer batchSize, ExecutorService executor, boolean isPendingMatch) {
@@ -216,23 +217,7 @@ public class MatchingAlgorithmUpdateCGDService {
                     getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository());
             callables.add(callable);
         }
-        getFutures(executor, callables);
-
-        getMatchingAlgorithmUtil().saveCGDUpdatedSummaryReport(RecapConstants.MATCHING_SUMMARY_SERIAL);
-
-        logger.info("PUL Final Counter Value:{} " , MatchingCounter.getPulSharedCount());
-        logger.info("CUL Final Counter Value: {}" , MatchingCounter.getCulSharedCount());
-        logger.info("NYPL Final Counter Value: {}" , MatchingCounter.getNyplSharedCount());
-
-        Integer updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
-        if(updateItemsQ != null){
-            while (updateItemsQ != 0) {
-                Thread.sleep(10000);
-                updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
-            }
-        }
-
-        executor.shutdown();
+        setCGDUpdateSummaryReport(executor, callables, RecapConstants.MATCHING_SUMMARY_SERIAL);
     }
 
     /**
@@ -258,24 +243,7 @@ public class MatchingAlgorithmUpdateCGDService {
                     getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository());
             callables.add(callable);
         }
-        getFutures(executor, callables);
-
-        getMatchingAlgorithmUtil().saveCGDUpdatedSummaryReport(RecapConstants.MATCHING_SUMMARY_MVM);
-
-        logger.info("PUL Final Counter Value:{} " , MatchingCounter.getPulSharedCount());
-        logger.info("CUL Final Counter Value: {}" , MatchingCounter.getCulSharedCount());
-        logger.info("NYPL Final Counter Value: {}" , MatchingCounter.getNyplSharedCount());
-
-        Integer updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
-
-        if(updateItemsQ != null) {
-            while (updateItemsQ != 0) {
-                Thread.sleep(10000);
-                updateItemsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateItemsQ");
-            }
-        }
-
-        executor.shutdown();
+        setCGDUpdateSummaryReport(executor, callables, RecapConstants.MATCHING_SUMMARY_MVM);
     }
 
     private Map<String, List<Integer>> executeCallables(ExecutorService executorService, List<Callable<Integer>> callables) {
@@ -406,5 +374,16 @@ public class MatchingAlgorithmUpdateCGDService {
             }
         }
         return institutionMap;
+    }
+
+    private void setCGDUpdateSummaryReport(ExecutorService executor, List<Callable<Integer>> callables, String reportName) throws InterruptedException {
+        getFutures(executor, callables);
+        getMatchingAlgorithmUtil().saveCGDUpdatedSummaryReport(reportName);
+        logger.info("PUL Final Counter Value:{} " , MatchingCounter.getPulSharedCount());
+        logger.info("CUL Final Counter Value: {}" , MatchingCounter.getCulSharedCount());
+        logger.info("NYPL Final Counter Value: {}" , MatchingCounter.getNyplSharedCount());
+        getUpdatedItemsQ();
+        executor.shutdown();
+
     }
 }

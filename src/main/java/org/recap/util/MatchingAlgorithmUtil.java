@@ -437,27 +437,11 @@ public class MatchingAlgorithmUtil {
             for (int j = 0; j < titleArray.length; j++) {
                 String tempTitle = titleArray[j];
                 if (!("a".equalsIgnoreCase(tempTitle) || "an".equalsIgnoreCase(tempTitle) || "the".equalsIgnoreCase(tempTitle))) {
-                    if(count == 0) {
-                        titleToMatch = tempTitle;
-                    } else {
-                        StringBuilder  stringBuilder = new StringBuilder();
-                        stringBuilder.append(titleToMatch);
-                        stringBuilder.append(" ");
-                        stringBuilder.append(tempTitle);
-                        titleToMatch = stringBuilder.toString();
-                    }
+                    titleToMatch = getTitleToMatch(titleToMatch, count, tempTitle);
                     count = count + 1;
                 } else {
                     if(j != 0) {
-                        if(count == 0) {
-                            titleToMatch = tempTitle;
-                        } else {
-                            StringBuilder  stringBuilder = new StringBuilder();
-                            stringBuilder.append(titleToMatch);
-                            stringBuilder.append(" ");
-                            stringBuilder.append(tempTitle);
-                            titleToMatch = stringBuilder.toString();
-                        }
+                        titleToMatch = getTitleToMatch(titleToMatch, count, tempTitle);
                         count = count + 1;
                     }
                 }
@@ -467,6 +451,19 @@ public class MatchingAlgorithmUtil {
             }
         }
         return titleToMatch.replaceAll("\\s", "");
+    }
+
+    private String getTitleToMatch(String titleToMatch, int count, String tempTitle) {
+        if (count == 0) {
+            titleToMatch = tempTitle;
+        } else {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(titleToMatch);
+            stringBuilder.append(" ");
+            stringBuilder.append(tempTitle);
+            titleToMatch = stringBuilder.toString();
+        }
+        return titleToMatch;
     }
 
     /**
@@ -479,24 +476,16 @@ public class MatchingAlgorithmUtil {
      * @param owningInstBibIds   the owning inst bib ids
      */
     public void getReportDataEntityList(List<ReportDataEntity> reportDataEntities, Collection owningInstSet, Collection bibIds, Collection materialTypes, List<String> owningInstBibIds) {
-        if(CollectionUtils.isNotEmpty(bibIds)) {
-            ReportDataEntity bibIdReportDataEntity = getReportDataEntityForCollectionValues(bibIds, RecapCommonConstants.BIB_ID);
+        checkAndAddReportDataEntities(reportDataEntities, bibIds, RecapCommonConstants.BIB_ID);
+        checkAndAddReportDataEntities(reportDataEntities, owningInstSet, RecapCommonConstants.OWNING_INSTITUTION);
+        checkAndAddReportDataEntities(reportDataEntities, materialTypes, RecapConstants.MATERIAL_TYPE);
+        checkAndAddReportDataEntities(reportDataEntities, owningInstBibIds, RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
+    }
+
+    private void checkAndAddReportDataEntities(List<ReportDataEntity> reportDataEntities, Collection bibIds, String bibId) {
+        if (CollectionUtils.isNotEmpty(bibIds)) {
+            ReportDataEntity bibIdReportDataEntity = getReportDataEntityForCollectionValues(bibIds, bibId);
             reportDataEntities.add(bibIdReportDataEntity);
-        }
-
-        if(CollectionUtils.isNotEmpty(owningInstSet)) {
-            ReportDataEntity owningInstReportDataEntity = getReportDataEntityForCollectionValues(owningInstSet, RecapCommonConstants.OWNING_INSTITUTION);
-            reportDataEntities.add(owningInstReportDataEntity);
-        }
-
-        if(CollectionUtils.isNotEmpty(materialTypes)) {
-            ReportDataEntity materialTypeReportDataEntity = getReportDataEntityForCollectionValues(materialTypes, RecapConstants.MATERIAL_TYPE);
-            reportDataEntities.add(materialTypeReportDataEntity);
-        }
-
-        if(CollectionUtils.isNotEmpty(owningInstBibIds)) {
-            ReportDataEntity owningInstBibIdReportDataEntity = getReportDataEntityForCollectionValues(owningInstBibIds, RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
-            reportDataEntities.add(owningInstBibIdReportDataEntity);
         }
     }
 
@@ -708,11 +697,7 @@ public class MatchingAlgorithmUtil {
      */
     public ReportEntity processReportsForUnMatchingTitles(String fileName, Map<String, String> titleMap, List<Integer> bibIds, List<String> materialTypes, List<String> owningInstitutions,
                                                           List<String> owningInstBibIds, String matchPointValue, Set<String> unMatchingTitleHeaderSet) {
-        ReportEntity unMatchReportEntity = new ReportEntity();
-        unMatchReportEntity.setType("TitleException");
-        unMatchReportEntity.setCreatedDate(new Date());
-        unMatchReportEntity.setInstitutionName(RecapCommonConstants.ALL_INST);
-        unMatchReportEntity.setFileName(fileName);
+        ReportEntity unMatchReportEntity = buildReportEntity(fileName);
         List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
         List<String> bibIdList = new ArrayList<>();
         List<String> materialTypeList = new ArrayList<>();
@@ -727,6 +712,15 @@ public class MatchingAlgorithmUtil {
             getReportDataEntity(fileName, matchPointValue, reportDataEntityList);
         }
         unMatchReportEntity.addAll(reportDataEntityList);
+        return unMatchReportEntity;
+    }
+
+    public ReportEntity buildReportEntity(String fileName) {
+        ReportEntity unMatchReportEntity = new ReportEntity();
+        unMatchReportEntity.setType("TitleException");
+        unMatchReportEntity.setCreatedDate(new Date());
+        unMatchReportEntity.setInstitutionName(RecapCommonConstants.ALL_INST);
+        unMatchReportEntity.setFileName(fileName);
         return unMatchReportEntity;
     }
 

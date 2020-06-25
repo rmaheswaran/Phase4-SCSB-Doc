@@ -70,26 +70,7 @@ public class DBReportUtil {
      * @return the list
      */
     public List<ReportDataEntity> generateBibFailureReportEntity(BibliographicEntity bibliographicEntity, Record record) {
-        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
-        ReportDataEntity owningInstitutionReportDataEntity = new ReportDataEntity();
-
-        if (bibliographicEntity.getOwningInstitutionId() != null) {
-            for (Map.Entry<String, Integer> entry : institutionEntitiesMap.entrySet()) {
-                if (entry.getValue() == bibliographicEntity.getOwningInstitutionId()) {
-                    owningInstitutionReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
-                    owningInstitutionReportDataEntity.setHeaderValue(entry.getKey());
-                    reportDataEntities.add(owningInstitutionReportDataEntity);
-                    break;
-                }
-            }
-        }
-
-        if (StringUtils.isNotBlank(bibliographicEntity.getOwningInstitutionBibId())) {
-            ReportDataEntity owningInstitutionBibIdReportDataEntity = new ReportDataEntity();
-            owningInstitutionBibIdReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
-            owningInstitutionBibIdReportDataEntity.setHeaderValue(bibliographicEntity.getOwningInstitutionBibId());
-            reportDataEntities.add(owningInstitutionBibIdReportDataEntity);
-        }
+        List<ReportDataEntity> reportDataEntities = getReportDataEntities(bibliographicEntity);
 
         String title = new MarcUtil().getDataFieldValue(record, "245", 'a');
         if (StringUtils.isNotBlank(title)) {
@@ -104,37 +85,11 @@ public class DBReportUtil {
     public List<ReportDataEntity> generateBibHoldingsFailureReportEntity(BibliographicEntity bibliographicEntity, HoldingsEntity holdingsEntity) {
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         reportDataEntities.addAll(generateBibFailureReportEntity(bibliographicEntity));
-        if (holdingsEntity != null && StringUtils.isNotBlank(holdingsEntity.getOwningInstitutionHoldingsId())) {
-            ReportDataEntity owningInstitutionHoldingsIdReportDataEntity = new ReportDataEntity();
-            owningInstitutionHoldingsIdReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION_HOLDINGS_ID);
-            owningInstitutionHoldingsIdReportDataEntity.setHeaderValue(holdingsEntity.getOwningInstitutionHoldingsId());
-            reportDataEntities.add(owningInstitutionHoldingsIdReportDataEntity);
-        }
-        return reportDataEntities;
+        return getReportDataEntities(holdingsEntity, reportDataEntities);
     }
 
     public List<ReportDataEntity> generateBibFailureReportEntity(BibliographicEntity bibliographicEntity) {
-        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
-
-        ReportDataEntity owningInstitutionReportDataEntity = new ReportDataEntity();
-
-        if (bibliographicEntity.getOwningInstitutionId() != null) {
-            for (Map.Entry<String, Integer> entry : institutionEntitiesMap.entrySet()) {
-                if (entry.getValue() == bibliographicEntity.getOwningInstitutionId()) {
-                    owningInstitutionReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
-                    owningInstitutionReportDataEntity.setHeaderValue(entry.getKey());
-                    reportDataEntities.add(owningInstitutionReportDataEntity);
-                    break;
-                }
-            }
-        }
-
-        if(StringUtils.isNotBlank(bibliographicEntity.getOwningInstitutionBibId())) {
-            ReportDataEntity owningInstitutionBibIdReportDataEntity = new ReportDataEntity();
-            owningInstitutionBibIdReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
-            owningInstitutionBibIdReportDataEntity.setHeaderValue(bibliographicEntity.getOwningInstitutionBibId());
-            reportDataEntities.add(owningInstitutionBibIdReportDataEntity);
-        }
+        List<ReportDataEntity> reportDataEntities = getReportDataEntities(bibliographicEntity);
 
         String content = new String(bibliographicEntity.getContent());
         if (StringUtils.isNotBlank(content)) {
@@ -167,12 +122,16 @@ public class DBReportUtil {
     public List<ReportDataEntity> generateBibHoldingsFailureReportEntity(BibliographicEntity bibliographicEntity, HoldingsEntity holdingsEntity, String institutionName, Record bibRecord) {
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         reportDataEntities.addAll(generateBibFailureReportEntity(bibliographicEntity, bibRecord));
+        return getReportDataEntities(holdingsEntity, reportDataEntities);
+    }
+
+    private List<ReportDataEntity> getReportDataEntities(HoldingsEntity holdingsEntity, List<ReportDataEntity> reportDataEntities) {
         if (holdingsEntity != null && StringUtils.isNotBlank(holdingsEntity.getOwningInstitutionHoldingsId())) {
-                ReportDataEntity owningInstitutionHoldingsIdReportDataEntity = new ReportDataEntity();
-                owningInstitutionHoldingsIdReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION_HOLDINGS_ID);
-                owningInstitutionHoldingsIdReportDataEntity.setHeaderValue(holdingsEntity.getOwningInstitutionHoldingsId());
-                reportDataEntities.add(owningInstitutionHoldingsIdReportDataEntity);
-            }
+            ReportDataEntity owningInstitutionHoldingsIdReportDataEntity = new ReportDataEntity();
+            owningInstitutionHoldingsIdReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION_HOLDINGS_ID);
+            owningInstitutionHoldingsIdReportDataEntity.setHeaderValue(holdingsEntity.getOwningInstitutionHoldingsId());
+            reportDataEntities.add(owningInstitutionHoldingsIdReportDataEntity);
+        }
         return reportDataEntities;
     }
 
@@ -189,7 +148,18 @@ public class DBReportUtil {
     public List<ReportDataEntity> generateBibHoldingsAndItemsFailureReportEntities(BibliographicEntity bibliographicEntity, HoldingsEntity holdingsEntity, ItemEntity itemEntity, String institutionName, Record bibRecord) {
         List<ReportDataEntity> reportEntities = new ArrayList<>();
         reportEntities.addAll(generateBibHoldingsFailureReportEntity(bibliographicEntity, holdingsEntity, institutionName, bibRecord));
+        reportEntities = setReportEntities(reportEntities, itemEntity);
+        return reportEntities;
+    }
 
+    public List<ReportDataEntity> generateBibHoldingsAndItemsFailureReportEntities(BibliographicEntity bibliographicEntity, HoldingsEntity holdingsEntity, ItemEntity itemEntity) {
+        List<ReportDataEntity> reportEntities = new ArrayList<>();
+        reportEntities.addAll(generateBibHoldingsFailureReportEntity(bibliographicEntity, holdingsEntity));
+        reportEntities = setReportEntities(reportEntities, itemEntity);
+        return reportEntities;
+    }
+
+    private List<ReportDataEntity> setReportEntities(List<ReportDataEntity> reportEntities, ItemEntity itemEntity) {
         if (itemEntity != null) {
             if (StringUtils.isNotBlank(itemEntity.getOwningInstitutionItemId())) {
                 ReportDataEntity localItemIdReportDataEntity = new ReportDataEntity();
@@ -242,59 +212,27 @@ public class DBReportUtil {
         return reportEntities;
     }
 
-    public List<ReportDataEntity> generateBibHoldingsAndItemsFailureReportEntities(BibliographicEntity bibliographicEntity, HoldingsEntity holdingsEntity, ItemEntity itemEntity) {
-        List<ReportDataEntity> reportEntities = new ArrayList<>();
-        reportEntities.addAll(generateBibHoldingsFailureReportEntity(bibliographicEntity, holdingsEntity));
+    private List<ReportDataEntity>  getReportDataEntities(BibliographicEntity bibliographicEntity) {
+        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        ReportDataEntity owningInstitutionReportDataEntity = new ReportDataEntity();
 
-        if (itemEntity != null) {
-            if(StringUtils.isNotBlank(itemEntity.getOwningInstitutionItemId())) {
-                ReportDataEntity localItemIdReportDataEntity = new ReportDataEntity();
-                localItemIdReportDataEntity.setHeaderName(RecapCommonConstants.LOCAL_ITEM_ID);
-                localItemIdReportDataEntity.setHeaderValue(itemEntity.getOwningInstitutionItemId());
-                reportEntities.add(localItemIdReportDataEntity);
-            }
-
-            if(StringUtils.isNotBlank(itemEntity.getBarcode())) {
-                ReportDataEntity itemBarcodeReportDataEntity = new ReportDataEntity();
-                itemBarcodeReportDataEntity.setHeaderName(RecapCommonConstants.ITEM_BARCODE);
-                itemBarcodeReportDataEntity.setHeaderValue(itemEntity.getBarcode());
-                reportEntities.add(itemBarcodeReportDataEntity);
-            }
-
-            if(StringUtils.isNotBlank(itemEntity.getCustomerCode())) {
-                ReportDataEntity customerCodeReportDataEntity = new ReportDataEntity();
-                customerCodeReportDataEntity.setHeaderName(RecapCommonConstants.CUSTOMER_CODE);
-                customerCodeReportDataEntity.setHeaderValue(itemEntity.getCustomerCode());
-                reportEntities.add(customerCodeReportDataEntity);
-            }
-
-            if (itemEntity.getCollectionGroupId() != null) {
-                for (Map.Entry<String, Integer> entry : collectionGroupMap.entrySet()) {
-                    if (entry.getValue() == itemEntity.getCollectionGroupId()) {
-                        ReportDataEntity collectionGroupDesignationEntity = new ReportDataEntity();
-                        collectionGroupDesignationEntity.setHeaderName(RecapCommonConstants.COLLECTION_GROUP_DESIGNATION);
-                        collectionGroupDesignationEntity.setHeaderValue(entry.getKey());
-                        reportEntities.add(collectionGroupDesignationEntity);
-                        break;
-                    }
+        if (bibliographicEntity.getOwningInstitutionId() != null) {
+            for (Map.Entry<String, Integer> entry : institutionEntitiesMap.entrySet()) {
+                if (entry.getValue() == bibliographicEntity.getOwningInstitutionId()) {
+                    owningInstitutionReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
+                    owningInstitutionReportDataEntity.setHeaderValue(entry.getKey());
+                    reportDataEntities.add(owningInstitutionReportDataEntity);
+                    break;
                 }
             }
-
-            if(itemEntity.getCreatedDate() != null) {
-                ReportDataEntity createDateItemEntity = new ReportDataEntity();
-                createDateItemEntity.setHeaderName(RecapCommonConstants.CREATE_DATE_ITEM);
-                createDateItemEntity.setHeaderValue(new SimpleDateFormat("mm-dd-yyyy").format(itemEntity.getCreatedDate()));
-                reportEntities.add(createDateItemEntity);
-            }
-
-            if(itemEntity.getLastUpdatedDate() != null) {
-                ReportDataEntity lastUpdateItemEntity = new ReportDataEntity();
-                lastUpdateItemEntity.setHeaderName(RecapCommonConstants.LAST_UPDATED_DATE_ITEM);
-                lastUpdateItemEntity.setHeaderValue(new SimpleDateFormat("mm-dd-yyyy").format(itemEntity.getLastUpdatedDate()));
-                reportEntities.add(lastUpdateItemEntity);
-            }
-
         }
-        return reportEntities;
+
+        if (StringUtils.isNotBlank(bibliographicEntity.getOwningInstitutionBibId())) {
+            ReportDataEntity owningInstitutionBibIdReportDataEntity = new ReportDataEntity();
+            owningInstitutionBibIdReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
+            owningInstitutionBibIdReportDataEntity.setHeaderValue(bibliographicEntity.getOwningInstitutionBibId());
+            reportDataEntities.add(owningInstitutionBibIdReportDataEntity);
+        }
+        return reportDataEntities;
     }
 }

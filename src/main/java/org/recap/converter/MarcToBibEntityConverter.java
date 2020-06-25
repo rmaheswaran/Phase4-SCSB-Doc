@@ -8,19 +8,14 @@ import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemStatusEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.marc.BibMarcRecord;
 import org.recap.model.marc.HoldingsMarcRecord;
 import org.recap.model.marc.ItemMarcRecord;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.CollectionGroupDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemStatusDetailsRepository;
+import org.recap.util.CommonUtil;
 import org.recap.util.DBReportUtil;
 import org.recap.util.MarcUtil;
 import org.slf4j.Logger;
@@ -30,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -51,20 +45,10 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
     private DBReportUtil dbReportUtil;
 
     @Autowired
-    private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
-
-    @Autowired
-    private InstitutionDetailsRepository institutionDetailsRepository;
-
-    @Autowired
-    private ItemStatusDetailsRepository itemStatusDetailsRepository;
+    private CommonUtil commonUtil;
 
     @Autowired
     private BibliographicDetailsRepository bibliographicDetailsRepository;
-
-    private Map itemStatusMap;
-    private Map collectionGroupMap;
-    private Map institutionEntityMap;
 
     /**
      * This method uses the marc record and builds the bibliographic entity. For exceptions, adds them to report entities. Also adds failed record counts.
@@ -87,12 +71,12 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
         List<ItemEntity> itemEntities = new ArrayList<>();
         StringBuilder errorMessage = new StringBuilder();
 
-        getDbReportUtil().setInstitutionEntitiesMap(getInstitutionEntityMap());
-        getDbReportUtil().setCollectionGroupMap(getCollectionGroupMap());
+        getDbReportUtil().setInstitutionEntitiesMap(commonUtil.getInstitutionEntityMap());
+        getDbReportUtil().setCollectionGroupMap(commonUtil.getCollectionGroupMap());
 
         BibMarcRecord bibMarcRecord = marcUtil.buildBibMarcRecord(record);
         Record bibRecord = bibMarcRecord.getBibRecord();
-        Integer owningInstitutionId = (Integer) getInstitutionEntityMap().get(institutionName);
+        Integer owningInstitutionId = (Integer) commonUtil.getInstitutionEntityMap().get(institutionName);
         Date currentDate = new Date();
         Map<String, Object> bibMap = processAndValidateBibliographicEntity(bibRecord, owningInstitutionId, currentDate,errorMessage);
         BibliographicEntity bibliographicEntity = (BibliographicEntity) bibMap.get(RecapCommonConstants.BIBLIOGRAPHICENTITY);
@@ -274,30 +258,10 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
      */
     private Map<String, Object> processAndValidateHoldingsEntity(BibliographicEntity bibliographicEntity,  Record holdingsRecord, Date currentDate,StringBuilder errorMessage) {
         Map<String, Object> map = new HashMap<>();
-        HoldingsEntity holdingsEntity = new HoldingsEntity();
-
         String holdingsContent = new MarcUtil().writeMarcXml(holdingsRecord);
-        if (StringUtils.isNotBlank(holdingsContent)) {
-            holdingsEntity.setContent(holdingsContent.getBytes());
-        } else {
-            errorMessage.append("Holdings Content cannot be empty").append(",");
-        }
-        holdingsEntity.setDeleted(false);
-        holdingsEntity.setCreatedDate(currentDate);
-        holdingsEntity.setCreatedBy(RecapCommonConstants.ACCESSION);
-        holdingsEntity.setLastUpdatedDate(currentDate);
-        holdingsEntity.setLastUpdatedBy(RecapCommonConstants.ACCESSION);
-        Integer owningInstitutionId = bibliographicEntity.getOwningInstitutionId();
-        holdingsEntity.setOwningInstitutionId(owningInstitutionId);
+        HoldingsEntity holdingsEntity = commonUtil.buildHoldingsEntity(bibliographicEntity, currentDate, errorMessage, holdingsContent);
         String owningInstitutionHoldingsId = marcUtil.getDataFieldValue(holdingsRecord, "852", '0');
-        if (StringUtils.isBlank(owningInstitutionHoldingsId)) {
-            owningInstitutionHoldingsId = UUID.randomUUID().toString();
-        } else if (owningInstitutionHoldingsId.length() > 100) {
-            owningInstitutionHoldingsId = UUID.randomUUID().toString();
-        }
-        holdingsEntity.setOwningInstitutionHoldingsId(owningInstitutionHoldingsId);
-        map.put("holdingsEntity", holdingsEntity);
-        return map;
+        return commonUtil.addHoldingsEntityToMap(map, holdingsEntity, owningInstitutionHoldingsId);
     }
 
     /**
@@ -346,11 +310,11 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
             errorMessage.append("Owning Institution Id cannot be null").append(",");
         }
         String collectionGroupCode = marcUtil.getDataFieldValue(itemRecord, "876", 'x');
-        if (StringUtils.isNotBlank(collectionGroupCode) && getCollectionGroupMap().containsKey(collectionGroupCode)) {
-            itemEntity.setCollectionGroupId((Integer) getCollectionGroupMap().get(collectionGroupCode));
+        if (StringUtils.isNotBlank(collectionGroupCode) && commonUtil.getCollectionGroupMap().containsKey(collectionGroupCode)) {
+            itemEntity.setCollectionGroupId((Integer) commonUtil.getCollectionGroupMap().get(collectionGroupCode));
         } else {
             isComplete = false;
-            itemEntity.setCollectionGroupId((Integer) getCollectionGroupMap().get(RecapCommonConstants.NOT_AVAILABLE_CGD));
+            itemEntity.setCollectionGroupId((Integer) commonUtil.getCollectionGroupMap().get(RecapCommonConstants.NOT_AVAILABLE_CGD));
         }
         itemEntity.setDeleted(false);
         itemEntity.setCreatedDate(currentDate);
@@ -375,10 +339,10 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
 
         if(isComplete){
             bibliographicEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
-            itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get("Available"));
+            itemEntity.setItemAvailabilityStatusId((Integer) commonUtil.getItemStatusMap().get("Available"));
             itemEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
         } else {
-            itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get("Not Available"));
+            itemEntity.setItemAvailabilityStatusId((Integer) commonUtil.getItemStatusMap().get("Not Available"));
             bibliographicEntity.setCatalogingStatus(RecapCommonConstants.INCOMPLETE_STATUS);
             itemEntity.setCatalogingStatus(RecapCommonConstants.INCOMPLETE_STATUS);
         }
@@ -400,69 +364,6 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
         }
         map.put("itemEntity", itemEntity);
         return map;
-    }
-
-    /**
-     * Gets all itemstatus and put it in a map.
-     *
-     * @return the item status map
-     */
-    public Map getItemStatusMap() {
-        if (null == itemStatusMap) {
-            itemStatusMap = new HashMap();
-            try {
-                Iterable<ItemStatusEntity> itemStatusEntities = itemStatusDetailsRepository.findAll();
-                for (Iterator iterator = itemStatusEntities.iterator(); iterator.hasNext(); ) {
-                    ItemStatusEntity itemStatusEntity = (ItemStatusEntity) iterator.next();
-                    itemStatusMap.put(itemStatusEntity.getStatusCode(), itemStatusEntity.getId());
-                }
-            } catch (Exception e) {
-                logger.error(RecapCommonConstants.LOG_ERROR,e);
-            }
-        }
-        return itemStatusMap;
-    }
-
-    /**
-     * Gets all collection group and put it in a map.
-     *
-     * @return the collection group map
-     */
-    public Map getCollectionGroupMap() {
-        if (null == collectionGroupMap) {
-            collectionGroupMap = new HashMap();
-            try {
-                Iterable<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
-                for (Iterator iterator = collectionGroupEntities.iterator(); iterator.hasNext(); ) {
-                    CollectionGroupEntity collectionGroupEntity = (CollectionGroupEntity) iterator.next();
-                    collectionGroupMap.put(collectionGroupEntity.getCollectionGroupCode(), collectionGroupEntity.getId());
-                }
-            } catch (Exception e) {
-                logger.error(RecapCommonConstants.LOG_ERROR,e);
-            }
-        }
-        return collectionGroupMap;
-    }
-
-    /**
-     * Gets all institution entity and puts them in a map.
-     *
-     * @return the institution entity map
-     */
-    public Map getInstitutionEntityMap() {
-        if (null == institutionEntityMap) {
-            institutionEntityMap = new HashMap();
-            try {
-                Iterable<InstitutionEntity> institutionEntities = institutionDetailsRepository.findAll();
-                for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
-                    InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
-                    institutionEntityMap.put(institutionEntity.getInstitutionCode(), institutionEntity.getId());
-                }
-            } catch (Exception e) {
-                logger.error(RecapCommonConstants.LOG_ERROR,e);
-            }
-        }
-        return institutionEntityMap;
     }
 
     /**
