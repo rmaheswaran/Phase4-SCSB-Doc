@@ -52,6 +52,94 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         Thread.sleep(1000);
         assertNotNull(reponse);
     }
+    @Test
+    public void testOngoingAccessionSummaryReportForFileSystem() throws Exception{
+        List<ReportEntity> reportEntityList = saveSummaryReportEntity();
+        Date createdDate = reportEntityList.get(0).getCreatedDate();
+        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+        solrIndexRequest.setCreatedDate(createdDate);
+        solrIndexRequest.setReportType(RecapConstants.ONGOING_ACCESSION_REPORT);
+        solrIndexRequest.setOwningInstitutionCode("PUL");
+        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
+        Thread.sleep(1000);
+        assertNotNull(reponse);
+    }
+    @Test
+    public void testDeaccessionSummaryReportForFileSystem() throws Exception{
+        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+        solrIndexRequest.setReportType(RecapCommonConstants.DEACCESSION_SUMMARY_REPORT);
+        solrIndexRequest.setOwningInstitutionCode("PUL");
+        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
+        Thread.sleep(1000);
+        assertNotNull(reponse);
+    }
+    @Test
+    public void testSubmitRejectedSummaryReportForFileSystem() throws Exception{
+        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+        solrIndexRequest.setReportType(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT);
+        solrIndexRequest.setOwningInstitutionCode("PUL");
+        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
+        Thread.sleep(1000);
+        assertNotNull(reponse);
+    }
+    @Test
+    public void testSolrFailureSummaryReportForFileSystem() throws Exception{
+        Date toDate = new Date();
+        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+        solrIndexRequest.setToDate(toDate);
+        solrIndexRequest.setReportType("Failure");
+        solrIndexRequest.setOwningInstitutionCode("PUL");
+        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
+        Thread.sleep(1000);
+        assertNotNull(reponse);
+    }
+
+    @Test
+    public void testSubmitExceptionSummaryReportForFileSystem() throws Exception{
+        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+        solrIndexRequest.setReportType(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT);
+        solrIndexRequest.setOwningInstitutionCode("PUL");
+        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
+        Thread.sleep(1000);
+        assertNotNull(reponse);
+    }
+
+    @Test
+    public void testSubmitSuccessSummaryReportForFileSystem() throws Exception{
+        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+        solrIndexRequest.setReportType(RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT);
+        solrIndexRequest.setOwningInstitutionCode("PUL");
+        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
+        Thread.sleep(1000);
+        assertNotNull(reponse);
+    }
+    @Test
+    public void testSubmitFailureSummaryReportForFileSystem() throws Exception{
+        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+        solrIndexRequest.setReportType(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT);
+        solrIndexRequest.setOwningInstitutionCode("PUL");
+        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
+        Thread.sleep(1000);
+        assertNotNull(reponse);
+    }
+
+    @Test
+    public void testSubmitSummaryReportForFileSystem() throws Exception{
+        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+        solrIndexRequest.setReportType(RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT);
+        solrIndexRequest.setOwningInstitutionCode("PUL");
+        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
+        Thread.sleep(1000);
+        assertNotNull(reponse);
+    }
 
     private List<ReportEntity> saveSummaryReportEntity(){
         List<ReportEntity> reportEntityList = new ArrayList<>();

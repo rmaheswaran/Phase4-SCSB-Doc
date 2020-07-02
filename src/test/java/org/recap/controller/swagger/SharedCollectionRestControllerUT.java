@@ -102,7 +102,7 @@ public class SharedCollectionRestControllerUT extends BaseControllerUT {
         barcodeList.add(barcode);
         itemAvailabityStatusRequest.setBarcodes(barcodeList);
         Mockito.when(mockedSharedCollectionRestController.getItemAvailabilityService()).thenReturn(itemAvailabilityService);
-        Mockito.when(mockedSharedCollectionRestController.getItemAvailabilityService().getItemStatusByBarcodeAndIsDeletedFalse(itemBarcode)).thenReturn(RecapCommonConstants.AVAILABLE);
+        Mockito.when(mockedSharedCollectionRestController.getItemAvailabilityService().getItemStatusByBarcodeAndIsDeletedFalse(itemBarcode)).thenCallRealMethod();
         Mockito.when(mockedSharedCollectionRestController.itemAvailabilityStatus(itemAvailabityStatusRequest)).thenCallRealMethod();
         ResponseEntity responseEntity = mockedSharedCollectionRestController.itemAvailabilityStatus(itemAvailabityStatusRequest);
         assertNotNull(responseEntity);
@@ -140,6 +140,46 @@ public class SharedCollectionRestControllerUT extends BaseControllerUT {
         Mockito.when(mockedSharedCollectionRestController.getAccessionService()).thenReturn(accessionService);
         Mockito.when(mockedSharedCollectionRestController.getBulkAccessionService()).thenReturn(bulkAccessionService);
         Mockito.when(mockedSharedCollectionRestController.getInputLimit()).thenReturn(10);
+        Mockito.when(accessionService.getProducerTemplate()).thenReturn(producerTemplate);
+        Mockito.when(mockedSharedCollectionRestController.getAccessionService().processRequest(accessionRequestList)).thenReturn(accessionResponseList);
+        Mockito.doCallRealMethod().when(bulkAccessionService).createSummaryReport(Mockito.any(),Mockito.any());
+        Mockito.when(mockedSharedCollectionRestController.accession(accessionRequestList, exchange)).thenCallRealMethod();
+        ResponseEntity responseEntity = mockedSharedCollectionRestController.accession(accessionRequestList, exchange);
+        assertNotNull(responseEntity);
+    }
+
+    @Test
+    public void accession_Excess_limit() throws Exception {
+       int inputLimit =2;
+        List<AccessionRequest> accessionRequestList = new ArrayList<>();
+        AccessionRequest accessionRequest = new AccessionRequest();
+        accessionRequest.setCustomerCode("PB");
+        accessionRequest.setItemBarcode("32101062128309");
+        AccessionRequest accessionRequest1 = new AccessionRequest();
+        accessionRequest1.setCustomerCode("PB");
+        accessionRequest1.setItemBarcode("32101062128310");
+        AccessionRequest accessionRequest2 = new AccessionRequest();
+        accessionRequest2.setCustomerCode("PB");
+        accessionRequest2.setItemBarcode("32101062128311");
+        accessionRequestList.add(accessionRequest);
+        accessionRequestList.add(accessionRequest1);
+        accessionRequestList.add(accessionRequest2);
+        List<AccessionResponse> accessionResponseList = new ArrayList<>();
+        AccessionResponse accessionResponse = new AccessionResponse();
+        accessionResponse.setItemBarcode("32101062128309");
+        accessionResponse.setMessage(RecapConstants.ONGOING_ACCESSION_LIMIT_EXCEED_MESSAGE + inputLimit);
+        AccessionResponse accessionResponse1 = new AccessionResponse();
+        accessionResponse1.setItemBarcode("32101062128310");
+        accessionResponse1.setMessage(RecapConstants.ONGOING_ACCESSION_LIMIT_EXCEED_MESSAGE + inputLimit);
+        AccessionResponse accessionResponse2 = new AccessionResponse();
+        accessionResponse2.setItemBarcode("32101062128311");
+        accessionResponse2.setMessage(RecapConstants.ONGOING_ACCESSION_LIMIT_EXCEED_MESSAGE + inputLimit);
+        accessionResponseList.add(accessionResponse);
+        accessionResponseList.add(accessionResponse1);
+        accessionResponseList.add(accessionResponse2);
+        Mockito.when(mockedSharedCollectionRestController.getAccessionService()).thenReturn(accessionService);
+        Mockito.when(mockedSharedCollectionRestController.getBulkAccessionService()).thenReturn(bulkAccessionService);
+        Mockito.when(mockedSharedCollectionRestController.getInputLimit()).thenReturn(inputLimit);
         Mockito.when(accessionService.getProducerTemplate()).thenReturn(producerTemplate);
         Mockito.when(mockedSharedCollectionRestController.getAccessionService().processRequest(accessionRequestList)).thenReturn(accessionResponseList);
         Mockito.doCallRealMethod().when(bulkAccessionService).createSummaryReport(Mockito.any(),Mockito.any());

@@ -18,7 +18,6 @@ import org.recap.util.BibJSONUtil;
 import org.recap.util.MarcUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.repository.SolrCrudRepository;
 
@@ -101,7 +100,7 @@ public class SolrUnicodeAT extends BaseTestCase {
         SolrInputDocument solrInputDocument = new BibJSONUtil().generateBibAndItemsForIndex(fetchedBibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository);
         assertNotNull(solrInputDocument);
 
-        //bibSolrCrudRepository = new BibCrudRepositoryMultiCoreSupport("recap", solrUrl);
+       // bibSolrCrudRepository = new BibCrudRepositoryMultiCoreSupport("recap", solrUrl);
         solrTemplate.saveDocument(solrCore, solrInputDocument);
         Bib solrBib = bibSolrCrudRepository.findByBibId(fetchedBibliographicEntity.getBibliographicId());
         assertNotNull(solrBib);

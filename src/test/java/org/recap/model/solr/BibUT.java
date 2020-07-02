@@ -70,6 +70,8 @@ public class BibUT extends BaseTestCase{
         bib.setBibCatalogingStatus("Incomplete");
         bib.setOwningInstHoldingsIdList(Arrays.asList(1));
         bib.hashCode();
+        bib.equals(bib);
+        bib.equals(false);
         assertNotNull(bib.getId());
         assertNotNull(bib.getBibId());
         assertNotNull(bib.getDocType());
