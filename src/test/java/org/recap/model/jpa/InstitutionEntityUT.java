@@ -1,11 +1,10 @@
 package org.recap.model.jpa;
 
-import org.hibernate.validator.constraints.SafeHtml;
 import org.junit.Test;
 import org.recap.BaseTestCase;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 22/6/16.

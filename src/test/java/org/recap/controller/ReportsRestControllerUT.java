@@ -77,6 +77,7 @@ public class ReportsRestControllerUT extends BaseControllerUT {
         reportsRequest.setAccessionDeaccessionFromDate("09/27/2016");
         reportsRequest.setAccessionDeaccessionToDate("01/27/2017");
         reportsRequest.setDeaccessionOwningInstitution("PUL");
+        reportsRequest.setExport(true);
         ObjectMapper objectMapper = new ObjectMapper();
         MvcResult mvcResult = this.mockMvc.perform(post("/reportsService/incompleteRecords")
                 .headers(getHttpHeaders())
@@ -88,6 +89,23 @@ public class ReportsRestControllerUT extends BaseControllerUT {
         String result = mvcResult.getResponse().getContentAsString();
         assertNotNull(result);
     }
+    /*@Test
+    public void testIncompleteRecords_Exception() throws Exception {
+        ReportsRequest reportsRequest = new ReportsRequest();
+        reportsRequest.setAccessionDeaccessionFromDate("09/27/2016");
+        reportsRequest.setAccessionDeaccessionToDate("01/27/2017");
+        reportsRequest.setDeaccessionOwningInstitution("PUL");
+        ObjectMapper objectMapper = new ObjectMapper();
+        MvcResult mvcResult = this.mockMvc.perform(post("/reportsService/incompleteRecords")
+                .headers(getHttpHeaders())
+                .contentType(contentType)
+                .content(objectMapper.writeValueAsString(reportsRequest)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String result = mvcResult.getResponse().getContentAsString();
+        assertNotNull(result);
+    }*/
 
     @Test
     public void testGenerateCsvReports() throws Exception {

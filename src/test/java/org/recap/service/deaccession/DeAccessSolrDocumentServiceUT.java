@@ -114,6 +114,24 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
     }
 
     @Test
+    public void testUpdateIsDeletedBibByBibId_Exception() throws Exception {
+        Integer bibId = 13;
+        Random random = new Random();
+        String itemBarcode = String.valueOf(random.nextInt());
+        BibliographicEntity bibEntity = getBibEntityWithHoldingsAndItem(itemBarcode);
+        Mockito.when(deAccessSolrDocumentService.getBibJSONUtil()).thenReturn(bibJSONUtil);
+        Mockito.when(deAccessSolrDocumentService.getBibliographicDetailsRepository()).thenReturn(mockBibliographicDetailsRepository);
+        Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository()).thenReturn(mockHoldingsDetailsRepository);
+        Mockito.when(deAccessSolrDocumentService.getSolrTemplate()).thenReturn(solrTemplate);
+        Mockito.when(deAccessSolrDocumentService.getBibliographicDetailsRepository().findByBibliographicId(bibId)).thenThrow(new NullPointerException());
+        Mockito.when(deAccessSolrDocumentService.getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository())).thenReturn(new SolrInputDocument());
+        Mockito.when(deAccessSolrDocumentService.updateIsDeletedBibByBibId(Arrays.asList(bibId))).thenCallRealMethod();
+        String response = deAccessSolrDocumentService.updateIsDeletedBibByBibId(Arrays.asList(bibId));
+        assertNotNull(response);
+        assertEquals(response,"Bib documents failed to update.");
+    }
+
+    @Test
     public void testUpdateIsDeletedHoldingsByHoldingsId() throws Exception {
         Integer holdingsId = 13;
         Random random = new Random();
@@ -129,6 +147,24 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         String response = deAccessSolrDocumentService.updateIsDeletedHoldingsByHoldingsId(Arrays.asList(holdingsId));
         assertNotNull(response);
         assertEquals(response, "Holdings documents updated successfully.");
+    }
+
+    @Test
+    public void testUpdateIsDeletedHoldingsByHoldingsId_Exception() throws Exception {
+        Integer holdingsId = 13;
+        Random random = new Random();
+        String itemBarcode = String.valueOf(random.nextInt());
+        BibliographicEntity bibEntity = getBibEntityWithHoldingsAndItem(itemBarcode);
+        Mockito.when(deAccessSolrDocumentService.getBibJSONUtil()).thenReturn(bibJSONUtil);
+        Mockito.when(deAccessSolrDocumentService.getBibliographicDetailsRepository()).thenReturn(mockBibliographicDetailsRepository);
+        Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository()).thenReturn(mockHoldingsDetailsRepository);
+        Mockito.when(deAccessSolrDocumentService.getSolrTemplate()).thenReturn(solrTemplate);
+        Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository().findByHoldingsId(holdingsId)).thenThrow(new NullPointerException());
+        Mockito.when(deAccessSolrDocumentService.getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository())).thenReturn(new SolrInputDocument());
+        Mockito.when(deAccessSolrDocumentService.updateIsDeletedHoldingsByHoldingsId(Arrays.asList(holdingsId))).thenCallRealMethod();
+        String response = deAccessSolrDocumentService.updateIsDeletedHoldingsByHoldingsId(Arrays.asList(holdingsId));
+        assertNotNull(response);
+        assertEquals(response, "Holdings documents failed to update.");
     }
 
     @Test
@@ -148,6 +184,26 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         String response = deAccessSolrDocumentService.updateIsDeletedItemByItemIds(Arrays.asList(itemId));
         assertNotNull(response);
         assertNotNull(response,"Item documents updated successfully.");
+
+    }
+
+    @Test
+    public void testUpdateIsDeletedItemByItemIds_Exception() throws Exception {
+        Integer itemId = 825172;
+        Random random = new Random();
+        String itemBarcode = String.valueOf(random.nextInt());
+        BibliographicEntity bibliographicEntity = getBibEntityWithHoldingsAndItem(itemBarcode);
+        Mockito.when(deAccessSolrDocumentService.getBibJSONUtil()).thenReturn(bibJSONUtil);
+        Mockito.when(deAccessSolrDocumentService.getBibliographicDetailsRepository()).thenReturn(mockBibliographicDetailsRepository);
+        Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository()).thenReturn(mockHoldingsDetailsRepository);
+        Mockito.when(deAccessSolrDocumentService.getItemDetailsRepository()).thenReturn(mockItemDetailsRepository);
+        Mockito.when(deAccessSolrDocumentService.getSolrTemplate()).thenReturn(solrTemplate);
+        Mockito.when(deAccessSolrDocumentService.getItemDetailsRepository().findByItemId(itemId)).thenThrow(new NullPointerException());
+        Mockito.when(deAccessSolrDocumentService.getBibJSONUtil().generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository())).thenReturn(new SolrInputDocument());
+        Mockito.when(deAccessSolrDocumentService.updateIsDeletedItemByItemIds(Arrays.asList(itemId))).thenCallRealMethod();
+        String response = deAccessSolrDocumentService.updateIsDeletedItemByItemIds(Arrays.asList(itemId));
+        assertNotNull(response);
+        assertNotNull(response,"Item documents failed to update.");
 
     }
 

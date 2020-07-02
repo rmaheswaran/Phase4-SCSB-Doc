@@ -186,36 +186,39 @@ public class TransferService {
         String owningInstitutionBibId = destination.getOwningInstitutionBibId();
         String owningInstitutionHoldingsId;
         Optional<InstitutionEntity> fetchedInstitutionEntity = institutionDetailsRepository.findById(owningInstitutionId);
+        if(fetchedInstitutionEntity.isPresent()) {
         String[] nonHoldingIdInstitutionArray = nonHoldingIdInstitutionForTransferApi.split(",");
-        boolean isNonHoldingIdInstitution = Arrays.asList(nonHoldingIdInstitutionArray).contains(fetchedInstitutionEntity.get().getInstitutionCode());
-        if(StringUtils.isNotBlank(owningInstitutionBibId)) {
-            BibliographicEntity fetchedBibliographicEntity = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
-            if(fetchedBibliographicEntity==null && StringUtils.isBlank(destination.getOwningInstitutionHoldingsId()) && isNonHoldingIdInstitution){
-                owningInstitutionHoldingsId= UUID.randomUUID().toString();
-            }
-            else {
-                owningInstitutionHoldingsId = destination.getOwningInstitutionHoldingsId();
-            }
-            if(StringUtils.isNotBlank(owningInstitutionHoldingsId)) {
-                String owningInstitutionItemId = destination.getOwningInstitutionItemId();
-                if(StringUtils.isNotBlank(owningInstitutionItemId)) {
-                    BibliographicEntity destinationBibEntity =
-                            getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
-                    if(null != destinationBibEntity) {
-                        transferValidationResponse.setDestBib(destinationBibEntity);
-                        validateHoldingsEntity(owningInstitutionId, transferValidationResponse, owningInstitutionHoldingsId, destinationBibEntity, true);
+            boolean isNonHoldingIdInstitution = Arrays.asList(nonHoldingIdInstitutionArray).contains(fetchedInstitutionEntity.get().getInstitutionCode());
+
+            if (StringUtils.isNotBlank(owningInstitutionBibId)) {
+                BibliographicEntity fetchedBibliographicEntity = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
+                if (fetchedBibliographicEntity == null && StringUtils.isBlank(destination.getOwningInstitutionHoldingsId()) && isNonHoldingIdInstitution) {
+                    owningInstitutionHoldingsId = UUID.randomUUID().toString();
+                } else {
+                    owningInstitutionHoldingsId = destination.getOwningInstitutionHoldingsId();
+                }
+
+                if (StringUtils.isNotBlank(owningInstitutionHoldingsId)) {
+                    String owningInstitutionItemId = destination.getOwningInstitutionItemId();
+                    if (StringUtils.isNotBlank(owningInstitutionItemId)) {
+                        BibliographicEntity destinationBibEntity =
+                                getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
+                        if (null != destinationBibEntity) {
+                            transferValidationResponse.setDestBib(destinationBibEntity);
+                            validateHoldingsEntity(owningInstitutionId, transferValidationResponse, owningInstitutionHoldingsId, destinationBibEntity, true);
+                        } else {
+                            transferValidationResponse.setDestinationBibId(owningInstitutionBibId);
+                            validateHoldingsEntity(owningInstitutionId, transferValidationResponse, owningInstitutionHoldingsId, destinationBibEntity, false);
+                        }
                     } else {
-                        transferValidationResponse.setDestinationBibId(owningInstitutionBibId);
-                        validateHoldingsEntity(owningInstitutionId, transferValidationResponse, owningInstitutionHoldingsId, destinationBibEntity, false);
+                        transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_OWN_INST_ITEM_ID_EMPTY);
                     }
                 } else {
-                    transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_OWN_INST_ITEM_ID_EMPTY);
+                    transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_OWN_INST_HOLDINGS_ID_EMPTY);
                 }
-            } else {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_OWN_INST_HOLDINGS_ID_EMPTY);
-            }
 
-        } else {
+            }
+        }else {
             transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_OWN_INST_BIB_ID_EMPTY);
         }
     }

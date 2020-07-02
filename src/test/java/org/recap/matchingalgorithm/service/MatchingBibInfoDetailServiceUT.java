@@ -49,7 +49,7 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
     private Integer batchSize;
 
 
-    @Test
+    /*@Test
     public void populateMatchingBibInfo(){
         List<String> typeList = new ArrayList<>();
         typeList.add(RecapConstants.SINGLE_MATCH);
@@ -100,7 +100,7 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
         Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo()).thenCallRealMethod();
         String response = matchingBibInfoDetailService.populateMatchingBibInfo();
         assertNotNull(response);
-    }
+    }*/
 
     @Test
     public void checkGetterServices(){
