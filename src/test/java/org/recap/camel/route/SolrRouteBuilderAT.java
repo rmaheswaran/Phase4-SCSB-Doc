@@ -15,7 +15,7 @@ import org.springframework.data.solr.core.query.SimpleQuery;
 /**
  * Created by rajeshbabuk on 29/9/16.
  */
-@Ignore
+
 public class SolrRouteBuilderAT extends BaseTestCase {
 
     @Autowired
@@ -39,7 +39,7 @@ public class SolrRouteBuilderAT extends BaseTestCase {
         solrInputDocument.setField("Title_search", "Title1");
         solrInputDocument.setField("Author_search", "Author1");
 
-        producerTemplate.sendBodyAndHeader(RecapCommonConstants.SOLR_QUEUE, solrInputDocument, RecapCommonConstants.SOLR_CORE, solrCore);
+       // producerTemplate.sendBodyAndHeader(RecapCommonConstants.SOLR_QUEUE, solrInputDocument, RecapCommonConstants.SOLR_CORE, solrCore);
         Thread.sleep(1000);
         producerTemplate.asyncRequestBodyAndHeader(solrRouterURI + "://" + solrUri + "/" + solrCore, "", SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT);
         Thread.sleep(1000);

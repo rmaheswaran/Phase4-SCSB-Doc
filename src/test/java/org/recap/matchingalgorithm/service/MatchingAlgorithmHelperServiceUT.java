@@ -327,7 +327,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCase{
         assertEquals(countMap, countsMap);
     }
 
-    @Test
+    /*@Test
     public void populateReportsForSingleMatch() throws Exception {
         List<MatchingBibEntity> matchingBibEntities = new ArrayList<>();
         MatchingBibEntity matchingBibEntity = getMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
@@ -353,7 +353,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCase{
         assertEquals(Math.toIntExact(countsMap.get(RecapConstants.PUL_MATCHING_COUNT)), 6);
         assertEquals(Math.toIntExact(countsMap.get(RecapConstants.CUL_MATCHING_COUNT)), 6);
         assertEquals(Math.toIntExact(countsMap.get(RecapConstants.NYPL_MATCHING_COUNT)), 6);
-    }
+    }*/
 
     @Test
     public void checkGetterServices() throws Exception {

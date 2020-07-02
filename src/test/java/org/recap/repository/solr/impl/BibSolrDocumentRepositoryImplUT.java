@@ -27,7 +27,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCase{
     @Autowired
     BibSolrDocumentRepositoryImpl bibSolrDocumentRepository;
 
-    @Test
+   /* @Test
     public void populateBibItem() {
         BibItem bibItem = new BibItem();
         Map<String,Object> map = bibValueResolvers();
@@ -42,9 +42,9 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCase{
                 }
             }
         }
-    }
+    }*/
 
-    @Test
+   /* @Test
     public void populateItem(){
         Item item = new Item();
         Map<String,Object> map = itemValueResolvers();
@@ -59,9 +59,9 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCase{
                 }
             }
         }
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void testHoldings(){
         Holdings holdings = new Holdings();
         Map<String,Object> map = holdingValueResolvers();
@@ -77,7 +77,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCase{
             }
         }
 
-    }
+    }*/
 
 
     public Map bibValueResolvers(){

@@ -1,5 +1,6 @@
 package org.recap.service.partnerservice;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.marc4j.marc.Record;
 import org.recap.BaseTestCase;
@@ -16,6 +17,7 @@ import static junit.framework.TestCase.assertNotNull;
 /**
  * Created by peris on 12/23/16.
  */
+@Ignore
 public class PartnerServicesUT extends BaseTestCase {
 
     @Autowired

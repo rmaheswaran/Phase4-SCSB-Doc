@@ -1,5 +1,6 @@
 package org.recap.model.search;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.marc4j.marc.Record;
 import org.recap.util.BibJSONUtil;
@@ -12,6 +13,7 @@ import static junit.framework.TestCase.assertNotNull;
 /**
  * Created by premkb on 2/8/16.
  */
+@Ignore
 public class BibliographicMarcFormUT {
 
     private String bibContent = "<collection xmlns=\"http://www.loc.gov/MARC21/slim\">\n"+

@@ -37,6 +37,8 @@ public class AccessionSummaryUT extends BaseTestCase {
         accessionSummary.addInvalidLenghBarcode(0);
         accessionSummary.addSuccessRecord(1);
         accessionSummary.addFailure(0);
+        accessionSummary.addEmptyCustomerCode(0);
+        accessionSummary.addCustomerCodeDoesNotExist(0);
         assertNotNull(accessionSummary.getRequestedRecords());
         assertNotNull(accessionSummary.getSuccessRecords());
         assertNotNull(accessionSummary.getDummyRecords());

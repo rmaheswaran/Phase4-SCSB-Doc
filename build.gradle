@@ -30,7 +30,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'jacoco'
 
-sonarqube {
+/*sonarqube {
 	properties {
 		property "systemProp.sonar.host.url", "http://174.129.129.28:9000"
 		property "systemProp.sonar.jdbc.url", "jdbc:mysql://scsb-mysql:3306/sonar"
@@ -39,7 +39,7 @@ sonarqube {
 		property "systemProp.sonar.jdbc.username", "sonar"
 		property "systemProp.sonar.jdbc.password", "sonar"
 	}
-}
+}*/
 
 //added to accept systemproperties while executing gradlew test cmd
 test {
@@ -132,10 +132,10 @@ eclipse {
 	}
 }
 
-jacoco {
+/*jacoco {
 	toolVersion = "0.7.9"
 	reportsDir = file("$buildDir/customJacocoReportDir")
-}
+}*/
 
 test {
 	jacoco {
