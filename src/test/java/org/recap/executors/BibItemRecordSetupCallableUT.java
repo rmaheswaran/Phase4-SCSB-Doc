@@ -3,6 +3,7 @@ package org.recap.executors;
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -11,9 +12,6 @@ import org.recap.BaseTestCase;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.solr.Bib;
-import org.recap.model.solr.Holdings;
-import org.recap.model.solr.Item;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,6 @@ import org.springframework.data.solr.core.SolrTemplate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -30,6 +27,7 @@ import static junit.framework.TestCase.assertNotNull;
 /**
  * Created by premkb on 1/8/16.
  */
+@Ignore
 public class BibItemRecordSetupCallableUT extends BaseTestCase {
 
     @Autowired

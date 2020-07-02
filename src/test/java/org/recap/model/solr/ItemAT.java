@@ -1,18 +1,16 @@
 package org.recap.model.solr;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.recap.BaseTestCase;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-@Ignore
+
 public class ItemAT extends  BaseTestCase {
 
     @Before
@@ -32,6 +30,8 @@ public class ItemAT extends  BaseTestCase {
         holdingsIdList.add(202);
 
         Item item = new Item();
+        item.setId("1");
+        item.setOwningInstitutionItemId("1");
         item.setBarcode("1");
         item.setItemId(301);
         item.setDocType("Item");
@@ -43,8 +43,39 @@ public class ItemAT extends  BaseTestCase {
         item.setVolumePartYear("1970");
         item.setHoldingsIdList(holdingsIdList);
         item.setItemBibIdList(itemBibIdList);
+        item.setRoot("_root_");
+        item.setCopyNumber("String");
+        item.setCallNumberDisplay("String");
+        item.setOwningInstitution("1");
+        item.setAvailabilityDisplay("1");
+        item.setUseRestrictionDisplay("1");
+        item.setCopyNumber("1");
+        item.setItemCreatedBy("test" );
+        item.setItemCreatedDate(new Date());
+        item.setItemLastUpdatedDate(new Date() );
+        item.setItemLastUpdatedBy("test" );
+        item.setTitleSort("test" );
+        item.setItemCatalogingStatus("test" );
+        item.setCgdChangeLog("test" );
+        item.setDeletedItem(true );
         Item indexedItem = itemCrudRepository.save(item);
         assertNotNull(indexedItem);
+        assertNotNull(item.getId());
+        assertNotNull(item.getOwningInstitutionItemId());
+        assertNotNull(item.getCallNumberDisplay());
+        assertNotNull(item.getOwningInstitution());
+        assertNotNull(item.getAvailabilityDisplay());
+        assertNotNull(item.getUseRestrictionDisplay());
+        assertNotNull(item.getRoot());
+        assertNotNull(item.getCopyNumber());
+        assertNotNull(item.getItemCreatedBy());
+        assertNotNull(item.getItemCreatedDate());
+        assertNotNull(item.getItemLastUpdatedDate());
+        assertNotNull(item.getItemLastUpdatedBy());
+        assertNotNull(item.isDeletedItem());
+        assertNotNull(item.getTitleSort());
+        assertNotNull(item.getItemCatalogingStatus());
+        assertNotNull(item.getCgdChangeLog());
 
 
         assertEquals(indexedItem.getBarcode(),"1");

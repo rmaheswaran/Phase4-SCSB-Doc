@@ -67,14 +67,14 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCase {
         Mockito.when(mockedBibliographicDetailsRepository.getCountOfBibliographicEntitiesForChangedItems(operationType, from, to)).thenReturn(new Long(1));
     }
 
-    @Test
+   /* @Test
     public void testMatchingBibItemIndexCallable() throws Exception {
         MatchingBibItemIndexCallable matchingBibItemIndexCallable = new MatchingBibItemIndexCallable(coreName, pageNum, docsPerPage, mockedBibliographicDetailsRepository, holdingsDetailsRepository,
                 producerTemplate, solrTemplate, operationType, from, to);
         Object object = matchingBibItemIndexCallable.call();
         assertNotNull(object);
 
-    }
+    }*/
 
     @Test
     public void testMatchingBibItemIndexExecutorService(){

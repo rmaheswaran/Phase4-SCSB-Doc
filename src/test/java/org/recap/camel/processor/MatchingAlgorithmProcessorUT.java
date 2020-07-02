@@ -2,15 +2,18 @@ package org.recap.camel.processor;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
+import org.recap.RecapCommonConstants;
+import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.MatchingBibEntity;
+import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
@@ -22,6 +25,9 @@ public class MatchingAlgorithmProcessorUT extends BaseTestCase{
 
     @Autowired
     MatchingAlgorithmProcessor matchingAlgorithmProcessor;
+
+    @Autowired
+    MatchingBibDetailsRepository matchingBibDetailsRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -87,5 +93,30 @@ public class MatchingAlgorithmProcessorUT extends BaseTestCase{
         assertNotNull(savedItemEntity.getItemId());
         return savedItemEntity.getItemId();
     }
+    @Test
+    public void updateMatchingBibEntityTest() throws Exception {
+        Map matchingBibMap = new HashMap();
+        List<Integer> bibIds = new ArrayList<>();
+        bibIds.add(1);
+        matchingBibMap.put(RecapCommonConstants.STATUS, RecapCommonConstants.COMPLETE_STATUS);
+        matchingBibMap.put(RecapConstants.MATCHING_BIB_IDS, bibIds);
+        matchingAlgorithmProcessor.updateMatchingBibEntity(matchingBibMap);
+    }
 
+    private MatchingBibEntity saveMatchingBibEntity(String matchingCriteria) {
+        MatchingBibEntity matchingBibEntity = new MatchingBibEntity();
+        matchingBibEntity.setBibId(1);
+        matchingBibEntity.setOwningInstitution("NYPL");
+        matchingBibEntity.setOwningInstBibId("N1029");
+        matchingBibEntity.setTitle("Middleware for ReCAP");
+        matchingBibEntity.setOclc("129393");
+        matchingBibEntity.setIsbn("93930");
+        matchingBibEntity.setIssn("12283");
+        matchingBibEntity.setLccn("039329");
+        matchingBibEntity.setMaterialType("monograph");
+        matchingBibEntity.setMatching(matchingCriteria);
+        matchingBibEntity.setRoot("31");
+        matchingBibEntity.setStatus(RecapConstants.PENDING);
+        return matchingBibDetailsRepository.save(matchingBibEntity);
+    }
 }
