@@ -1,12 +1,22 @@
 package org.recap.util;
 
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCase;
+import org.recap.RecapCommonConstants;
+import org.recap.matchingalgorithm.service.OngoingMatchingReportsService;
+import org.recap.model.solr.SolrIndexRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,11 +28,46 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCase{
     @Mock
     OngoingMatchingAlgorithmUtil ongoingMatchingAlgorithmUtil;
 
+    @Autowired
+    MatchingAlgorithmUtil matchingAlgorithmUtil;
+
+    @Mock
+     MatchingAlgorithmUtil mockedmatchingAlgorithmUtil;
+
+    @Mock
+    OngoingMatchingReportsService ongoingMatchingReportsService;
+
+    @Mock
+    DateUtil dateUtil;
+
+    @Value("${matching.algorithm.bibinfo.batchsize}")
+    private String batchSize;
+
     @Test
     public void processMatchingForBibTest() {
         SolrDocument solrDocument = new SolrDocument();
         Mockito.when(ongoingMatchingAlgorithmUtil.processMatchingForBib(solrDocument, new ArrayList<>())).thenReturn("Success");
         String status = ongoingMatchingAlgorithmUtil.processMatchingForBib(solrDocument, new ArrayList<>());
+        assertEquals("Success", status);
+    }
+    @Ignore
+    public void testfetchUpdatedRecordsAndStartProcess() throws Exception {
+        Date processDate = new Date();
+        Date fromDate = dateUtil.getFromDate(processDate);
+        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+        solrIndexRequest.setCreatedDate(processDate);
+        SolrDocument solrDocument = new SolrDocument();
+        SolrDocumentList solrDocumentList = new SolrDocumentList();
+        solrDocumentList.add(solrDocument);
+        List<Integer> bibIds = new ArrayList<>();
+        Integer rows = Integer.valueOf(batchSize);
+        Date date = solrIndexRequest.getCreatedDate();
+        solrIndexRequest.setProcessType(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"ongoingMatchingReportsService",ongoingMatchingReportsService);
+        Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
+        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, rows)).thenCallRealMethod();
+        String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, rows);
         assertEquals("Success", status);
     }
 

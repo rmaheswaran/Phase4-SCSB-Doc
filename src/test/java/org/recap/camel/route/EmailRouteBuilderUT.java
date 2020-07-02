@@ -14,7 +14,7 @@ public class EmailRouteBuilderUT extends BaseTestCase {
 
     @Autowired
     ProducerTemplate producerTemplate;
-
+/*
     @Test
     public void testSendEmail() throws Exception {
         EmailPayLoad emailPayLoad = new EmailPayLoad();
@@ -24,5 +24,5 @@ public class EmailRouteBuilderUT extends BaseTestCase {
         emailPayLoad.setNewCgd("Open");
         emailPayLoad.setNotes("Update Shared to Open");
         producerTemplate.sendBody(RecapConstants.EMAIL_Q, emailPayLoad);
-    }
+    }*/
 }

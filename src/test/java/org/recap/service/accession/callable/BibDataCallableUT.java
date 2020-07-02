@@ -21,6 +21,7 @@ public class BibDataCallableUT extends BaseTestCase{
     @Test
     public void testBibDataCallaable(){
         bibDataCallable.setAccessionRequest(new AccessionRequest());
+        bibDataCallable.setOwningInstitution("PUL");
         List<BibDataResolver> bibDataResolvers = bibDataCallable.getBibDataResolvers();
         assertNotNull(bibDataResolvers);
         bibDataCallable.setWriteToReport(true);

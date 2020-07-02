@@ -18,7 +18,7 @@ public class RoleEntityUT extends BaseTestCase{
     @Autowired
     UserDetailsRepository userDetailsRepository;
 
-    @Test
+   /* @Test
     public void saveRole(){
 
         RoleEntity roleEntity = new RoleEntity();
@@ -30,7 +30,7 @@ public class RoleEntityUT extends BaseTestCase{
         assertNotNull(savedRoleEntity.getRoleName());
         assertNotNull(savedRoleEntity.getRoleDescription());
     }
-
+*/
     @Test
     public void testRoles(){
         RoleEntity roleEntity = new RoleEntity();
