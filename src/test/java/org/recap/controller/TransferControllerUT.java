@@ -8,31 +8,20 @@ import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.transfer.Source;
-import org.recap.model.transfer.Destination;
-import org.recap.model.transfer.ItemSource;
-import org.recap.model.transfer.HoldingsTransferRequest;
-import org.recap.model.transfer.HoldingTransferResponse;
-import org.recap.model.transfer.ItemDestination;
-import org.recap.model.transfer.ItemTransferRequest;
-import org.recap.model.transfer.ItemTransferResponse;
-import org.recap.model.transfer.TransferRequest;
-import org.recap.model.transfer.TransferResponse;
+import org.recap.model.transfer.*;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.service.transfer.TransferService;
 import org.recap.util.HelperUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
 /**
@@ -57,6 +46,9 @@ public class TransferControllerUT extends BaseTestCase{
 
     @Mock
     private HelperUtil helperUtil;
+
+    @Value("${transfer.api.nonholdingid.institution}")
+    private String nonHoldingIdInstitutionForTransferApi;
 
     public ItemTransferRequest getItemTransferRequest(){
         ItemTransferRequest itemTransferRequest = new ItemTransferRequest();
@@ -88,12 +80,109 @@ public class TransferControllerUT extends BaseTestCase{
 
     @Test
     public void testTransferController() throws Exception {
-        TransferRequest transferRequest = new TransferRequest();
-        transferRequest.setInstitution("PUL");
-        transferRequest.setHoldingTransfers(Arrays.asList(getHoldingsTransferRequest()));
-        transferRequest.setItemTransfers(Arrays.asList(getItemTransferRequest()));
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setId(1);
+        institutionEntity.setInstitutionName("Princeton");
+        institutionEntity.setInstitutionCode("PUL");
+        TransferRequest transferRequest = new TransferRequest();
+        transferRequest.setInstitution("PUL");
+        HoldingsTransferRequest holdingsTransferRequestArrayList = new HoldingsTransferRequest();
+        Source source = new Source();
+        ItemSource ItemSource = new ItemSource();
+        source.setOwningInstitutionBibId("53624");
+        source.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setSource(source);
+        Destination destination = new Destination();
+        destination.setOwningInstitutionBibId("1421");
+        destination.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setDestination(destination);
+        List<HoldingsTransferRequest> HoldingsTransferRequest1 = new ArrayList<>();
+        HoldingsTransferRequest1.add(holdingsTransferRequestArrayList);
+        transferRequest.setHoldingTransfers(HoldingsTransferRequest1);
+        TransferResponse transferResponse = new TransferResponse();
+        transferResponse.setMessage("Success");
+        HoldingTransferResponse holdingsTransferResponseArrayList =new HoldingTransferResponse();
+        holdingsTransferResponseArrayList.setMessage("Successfully relinked");
+        holdingsTransferResponseArrayList.setSuccess(true);
+        holdingsTransferResponseArrayList.setHoldingsTransferRequest(holdingsTransferRequestArrayList);
+        List<HoldingTransferResponse> holdingTransferResponse = new ArrayList<>();
+        holdingTransferResponse.add(holdingsTransferResponseArrayList);
+        transferResponse.setHoldingTransferResponses(holdingTransferResponse);
+        List<ItemTransferResponse> itemTransferResponses = new ArrayList<>();
+        ItemTransferResponse itemTransferResponse = new ItemTransferResponse();
+        itemTransferResponse.setMessage("Success");
+        itemTransferResponse.setSuccess(true);
+        ItemSource itemSource = new ItemSource();
+        itemSource.setOwningInstitutionItemId("PUL");
+        ItemDestination itemDestination = new ItemDestination();
+        itemDestination.setOwningInstitutionItemId("CUL");
+        ItemTransferRequest itemTransferRequest = new ItemTransferRequest();
+        itemTransferRequest.setSource(itemSource);
+        itemTransferRequest.setDestination(itemDestination);
+        itemTransferResponse.setItemTransferRequest(itemTransferRequest);
+        itemTransferResponses.add(itemTransferResponse);
+        ReflectionTestUtils.setField(transferService,"institutionDetailsRepository",institutionDetailsRepository);
+        Mockito.when(transferController.getHelperUtil()).thenReturn(helperUtil);
+        Mockito.when(transferController.getTransferService()).thenReturn(transferService);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository().findByInstitutionCode(Mockito.any())).thenReturn(institutionEntity);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository().findById(Mockito.any())).thenReturn(Optional.of(institutionEntity));
+        Mockito.when(transferService.getBibliographicDetailsRepository()).thenReturn(bibliographicDetailsRepository);
+        Mockito.when(transferService.getHoldingsDetailsRepository()).thenReturn(holdingsDetailsRepository);
+        Mockito.when(transferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.any(), Mockito.any())).thenReturn(getBibliographicEntity());
+        Mockito.when(transferService.getHoldingsDetailsRepository().findByOwningInstitutionHoldingsIdAndOwningInstitutionId(Mockito.any(), Mockito.any())).thenReturn(getBibliographicEntity().getHoldingsEntities().get(0));
+        Mockito.when(transferService.getHelperUtil()).thenReturn(helperUtil);
+        Mockito.when(transferController.getTransferService().processHoldingTransfer(transferRequest, institutionEntity)).thenReturn(holdingTransferResponse);
+        Mockito.when(transferController.getTransferService().processItemTransfer(transferRequest, institutionEntity)).thenReturn(itemTransferResponses);
+        Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
+        TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
+        assertNotNull(transferResponse1);
+        assertEquals(transferResponse1.getMessage(),"Success");
+    }
+    @Test
+    public void testTransferController_Partially_Success_holding() throws Exception {
+        InstitutionEntity institutionEntity = new InstitutionEntity();
+        institutionEntity.setId(1);
+        institutionEntity.setInstitutionName("Princeton");
+        institutionEntity.setInstitutionCode("PUL");
+        TransferRequest transferRequest = new TransferRequest();
+        transferRequest.setInstitution("PUL");
+        HoldingsTransferRequest holdingsTransferRequestArrayList = new HoldingsTransferRequest();
+        Source source = new Source();
+        ItemSource ItemSource = new ItemSource();
+        source.setOwningInstitutionBibId("53624");
+        source.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setSource(source);
+        Destination destination = new Destination();
+        destination.setOwningInstitutionBibId("1421");
+        destination.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setDestination(destination);
+        List<HoldingsTransferRequest> HoldingsTransferRequest1 = new ArrayList<>();
+        HoldingsTransferRequest1.add(holdingsTransferRequestArrayList);
+        transferRequest.setHoldingTransfers(HoldingsTransferRequest1);
+        TransferResponse transferResponse = new TransferResponse();
+        transferResponse.setMessage("Success");
+        HoldingTransferResponse holdingsTransferResponseArrayList =new HoldingTransferResponse();
+        holdingsTransferResponseArrayList.setMessage("Successfully relinked");
+        holdingsTransferResponseArrayList.setSuccess(false);
+        holdingsTransferResponseArrayList.setHoldingsTransferRequest(holdingsTransferRequestArrayList);
+        List<HoldingTransferResponse> holdingTransferResponse = new ArrayList<>();
+        holdingTransferResponse.add(holdingsTransferResponseArrayList);
+        transferResponse.setHoldingTransferResponses(holdingTransferResponse);
+        List<ItemTransferResponse> itemTransferResponses = new ArrayList<>();
+        ItemTransferResponse itemTransferResponse = new ItemTransferResponse();
+        itemTransferResponse.setMessage("Success");
+        itemTransferResponse.setSuccess(true);
+        ItemSource itemSource = new ItemSource();
+        itemSource.setOwningInstitutionItemId("PUL");
+        ItemDestination itemDestination = new ItemDestination();
+        itemDestination.setOwningInstitutionItemId("CUL");
+        ItemTransferRequest itemTransferRequest = new ItemTransferRequest();
+        itemTransferRequest.setSource(itemSource);
+        itemTransferRequest.setDestination(itemDestination);
+        itemTransferResponse.setItemTransferRequest(itemTransferRequest);
+        itemTransferResponses.add(itemTransferResponse);
+        ReflectionTestUtils.setField(transferService,"institutionDetailsRepository",institutionDetailsRepository);
         Mockito.when(transferController.getHelperUtil()).thenReturn(helperUtil);
         Mockito.when(transferController.getTransferService()).thenReturn(transferService);
         Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
@@ -103,14 +192,198 @@ public class TransferControllerUT extends BaseTestCase{
         Mockito.when(transferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.any(), Mockito.any())).thenReturn(getBibliographicEntity());
         Mockito.when(transferService.getHoldingsDetailsRepository().findByOwningInstitutionHoldingsIdAndOwningInstitutionId(Mockito.any(), Mockito.any())).thenReturn(getBibliographicEntity().getHoldingsEntities().get(0));
         Mockito.when(transferService.getHelperUtil()).thenReturn(helperUtil);
-        Mockito.when(transferController.getTransferService().processHoldingTransfer(transferRequest, institutionEntity)).thenCallRealMethod();
-        Mockito.when(transferController.getTransferService().processItemTransfer(transferRequest, institutionEntity)).thenCallRealMethod();
+        Mockito.when(transferController.getTransferService().processHoldingTransfer(transferRequest, institutionEntity)).thenReturn(holdingTransferResponse);
+        Mockito.when(transferController.getTransferService().processItemTransfer(transferRequest, institutionEntity)).thenReturn(itemTransferResponses);
         Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
-        TransferResponse transferResponse = transferController.processTransfer(transferRequest);
-        assertNotNull(transferResponse);
-        assertEquals(transferResponse.getMessage(),"Success");
+        TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
+        assertNotNull(transferResponse1);
+        assertEquals(transferResponse1.getMessage(),"Partially Success");
     }
 
+    @Test
+    public void testTransferController_Partially_Success_item() throws Exception {
+        InstitutionEntity institutionEntity = new InstitutionEntity();
+        institutionEntity.setId(1);
+        institutionEntity.setInstitutionName("Princeton");
+        institutionEntity.setInstitutionCode("PUL");
+        TransferRequest transferRequest = new TransferRequest();
+        transferRequest.setInstitution("PUL");
+        HoldingsTransferRequest holdingsTransferRequestArrayList = new HoldingsTransferRequest();
+        Source source = new Source();
+        ItemSource ItemSource = new ItemSource();
+        source.setOwningInstitutionBibId("53624");
+        source.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setSource(source);
+        Destination destination = new Destination();
+        destination.setOwningInstitutionBibId("1421");
+        destination.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setDestination(destination);
+        List<HoldingsTransferRequest> HoldingsTransferRequest1 = new ArrayList<>();
+        HoldingsTransferRequest1.add(holdingsTransferRequestArrayList);
+        transferRequest.setHoldingTransfers(HoldingsTransferRequest1);
+        TransferResponse transferResponse = new TransferResponse();
+        transferResponse.setMessage("Success");
+        HoldingTransferResponse holdingsTransferResponseArrayList =new HoldingTransferResponse();
+        holdingsTransferResponseArrayList.setMessage("Successfully relinked");
+        holdingsTransferResponseArrayList.setSuccess(true);
+        holdingsTransferResponseArrayList.setHoldingsTransferRequest(holdingsTransferRequestArrayList);
+        List<HoldingTransferResponse> holdingTransferResponse = new ArrayList<>();
+        holdingTransferResponse.add(holdingsTransferResponseArrayList);
+        transferResponse.setHoldingTransferResponses(holdingTransferResponse);
+        List<ItemTransferResponse> itemTransferResponses = new ArrayList<>();
+        ItemTransferResponse itemTransferResponse = new ItemTransferResponse();
+        itemTransferResponse.setMessage("Success");
+        itemTransferResponse.setSuccess(false);
+        ItemSource itemSource = new ItemSource();
+        itemSource.setOwningInstitutionItemId("PUL");
+        ItemDestination itemDestination = new ItemDestination();
+        itemDestination.setOwningInstitutionItemId("CUL");
+        ItemTransferRequest itemTransferRequest = new ItemTransferRequest();
+        itemTransferRequest.setSource(itemSource);
+        itemTransferRequest.setDestination(itemDestination);
+        itemTransferResponse.setItemTransferRequest(itemTransferRequest);
+        itemTransferResponses.add(itemTransferResponse);
+        ReflectionTestUtils.setField(transferService,"institutionDetailsRepository",institutionDetailsRepository);
+        Mockito.when(transferController.getHelperUtil()).thenReturn(helperUtil);
+        Mockito.when(transferController.getTransferService()).thenReturn(transferService);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository().findByInstitutionCode(Mockito.any())).thenReturn(institutionEntity);
+        Mockito.when(transferService.getBibliographicDetailsRepository()).thenReturn(bibliographicDetailsRepository);
+        Mockito.when(transferService.getHoldingsDetailsRepository()).thenReturn(holdingsDetailsRepository);
+        Mockito.when(transferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.any(), Mockito.any())).thenReturn(getBibliographicEntity());
+        Mockito.when(transferService.getHoldingsDetailsRepository().findByOwningInstitutionHoldingsIdAndOwningInstitutionId(Mockito.any(), Mockito.any())).thenReturn(getBibliographicEntity().getHoldingsEntities().get(0));
+        Mockito.when(transferService.getHelperUtil()).thenReturn(helperUtil);
+        Mockito.when(transferController.getTransferService().processHoldingTransfer(transferRequest, institutionEntity)).thenReturn(holdingTransferResponse);
+        Mockito.when(transferController.getTransferService().processItemTransfer(transferRequest, institutionEntity)).thenReturn(itemTransferResponses);
+        Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
+        TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
+        assertNotNull(transferResponse1);
+        assertEquals(transferResponse1.getMessage(),"Partially Success");
+    }
+
+    @Test
+    public void testTransferController_Failed() throws Exception {
+        InstitutionEntity institutionEntity = new InstitutionEntity();
+        institutionEntity.setId(1);
+        institutionEntity.setInstitutionName("Princeton");
+        institutionEntity.setInstitutionCode("PUL");
+        TransferRequest transferRequest = new TransferRequest();
+        transferRequest.setInstitution("PUL");
+        HoldingsTransferRequest holdingsTransferRequestArrayList = new HoldingsTransferRequest();
+        Source source = new Source();
+        ItemSource ItemSource = new ItemSource();
+        source.setOwningInstitutionBibId("53624");
+        source.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setSource(source);
+        Destination destination = new Destination();
+        destination.setOwningInstitutionBibId("1421");
+        destination.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setDestination(destination);
+        List<HoldingsTransferRequest> HoldingsTransferRequest1 = new ArrayList<>();
+        HoldingsTransferRequest1.add(holdingsTransferRequestArrayList);
+        transferRequest.setHoldingTransfers(HoldingsTransferRequest1);
+        TransferResponse transferResponse = new TransferResponse();
+        transferResponse.setMessage("Success");
+        HoldingTransferResponse holdingsTransferResponseArrayList =new HoldingTransferResponse();
+        holdingsTransferResponseArrayList.setMessage("Successfully relinked");
+        holdingsTransferResponseArrayList.setSuccess(false);
+        holdingsTransferResponseArrayList.setHoldingsTransferRequest(holdingsTransferRequestArrayList);
+        List<HoldingTransferResponse> holdingTransferResponse = new ArrayList<>();
+        holdingTransferResponse.add(holdingsTransferResponseArrayList);
+        transferResponse.setHoldingTransferResponses(holdingTransferResponse);
+        List<ItemTransferResponse> itemTransferResponses = new ArrayList<>();
+        ItemTransferResponse itemTransferResponse = new ItemTransferResponse();
+        itemTransferResponse.setMessage("Success");
+        itemTransferResponse.setSuccess(false);
+        ItemSource itemSource = new ItemSource();
+        itemSource.setOwningInstitutionItemId("PUL");
+        ItemDestination itemDestination = new ItemDestination();
+        itemDestination.setOwningInstitutionItemId("CUL");
+        ItemTransferRequest itemTransferRequest = new ItemTransferRequest();
+        itemTransferRequest.setSource(itemSource);
+        itemTransferRequest.setDestination(itemDestination);
+        itemTransferResponse.setItemTransferRequest(itemTransferRequest);
+        itemTransferResponses.add(itemTransferResponse);
+        ReflectionTestUtils.setField(transferService,"institutionDetailsRepository",institutionDetailsRepository);
+        Mockito.when(transferController.getHelperUtil()).thenReturn(helperUtil);
+        Mockito.when(transferController.getTransferService()).thenReturn(transferService);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository().findByInstitutionCode(Mockito.any())).thenReturn(institutionEntity);
+        Mockito.when(transferService.getBibliographicDetailsRepository()).thenReturn(bibliographicDetailsRepository);
+        Mockito.when(transferService.getHoldingsDetailsRepository()).thenReturn(holdingsDetailsRepository);
+        Mockito.when(transferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.any(), Mockito.any())).thenReturn(getBibliographicEntity());
+        Mockito.when(transferService.getHoldingsDetailsRepository().findByOwningInstitutionHoldingsIdAndOwningInstitutionId(Mockito.any(), Mockito.any())).thenReturn(getBibliographicEntity().getHoldingsEntities().get(0));
+        Mockito.when(transferService.getHelperUtil()).thenReturn(helperUtil);
+        Mockito.when(transferController.getTransferService().processHoldingTransfer(transferRequest, institutionEntity)).thenReturn(holdingTransferResponse);
+        Mockito.when(transferController.getTransferService().processItemTransfer(transferRequest, institutionEntity)).thenReturn(itemTransferResponses);
+        Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
+        TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
+        assertNotNull(transferResponse1);
+        assertEquals(transferResponse1.getMessage(),"Failed");
+    }
+
+    @Test
+    public void testTransferController_null() throws Exception {
+        InstitutionEntity institutionEntity = new InstitutionEntity();
+        institutionEntity.setId(1);
+        institutionEntity.setInstitutionName("Princeton");
+        institutionEntity.setInstitutionCode("PUL");
+        TransferRequest transferRequest = new TransferRequest();
+        transferRequest.setInstitution("PUL");
+        ReflectionTestUtils.setField(transferService,"institutionDetailsRepository",institutionDetailsRepository);
+        Mockito.when(transferController.getHelperUtil()).thenReturn(helperUtil);
+        Mockito.when(transferController.getTransferService()).thenReturn(transferService);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository().findByInstitutionCode(Mockito.any())).thenReturn(institutionEntity);
+        Mockito.when(transferService.getBibliographicDetailsRepository()).thenReturn(bibliographicDetailsRepository);
+        Mockito.when(transferService.getHoldingsDetailsRepository()).thenReturn(holdingsDetailsRepository);
+        Mockito.when(transferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.any(), Mockito.any())).thenReturn(getBibliographicEntity());
+        Mockito.when(transferService.getHoldingsDetailsRepository().findByOwningInstitutionHoldingsIdAndOwningInstitutionId(Mockito.any(), Mockito.any())).thenReturn(getBibliographicEntity().getHoldingsEntities().get(0));
+        Mockito.when(transferService.getHelperUtil()).thenReturn(helperUtil);
+        Mockito.when(transferController.getTransferService().processHoldingTransfer(transferRequest, institutionEntity)).thenReturn(null);
+        Mockito.when(transferController.getTransferService().processItemTransfer(transferRequest, institutionEntity)).thenReturn(null);
+        Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
+        TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
+        assertNotNull(transferResponse1);
+    }
+
+    @Test
+    public void testTransferController_institution_empty() throws Exception {
+        InstitutionEntity institutionEntity = new InstitutionEntity();
+        institutionEntity.setId(1);
+        institutionEntity.setInstitutionName("Princeton");
+        institutionEntity.setInstitutionCode("PUL");
+        TransferRequest transferRequest = new TransferRequest();
+        transferRequest.setInstitution(null);
+        ReflectionTestUtils.setField(transferService,"institutionDetailsRepository",institutionDetailsRepository);
+        Mockito.when(transferController.getHelperUtil()).thenReturn(helperUtil);
+        Mockito.when(transferController.getTransferService()).thenReturn(transferService);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository().findByInstitutionCode(Mockito.any())).thenReturn(institutionEntity);
+        Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
+        TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
+        assertNotNull(transferResponse1);
+        assertEquals(transferResponse1.getMessage(),"Institution is empty");
+    }
+
+    @Test
+    public void testTransferController_Unknow_institution() throws Exception {
+        InstitutionEntity institutionEntity = new InstitutionEntity();
+        institutionEntity.setId(1);
+        institutionEntity.setInstitutionName("Princeton");
+        institutionEntity.setInstitutionCode("PUL");
+        TransferRequest transferRequest = new TransferRequest();
+        transferRequest.setInstitution("PUL");
+        ReflectionTestUtils.setField(transferService,"institutionDetailsRepository",institutionDetailsRepository);
+        Mockito.when(transferController.getHelperUtil()).thenReturn(helperUtil);
+        Mockito.when(transferController.getTransferService()).thenReturn(transferService);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
+        Mockito.when(transferController.getTransferService().getInstitutionDetailsRepository().findByInstitutionCode(Mockito.any())).thenReturn(null);
+        Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
+        TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
+        assertNotNull(transferResponse1);
+        assertEquals(transferResponse1.getMessage(),"Unknow institution");
+    }
     @Test
     public void checkGetterServices(){
         Mockito.when(transferController.getTransferService()).thenCallRealMethod();

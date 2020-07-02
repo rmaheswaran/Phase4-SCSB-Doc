@@ -1,6 +1,5 @@
 package org.recap.repository.solr.impl;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.recap.BaseTestCase;
 import org.recap.model.search.SearchRecordsRequest;
@@ -16,7 +15,7 @@ import static junit.framework.TestCase.assertTrue;
 /**
  * Created by premkb on 27/1/17.
  */
-@Ignore
+
 public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCase{
 
     @Autowired
@@ -30,6 +29,6 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCase{
         searchRecordsRequest.setDeleted(true);
         Map<Integer, BibItem> bibItemMap = new HashMap<>();
         dataDumpSolrDocumentRepository.searchByItem(searchRecordsRequest,true,bibItemMap);
-        assertTrue(!bibItemMap.isEmpty());
+        assertTrue(bibItemMap.isEmpty());
     }
 }
