@@ -296,5 +296,8 @@ public final class RecapConstants {
     public static final String MATCHING_BATCH_JOB_DATE_FORMAT = "EEE MMM dd HH:mm:ss z yyyy";
     public static final String ACCESSION__CAUGHT_EXCEPTION_METHOD = "caughtException";
 
+    public static final String ETL_DATA_LOAD_NAMESPACE = "http://www.loc.gov/MARC21/slim";
+
+
     private RecapConstants(){}
 }

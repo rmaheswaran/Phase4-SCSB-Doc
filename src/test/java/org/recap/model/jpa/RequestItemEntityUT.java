@@ -60,7 +60,7 @@ public class RequestItemEntityUT extends BaseTestCase{
         requestItemEntity.setCreatedBy("test");
         requestItemEntity.setNotes("test");
         requestItemEntity.setRequestStatusEntity(requestStatusEntity);
-        requestItemEntity.setPatronId(1);
+        requestItemEntity.setPatronId("1");
         RequestItemEntity savedRequestItemEntity = requestItemDetailsRepository.save(requestItemEntity);
         assertNotNull(savedRequestItemEntity);
     }
