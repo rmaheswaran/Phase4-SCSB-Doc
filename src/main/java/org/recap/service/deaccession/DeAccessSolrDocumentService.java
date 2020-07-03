@@ -113,7 +113,8 @@ public class DeAccessSolrDocumentService {
         SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
         StopWatch stopWatchIndexDocument = new StopWatch();
         stopWatchIndexDocument.start();
-        getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);
+      //  getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);
+        getSolrTemplate().saveDocument("", bibSolrInputDocument);
         stopWatchIndexDocument.stop();
         logger.info("Time taken to index the doc for Bib Solr Document from Deaccession Service --->{}sec", stopWatchIndexDocument.getTotalTimeSeconds());
     }
