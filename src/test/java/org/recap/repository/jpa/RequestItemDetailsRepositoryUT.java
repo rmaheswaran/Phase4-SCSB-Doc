@@ -507,7 +507,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         requestItemEntity.setLastUpdatedDate(new Date());
         requestItemEntity.setStopCode("s1");
         requestItemEntity.setRequestStatusId(4);
-        requestItemEntity.setPatronId(1);
+        requestItemEntity.setPatronId("1");
         return requestItemDetailsRepository.save(requestItemEntity);
     }
 

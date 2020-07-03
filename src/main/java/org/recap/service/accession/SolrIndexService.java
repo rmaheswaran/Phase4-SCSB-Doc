@@ -126,7 +126,8 @@ public class SolrIndexService {
         if (solrInputDocument !=null) {
             StopWatch stopWatchIndexDocument = new StopWatch();
             stopWatchIndexDocument.start();
-            getSolrTemplate().saveDocument(solrCore, solrInputDocument);
+            getSolrTemplate().saveDocument("",solrInputDocument);
+      //      getSolrTemplate().saveDocument(solrCore, solrInputDocument);
             stopWatchIndexDocument.stop();
             logger.info("Time taken to index the doc--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
         }
