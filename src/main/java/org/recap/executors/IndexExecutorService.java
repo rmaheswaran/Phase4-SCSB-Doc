@@ -194,6 +194,7 @@ public abstract class IndexExecutorService {
                             logger.info("Num of bibs fetched by thread : {}",entitiesCount);
                             futureCount++;
                         } catch (InterruptedException | ExecutionException e) {
+                            Thread.currentThread().interrupt();
                             logger.error(RecapCommonConstants.LOG_ERROR,e);
                         }
                     }
@@ -300,6 +301,7 @@ public abstract class IndexExecutorService {
                             futureCount++;
                             logger.info("Num of bibs fetched by thread : {}",entitiesCount);
                         } catch (InterruptedException | ExecutionException e) {
+                            Thread.currentThread().interrupt();
                             logger.error(RecapCommonConstants.LOG_ERROR,e);
                         }
                     }
