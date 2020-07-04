@@ -83,7 +83,7 @@ public class OngoingMatchingAlgorithmJobController {
                 status = getMatchingBibInfoDetailService().populateMatchingBibInfo(getDateUtil().getFromDate(date), getDateUtil().getToDate(date));
             }
         } catch (Exception e) {
-            logger.error("Exception : {}", e);
+            logger.error("Exception : {0}", e);
         }
         stopWatch.stop();
         getLogger().info("Total Time taken to complete Ongoing Matching Algorithm : {}", stopWatch.getTotalTimeSeconds());
