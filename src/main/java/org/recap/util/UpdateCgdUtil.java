@@ -59,7 +59,7 @@ public class UpdateCgdUtil {
     @Autowired
     private ItemCrudRepository itemSolrCrudRepository;
 
-    @Resource(name = "recapSolrTemplate")
+    @Resource
     private SolrTemplate solrTemplate;
 
     @Autowired
