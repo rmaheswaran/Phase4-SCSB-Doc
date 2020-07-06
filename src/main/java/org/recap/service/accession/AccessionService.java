@@ -20,23 +20,8 @@ import org.recap.model.accession.AccessionResponse;
 import org.recap.model.accession.AccessionSummary;
 import org.recap.model.jaxb.BibRecord;
 import org.recap.model.jaxb.marc.BibRecords;
-import org.recap.model.jpa.AccessionEntity;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CustomerCodeEntity;
-import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.ItemChangeLogEntity;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.jpa.ReportEntity;
-import org.recap.repository.jpa.AccessionDetailsRepository;
-import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemBarcodeHistoryDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
-import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.model.jpa.*;
+import org.recap.repository.jpa.*;
 import org.recap.service.accession.resolver.BibDataResolver;
 import org.recap.service.accession.resolver.CULBibDataResolver;
 import org.recap.service.accession.resolver.NYPLBibDataResolver;
@@ -58,6 +43,7 @@ import org.springframework.util.StopWatch;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
+
 
 /**
  * Created by chenchulakshmig on 20/10/16.
@@ -420,21 +406,21 @@ public class AccessionService {
                             bibDataResponse = getPrincetonService().getBibData(accessionRequest.getItemBarcode());
                             stopWatch.stop();
                             logger.info("Time taken to get bib data from ils : {}" ,stopWatch.getTotalTimeSeconds());
-                          //  response = processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
+                            response = processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
                         } else if (owningInstitution != null && owningInstitution.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
                             StopWatch stopWatch = new StopWatch();
                             stopWatch.start();
                             bibDataResponse = getColumbiaService().getBibData(accessionRequest.getItemBarcode());
                             stopWatch.stop();
                             logger.info("Time taken to get bib data from ils : {}", stopWatch.getTotalTimeSeconds());
-                         //   response = processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
+                            response = processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
                         } else if (owningInstitution != null && owningInstitution.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
                             StopWatch stopWatch1 = new StopWatch();
                             stopWatch1.start();
                             bibDataResponse = getNyplService().getBibData(accessionRequest.getItemBarcode(), accessionRequest.getCustomerCode());
                             stopWatch1.stop();
                             logger.info("Total Time taken to get bib data from ils : {}", stopWatch1.getTotalTimeSeconds());
-                          //  response = processAccessionForSCSBXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
+                            response = processAccessionForSCSBXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
                         }
                     } catch (Exception ex) {
                         accessionHelperUtil.processException(accessionResponsesList, accessionRequest, reportDataEntityList, owningInstitution, ex);

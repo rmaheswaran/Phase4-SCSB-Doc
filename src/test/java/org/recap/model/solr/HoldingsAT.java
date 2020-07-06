@@ -1,6 +1,7 @@
 package org.recap.model.solr;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.recap.BaseTestCase;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by rajeshbabuk on 13/9/16.
  */
-
+@Ignore
 public class HoldingsAT extends BaseTestCase {
 
     @Value("${solr.parent.core}")

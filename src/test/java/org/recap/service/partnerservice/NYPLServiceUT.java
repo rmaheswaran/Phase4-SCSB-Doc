@@ -1,6 +1,5 @@
 package org.recap.service.partnerservice;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.recap.BaseTestCase;
 import org.recap.model.jaxb.JAXBHandler;
@@ -12,7 +11,7 @@ import static junit.framework.TestCase.assertNotNull;
 /**
  * Created by premkb on 18/12/16.
  */
-@Ignore
+
 public class NYPLServiceUT extends BaseTestCase {
 
     @Autowired
