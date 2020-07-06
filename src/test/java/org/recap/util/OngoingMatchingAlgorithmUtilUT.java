@@ -12,6 +12,7 @@ import org.recap.matchingalgorithm.service.OngoingMatchingReportsService;
 import org.recap.model.solr.SolrIndexRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -35,10 +36,16 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCase{
      MatchingAlgorithmUtil mockedmatchingAlgorithmUtil;
 
     @Mock
-    OngoingMatchingReportsService ongoingMatchingReportsService;
+    private SolrTemplate solrTemplate;
 
     @Mock
+    OngoingMatchingReportsService ongoingMatchingReportsService;
+
+    @Autowired
     DateUtil dateUtil;
+
+    @Mock
+    SolrQueryBuilder solrQueryBuilder;
 
     @Value("${matching.algorithm.bibinfo.batchsize}")
     private String batchSize;
@@ -65,8 +72,15 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCase{
         solrIndexRequest.setProcessType(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"ongoingMatchingReportsService",ongoingMatchingReportsService);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"solrQueryBuilder",solrQueryBuilder);
+      //  Mockito.when(ongoingMatchingAlgorithmUtil.getSolrTemplate()).thenCallRealMethod();
+        Mockito.when(ongoingMatchingAlgorithmUtil.getFormattedDateString(fromDate)).thenCallRealMethod();
+        String formattedDate = ongoingMatchingAlgorithmUtil.getFormattedDateString(fromDate);
+        Mockito.when(ongoingMatchingAlgorithmUtil.fetchDataForOngoingMatchingBasedOnDate(formattedDate, 1000,0)).thenCallRealMethod();
+        Mockito.when(solrQueryBuilder.fetchCreatedOrUpdatedBibs(formattedDate)).thenCallRealMethod();
         Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
         Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, rows)).thenCallRealMethod();
+
         String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, rows);
         assertEquals("Success", status);
     }
