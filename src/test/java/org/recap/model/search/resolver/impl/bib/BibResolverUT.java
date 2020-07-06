@@ -3,7 +3,6 @@ package org.recap.model.search.resolver.impl.bib;
 import org.junit.Test;
 import org.recap.BaseTestCase;
 import org.recap.RecapCommonConstants;
-import org.recap.model.search.resolver.impl.Bib.TitleSubFieldAValueResolver;
 import org.recap.model.solr.BibItem;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ public class BibResolverUT extends BaseTestCase {
 
     @Test
     public void testIsDeletedBibValueResolver() throws Exception {
-        IsDeletedBibValueResolver isDeletedBibValueResolver = new IsDeletedBibValueResolver();
+        org.recap.model.search.resolver.impl.bib.IsDeletedBibValueResolver isDeletedBibValueResolver = new IsDeletedBibValueResolver();
         isDeletedBibValueResolver.setValue(bibItem(),true);
         isDeletedBibValueResolver.isInterested(RecapCommonConstants.IS_DELETED_BIB);
         assertNotNull(isDeletedBibValueResolver.getClass());
@@ -27,21 +26,21 @@ public class BibResolverUT extends BaseTestCase {
 
     @Test
     public void testLeaderMaterialTypeValueResolver() throws Exception {
-        LeaderMaterialTypeValueResolver leaderMaterialTypeValueResolver = new LeaderMaterialTypeValueResolver();
+        org.recap.model.search.resolver.impl.bib.LeaderMaterialTypeValueResolver leaderMaterialTypeValueResolver = new LeaderMaterialTypeValueResolver();
         leaderMaterialTypeValueResolver.setValue(bibItem(),"test");
         leaderMaterialTypeValueResolver.isInterested("LeaderMaterialType");
         assertNotNull(leaderMaterialTypeValueResolver.getClass());
     }
     @Test
     public void testDocTypeValueResolver() throws Exception {
-        DocTypeValueResolver docTypeValueResolver = new DocTypeValueResolver();
+        org.recap.model.search.resolver.impl.bib.DocTypeValueResolver docTypeValueResolver = new DocTypeValueResolver();
         docTypeValueResolver.setValue(bibItem(),"test");
         docTypeValueResolver.isInterested("DocType");
         assertNotNull(docTypeValueResolver.getClass());
     }
     @Test
     public void testAuthorSearchValueResolver() throws Exception {
-        AuthorSearchValueResolver authorSearchValueResolver = new AuthorSearchValueResolver();
+        org.recap.model.search.resolver.impl.bib.AuthorSearchValueResolver authorSearchValueResolver = new org.recap.model.search.resolver.impl.bib.AuthorSearchValueResolver();
         List value = new ArrayList();
         value.add("test");
         authorSearchValueResolver.setValue(bibItem(),value);
@@ -50,35 +49,35 @@ public class BibResolverUT extends BaseTestCase {
     }
     @Test
     public void testOwningInstitutionValueResolver() throws Exception {
-        OwningInstitutionValueResolver owningInstitutionValueResolver = new OwningInstitutionValueResolver();
+        org.recap.model.search.resolver.impl.bib.OwningInstitutionValueResolver owningInstitutionValueResolver = new OwningInstitutionValueResolver();
         owningInstitutionValueResolver.setValue(bibItem(),"test");
         owningInstitutionValueResolver.isInterested("BibOwningInstitution");
         assertNotNull(owningInstitutionValueResolver.getClass());
     }
     @Test
     public void testImprintValueResolver() throws Exception {
-        ImprintValueResolver imprintValueResolver = new ImprintValueResolver();
+        org.recap.model.search.resolver.impl.bib.ImprintValueResolver imprintValueResolver = new ImprintValueResolver();
         imprintValueResolver.setValue(bibItem(),"test");
         imprintValueResolver.isInterested("Imprint");
         assertNotNull(imprintValueResolver.getClass());
     }
     @Test
     public void testBibLastUpdatedByValueResolver() throws Exception {
-        BibLastUpdatedByValueResolver bibLastUpdatedByValueResolver = new BibLastUpdatedByValueResolver();
+        org.recap.model.search.resolver.impl.bib.BibLastUpdatedByValueResolver bibLastUpdatedByValueResolver = new BibLastUpdatedByValueResolver();
         bibLastUpdatedByValueResolver.setValue(bibItem(),"test");
         bibLastUpdatedByValueResolver.isInterested("BibLastUpdatedBy");
         assertNotNull(bibLastUpdatedByValueResolver.getClass());
     }
     @Test
     public void testPublisherValueResolver() throws Exception {
-        PublisherValueResolver publisherValueResolver = new PublisherValueResolver();
+        org.recap.model.search.resolver.impl.bib.PublisherValueResolver publisherValueResolver = new PublisherValueResolver();
         publisherValueResolver.setValue(bibItem(),"test");
         publisherValueResolver.isInterested("Publisher");
         assertNotNull(publisherValueResolver.getClass());
     }
     @Test
     public void testBibLastUpdatedDateValueResolver() throws Exception {
-        BibLastUpdatedDateValueResolver bibLastUpdatedDateValueResolver = new BibLastUpdatedDateValueResolver();
+        org.recap.model.search.resolver.impl.bib.BibLastUpdatedDateValueResolver bibLastUpdatedDateValueResolver = new BibLastUpdatedDateValueResolver();
         Date date= new Date();
         bibLastUpdatedDateValueResolver.setValue(bibItem(),date);
         bibLastUpdatedDateValueResolver.isInterested("BibLastUpdatedDate");
@@ -86,70 +85,70 @@ public class BibResolverUT extends BaseTestCase {
     }
     @Test
     public void testNotesValueResolver() throws Exception {
-        NotesValueResolver notesValueResolver = new NotesValueResolver();
+        org.recap.model.search.resolver.impl.bib.NotesValueResolver notesValueResolver = new NotesValueResolver();
         notesValueResolver.setValue(bibItem(),"test");
         notesValueResolver.isInterested("notes");
         assertNotNull(notesValueResolver.getClass());
     }
     @Test
     public void testBibCreatedByValueResolver() throws Exception {
-        BibCreatedByValueResolver bibCreatedByValueResolver = new BibCreatedByValueResolver();
+        org.recap.model.search.resolver.impl.bib.BibCreatedByValueResolver bibCreatedByValueResolver = new BibCreatedByValueResolver();
         bibCreatedByValueResolver.setValue(bibItem(),"test");
         bibCreatedByValueResolver.isInterested("BibCreatedBy");
         assertNotNull(bibCreatedByValueResolver.getClass());
     }
     @Test
     public void testPublicationDateValueResolver() throws Exception {
-        PublicationDateValueResolver publicationDateValueResolver = new PublicationDateValueResolver();
+        org.recap.model.search.resolver.impl.bib.PublicationDateValueResolver publicationDateValueResolver = new PublicationDateValueResolver();
         publicationDateValueResolver.setValue(bibItem(),"test");
         publicationDateValueResolver.isInterested("PublicationDate");
         assertNotNull(publicationDateValueResolver.getClass());
     }
     @Test
     public void testTitleSearchValueResolver() throws Exception {
-        TitleSearchValueResolver titleSearchValueResolver = new TitleSearchValueResolver();
+        org.recap.model.search.resolver.impl.bib.TitleSearchValueResolver titleSearchValueResolver = new TitleSearchValueResolver();
         titleSearchValueResolver.setValue(bibItem(),"test");
         titleSearchValueResolver.isInterested("Title_search");
         assertNotNull(titleSearchValueResolver.getClass());
     }
     @Test
     public void testTitleSortValueResolver() throws Exception {
-        TitleSortValueResolver titleSortValueResolver = new TitleSortValueResolver();
+        org.recap.model.search.resolver.impl.bib.TitleSortValueResolver titleSortValueResolver = new TitleSortValueResolver();
         titleSortValueResolver.setValue(bibItem(),"test");
         titleSortValueResolver.isInterested("Title_sort");
         assertNotNull(titleSortValueResolver.getClass());
     }
     @Test
     public void testLCCNValueResolver() throws Exception {
-        LCCNValueResolver LCCNValueResolver = new LCCNValueResolver();
+        org.recap.model.search.resolver.impl.bib.LCCNValueResolver LCCNValueResolver = new LCCNValueResolver();
         LCCNValueResolver.setValue(bibItem(),"test");
         LCCNValueResolver.isInterested("LCCN");
         assertNotNull(LCCNValueResolver.getClass());
     }
     @Test
     public void testIdValueResolver() throws Exception {
-        IdValueResolver idValueResolver = new IdValueResolver();
+        org.recap.model.search.resolver.impl.bib.IdValueResolver idValueResolver = new org.recap.model.search.resolver.impl.bib.IdValueResolver();
         idValueResolver.setValue(bibItem(),"test");
         idValueResolver.isInterested("id");
         assertNotNull(idValueResolver.getClass());
     }
     @Test
     public void testOwningInstitutionBibIdValueResolver() throws Exception {
-        OwningInstitutionBibIdValueResolver owningInstitutionBibIdValueResolver = new OwningInstitutionBibIdValueResolver();
+        org.recap.model.search.resolver.impl.bib.OwningInstitutionBibIdValueResolver owningInstitutionBibIdValueResolver = new OwningInstitutionBibIdValueResolver();
         owningInstitutionBibIdValueResolver.setValue(bibItem(),"test");
         owningInstitutionBibIdValueResolver.isInterested(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
         assertNotNull(owningInstitutionBibIdValueResolver.getClass());
     }
     @Test
     public void testBibIdValueResolver() throws Exception {
-        BibIdValueResolver bibIdValueResolver = new BibIdValueResolver();
+        org.recap.model.search.resolver.impl.bib.BibIdValueResolver bibIdValueResolver = new org.recap.model.search.resolver.impl.bib.BibIdValueResolver();
         bibIdValueResolver.setValue(bibItem(),1);
         bibIdValueResolver.isInterested("BibId");
         assertNotNull(bibIdValueResolver.getClass());
     }
     @Test
     public void testISBNValueResolver() throws Exception {
-        ISBNValueResolver ISBNValueResolver = new ISBNValueResolver();
+        org.recap.model.search.resolver.impl.bib.ISBNValueResolver ISBNValueResolver = new ISBNValueResolver();
         List<String> value = new ArrayList<String>();
         value.add("test");
         ISBNValueResolver.setValue(bibItem(),value);
@@ -158,21 +157,21 @@ public class BibResolverUT extends BaseTestCase {
     }
     @Test
     public void testTitleDisplayValueResolver() throws Exception {
-        TitleDisplayValueResolver titleDisplayValueResolver = new TitleDisplayValueResolver();
+        org.recap.model.search.resolver.impl.bib.TitleDisplayValueResolver titleDisplayValueResolver = new TitleDisplayValueResolver();
         titleDisplayValueResolver.setValue(bibItem(),"test");
         titleDisplayValueResolver.isInterested("Title_display");
         assertNotNull(titleDisplayValueResolver.getClass());
     }
     @Test
     public void testAuthorDisplayValueResolver() throws Exception {
-        AuthorDisplayValueResolver authorDisplayValueResolver = new AuthorDisplayValueResolver();
+        org.recap.model.search.resolver.impl.bib.AuthorDisplayValueResolver authorDisplayValueResolver = new AuthorDisplayValueResolver();
         authorDisplayValueResolver.setValue(bibItem(),"test");
         authorDisplayValueResolver.isInterested("Author_display");
         assertNotNull(authorDisplayValueResolver.getClass());
     }
     @Test
     public void testBibCreatedDateValueResolver() throws Exception {
-        BibCreatedDateValueResolver bibCreatedDateValueResolver = new BibCreatedDateValueResolver();
+        org.recap.model.search.resolver.impl.bib.BibCreatedDateValueResolver bibCreatedDateValueResolver = new BibCreatedDateValueResolver();
         Date date= new Date();
         bibCreatedDateValueResolver.setValue(bibItem(),date);
         bibCreatedDateValueResolver.isInterested("BibCreatedDate");
@@ -180,14 +179,14 @@ public class BibResolverUT extends BaseTestCase {
     }
     @Test
     public void testSubjectValueResolver() throws Exception {
-        SubjectValueResolver subjectValueResolver = new SubjectValueResolver();
+        org.recap.model.search.resolver.impl.bib.SubjectValueResolver subjectValueResolver = new SubjectValueResolver();
         subjectValueResolver.setValue(bibItem(),"test");
         subjectValueResolver.isInterested("Subject");
         assertNotNull(subjectValueResolver.getClass());
     }
     @Test
     public void testOCLCValueResolver() throws Exception {
-        OCLCValueResolver OCLCValueResolver = new OCLCValueResolver();
+        org.recap.model.search.resolver.impl.bib.OCLCValueResolver OCLCValueResolver = new OCLCValueResolver();
         List<String> value = new ArrayList<String>();
         value.add("test");
         OCLCValueResolver.setValue(bibItem(),value);
@@ -196,41 +195,42 @@ public class BibResolverUT extends BaseTestCase {
     }
     @Test
     public void testMaterialTypeValueResolver() throws Exception {
-        MaterialTypeValueResolver materialTypeValueResolver = new MaterialTypeValueResolver();
+        org.recap.model.search.resolver.impl.bib.MaterialTypeValueResolver materialTypeValueResolver = new MaterialTypeValueResolver();
         materialTypeValueResolver.setValue(bibItem(),"test");
         materialTypeValueResolver.isInterested("MaterialType");
         assertNotNull(materialTypeValueResolver.getClass());
     }
     @Test
     public void testPublicationPlaceValueResolver() throws Exception {
-        PublicationPlaceValueResolver publicationPlaceValueResolver = new PublicationPlaceValueResolver();
+        org.recap.model.search.resolver.impl.bib.PublicationPlaceValueResolver publicationPlaceValueResolver = new PublicationPlaceValueResolver();
         publicationPlaceValueResolver.setValue(bibItem(),"test");
         publicationPlaceValueResolver.isInterested("PublicationPlace");
         assertNotNull(publicationPlaceValueResolver.getClass());
     }
     @Test
     public void testRootValueResolver() throws Exception {
-        RootValueResolver rootValueResolver = new RootValueResolver();
+        org.recap.model.search.resolver.impl.bib.RootValueResolver rootValueResolver = new org.recap.model.search.resolver.impl.bib.RootValueResolver();
         rootValueResolver.setValue(bibItem(),"test");
         rootValueResolver.isInterested("_root_");
         assertNotNull(rootValueResolver.getClass());
     }
     @Test
     public void testISSNValueResolver() throws Exception {
-        ISSNValueResolver ISSNValueResolver = new ISSNValueResolver();
+        org.recap.model.search.resolver.impl.bib.ISSNValueResolver ISSNValueResolver = new ISSNValueResolver();
         List<String> value = new ArrayList<String>();
         value.add("test");
         ISSNValueResolver.setValue(bibItem(),value);
         ISSNValueResolver.isInterested("ISSN");
         assertNotNull(ISSNValueResolver.getClass());
     }
-    @Test
+
+    /*@Test
     public void testTitleSubFieldAValueResolver() throws Exception {
         TitleSubFieldAValueResolver titleSubFieldAValueResolver = new TitleSubFieldAValueResolver();
         titleSubFieldAValueResolver.setValue(bibItem(),"test");
         titleSubFieldAValueResolver.isInterested("Title_subfield_a");
         assertNotNull(titleSubFieldAValueResolver.getClass());
-    }
+    }*/
 
 
     public BibItem bibItem() throws Exception{
