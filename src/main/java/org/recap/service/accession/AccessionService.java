@@ -627,8 +627,8 @@ public class AccessionService {
      */
     public String createDummyRecordIfAny(String response, String owningInstitution, List<ReportDataEntity> reportDataEntityList, AccessionRequest accessionRequest) {
         String message = response;
-        if (response != null && (response.contains(RecapConstants.ITEM_BARCODE_NOT_FOUND)) ||
-                response.contains(RecapConstants.INVALID_MARC_XML_ERROR_MSG) ) {
+        if (response != null && (response.contains(RecapConstants.ITEM_BARCODE_NOT_FOUND) ||
+                response.contains(RecapConstants.INVALID_MARC_XML_ERROR_MSG)) ) {
             BibliographicEntity fetchBibliographicEntity = getBibEntityUsingBarcodeForIncompleteRecord(accessionRequest.getItemBarcode());
             if (fetchBibliographicEntity == null) {
                 String dummyRecordResponse = createDummyRecord(accessionRequest, owningInstitution);
@@ -703,7 +703,7 @@ public class AccessionService {
      * @return
      */
     @Transactional
-    synchronized String updateData(Object record, String owningInstitution, List<Map<String, String>> responseMapList, AccessionRequest accessionRequest, boolean isValidBoundWithRecord,boolean isFirstRecord){
+    public synchronized String updateData(Object record, String owningInstitution, List<Map<String, String>> responseMapList, AccessionRequest accessionRequest, boolean isValidBoundWithRecord,boolean isFirstRecord){
         String response = null;
         XmlToBibEntityConverterInterface xmlToBibEntityConverterInterface = getConverter(owningInstitution);
         if (null != xmlToBibEntityConverterInterface) {
