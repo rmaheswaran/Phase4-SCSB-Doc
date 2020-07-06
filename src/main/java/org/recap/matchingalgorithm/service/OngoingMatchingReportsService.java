@@ -157,7 +157,7 @@ public class OngoingMatchingReportsService {
                 file = getCsvUtil().createTitleExceptionReportFile(fileNameWithExtension, maxTitleCount, titleExceptionReports);
                 getCamelContext().getRouteController().startRoute(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID);
             } catch (Exception e) {
-                getLogger().error("Exception : {}", e);
+                getLogger().error("Exception : {0}" , e);
             }
         }
         return file != null ? file.getName() : null;
@@ -223,7 +223,7 @@ public class OngoingMatchingReportsService {
                 getCamelContext().getRouteController().startRoute(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID);
                 getProducerTemplate().sendBodyAndHeader(RecapConstants.FTP_SERIAL_MVM_REPORT_Q, matchingSerialAndMvmReports, RecapConstants.FILE_NAME, RecapConstants.MATCHING_SERIAL_MVM_REPORT);
             } catch (Exception e) {
-                getLogger().error("Exception : {}", e);
+                getLogger().error("Exception : {0}", e);
             }
         }
     }
@@ -275,7 +275,7 @@ public class OngoingMatchingReportsService {
                 }
             }
         }catch (Exception e) {
-            getLogger().error("Exception : {}", e);
+            getLogger().error("Exception : {0}", e);
         }
         return matchingSerialAndMVMReportsList;
     }
@@ -327,7 +327,7 @@ public class OngoingMatchingReportsService {
             bibCount = Math.toIntExact(queryResponseForBib.getResults().getNumFound());
             itemCount = Math.toIntExact(queryResponseForItem.getResults().getNumFound());
         } catch (Exception e) {
-            getLogger().error("Exception : {}", e);
+            getLogger().error("Exception : {0}", e);
         }
         try {
             for(MatchingSummaryReport matchingSummaryReport : matchingSummaryReports) {
@@ -355,7 +355,7 @@ public class OngoingMatchingReportsService {
             getCamelContext().getRouteController().startRoute(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID);
             getProducerTemplate().sendBodyAndHeader(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_Q, matchingSummaryReports, RecapConstants.FILE_NAME, RecapConstants.MATCHING_SUMMARY_REPORT);
         } catch (Exception e) {
-            getLogger().error("Exception : {}", e);
+            getLogger().error("Exception : {0}", e);
         }
     }
 }

@@ -35,8 +35,7 @@ public class SubmitCollectionReportGenerator {
         List<ReportDataEntity> reportDataEntities = reportEntity.getReportDataEntities();
         SubmitCollectionReportRecord submitCollectionReportRecord = null;
         for (Iterator<ReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
-            if((null == submitCollectionReportRecord && submitCollectionReportRecordList.isEmpty())
-                    || (isReportRecordFullyUpdated(submitCollectionReportRecord))){
+            if(null == submitCollectionReportRecord || isReportRecordFullyUpdated(submitCollectionReportRecord)){
                 submitCollectionReportRecord = new SubmitCollectionReportRecord();
                 submitCollectionReportRecord.setReportType(getReportType(reportEntity.getType()));
             }
@@ -59,9 +58,11 @@ public class SubmitCollectionReportGenerator {
     }
 
     private boolean isReportRecordFullyUpdated(SubmitCollectionReportRecord submitCollectionReportRecord){
-        boolean newReportObject = true;
-        newReportObject &= (null != submitCollectionReportRecord);
-        newReportObject &= (null != submitCollectionReportRecord.getCustomerCode());
+        boolean newReportObject;
+        if (null == submitCollectionReportRecord) {
+            return false;
+        }
+        newReportObject = (null != submitCollectionReportRecord.getCustomerCode());
         newReportObject &= (null != submitCollectionReportRecord.getItemBarcode());
         newReportObject &= (null != submitCollectionReportRecord.getOwningInstitution());
         newReportObject &= (null != submitCollectionReportRecord.getMessage());
