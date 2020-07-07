@@ -122,6 +122,7 @@ public class UpdateCgdUtil {
                         stopWatchIndexDocument.start();
                         SolrInputDocument bibSolrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(bibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository);
                         solrTemplate.saveDocument(solrCore, bibSolrInputDocument);
+                        solrTemplate.commit(solrCore);
                         stopWatchIndexDocument.stop();
                         logger.info("Time taken to index the doc for updateCGDForItemInSolr--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
                     }
