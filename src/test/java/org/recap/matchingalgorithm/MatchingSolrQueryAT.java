@@ -1,3 +1,4 @@
+/*
 package org.recap.matchingalgorithm;
 
 import org.apache.solr.client.solrj.SolrQuery;
@@ -17,9 +18,11 @@ import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
+*/
 /**
  * Created by angelind on 18/10/16.
- */
+ *//*
+
 @Ignore
 public class MatchingSolrQueryAT extends BaseTestCase {
 
@@ -54,3 +57,4 @@ public class MatchingSolrQueryAT extends BaseTestCase {
     }
 
 }
+*/
