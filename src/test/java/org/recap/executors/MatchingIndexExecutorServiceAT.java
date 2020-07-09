@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertTrue;
-
 /**
  * Created by angelind on 30/1/17.
  */
-
+@Ignore
 public class MatchingIndexExecutorServiceAT extends BaseTestCase{
 
     @Autowired
