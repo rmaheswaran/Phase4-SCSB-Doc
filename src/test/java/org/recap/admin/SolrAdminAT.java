@@ -1,3 +1,4 @@
+/*
 package org.recap.admin;
 
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
@@ -14,9 +15,11 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+*/
 /**
  * Created by pvsubrah on 6/12/16.
- */
+ *//*
+
 @Ignore
 public class SolrAdminAT extends BaseTestCase {
 
@@ -57,3 +60,4 @@ public class SolrAdminAT extends BaseTestCase {
         assertTrue(isCoreExists);
     }
 }
+*/
