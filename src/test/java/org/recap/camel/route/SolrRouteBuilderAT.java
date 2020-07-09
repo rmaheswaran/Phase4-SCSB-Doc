@@ -1,3 +1,4 @@
+/*
 package org.recap.camel.route;
 
 import org.apache.camel.ProducerTemplate;
@@ -11,9 +12,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.query.SimpleQuery;
 
 
+*/
 /**
  * Created by rajeshbabuk on 29/9/16.
- */
+ *//*
+
 @Ignore
 public class SolrRouteBuilderAT extends BaseTestCase {
 
@@ -44,4 +47,4 @@ public class SolrRouteBuilderAT extends BaseTestCase {
         Thread.sleep(1000);
     }
 
-}
+}*/

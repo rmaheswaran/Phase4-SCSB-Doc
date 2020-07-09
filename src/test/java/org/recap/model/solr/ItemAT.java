@@ -1,3 +1,4 @@
+/*
 package org.recap.model.solr;
 
 import org.junit.Before;
@@ -92,3 +93,4 @@ public class ItemAT extends  BaseTestCase {
         assertTrue(indexedItem.getItemBibIdList().equals(itemBibIdList));
     }
 }
+*/
