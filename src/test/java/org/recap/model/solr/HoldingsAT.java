@@ -1,3 +1,4 @@
+/*
 package org.recap.model.solr;
 
 import org.junit.Before;
@@ -11,9 +12,11 @@ import java.util.Date;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+*/
 /**
  * Created by rajeshbabuk on 13/9/16.
- */
+ *//*
+
 @Ignore
 public class HoldingsAT extends BaseTestCase {
 
@@ -61,3 +64,4 @@ public class HoldingsAT extends BaseTestCase {
         assertEquals(fetchedHoldings.getOwningInstitution(), "NYPL");
     }
 }
+*/

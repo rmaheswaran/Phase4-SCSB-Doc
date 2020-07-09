@@ -1,3 +1,4 @@
+/*
 package org.recap.repository.solr.impl;
 
 import org.junit.Ignore;
@@ -13,9 +14,11 @@ import java.util.Map;
 
 import static junit.framework.TestCase.assertTrue;
 
+*/
 /**
  * Created by premkb on 27/1/17.
- */
+ *//*
+
 @Ignore
 public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCase{
 
@@ -33,3 +36,4 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCase{
         assertTrue(bibItemMap.isEmpty());
     }
 }
+*/
