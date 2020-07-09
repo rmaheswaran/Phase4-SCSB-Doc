@@ -1,3 +1,4 @@
+/*
 package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
@@ -26,9 +27,11 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+*/
 /**
  * Created by pvsubrah on 6/14/16.
- */
+ *//*
+
 @Ignore
 public class ExecutorAT extends BaseTestCase {
 
@@ -162,3 +165,4 @@ public class ExecutorAT extends BaseTestCase {
     }
 
 }
+*/

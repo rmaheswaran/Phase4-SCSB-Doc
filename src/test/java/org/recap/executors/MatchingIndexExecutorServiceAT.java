@@ -1,3 +1,4 @@
+/*
 package org.recap.executors;
 
 import org.junit.Ignore;
@@ -8,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
+*/
 /**
  * Created by angelind on 30/1/17.
- */
+ *//*
+
 @Ignore
 public class MatchingIndexExecutorServiceAT extends BaseTestCase{
 
@@ -24,4 +27,4 @@ public class MatchingIndexExecutorServiceAT extends BaseTestCase{
     }
 
 
-}
+}*/
