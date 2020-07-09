@@ -6,7 +6,6 @@ import org.apache.solr.common.SolrInputDocument;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.RecapCommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.query.SimpleQuery;
@@ -15,7 +14,7 @@ import org.springframework.data.solr.core.query.SimpleQuery;
 /**
  * Created by rajeshbabuk on 29/9/16.
  */
-
+@Ignore
 public class SolrRouteBuilderAT extends BaseTestCase {
 
     @Autowired

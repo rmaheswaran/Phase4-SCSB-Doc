@@ -59,6 +59,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
 
+
 /**
  * Created by chenchulakshmig on 20/10/16.
  */
@@ -420,21 +421,21 @@ public class AccessionService {
                             bibDataResponse = getPrincetonService().getBibData(accessionRequest.getItemBarcode());
                             stopWatch.stop();
                             logger.info("Time taken to get bib data from ils : {}" ,stopWatch.getTotalTimeSeconds());
-                          //  response = processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
+                            response = processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
                         } else if (owningInstitution != null && owningInstitution.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
                             StopWatch stopWatch = new StopWatch();
                             stopWatch.start();
                             bibDataResponse = getColumbiaService().getBibData(accessionRequest.getItemBarcode());
                             stopWatch.stop();
                             logger.info("Time taken to get bib data from ils : {}", stopWatch.getTotalTimeSeconds());
-                         //   response = processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
+                            response = processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
                         } else if (owningInstitution != null && owningInstitution.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
                             StopWatch stopWatch1 = new StopWatch();
                             stopWatch1.start();
                             bibDataResponse = getNyplService().getBibData(accessionRequest.getItemBarcode(), accessionRequest.getCustomerCode());
                             stopWatch1.stop();
                             logger.info("Total Time taken to get bib data from ils : {}", stopWatch1.getTotalTimeSeconds());
-                          //  response = processAccessionForSCSBXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
+                            response = processAccessionForSCSBXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
                         }
                     } catch (Exception ex) {
                         accessionHelperUtil.processException(accessionResponsesList, accessionRequest, reportDataEntityList, owningInstitution, ex);
