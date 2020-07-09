@@ -1,3 +1,4 @@
+/*
 package org.recap.repository.solr.main;
 
 import com.google.common.collect.Lists;
@@ -41,9 +42,11 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+*/
 /**
  * Created by rajeshbabuk on 14/7/16.
- */
+ *//*
+
 @Ignore
 public class BibSolrDocumentRepositoryAT extends BaseTestCase {
 
@@ -325,12 +328,14 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         }
     }
 
-    /*@Test
+    */
+/*@Test
     public void testGetModifiedText() throws Exception {
         String searchText = "Test-Title.";
         String modifiedText = solrQueryBuilder.getModifiedText(searchText);
         assertEquals(modifiedText, "Test\\-Title\\.");
-    }*/
+    }*//*
+
 
     @Ignore
     public void searchBoundWithDocuments() throws Exception {
@@ -513,4 +518,4 @@ public class BibSolrDocumentRepositoryAT extends BaseTestCase {
         assertNotNull(bibItems);
     }
 
-}
+}*/
