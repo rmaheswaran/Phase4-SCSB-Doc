@@ -18,8 +18,6 @@ import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.solr.main.BibSolrCrudRepository;
 import org.recap.service.accession.SolrIndexService;
 import org.recap.util.BibJSONUtil;
-import org.recap.util.ItemJSONUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 

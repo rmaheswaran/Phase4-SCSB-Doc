@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,7 +33,7 @@ import java.util.HashMap;
  */
 @RestController
 @RequestMapping("/searchService")
-@Api(value="search", description="Search Records")
+@Api(value="search")
 public class SearchRecordRestController {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchRecordRestController.class);
@@ -55,7 +56,7 @@ public class SearchRecordRestController {
      * @param searchRecordsRequest the search records request
      * @return the SearchRecordsResponse.
      */
-    @RequestMapping(value="/search", method = RequestMethod.POST)
+    @PostMapping(value="/search")
     @ApiOperation(value = "search",notes = "Search Books in ReCAP - Using Method Post, Request data is String", nickname = "search")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful Search")})
     @ResponseBody
@@ -86,7 +87,7 @@ public class SearchRecordRestController {
      * @param searchRecordsRequest the search records request
      * @return the responseMap.
      */
-    @RequestMapping(value="/searchRecords", method = RequestMethod.POST)
+    @PostMapping(value="/searchRecords")
     @ApiOperation(value = "searchRecords",notes = "Search Books in ReCAP - Using Method Post, Request data is String", nickname = "searchRecords", consumes="application/json")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful Search")})
     public Map searchRecords(@ApiParam(value = "Paramerters for Searching Records" , required = true, name="requestJson") @RequestBody SearchRecordsRequest searchRecordsRequest) {
@@ -117,7 +118,7 @@ public class SearchRecordRestController {
      * @param pageSize                    the page size
      * @return the SearchResultRow list.
      */
-    @RequestMapping(value="/searchByParam", method = RequestMethod.GET)
+    @GetMapping(value="/searchByParam")
     @ApiOperation(value = "searchParam",notes = "Search Books in ReCAP - Using Method GET, Request data as parameter", nickname = "search")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful Search")})
     public List<SearchResultRow> searchRecordsServiceGet(

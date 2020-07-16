@@ -11,11 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.util.StopWatch;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -40,7 +36,7 @@ public class OngoingMatchingAlgorithmJobRestController {
     @Value("${matching.algorithm.bibinfo.batchsize}")
     private String batchSize;
 
-    @RequestMapping(value = "/ongoingMatchingAlgorithmJob", method = RequestMethod.POST,  consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/ongoingMatchingAlgorithmJob", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String startMatchingAlgorithmJob(@RequestBody SolrIndexRequest solrIndexRequest) {
         StopWatch stopWatch = new StopWatch();

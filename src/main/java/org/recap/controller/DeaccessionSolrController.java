@@ -7,9 +7,9 @@ import org.recap.service.deaccession.DeAccessSolrDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class DeaccessionSolrController {
      * @param deAccessionSolrRequest the de accession solr request
      * @return the response entity
      */
-    @RequestMapping(value="/deaccessionInSolr", method = RequestMethod.POST)
+    @PostMapping(value="/deaccessionInSolr")
     public ResponseEntity deaccessionInSolr(@RequestBody DeAccessionSolrRequest deAccessionSolrRequest) {
         List<Integer> bibIds = deAccessionSolrRequest.getBibIds();
         List<Integer> holdingsIds = deAccessionSolrRequest.getHoldingsIds();

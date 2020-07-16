@@ -61,14 +61,14 @@ public class MatchingAlgorithmUT extends BaseTestCase {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        Mockito.when(matchingAlgorithmHelperService.findMatchingAndPopulateMatchPointsEntities()).thenReturn(new Long(7));
+        Mockito.when(matchingAlgorithmHelperService.findMatchingAndPopulateMatchPointsEntities()).thenReturn(Long.valueOf(7));
         long count = matchingAlgorithmHelperService.findMatchingAndPopulateMatchPointsEntities();
 
         stopWatch.stop();
         logger.info("Total Time taken : " + stopWatch.getTotalTimeSeconds());
 
         Thread.sleep(10000);
-        Mockito.when(matchingMatchPointsDetailsRepository.count()).thenReturn(new Long(7));
+        Mockito.when(matchingMatchPointsDetailsRepository.count()).thenReturn(Long.valueOf(7));
         long savedCount = matchingMatchPointsDetailsRepository.count();
         assertTrue(savedCount>0);
     }
@@ -77,7 +77,7 @@ public class MatchingAlgorithmUT extends BaseTestCase {
     public void populateTempMatchingBibsEntity() throws Exception {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        Mockito.when(matchingAlgorithmHelperService.populateMatchingBibEntities()).thenReturn(new Long(1));
+        Mockito.when(matchingAlgorithmHelperService.populateMatchingBibEntities()).thenReturn(Long.valueOf(1));
         long count = matchingAlgorithmHelperService.populateMatchingBibEntities();
 
         stopWatch.stop();

@@ -295,7 +295,7 @@ public class ItemDetailsRepositoryUT extends BaseTestCase {
         ItemEntity itemEntity = itemDetailsRepository.findByOwningInstitutionItemIdAndOwningInstitutionId("7453441",1);
         assertNotEquals(null,itemEntity);
         assertEquals("7453441",itemEntity.getOwningInstitutionItemId());
-        assertEquals(new Integer(1),itemEntity.getOwningInstitutionId());
+        assertEquals(Integer.valueOf(1),itemEntity.getOwningInstitutionId());
 
     }
 

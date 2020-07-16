@@ -1,6 +1,6 @@
 package org.recap.controller;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
@@ -9,9 +9,9 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -37,7 +37,7 @@ public class AccessionReconcilationRestController {
      * @throws IOException
      * @throws SolrServerException
      */
-    @RequestMapping(method = RequestMethod.POST,value = "/startAccessionReconcilation")
+    @PostMapping(value = "/startAccessionReconcilation")
     public Map<String,String> startAccessionReconcilation(@RequestBody Map<String,String> barcodesAndCustomerCodes) throws IOException, SolrServerException {
         SolrClient solrClient = solrTemplate.getSolrClient();
         Set<String> barcodes = barcodesAndCustomerCodes.keySet();

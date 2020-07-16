@@ -2,14 +2,14 @@ package org.recap.model.search;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by rajesh on 18-Jul-16.
  */
-@Data
-@EqualsAndHashCode(of = {"chronologyAndEnum"})
+@Getter
+@Setter
 @ApiModel(value="SearchItemResultRow", description="Model for Displaying Item Result")
 public class SearchItemResultRow extends AbstractSearchItemResultRow implements Comparable<SearchItemResultRow> {
     @ApiModelProperty(name= "itemId", value= "Item Id",position = 8)
@@ -41,6 +41,23 @@ public class SearchItemResultRow extends AbstractSearchItemResultRow implements 
         else {
             return objChronologyAndEnum.compareTo(searchItemResultRowChronologyAndEnum);
         }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object)
+            return true;
+        if (object == null || getClass() != object.getClass())
+            return false;
+
+        SearchItemResultRow searchItemResultRow = (SearchItemResultRow) object;
+
+        return getChronologyAndEnum() != null ? getChronologyAndEnum().equals(searchItemResultRow.getChronologyAndEnum()) : searchItemResultRow.getChronologyAndEnum() == null;
+
+    }
+    @Override
+    public int hashCode() {
+        return getChronologyAndEnum() != null ? getChronologyAndEnum().hashCode() : 0;
     }
 }
 

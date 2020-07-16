@@ -14,8 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StopWatch;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
@@ -44,7 +43,7 @@ public class GenerateReportController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/reportGeneration/generateReports", method = RequestMethod.POST)
+    @PostMapping(value = "/reportGeneration/generateReports")
     public String generateReports(@Valid @ModelAttribute("solrIndexRequest") SolrIndexRequest solrIndexRequest,
                                   BindingResult result,
                                   Model model) {

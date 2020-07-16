@@ -200,9 +200,9 @@ public abstract class IndexExecutorService {
                     }
                     if (!isIncremental) {
                         solrAdmin.mergeCores(coreNames);
-                        logger.info("Solr core status : " + solrAdmin.getCoresStatus());
+                        logger.info("Solr core status : {}" , solrAdmin.getCoresStatus());
                         while (solrAdmin.getCoresStatus() != 0) {
-                            logger.info("Solr core status : " + solrAdmin.getCoresStatus());
+                            logger.info("Solr core status : {}" , solrAdmin.getCoresStatus());
                         }
                         deleteTempIndexes(coreNames, solrServerProtocol + solrUrl);
                     }
@@ -211,7 +211,7 @@ public abstract class IndexExecutorService {
                     Long solrBibCount = bibSolrCrudRepository.countByDocType(RecapCommonConstants.BIB);
                     logger.info("Total number of Bibs in Solr in recap core : {}",solrBibCount);
                 }
-                logger.info("Total futures executed: ",futureCount);
+                logger.info("Total futures executed: {}",futureCount);
                 stopWatch.stop();
                 logger.info("Time taken to fetch {} Bib Records and index to recap core : {} seconds",totalBibsProcessed,stopWatch.getTotalTimeSeconds());
                 if (!isIncremental) {
@@ -310,7 +310,7 @@ public abstract class IndexExecutorService {
                     Long solrBibCount = bibSolrCrudRepository.countByDocType(RecapCommonConstants.BIB);
                     logger.info("Total number of Bibs in Solr in recap core : {}",solrBibCount);
                 }
-                logger.info("Total futures executed: ",futureCount);
+                logger.info("Total futures executed: {}",futureCount);
                 stopWatch.stop();
                 logger.info("Time taken to fetch {} Bib Records and index to recap core : {} seconds",totalBibsProcessed,stopWatch.getTotalTimeSeconds());
                 executorService.shutdown();
