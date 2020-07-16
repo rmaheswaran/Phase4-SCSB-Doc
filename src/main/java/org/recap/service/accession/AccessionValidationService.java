@@ -88,10 +88,7 @@ public class AccessionValidationService {
         }
         InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(owningInstitutionId);
         HoldingsEntity holdingsEntity = holdingsDetailsRepository.findByOwningInstitutionHoldingsIdAndOwningInstitutionId(owningInstitutionHoldingId,institutionEntity.getId());
-        if(holdingsEntity!=null && holdingsEntity.getBibliographicEntities().size() >= 1) {
-            return false;
-        }
-        return true;
+        return(!(holdingsEntity!=null && holdingsEntity.getBibliographicEntities().size() >= 1));
     }
 
     public boolean validateItemAndHolding(BibliographicEntity bibliographicEntity, boolean isValidBoundWithRecord, boolean isFirstRecord, StringBuilder errorMessage){

@@ -385,7 +385,7 @@ public class AccessionServiceUT extends BaseTestCase {
         Mockito.when(mockAccessionService.getTrimmedAccessionRequests(accessionRequestList)).thenCallRealMethod();
        // List<AccessionRequest> trimmedAccessionRequests = mockAccessionService.getTrimmedAccessionRequests(accessionRequestList);
         String status = mockAccessionService.saveRequest(accessionRequestList);
-        assertEquals(status, RecapConstants.ACCESSION_SAVE_SUCCESS_STATUS);
+        assertEquals(RecapConstants.ACCESSION_SAVE_SUCCESS_STATUS, status);
 
         List<AccessionEntity> accessionEntities = Arrays.asList(accessionEntity);
         Mockito.when(mockAccessionService.getAccessionEntities(RecapConstants.PENDING)).thenReturn(accessionEntities);

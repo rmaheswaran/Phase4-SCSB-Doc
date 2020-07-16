@@ -42,7 +42,7 @@ public class ItemJSONUtil extends MarcUtil{
         try {
             Item item = new Item();
             Integer itemId = itemEntity.getItemId();
-            item.setId(String.valueOf(itemEntity.getOwningInstitutionId()+itemEntity.getOwningInstitutionItemId()));
+            item.setId(itemEntity.getOwningInstitutionId()+itemEntity.getOwningInstitutionItemId());
             item.setItemId(itemId);
             item.setOwningInstitutionItemId(itemEntity.getOwningInstitutionItemId());
             item.setBarcode(itemEntity.getBarcode());

@@ -147,7 +147,7 @@ public class UpdateCgdUtilUT extends BaseTestCase {
 
     @Test
     public void updateCGDForItem() throws Exception {
-        Mockito.when(mockedItemChangeLogDetailsRepository.count()).thenReturn(new Long(0));
+        Mockito.when(mockedItemChangeLogDetailsRepository.count()).thenReturn(Long.valueOf(0));
         long beforeCountForChangeLog = mockedItemChangeLogDetailsRepository.count();
 
         BibliographicEntity bibliographicEntity = getBibEntityWithHoldingsAndItem();
@@ -200,7 +200,7 @@ public class UpdateCgdUtilUT extends BaseTestCase {
             assertEquals(itemBarcode, fetchedItemEntity.getBarcode());
             assertEquals("Private", fetchedItemEntity.getCollectionGroupEntity().getCollectionGroupCode());
         }
-        Mockito.when(mockedItemChangeLogDetailsRepository.count()).thenReturn(new Long(1));
+        Mockito.when(mockedItemChangeLogDetailsRepository.count()).thenReturn(Long.valueOf(1));
         long afterCountForChangeLog = mockedItemChangeLogDetailsRepository.count();
 
         assertEquals(afterCountForChangeLog, beforeCountForChangeLog + 1);

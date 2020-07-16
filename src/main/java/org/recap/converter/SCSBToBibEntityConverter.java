@@ -1,6 +1,7 @@
 package org.recap.converter;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.accession.AccessionRequest;
@@ -29,7 +30,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Created by premkb on 15/12/16.
@@ -307,9 +307,9 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
             }
             itemEntity.setCustomerCode(accessionRequest.getCustomerCode());
             itemEntity.setCallNumber(holdingsCallNumber);
-            itemEntity.setCallNumberType(holdingsCallNumberType != null ? String.valueOf(holdingsCallNumberType) : "");
+            itemEntity.setCallNumberType(holdingsCallNumberType != null ? holdingsCallNumberType : "");
             String copyNumber = getMarcUtil().getDataFieldValueForRecordType(itemRecordType, "876", null, null, "t");
-            if (StringUtils.isNotBlank(copyNumber) && org.apache.commons.lang3.math.NumberUtils.isNumber(copyNumber)) {
+            if (StringUtils.isNotBlank(copyNumber) && NumberUtils.isCreatable(copyNumber)) {
                 itemEntity.setCopyNumber(Integer.valueOf(copyNumber));
             }
             if (owningInstitutionId != null) {

@@ -61,8 +61,8 @@ public class MatchingAlgorithmProcessor {
                 try {
                     matchingBibDetailsRepository.save(matchingBibEntity);
                 } catch (Exception e) {
-                    logger.info("Exception for single Entity : " , e);
-                    logger.info("ISBN : " + matchingBibEntity.getIsbn());
+                    logger.info("Exception for single Entity : {}" , e);
+                    logger.info("ISBN : {}" , matchingBibEntity.getIsbn());
                 }
             }
         }
@@ -97,7 +97,7 @@ public class MatchingAlgorithmProcessor {
         try {
             matchingBibDetailsRepository.updateStatusBasedOnBibs(status, matchingBibIds);
         } catch (Exception e) {
-            logger.info("Exception while updating matching Bib entity status : " , e);
+            logger.info("Exception while updating matching Bib entity status : {}" , e);
         }
     }
 }

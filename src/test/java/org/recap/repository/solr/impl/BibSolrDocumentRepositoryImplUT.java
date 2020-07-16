@@ -1,23 +1,13 @@
 package org.recap.repository.solr.impl;
 
-import org.junit.Test;
 import org.recap.BaseTestCase;
 import org.recap.RecapCommonConstants;
-import org.recap.model.search.resolver.BibValueResolver;
-import org.recap.model.search.resolver.HoldingsValueResolver;
-import org.recap.model.search.resolver.ItemValueResolver;
-import org.recap.model.solr.BibItem;
-import org.recap.model.solr.Holdings;
-import org.recap.model.solr.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 22/2/17.
