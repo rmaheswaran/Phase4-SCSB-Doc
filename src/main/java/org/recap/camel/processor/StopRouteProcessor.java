@@ -2,14 +2,17 @@ package org.recap.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.log4j.Logger;
+import org.recap.RecapCommonConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Created by angelind on 22/6/17.
  */
 public class StopRouteProcessor implements Processor {
 
-    private static final Logger logger = Logger.getLogger(StopRouteProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(StopRouteProcessor.class);
     private String routeId;
 
     /**
@@ -30,8 +33,8 @@ public class StopRouteProcessor implements Processor {
                 try {
                     exchange.getContext().getRouteController().stopRoute(routeId);
                 } catch (Exception e) {
-                    logger.error("Exception while stop route : " + routeId);
-                    e.printStackTrace();
+                    logger.error("Exception while stop route : {}" , routeId);
+                    logger.error(RecapCommonConstants.LOCAL_ITEM_ID, e.getStackTrace());
                 }
             }
         };

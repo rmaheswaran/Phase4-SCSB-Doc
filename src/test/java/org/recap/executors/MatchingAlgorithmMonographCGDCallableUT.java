@@ -43,7 +43,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCase{
     @Mock
     ProducerTemplate producerTemplate;
 
-    long from = new Long(0);
+    long from = Long.valueOf(0);
     int pageNum = 1;
     Integer batchSize = 10;
 

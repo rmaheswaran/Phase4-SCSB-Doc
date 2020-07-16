@@ -55,6 +55,7 @@ public class EmailService {
      * Instantiates a new Email service.
      */
     public EmailService() {
+        //Do Nothing
     }
 
     /**

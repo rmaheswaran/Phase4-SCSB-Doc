@@ -1,7 +1,5 @@
 package org.recap.controller;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.solr.common.SolrInputDocument;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -13,16 +11,14 @@ import org.recap.RecapConstants;
 import org.recap.admin.SolrAdmin;
 import org.recap.executors.BibItemIndexExecutorService;
 import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.solr.Bib;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.solr.main.*;
+import org.recap.repository.solr.main.BibSolrCrudRepository;
+import org.recap.repository.solr.main.HoldingsSolrCrudRepository;
+import org.recap.repository.solr.main.ItemCrudRepository;
 import org.recap.service.accession.SolrIndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,7 +30,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 /**

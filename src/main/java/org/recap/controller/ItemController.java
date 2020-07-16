@@ -5,8 +5,8 @@ import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class ItemController {
      * @param barcodes the barcodes
      * @return the list
      */
-    @RequestMapping(method = RequestMethod.GET, value ="/findByBarcodeIn")
+    @GetMapping(value ="/findByBarcodeIn")
     public List<ItemEntity> findByBarcodeIn(String barcodes){
         List<String> barcodeList = splitStringAndGetList(barcodes);
         List<ItemEntity> itemEntityList = getItemDetailsRepository().findByBarcodeIn(barcodeList);

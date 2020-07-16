@@ -59,7 +59,7 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCase{
     @PersistenceContext
     private EntityManager entityManager;
 
-    long from = new Long(0);
+    long from = Long.valueOf(0);
     int pageNum = 1;
     Integer batchSize = 10;
     BibliographicEntity bibliographicEntity = null;

@@ -26,7 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -92,7 +93,7 @@ public class SharedCollectionRestController {
      * @param itemAvailabityStatusRequest the item availabity status request
      * @return the response entity
      */
-    @RequestMapping(value = "/itemAvailabilityStatus", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/itemAvailabilityStatus", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity itemAvailabilityStatus(@RequestBody ItemAvailabityStatusRequest itemAvailabityStatusRequest) {
         List<ItemAvailabilityResponse> itemAvailabilityResponses = new ArrayList<>();
@@ -114,7 +115,7 @@ public class SharedCollectionRestController {
      * @param bibItemAvailabityStatusRequest the bib item availability status request
      * @return the response entity
      */
-    @RequestMapping(value = "/bibAvailabilityStatus", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/bibAvailabilityStatus", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity bibAvailabilityStatus(@RequestBody BibItemAvailabityStatusRequest bibItemAvailabityStatusRequest) {
         List<BibAvailabilityResponse> bibAvailabilityResponses;
@@ -137,7 +138,7 @@ public class SharedCollectionRestController {
      * @param accessionRequestList the accession request list
      * @return the response entity
      */
-    @RequestMapping(value = "/accessionBatch", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/accessionBatch", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity accessionBatch(@RequestBody List<AccessionRequest> accessionRequestList) {
         String responseMessage = getAccessionService().saveRequest(accessionRequestList);
@@ -151,7 +152,7 @@ public class SharedCollectionRestController {
      * @param accessionRequestList the accession request list
      * @return the response entity
      */
-    @RequestMapping(value = "/accession", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/accession", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity accession(@RequestBody List<AccessionRequest> accessionRequestList,Exchange exchange) {
         ResponseEntity responseEntity;
@@ -184,7 +185,7 @@ public class SharedCollectionRestController {
      *
      * @return the string
      */
-    @RequestMapping(value = "/ongoingAccessionJob", method = RequestMethod.GET)
+    @GetMapping(value = "/ongoingAccessionJob")
     @ResponseBody
     public String ongoingAccessionJob(Exchange exchange) {
         StopWatch stopWatch = new StopWatch();

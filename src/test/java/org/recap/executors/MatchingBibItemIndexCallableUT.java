@@ -64,7 +64,7 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCase {
         MockitoAnnotations.initMocks(this);
         bibliographicEntity = saveBibSingleHoldingsSingleItem();
         Mockito.when(mockedBibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(PageRequest.of(pageNum, docsPerPage), operationType, from, to)).thenReturn(getBibliographicPagableObject(Arrays.asList(bibliographicEntity)));
-        Mockito.when(mockedBibliographicDetailsRepository.getCountOfBibliographicEntitiesForChangedItems(operationType, from, to)).thenReturn(new Long(1));
+        Mockito.when(mockedBibliographicDetailsRepository.getCountOfBibliographicEntitiesForChangedItems(operationType, from, to)).thenReturn(Long.valueOf(1));
     }
 
    /* @Test

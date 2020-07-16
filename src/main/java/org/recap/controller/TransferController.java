@@ -14,9 +14,9 @@ import org.recap.util.HelperUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Iterator;
@@ -53,7 +53,7 @@ public class TransferController {
      * @return response
      * @throws Exception
      */
-    @RequestMapping(value = "/processTransfer",method = RequestMethod.POST)
+    @PostMapping(value = "/processTransfer")
     public TransferResponse processTransfer(@RequestBody TransferRequest transferRequest) {
         // todo: validate transfer request
         TransferResponse transferResponse = new TransferResponse();

@@ -158,8 +158,8 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         matchingAlgoMap.put("culMatchingCount", 2);
         matchingAlgoMap.put("nyplMatchingCount", 3);
         Mockito.when(matchingAlgoController.getMatchingAlgorithmHelperService()).thenReturn(matchingAlgorithmHelperService);
-        Mockito.when(matchingAlgorithmHelperService.findMatchingAndPopulateMatchPointsEntities()).thenReturn(new Long(10));
-        Mockito.when(matchingAlgorithmHelperService.populateMatchingBibEntities()).thenReturn(new Long(10));
+        Mockito.when(matchingAlgorithmHelperService.findMatchingAndPopulateMatchPointsEntities()).thenReturn(Long.valueOf(10));
+        Mockito.when(matchingAlgorithmHelperService.populateMatchingBibEntities()).thenReturn(Long.valueOf(10));
         Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCandISBN(batchSize)).thenReturn(matchingAlgoMap);
         Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndISSN(batchSize)).thenReturn(matchingAlgoMap);
         Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndLCCN(batchSize)).thenReturn(matchingAlgoMap);
@@ -212,7 +212,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         Mockito.when(matchingAlgorithmUpdateCGDService.getItemDetailsRepository()).thenReturn(itemDetailsRepository);
         Mockito.when(matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo()).thenReturn(activeMqQueuesInfo);
         Mockito.when(matchingAlgorithmUtil.getReportDetailRepository()).thenReturn(reportDetailRepository);
-        Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingMonograph(RecapCommonConstants.BIB_ID)).thenReturn(new Long(10000));
+        Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingMonograph(RecapCommonConstants.BIB_ID)).thenReturn(Long.valueOf(10000));
         Mockito.doCallRealMethod().when(matchingAlgorithmUpdateCGDService).updateCGDProcessForMonographs(Mockito.any());
         Mockito.doCallRealMethod().when(matchingAlgorithmUtil).updateMonographicSetRecords(Mockito.any(),Mockito.any());
         Mockito.doCallRealMethod().when(matchingAlgorithmUtil).updateExceptionRecords(Mockito.any(),Mockito.any());
@@ -243,7 +243,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         Mockito.when(matchingAlgorithmUpdateCGDService.getItemDetailsRepository()).thenReturn(itemDetailsRepository);
         Mockito.when(matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo()).thenReturn(activeMqQueuesInfo);
         Mockito.when(matchingAlgorithmUtil.getReportDetailRepository()).thenReturn(reportDetailRepository);
-        Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(RecapCommonConstants.BIB_ID)).thenReturn(new Long(10000));
+        Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(RecapCommonConstants.BIB_ID)).thenReturn(Long.valueOf(10000));
         Mockito.doCallRealMethod().when(matchingAlgorithmUtil).saveCGDUpdatedSummaryReport(Mockito.any());
         Mockito.when(matchingAlgoController.getMatchingAlgorithmUpdateCGDService()).thenReturn(matchingAlgorithmUpdateCGDService);
         Mockito.doCallRealMethod().when(matchingAlgorithmUpdateCGDService).updateCGDProcessForSerials(batchSize);
@@ -273,7 +273,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         Mockito.when(matchingAlgorithmUpdateCGDService.getItemDetailsRepository()).thenReturn(itemDetailsRepository);
         Mockito.when(matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo()).thenReturn(activeMqQueuesInfo);
         Mockito.when(matchingAlgorithmUtil.getReportDetailRepository()).thenReturn(reportDetailRepository);
-        Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingMVMs(RecapCommonConstants.BIB_ID)).thenReturn(new Long(10000));
+        Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingMVMs(RecapCommonConstants.BIB_ID)).thenReturn(Long.valueOf(10000));
         Mockito.doCallRealMethod().when(matchingAlgorithmUtil).saveCGDUpdatedSummaryReport(Mockito.any());
         Mockito.doCallRealMethod().when(matchingAlgorithmUpdateCGDService).updateCGDProcessForMVMs(batchSize);
         Mockito.when(matchingAlgoController.updateMvmCGDInDB()).thenCallRealMethod();
@@ -305,7 +305,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         Mockito.when(matchingBibInfoDetailService.getReportDataDetailsRepository()).thenReturn(reportDataDetailsRepository);
         Mockito.when(matchingBibInfoDetailService.getReportDetailRepository()).thenReturn(reportDetailRepository);
         Mockito.when(matchingBibInfoDetailService.getBatchSize()).thenReturn(batchSize);
-        Mockito.when(reportDetailRepository.getCountByType(Mockito.any())).thenReturn(new Integer(100));
+        Mockito.when(reportDetailRepository.getCountByType(Mockito.any())).thenReturn(Integer.valueOf(100));
         Mockito.when(reportDetailRepository.getRecordNumByType(Mockito.any(),Mockito.any())).thenReturn(getRecordNumber());
         Mockito.when(reportDataDetailsRepository.getRecordsForMatchingBibInfo(Mockito.any(),Mockito.any())).thenReturn(Arrays.asList(new ReportDataEntity()));
         Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo()).thenCallRealMethod();
@@ -344,7 +344,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupMap()).thenReturn(collectionGroupMap);
         Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupMap().get(RecapCommonConstants.SHARED_CGD)).thenReturn(1);
         Mockito.when(matchingAlgorithmUpdateCGDService.getBibliographicDetailsRepository().findByBibliographicIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
-        Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository().getCountOfRecordNumForMatchingSerials(RecapCommonConstants.BIB_ID)).thenReturn(new Long(10000));
+        Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository().getCountOfRecordNumForMatchingSerials(RecapCommonConstants.BIB_ID)).thenReturn(Long.valueOf(10000));
         for(int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
             Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository().getReportDataEntityForMatchingSerials(RecapCommonConstants.BIB_ID, from, batchSize)).thenReturn(Arrays.asList(reportDataEntity));

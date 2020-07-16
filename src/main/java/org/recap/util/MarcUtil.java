@@ -29,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -47,7 +48,7 @@ public class MarcUtil {
      */
     public List<Record> convertMarcXmlToRecord(String marcXml) {
         List<Record> records = new ArrayList<>();
-        MarcReader reader = new MarcXmlReader(IOUtils.toInputStream(marcXml));
+        MarcReader reader = new MarcXmlReader(IOUtils.toInputStream(marcXml, StandardCharsets.UTF_8));
         while (reader.hasNext()) {
             Record record = reader.next();
             records.add(record);

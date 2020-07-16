@@ -1,10 +1,7 @@
 package org.recap.camel.route;
 
 import org.apache.camel.ProducerTemplate;
-import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
-import org.recap.model.camel.EmailPayLoad;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

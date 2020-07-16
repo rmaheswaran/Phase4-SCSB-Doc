@@ -59,7 +59,7 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCase{
     @Mock
     private Map collectionGroupMap;
 
-    long from = new Long(0);
+    long from = Long.valueOf(0);
     int pageNum = 1;
     Integer batchSize = 10;
     BibliographicEntity bibliographicEntity = null;
