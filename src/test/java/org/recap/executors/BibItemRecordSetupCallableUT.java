@@ -212,11 +212,11 @@ public class BibItemRecordSetupCallableUT extends BaseTestCase {
         BibItemRecordSetupCallable bibItemRecordSetupCallable = new BibItemRecordSetupCallable(bibliographicEntity, mockSolrTemplate, mockBibliographicDetailsRepository, mockHoldingsDetailsRepository, producerTemplate);
         SolrInputDocument bibItem = (SolrInputDocument) bibItemRecordSetupCallable.call();
         assertNotNull(bibItem);
-        assertEquals(new Integer(1),bibItem.get("BibId").getValue());
+        assertEquals(Integer.valueOf(1),bibItem.get("BibId").getValue());
         assertNotNull(bibItem.getChildDocuments());
-        assertEquals(new Integer(1),bibItem.getChildDocuments().get(0).get("HoldingId").getValue());
+        assertEquals(Integer.valueOf(1),bibItem.getChildDocuments().get(0).get("HoldingId").getValue());
         assertNotNull(bibItem.getChildDocuments().get(0).getChildDocuments());
-        assertEquals(new Integer(1),bibItem.getChildDocuments().get(0).getChildDocuments().get(0).get("ItemId").getValue());
+        assertEquals(Integer.valueOf(1),bibItem.getChildDocuments().get(0).getChildDocuments().get(0).get("ItemId").getValue());
     }
 
     public List<HoldingsEntity> getHoldingEntityList(){

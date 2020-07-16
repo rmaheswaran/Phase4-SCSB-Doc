@@ -13,8 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
@@ -41,7 +40,7 @@ public class ResubmitRequestController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/resubmitRequests", method = RequestMethod.POST)
+    @PostMapping(value = "/resubmitRequests")
     public String resubmitRequests(@Valid @ModelAttribute("replaceRequest") ReplaceRequest replaceRequest) {
         String responseMessage = null;
         try {

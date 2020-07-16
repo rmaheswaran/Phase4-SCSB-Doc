@@ -10,10 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by rajeshbabuk on 13/1/17.
@@ -36,7 +33,7 @@ public class ReportsRestController {
      * @param reportsRequest the reports request
      * @return the reports response
      */
-    @RequestMapping(value="/accessionDeaccessionCounts", method = RequestMethod.POST)
+    @PostMapping(value="/accessionDeaccessionCounts")
     public ReportsResponse accessionDeaccessionCounts(@RequestBody ReportsRequest reportsRequest) {
         ReportsResponse reportsResponse = new ReportsResponse();
         try {
@@ -54,7 +51,7 @@ public class ReportsRestController {
      * @param reportsRequest the reports request
      * @return the reports response
      */
-    @RequestMapping(value="/cgdItemCounts", method = RequestMethod.POST)
+    @PostMapping(value="/cgdItemCounts")
     public ReportsResponse cgdItemCounts(@RequestBody ReportsRequest reportsRequest) {
         ReportsResponse reportsResponse = new ReportsResponse();
         try {
@@ -72,7 +69,7 @@ public class ReportsRestController {
      * @param reportsRequest the reports request
      * @return the reports response
      */
-    @RequestMapping(value="/deaccessionResults", method = RequestMethod.POST)
+    @PostMapping(value="/deaccessionResults")
     public ReportsResponse deaccessionResults(@RequestBody ReportsRequest reportsRequest) {
         ReportsResponse reportsResponse = new ReportsResponse();
         try {
@@ -90,7 +87,7 @@ public class ReportsRestController {
      * @param reportsRequest the reports request
      * @return the reports response
      */
-    @RequestMapping(value="/incompleteRecords", method = RequestMethod.POST)
+    @PostMapping(value="/incompleteRecords")
     public ReportsResponse incompleteRecords(@RequestBody ReportsRequest reportsRequest) {
         ReportsResponse reportsResponse = new ReportsResponse();
         try {
@@ -108,7 +105,7 @@ public class ReportsRestController {
      * @param reportDataRequest the report data request
      * @return the string
      */
-    @RequestMapping(value="/generateCsvReport", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="/generateCsvReport", consumes = MediaType.APPLICATION_JSON_VALUE)
     public String generateCsvReports(@RequestBody ReportDataRequest reportDataRequest){
         return reportGenerator.generateReport(reportDataRequest.getFileName(),reportDataRequest.getInstitutionCode(),reportDataRequest.getReportType(),
                 reportDataRequest.getTransmissionType(),null,null);

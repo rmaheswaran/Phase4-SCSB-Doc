@@ -22,7 +22,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -87,7 +88,7 @@ public class SolrIndexController {
      * @throws Exception the exception
      */
     @ResponseBody
-    @RequestMapping(value = "/solrIndexer/fullIndex", method = RequestMethod.POST)
+    @PostMapping(value = "/solrIndexer/fullIndex")
     public String fullIndex(@Valid @ModelAttribute("solrIndexRequest") SolrIndexRequest solrIndexRequest,
                             BindingResult result,
                             Model model) throws Exception {
@@ -135,7 +136,7 @@ public class SolrIndexController {
      * @throws Exception the exception
      */
     @ResponseBody
-    @RequestMapping(value = "/solrIndexer/partialIndex", method = RequestMethod.POST)
+    @PostMapping(value = "/solrIndexer/partialIndex")
     public String partialIndex(@Valid @ModelAttribute("solrIndexRequest") SolrIndexRequest solrIndexRequest,
                             BindingResult result,
                             Model model) throws Exception {
@@ -161,7 +162,7 @@ public class SolrIndexController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/solrIndexer/report", method = RequestMethod.GET)
+    @GetMapping(value = "/solrIndexer/report")
     public String report(String status) {
         return StringUtils.isBlank(status) ? "Index process initiated!" : status;
     }
@@ -173,7 +174,7 @@ public class SolrIndexController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/solrIndexer/indexByBibliographicId", method = RequestMethod.POST)
+    @PostMapping(value = "/solrIndexer/indexByBibliographicId")
     public String indexByBibliographicId(@RequestBody List<Integer> bibliographicIdList) {
         String response = null;
         try {
@@ -189,7 +190,7 @@ public class SolrIndexController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/solrIndexer/indexByOwningInstBibliographicIdList", method = RequestMethod.POST)
+    @PostMapping(value = "/solrIndexer/indexByOwningInstBibliographicIdList")
     public String indexByOwningInstBibliographicIdList(@RequestParam Map<String,Object> requestParameters) {
         String ownInstbibliographicIdListString = (String)requestParameters.get(RecapConstants.OWN_INST_BIBID_LIST);
         ownInstbibliographicIdListString = ownInstbibliographicIdListString.replace("[","");
@@ -218,7 +219,7 @@ public class SolrIndexController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/solrIndexer/deleteByBibHoldingItemId", method = RequestMethod.POST)
+    @PostMapping(value = "/solrIndexer/deleteByBibHoldingItemId")
     public String deleteByBibHoldingItemId(@RequestBody List<Map<String,String>> idMapToRemoveIndexList) {
         String response = null;
         logger.info("idMapToRemoveIndexList size--->{}",idMapToRemoveIndexList.size());
@@ -264,7 +265,7 @@ public class SolrIndexController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/solrIndexer/deleteByBibIdAndIsDeletedFlag", method = RequestMethod.POST)
+    @PostMapping(value = "/solrIndexer/deleteByBibIdAndIsDeletedFlag")
     public String deleteByBibIdAndIsDeletedFlag(@RequestBody List<Map<String,String>> bibIdMapToRemoveIndexList) {
         String response = null;
         logger.info("bibIdMapToRemoveIndexList size--->{}",bibIdMapToRemoveIndexList.size());

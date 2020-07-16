@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -29,7 +29,7 @@ public class UpdateJobController {
      * @param jobEntity the job entity
      * @return the string
      */
-    @RequestMapping(value="/updateJob", method = RequestMethod.POST)
+    @PostMapping(value="/updateJob")
     public String updateJob(@RequestBody JobEntity jobEntity) {
         jobDetailsRepository.save(jobEntity);
         return RecapCommonConstants.SUCCESS;

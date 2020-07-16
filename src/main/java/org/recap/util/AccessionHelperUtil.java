@@ -177,7 +177,7 @@ public class AccessionHelperUtil {
     }
 
     private void processXMLForAccession(Set<AccessionResponse> accessionResponses, List<Map<String, String>> responseMaps, AccessionRequest accessionRequest, List<ReportDataEntity> reportDataEntitys, String owningInstitution, BibDataResolver bibDataResolver, Object unmarshalObject) throws Exception {
-        String response = bibDataResolver.processXml(accessionResponses, unmarshalObject,
+        bibDataResolver.processXml(accessionResponses, unmarshalObject,
                 responseMaps, owningInstitution, reportDataEntitys, accessionRequest);
         callCheckin(accessionRequest.getItemBarcode(), owningInstitution);
     }
@@ -393,9 +393,9 @@ public class AccessionHelperUtil {
                                  List<ReportDataEntity> reportDataEntityList, String owningInstitution, Exception ex) {
         String response = ex.getMessage();
         if (StringUtils.contains(response, RecapConstants.ITEM_BARCODE_NOT_FOUND)) {
-            logger.error(RecapCommonConstants.LOG_ERROR + response);
+            logger.error(RecapCommonConstants.LOG_ERROR , response);
         } else if(StringUtils.contains(response,RecapConstants.MARC_FORMAT_PARSER_ERROR)){
-            logger.error(RecapCommonConstants.LOG_ERROR + response);
+            logger.error(RecapCommonConstants.LOG_ERROR , response);
             response = RecapConstants.INVALID_MARC_XML_ERROR_MSG;
             logger.error(RecapConstants.EXCEPTION,ex);
         } else {
