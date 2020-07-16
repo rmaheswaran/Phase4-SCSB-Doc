@@ -70,14 +70,15 @@ public class SubmitCollectionReportGenerator {
     }
 
     private String getReportType(String type){
-        if(type.equals(RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)){
-            return RecapCommonConstants.SUCCESS;
-        } else if(type.equals(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT)){
-            return RecapCommonConstants.FAIL;
-        } else if(type.equals(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)){
-            return RecapConstants.SC_EXCEPTION;
-        } else if(type.equals(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT)){
-            return RecapConstants.REJECTION;
+        switch (type) {
+            case RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT:
+                return RecapCommonConstants.SUCCESS;
+            case RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT:
+                return RecapCommonConstants.FAIL;
+            case RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT:
+                return RecapConstants.SC_EXCEPTION;
+            case RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT:
+                return RecapConstants.REJECTION;
         }
         return null;
     }

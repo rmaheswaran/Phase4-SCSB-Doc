@@ -5,7 +5,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jms.JmsQueueEndpoint;
 import org.apache.camel.component.solr.SolrConstants;
 import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
 import org.recap.admin.SolrAdmin;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.solr.main.BibSolrCrudRepository;

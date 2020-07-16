@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -46,9 +46,9 @@ public class GenerateReportRestController {
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
 
-    @RequestMapping(value = "/generateReports", method = RequestMethod.POST,  consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/generateReports", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    private String generateReportsJob(@RequestBody SolrIndexRequest solrIndexRequest) {
+    public String generateReportsJob(@RequestBody SolrIndexRequest solrIndexRequest) {
         String status;
         Date fromDate = solrIndexRequest.getCreatedDate();
         Date toDate = new Date();
@@ -85,7 +85,7 @@ public class GenerateReportRestController {
     }
 
     @ResponseBody
-    @RequestMapping(value="/generateSubmitCollectionReport", method = RequestMethod.POST)
+    @PostMapping(value="/generateSubmitCollectionReport")
     public String generateSubmitCollectionReport(@RequestBody List<Integer> reportRecordNumberList) {
        return reportGenerator.generateReportBasedOnReportRecordNum(reportRecordNumberList,RecapConstants.SUBMIT_COLLECTION, RecapCommonConstants.FTP);
     }

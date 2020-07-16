@@ -1,7 +1,6 @@
 package org.recap.repository.jpa;
 
 import org.recap.model.jpa.InstitutionEntity;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 

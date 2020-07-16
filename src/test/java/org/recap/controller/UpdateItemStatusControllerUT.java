@@ -1,8 +1,6 @@
 package org.recap.controller;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -16,12 +14,10 @@ import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.util.UpdateCgdUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;

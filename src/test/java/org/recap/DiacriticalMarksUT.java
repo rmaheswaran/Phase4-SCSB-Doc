@@ -1,6 +1,6 @@
 package org.recap;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;

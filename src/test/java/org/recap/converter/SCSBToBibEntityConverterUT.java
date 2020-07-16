@@ -1,20 +1,7 @@
 package org.recap.converter;
 
-import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.model.accession.AccessionRequest;
-import org.recap.model.jaxb.JAXBHandler;
-import org.recap.model.jaxb.marc.BibRecords;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.ItemEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by premkb on 15/12/16.

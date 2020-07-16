@@ -5,9 +5,9 @@ import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.camel.EmailPayLoad;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -26,7 +26,7 @@ public class BatchJobEmailController {
      * @param emailPayLoad the email pay load
      * @return the string
      */
-    @RequestMapping(value="/batchJobEmail", method = RequestMethod.POST)
+    @PostMapping(value="/batchJobEmail")
     public String batchJobSendEmail(@RequestBody EmailPayLoad emailPayLoad) {
         producerTemplate.sendBodyAndHeader(RecapConstants.EMAIL_Q, emailPayLoad, RecapConstants.EMAIL_FOR, RecapConstants.BATCHJOB);
         return RecapCommonConstants.SUCCESS;

@@ -189,7 +189,7 @@ public class MarcUtilUT {
         List<Record> records = marcUtil.convertMarcXmlToRecord(marcXML);
         assertNotNull(records.get(0));
         Integer secondIndicatorForDataField = marcUtil.getSecondIndicatorForDataField(records.get(0), "245");
-        assertEquals(secondIndicatorForDataField, new Integer(3));
+        assertEquals(secondIndicatorForDataField, Integer.valueOf(3));
     }
 
     private List<Record> getRecords() throws Exception{
