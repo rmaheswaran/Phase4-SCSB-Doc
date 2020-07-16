@@ -14,7 +14,7 @@ import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -395,7 +395,7 @@ public class BibliographicEntityUT extends BaseTestCase {
         String sourceBibContent = FileUtils.readFileToString(bibContentFile, "UTF-8");
 
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
-        bibliographicEntity.setContent(sourceBibContent.getBytes("UTF-8"));
+        bibliographicEntity.setContent(sourceBibContent.getBytes(StandardCharsets.UTF_8));
         bibliographicEntity.setOwningInstitutionId(1);
         String owningInstitutionBibId = String.valueOf(random.nextInt());
         bibliographicEntity.setOwningInstitutionBibId(owningInstitutionBibId);
@@ -411,7 +411,7 @@ public class BibliographicEntityUT extends BaseTestCase {
         assertNotNull(fetchedBibliographicEntity);
         assertNotNull(fetchedBibliographicEntity.getContent());
 
-        String fetchedBibContent = new String(fetchedBibliographicEntity.getContent(), Charset.forName("UTF-8"));
+        String fetchedBibContent = new String(fetchedBibliographicEntity.getContent(), StandardCharsets.UTF_8);
         assertEquals(sourceBibContent, fetchedBibContent);
     }
 

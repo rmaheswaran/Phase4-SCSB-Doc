@@ -25,10 +25,10 @@ public class SearchRecordsRequestUT {
         assertEquals("NYPL",searchRecordsRequest.getOwningInstitutions().get(0));
         assertEquals("Shared",searchRecordsRequest.getCollectionGroupDesignations().get(0));
         assertEquals("Monograph",searchRecordsRequest.getMaterialTypes().get(0));
-        assertEquals(new Integer(1),searchRecordsRequest.getTotalPageCount());
+        assertEquals(Integer.valueOf(1),searchRecordsRequest.getTotalPageCount());
         assertEquals("1",searchRecordsRequest.getTotalBibRecordsCount());
         assertEquals("1",searchRecordsRequest.getTotalItemRecordsCount());
-        assertEquals(new Integer(1),searchRecordsRequest.getIndex());
+        assertEquals(Integer.valueOf(1),searchRecordsRequest.getIndex());
 
     }
 

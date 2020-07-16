@@ -148,7 +148,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         List<Integer> cgdIdList = new ArrayList<>(Arrays.asList(cgdId));
         String[] requestTypeId = {"RETRIEVAL", "RECALL", "EDD"};
         List<String> requestTypeIdList = new ArrayList<>(Arrays.asList(requestTypeId));
-        Mockito.when(mockedRequestItemDetailsRepository.getPhysicalAndEDDCounts(fromDate,toDate,1,cgdIdList,requestTypeIdList)).thenReturn(new Long(1));
+        Mockito.when(mockedRequestItemDetailsRepository.getPhysicalAndEDDCounts(fromDate,toDate,1,cgdIdList,requestTypeIdList)).thenReturn(Long.valueOf(1));
         long count = mockedRequestItemDetailsRepository.getPhysicalAndEDDCounts(fromDate,toDate,1,cgdIdList,requestTypeIdList);
         assertNotNull(count);
         assertEquals(1,count);
@@ -167,7 +167,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         List<Integer> cgdIdList = new ArrayList<>(Arrays.asList(cgdId));
         String[] requestTypeId = {"RETRIEVAL", "RECALL", "BORROW DIRECT"};
         List<String> requestTypeIdList = new ArrayList<>(Arrays.asList(requestTypeId));
-        Mockito.when(mockedRequestItemDetailsRepository.getPhysicalAndEDDCounts(fromDate,toDate,1,cgdIdList,requestTypeIdList)).thenReturn(new Long(1));
+        Mockito.when(mockedRequestItemDetailsRepository.getPhysicalAndEDDCounts(fromDate,toDate,1,cgdIdList,requestTypeIdList)).thenReturn(Long.valueOf(1));
         long count = mockedRequestItemDetailsRepository.getPhysicalAndEDDCounts(fromDate,toDate,1,cgdIdList,requestTypeIdList);
         assertNotNull(count);
         assertEquals(1,count);
@@ -408,7 +408,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
         Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
-        Mockito.when(mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,1, RecapCommonConstants.RETRIEVAL)).thenReturn(new Long(1));
+        Mockito.when(mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,1, RecapCommonConstants.RETRIEVAL)).thenReturn(Long.valueOf(1));
         long count = mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,1, RecapCommonConstants.RETRIEVAL);
         assertNotNull(count);
         assertEquals(1,count);
@@ -423,7 +423,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
         Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
-        Mockito.when(mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,2, RecapCommonConstants.RETRIEVAL)).thenReturn(new Long(1));
+        Mockito.when(mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,2, RecapCommonConstants.RETRIEVAL)).thenReturn(Long.valueOf(1));
         long count = mockedRequestItemDetailsRepository.getBDHoldRecallRetrievalRequestCounts(fromDate,toDate,2, RecapCommonConstants.RETRIEVAL);
         assertNotNull(count);
         assertEquals(1,count);

@@ -39,7 +39,7 @@ public class AccessionDetailsRepositoryUT extends BaseTestCase {
         testSaveAccessionRequest();
         List<AccessionEntity> accessionEntities = accessionDetailsRepository.getAccessionEntityByDateAndStatus(dateUtil.getFromDate(new Date()), dateUtil.getToDate(new Date()), RecapConstants.PENDING);
         assertNotNull(accessionEntities);
-        assertEquals(accessionEntities.size(), 1);
+        assertEquals(1, accessionEntities.size());
     }
 
     @Test

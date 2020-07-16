@@ -78,7 +78,7 @@ public class MatchingAlgoReportUT extends BaseTestCase {
         stopwatch.start();
         MatchingCounter.reset();
         Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository()).thenReturn(reportDataDetailsRepository);
-        Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(RecapCommonConstants.BIB_ID)).thenReturn(new Long(0));
+        Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(RecapCommonConstants.BIB_ID)).thenReturn(Long.valueOf(0));
         Mockito.doCallRealMethod().when(matchingAlgorithmUpdateCGDService).getItemsCountForSerialsMatching(batchSize);
         MatchingCounter.updateCounter(1, false);
         MatchingCounter.updateCounter(2, false);

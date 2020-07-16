@@ -16,8 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
@@ -138,7 +138,7 @@ public class MatchingAlgorithmController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/matchingAlgorithm/full", method = RequestMethod.POST)
+    @PostMapping(value = "/matchingAlgorithm/full")
     public String matchingAlgorithmFull(@Valid @ModelAttribute("matchingAlgoDate") String matchingAlgoDate) {
         StringBuilder status = new StringBuilder();
         try {
@@ -169,7 +169,7 @@ public class MatchingAlgorithmController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/matchingAlgorithm/findMatchingAndSaveReports", method = RequestMethod.POST)
+    @PostMapping(value = "/matchingAlgorithm/findMatchingAndSaveReports")
     public String matchingAlgorithmFindMatchingAndReports() {
         StringBuilder status = new StringBuilder();
         try {
@@ -205,7 +205,7 @@ public class MatchingAlgorithmController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/matchingAlgorithm/reports", method = RequestMethod.POST)
+    @PostMapping(value = "/matchingAlgorithm/reports")
     public String matchingAlgorithmOnlyReports() {
         StringBuilder status = new StringBuilder();
         try {
@@ -229,7 +229,7 @@ public class MatchingAlgorithmController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/matchingAlgorithm/updateMonographCGDInDB", method = RequestMethod.POST)
+    @PostMapping(value = "/matchingAlgorithm/updateMonographCGDInDB")
     public String updateMonographCGDInDB() {
         StringBuilder status = new StringBuilder();
         try {
@@ -253,7 +253,7 @@ public class MatchingAlgorithmController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/matchingAlgorithm/updateSerialCGDInDB", method = RequestMethod.POST)
+    @PostMapping(value = "/matchingAlgorithm/updateSerialCGDInDB")
     public String updateSerialCGDInDB() {
         StringBuilder status = new StringBuilder();
         try {
@@ -277,7 +277,7 @@ public class MatchingAlgorithmController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/matchingAlgorithm/updateMvmCGDInDB", method = RequestMethod.POST)
+    @PostMapping(value = "/matchingAlgorithm/updateMvmCGDInDB")
     public String updateMvmCGDInDB() {
         StringBuilder status = new StringBuilder();
         try {
@@ -302,7 +302,7 @@ public class MatchingAlgorithmController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/matchingAlgorithm/updateCGDInSolr", method = RequestMethod.POST)
+    @PostMapping(value = "/matchingAlgorithm/updateCGDInSolr")
     public String updateCGDInSolr(@Valid @ModelAttribute("matchingAlgoDate") String matchingAlgoDate) {
         StringBuilder status = new StringBuilder();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm/dd");
@@ -337,7 +337,7 @@ public class MatchingAlgorithmController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/matchingAlgorithm/populateDataForDataDump", method = RequestMethod.POST)
+    @PostMapping(value = "/matchingAlgorithm/populateDataForDataDump")
     public String populateDataForDataDump(){
         String respone  = null;
         try {
@@ -419,7 +419,7 @@ public class MatchingAlgorithmController {
      */
 // Added to produce the Summary of serial Item count which came under Matching Algorithm
     @ResponseBody
-    @RequestMapping(value = "/matchingAlgorithm/itemsCountForSerials", method = RequestMethod.GET)
+    @GetMapping(value = "/matchingAlgorithm/itemsCountForSerials")
     public String itemCountForSerials(){
         StringBuilder response = new StringBuilder();
         StopWatch stopwatch = new StopWatch();
