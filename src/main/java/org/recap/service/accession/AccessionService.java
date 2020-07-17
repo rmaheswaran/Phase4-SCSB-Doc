@@ -57,7 +57,14 @@ import org.springframework.util.StopWatch;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -242,7 +249,7 @@ public class AccessionService {
     @Transactional
     public String saveRequest(List<AccessionRequest> accessionRequestList) {
         List<AccessionRequest> trimmedAccessionRequests = getTrimmedAccessionRequests(accessionRequestList);
-        String status = null;
+        String status;
         try {
             AccessionEntity accessionEntity = new AccessionEntity();
             accessionEntity.setAccessionRequest(convertJsonToString(trimmedAccessionRequests));
@@ -278,7 +285,8 @@ public class AccessionService {
         if(CollectionUtils.isNotEmpty(accessionEntityList)) {
             try {
                 for(AccessionEntity accessionEntity : accessionEntityList) {
-                    TypeReference<List<AccessionRequest>> typeReference = new TypeReference<List<AccessionRequest>>() {};
+                    TypeReference<List<AccessionRequest>> typeReference = new TypeReference<>() {
+                    };
                     accessionRequestList.addAll(new ObjectMapper().readValue(accessionEntity.getAccessionRequest(), typeReference));
                 }
             } catch(Exception e) {
@@ -313,8 +321,7 @@ public class AccessionService {
         List<Map<String, String>> responseMaps = new ArrayList<>();
 
         // iterate Request
-        for (Iterator<AccessionRequest> iterator = trimmedAccessionRequests.iterator(); iterator.hasNext(); ) {
-            AccessionRequest accessionRequest = iterator.next();
+        for (AccessionRequest accessionRequest : trimmedAccessionRequests) {
             List<ReportDataEntity> reportDataEntitys = new ArrayList<>();
 
             // validate empty barcode ,customer code and owning institution
@@ -324,7 +331,7 @@ public class AccessionService {
 
             String owningInstitution = accessionValidationResponse.getOwningInstitution();
 
-            if(!accessionValidationResponse.isValid()) {
+            if (!accessionValidationResponse.isValid()) {
                 String message = accessionValidationResponse.getMessage();
                 accessionHelperUtil.setAccessionResponse(accessionResponses, itemBarcode, message);
                 reportDataEntitys.addAll(accessionHelperUtil.createReportDataEntityList(accessionRequest, message));
@@ -391,7 +398,7 @@ public class AccessionService {
      */
     @Transactional
     public List<AccessionResponse> processRequest(List<AccessionRequest> accessionRequestList) {
-        String response = null;
+        String response;
         List<AccessionRequest> trimmedAccessionRequests = getTrimmedAccessionRequests(accessionRequestList);
         Set<AccessionResponse> accessionResponsesList = new HashSet<>();
         String bibDataResponse;
@@ -421,21 +428,21 @@ public class AccessionService {
                             bibDataResponse = getPrincetonService().getBibData(accessionRequest.getItemBarcode());
                             stopWatch.stop();
                             logger.info("Time taken to get bib data from ils : {}" ,stopWatch.getTotalTimeSeconds());
-                            response = processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
+                            processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
                         } else if (owningInstitution != null && owningInstitution.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
                             StopWatch stopWatch = new StopWatch();
                             stopWatch.start();
                             bibDataResponse = getColumbiaService().getBibData(accessionRequest.getItemBarcode());
                             stopWatch.stop();
                             logger.info("Time taken to get bib data from ils : {}", stopWatch.getTotalTimeSeconds());
-                            response = processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
+                            processAccessionForMarcXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
                         } else if (owningInstitution != null && owningInstitution.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
                             StopWatch stopWatch1 = new StopWatch();
                             stopWatch1.start();
                             bibDataResponse = getNyplService().getBibData(accessionRequest.getItemBarcode(), accessionRequest.getCustomerCode());
                             stopWatch1.stop();
                             logger.info("Total Time taken to get bib data from ils : {}", stopWatch1.getTotalTimeSeconds());
-                            response = processAccessionForSCSBXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
+                            processAccessionForSCSBXml(accessionResponsesList, bibDataResponse, responseMapList, owningInstitution, reportDataEntityList, accessionRequest);
                         }
                     } catch (Exception ex) {
                         accessionHelperUtil.processException(accessionResponsesList, accessionRequest, reportDataEntityList, owningInstitution, ex);
@@ -468,10 +475,7 @@ public class AccessionService {
      * @return
      */
     private boolean isItemBarcodeEmpty(AccessionRequest accessionRequest) {
-        if(StringUtils.isBlank(accessionRequest.getItemBarcode())) {
-            return true;
-        }
-        return false;
+        return StringUtils.isBlank(accessionRequest.getItemBarcode());
     }
 
     /**
@@ -529,17 +533,11 @@ public class AccessionService {
     }
 
     private boolean isBoundWithItemForMarcRecord(List<Record> recordList){
-        if(recordList.size() > 1){
-            return true;
-        }
-        return false;
+        return recordList.size() > 1;
     }
 
     private boolean isBoundWithItemForScsbRecord(List<BibRecord> bibRecordList){
-        if(bibRecordList.size() > 1){
-            return true;
-        }
-        return false;
+        return bibRecordList.size() > 1;
     }
 
     /**
@@ -634,11 +632,10 @@ public class AccessionService {
             if (fetchBibliographicEntity == null) {
                 String dummyRecordResponse = createDummyRecord(accessionRequest, owningInstitution);
                 message = response+", "+dummyRecordResponse;
-                reportDataEntityList.addAll(accessionHelperUtil.createReportDataEntityList(accessionRequest, message));
             } else {
                 message = RecapConstants.ITEM_BARCODE_ALREADY_ACCESSIONED_MSG;
-                reportDataEntityList.addAll(accessionHelperUtil.createReportDataEntityList(accessionRequest, message));
             }
+            reportDataEntityList.addAll(accessionHelperUtil.createReportDataEntityList(accessionRequest, message));
         }
         return message;
     }
@@ -779,10 +776,9 @@ public class AccessionService {
 
             for (Iterator iholdings = holdingsEntities.iterator(); iholdings.hasNext();) {
                 HoldingsEntity holdingsEntity =(HoldingsEntity) iholdings.next();
-                for (int j=0;j<fetchHoldingsEntities.size();j++) {
-                    HoldingsEntity fetchHolding=fetchHoldingsEntities.get(j);
-                    if(fetchHolding.getOwningInstitutionHoldingsId().equalsIgnoreCase(holdingsEntity.getOwningInstitutionHoldingsId())  && fetchHolding.getOwningInstitutionId().intValue() == holdingsEntity.getOwningInstitutionId().intValue()) {
-                        copyHoldingsEntity(fetchHolding,holdingsEntity);
+                for (HoldingsEntity fetchHolding : fetchHoldingsEntities) {
+                    if (fetchHolding.getOwningInstitutionHoldingsId().equalsIgnoreCase(holdingsEntity.getOwningInstitutionHoldingsId()) && fetchHolding.getOwningInstitutionId().intValue() == holdingsEntity.getOwningInstitutionId().intValue()) {
+                        copyHoldingsEntity(fetchHolding, holdingsEntity);
                         iholdings.remove();
                     }else{
                         // Added for Boundwith scenarios
@@ -816,8 +812,7 @@ public class AccessionService {
 
             List<ItemEntity> finalItemEntities = new ArrayList<>();
 
-            for (Iterator<HoldingsEntity> iterator = fetchHoldingsEntities.iterator(); iterator.hasNext(); ) {
-                HoldingsEntity holdingsEntity =  iterator.next();
+            for (HoldingsEntity holdingsEntity : fetchHoldingsEntities) {
                 finalItemEntities.addAll(holdingsEntity.getItemEntities());
             }
 
@@ -841,9 +836,7 @@ public class AccessionService {
         Subfield incomingSubFieldb = incoming852DataField != null ? incoming852DataField.getSubfield('b') : null;
         Subfield fetchedSubFieldb = fetched852DataField != null ? fetched852DataField.getSubfield('b') : null;
         if (incomingSubFieldb != null && fetchedSubFieldb != null){
-            if(incomingSubFieldb.getData().equals(fetchedSubFieldb.getData())){
-                return true;
-            }
+            return incomingSubFieldb.getData().equals(fetchedSubFieldb.getData());
         }
         return false;
     }
@@ -863,10 +856,9 @@ public class AccessionService {
     private void processItems(List<ItemEntity> fetchItemsEntities, List<ItemEntity> itemsEntities) {
         for (Iterator iItems = itemsEntities.iterator(); iItems.hasNext();) {
             ItemEntity itemEntity =(ItemEntity) iItems.next();
-            for (Iterator ifetchItems=fetchItemsEntities.iterator();ifetchItems.hasNext();) {
-                ItemEntity fetchItem=(ItemEntity) ifetchItems.next();
-                if(fetchItem.getOwningInstitutionItemId().equalsIgnoreCase(itemEntity.getOwningInstitutionItemId())  && fetchItem.getOwningInstitutionId().intValue() == itemEntity.getOwningInstitutionId().intValue()) {
-                    copyItemEntity(fetchItem,itemEntity);
+            for (ItemEntity fetchItem : fetchItemsEntities) {
+                if (fetchItem.getOwningInstitutionItemId().equalsIgnoreCase(itemEntity.getOwningInstitutionItemId()) && fetchItem.getOwningInstitutionId().intValue() == itemEntity.getOwningInstitutionId().intValue()) {
+                    copyItemEntity(fetchItem, itemEntity);
                     iItems.remove();
                 }
             }
@@ -924,8 +916,8 @@ public class AccessionService {
     public String indexReaccessionedItem(List<ItemEntity> itemEntityList){
         try {
             for(ItemEntity itemEntity:itemEntityList){
-                itemEntity.getBibliographicEntities();
-                for (BibliographicEntity bibliographicEntity:itemEntity.getBibliographicEntities()) {
+                List<BibliographicEntity>  bibliographicEntities = itemEntity.getBibliographicEntities();
+                for (BibliographicEntity bibliographicEntity:bibliographicEntities) {
                     indexBibliographicRecord(bibliographicEntity.getBibliographicId());
                 }
             }
@@ -996,9 +988,8 @@ public class AccessionService {
             institutionEntityMap = new HashMap();
             try {
                 Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().findAll();
-                for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
-                    InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
-                    institutionEntityMap.put( institutionEntity.getInstitutionCode(),institutionEntity.getId());
+                for (InstitutionEntity institutionEntity : institutionEntities) {
+                    institutionEntityMap.put(institutionEntity.getInstitutionCode(), institutionEntity.getId());
                 }
             } catch (Exception e) {
                 logger.error(RecapConstants.EXCEPTION,e);
@@ -1052,8 +1043,7 @@ public class AccessionService {
     public void prepareSummary(AccessionSummary accessionSummary, Object object) {
         Set<AccessionResponse> accessionResponses = (Set<AccessionResponse>) object;
         if(CollectionUtils.isNotEmpty(accessionResponses)) {
-            for (Iterator<AccessionResponse> iterator = accessionResponses.iterator(); iterator.hasNext(); ) {
-                AccessionResponse accessionResponse = iterator.next();
+            for (AccessionResponse accessionResponse : accessionResponses) {
                 String message = accessionResponse.getMessage();
                 addCountToSummary(accessionSummary, message);
             }

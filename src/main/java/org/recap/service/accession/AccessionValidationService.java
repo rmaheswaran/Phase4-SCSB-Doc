@@ -59,10 +59,7 @@ public class AccessionValidationService {
         CustomerCodeEntity customerCodeEntity = customerCodeDetailsRepository.findByCustomerCode(accessionRequest.getCustomerCode());
         Integer owningInstitutionId = customerCodeEntity.getOwningInstitutionId();
         HoldingsEntity holdingsEntity = holdingsDetailsRepository.findByOwningInstitutionHoldingsIdAndOwningInstitutionId(holdingId, owningInstitutionId);
-        if(holdingsEntity!=null && holdingsEntity.getBibliographicEntities().size() >= 1) {
-            return false;
-        }
-        return true;
+        return holdingsEntity == null || holdingsEntity.getBibliographicEntities().isEmpty();
     }
 
     public boolean validateBoundWithScsbRecordFromIls(List<BibRecord> bibRecordList){

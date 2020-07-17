@@ -26,12 +26,12 @@ public class FTPDeAccessionReportGenerator implements ReportGeneratorInterface {
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapCommonConstants.DEACCESSION_SUMMARY_REPORT) ? true : false;
+        return reportType.equalsIgnoreCase(RecapCommonConstants.DEACCESSION_SUMMARY_REPORT);
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP) ? true : false;
+        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP);
     }
 
     @Override

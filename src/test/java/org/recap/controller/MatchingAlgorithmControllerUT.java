@@ -139,7 +139,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
     @Test
     public void matchingAlgorithmFullTest() throws Exception {
         Date matchingAlgoDate = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm/dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         String matchingAlgoDateString = sdf.format(matchingAlgoDate);
         Mockito.when(matchingAlgoController.matchingAlgorithmFindMatchingAndReports()).thenReturn(RecapConstants.STATUS_DONE);
         Mockito.when(matchingAlgoController.updateMonographCGDInDB()).thenReturn(RecapConstants.STATUS_DONE);
@@ -284,7 +284,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
     @Test
     public void updateCGDInSolr() throws Exception {
         Date matchingAlgoDate = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm/dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         String matchingAlgoDateString = sdf.format(matchingAlgoDate);
         Date updatedDate = new Date();
         try {

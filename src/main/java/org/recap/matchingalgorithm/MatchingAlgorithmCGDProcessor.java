@@ -103,8 +103,7 @@ public class MatchingAlgorithmCGDProcessor {
     }
 
     private void findItemToBeSharedBasedOnDate(Map<Integer, ItemEntity> itemEntityMap) {
-        List<ItemEntity> itemEntities = new ArrayList<>();
-        itemEntities.addAll(itemEntityMap.values());
+        List<ItemEntity> itemEntities = new ArrayList<>(itemEntityMap.values());
         ItemEntity itemEntityToBeShared = getItemToBeSharedBasedOnInitialMatchingDate(itemEntities);
         if(itemEntityToBeShared != null) {
             itemEntityMap.remove(itemEntityToBeShared.getItemId());
@@ -281,11 +280,9 @@ public class MatchingAlgorithmCGDProcessor {
      */
     public void populateUseRestrictionMap(Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap, ItemEntity itemEntity, Integer owningInstitutionId, Integer useRestriction) {
         if(useRestrictionMap.containsKey(useRestriction)) {
-            Map<Integer, List<ItemEntity>> owningInstitutionMap = new HashMap<>();
-            owningInstitutionMap.putAll(useRestrictionMap.get(useRestriction));
+            Map<Integer, List<ItemEntity>> owningInstitutionMap = new HashMap<>(useRestrictionMap.get(useRestriction));
             if(owningInstitutionMap.containsKey(owningInstitutionId)) {
-                List<ItemEntity> itemEntityList = new ArrayList<>();
-                itemEntityList.addAll(owningInstitutionMap.get(owningInstitutionId));
+                List<ItemEntity> itemEntityList = new ArrayList<>(owningInstitutionMap.get(owningInstitutionId));
                 itemEntityList.add(itemEntity);
                 owningInstitutionMap.put(owningInstitutionId, itemEntityList);
             } else {
@@ -366,8 +363,7 @@ public class MatchingAlgorithmCGDProcessor {
     private void populateCounterMap(Map<Integer, List<Integer>> counterMap, Integer institution) {
         Integer counter = getCounterForGivenInst(institution);
         if(counterMap.containsKey(counter)) {
-            List<Integer> institutions = new ArrayList<>();
-            institutions.addAll(counterMap.get(counter));
+            List<Integer> institutions = new ArrayList<>(counterMap.get(counter));
             institutions.add(institution);
             counterMap.put(counter, institutions);
         } else {

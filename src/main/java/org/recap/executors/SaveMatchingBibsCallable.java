@@ -175,10 +175,7 @@ public class SaveMatchingBibsCallable implements Callable {
      * @return the boolean
      */
     public static synchronized boolean isBibIdDuplicate(Integer bibId) {
-        if(getBibIdList().contains(bibId)) {
-            return true;
-        }
-        return false;
+        return getBibIdList().contains(bibId);
     }
 
     /**

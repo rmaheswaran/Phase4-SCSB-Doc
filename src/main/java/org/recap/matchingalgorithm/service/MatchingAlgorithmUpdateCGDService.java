@@ -274,7 +274,11 @@ public class MatchingAlgorithmUpdateCGDService {
                     exceptionRecordNumbers.addAll(recordNumberMap.get(RecapConstants.EXCEPTION_RECORD_NUMS));
                 }
             }
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            Thread.currentThread().interrupt();
+        }
+        catch (ExecutionException e) {
             logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
     }
@@ -288,7 +292,11 @@ public class MatchingAlgorithmUpdateCGDService {
                     .map(future -> {
                         try {
                             return future.get();
-                        } catch (InterruptedException | ExecutionException e) {
+                        } catch (InterruptedException  e) {
+                            Thread.currentThread().interrupt();
+                            throw new IllegalStateException(e);
+                        }
+                        catch (ExecutionException e) {
                             throw new IllegalStateException(e);
                         }
                     });

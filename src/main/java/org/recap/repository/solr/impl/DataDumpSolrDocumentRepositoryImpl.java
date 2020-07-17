@@ -183,10 +183,8 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
 
     private boolean isChangedToPrivateCGD(ItemEntity fetchedItemEntity){
         if(fetchedItemEntity.getCgdChangeLog()!=null){
-            if(fetchedItemEntity.getCgdChangeLog().equals(RecapConstants.CGD_CHANGE_LOG_SHARED_TO_PRIVATE)
-                    || fetchedItemEntity.getCgdChangeLog().equals(RecapConstants.CGD_CHANGE_LOG_OPEN_TO_PRIVATE)){
-                return true;
-            }
+            return fetchedItemEntity.getCgdChangeLog().equals(RecapConstants.CGD_CHANGE_LOG_SHARED_TO_PRIVATE)
+                    || fetchedItemEntity.getCgdChangeLog().equals(RecapConstants.CGD_CHANGE_LOG_OPEN_TO_PRIVATE);
         }
         return false;
     }
@@ -278,10 +276,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
      * @return
      */
     private boolean isPartialFullDump(String fieldValue) {
-        if (StringUtils.isNotBlank(fieldValue) && fieldValue.contains(RecapConstants.INCREMENTAL_DUMP_TO_NOW)) {
-            return false;
-        }
-        return true;
+        return !StringUtils.isNotBlank(fieldValue) || !fieldValue.contains(RecapConstants.INCREMENTAL_DUMP_TO_NOW);
     }
 
     private BibItem findBibItem(List<BibItem> bibItems, String root) {
@@ -406,29 +401,20 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
     }
 
     private List<String> getInstitutionList(String institutionString){
-        List<String> institutionList = Arrays.asList(institutionString.split("\\s*,\\s*"));
-        return institutionList;
+        return Arrays.asList(institutionString.split("\\s*,\\s*"));
     }
 
     private boolean isDeletedOnlyOrphanInstitution(SearchRecordsRequest searchRecordsRequest){
         String requestingInstitution = searchRecordsRequest.getRequestingInstitution();
         List<String> deleteOnlyOrphanInstitutionList = getInstitutionList(deletedOnlyOrphanInstitution);
-        if(deleteOnlyOrphanInstitutionList.contains(requestingInstitution)){
-            return true;
-        } else {
-            return false;
-        }
+        return deleteOnlyOrphanInstitutionList.contains(requestingInstitution);
     }
 
     private boolean isIncrementalNonFullTreeInstitution(SearchRecordsRequest searchRecordsRequest){
         String requestingInstitution = searchRecordsRequest.getRequestingInstitution();
         logger.info("incrementalNonFullTreeInstitution--->{}",incrementalNonFullTreeInstitution);
         List<String> incrementalNonFullTreeInstitutionList = getInstitutionList(incrementalNonFullTreeInstitution);
-        if(incrementalNonFullTreeInstitutionList.contains(requestingInstitution)){
-            return true;
-        } else {
-            return false;
-        }
+        return incrementalNonFullTreeInstitutionList.contains(requestingInstitution);
     }
 
     private List<BibItem>  getBibItems(SolrDocumentList bibSolrDocumentList, SearchRecordsRequest searchRecordsRequest) {

@@ -40,11 +40,10 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -121,10 +120,9 @@ public class AccessionHelperUtil {
             // Call ILS - Bib Data API
             StopWatch individualStopWatch = new StopWatch();
             individualStopWatch.start();
-            for (Iterator<BibDataResolver> bibDataResolverIterator = accessionService.getBibDataResolvers().iterator(); bibDataResolverIterator.hasNext(); ) {
-                BibDataResolver bibDataResolver = bibDataResolverIterator.next();
+            for (BibDataResolver bibDataResolver : accessionService.getBibDataResolvers()) {
                 if (bibDataResolver.isInterested(owningInstitution)) {
-                    String bibData = null;
+                    String bibData;
                     try {
                         // Calling ILS - Bib Data API
                         bibData = bibDataResolver.getBibData(itemBarcode, customerCode);
@@ -139,7 +137,7 @@ public class AccessionHelperUtil {
 
                         Object unmarshalObject = bibDataResolver.unmarshal(bibData);
                         Integer owningInstitutionId = getInstitutionIdCodeMap().get(owningInstitution);
-                        ItemEntity itemEntity = bibDataResolver.getItemEntityFromRecord(unmarshalObject,owningInstitutionId);
+                        ItemEntity itemEntity = bibDataResolver.getItemEntityFromRecord(unmarshalObject, owningInstitutionId);
                         boolean accessionProcess = bibDataResolver.isAccessionProcess(itemEntity, owningInstitution);
 
                         // Process XML Record
@@ -419,7 +417,7 @@ public class AccessionHelperUtil {
         ItemCheckInRequest itemRequestInfo = new ItemCheckInRequest();
         RestTemplate restTemplate = new RestTemplate();
         try {
-            itemRequestInfo.setItemBarcodes(Arrays.asList(itemBarcode));
+            itemRequestInfo.setItemBarcodes(Collections.singletonList(itemBarcode));
             itemRequestInfo.setItemOwningInstitution(owningInstitutionId);
             if (RecapCommonConstants.NYPL.equalsIgnoreCase(owningInstitutionId)) {
                 HttpEntity request = new HttpEntity<>(getHttpHeadersAuth());
@@ -486,9 +484,8 @@ public class AccessionHelperUtil {
             institutionEntityMap = new HashMap();
             try {
                 Iterable<InstitutionEntity> institutionEntities = institutionDetailsRepository.findAll();
-                for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
-                    InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
-                    institutionEntityMap.put(institutionEntity.getInstitutionCode(),institutionEntity.getId());
+                for (InstitutionEntity institutionEntity : institutionEntities) {
+                    institutionEntityMap.put(institutionEntity.getInstitutionCode(), institutionEntity.getId());
                 }
             } catch (Exception e) {
                 logger.error(RecapConstants.EXCEPTION,e);
