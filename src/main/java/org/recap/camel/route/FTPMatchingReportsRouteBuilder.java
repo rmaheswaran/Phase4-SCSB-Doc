@@ -51,7 +51,7 @@ public class FTPMatchingReportsRouteBuilder {
                 }
             });
         } catch (Exception e) {
-            logger.info(RecapCommonConstants.LOG_ERROR+e);
+            logger.info(RecapCommonConstants.LOG_ERROR, e);
         }
 
         try {
@@ -70,7 +70,7 @@ public class FTPMatchingReportsRouteBuilder {
                 }
             });
         } catch (Exception e) {
-            logger.info(RecapCommonConstants.LOG_ERROR+e);
+            logger.info(RecapCommonConstants.LOG_ERROR, e);
         }
 
         try {
@@ -91,7 +91,7 @@ public class FTPMatchingReportsRouteBuilder {
                 }
             });
         } catch (Exception e) {
-            logger.info(RecapCommonConstants.LOG_ERROR+e);
+            logger.info(RecapCommonConstants.LOG_ERROR, e);
         }
     }
 }

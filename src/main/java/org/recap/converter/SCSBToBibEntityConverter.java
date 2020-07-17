@@ -124,7 +124,7 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
                                             failedItemCount = failedItemCount + (int) itemMap.get(RecapCommonConstants.FAILED_ITEM_COUNT);
                                         }
                                         if(itemMap.containsKey(RecapCommonConstants.ITEMBARCODE)){
-                                            map.put(RecapCommonConstants.ITEMBARCODE,(String)itemMap.get(RecapCommonConstants.ITEMBARCODE));
+                                            map.put(RecapCommonConstants.ITEMBARCODE, itemMap.get(RecapCommonConstants.ITEMBARCODE));
                                         }
                                         if(itemMap.containsKey(RecapCommonConstants.REASON_FOR_ITEM_FAILURE)){
                                             String reason = (String)itemMap.get(RecapCommonConstants.REASON_FOR_ITEM_FAILURE);

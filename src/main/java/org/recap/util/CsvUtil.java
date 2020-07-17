@@ -40,7 +40,9 @@ public class CsvUtil {
         } catch (Exception e) {
             logger.error(RecapCommonConstants.LOG_ERROR,e);
         } finally {
-            csvOutput.flush();
+            if(csvOutput != null) {
+                csvOutput.flush();
+            }
             csvOutput.close();
         }
         return file;

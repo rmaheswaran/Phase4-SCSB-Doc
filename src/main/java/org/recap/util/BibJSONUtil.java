@@ -193,8 +193,7 @@ public class BibJSONUtil extends MarcUtil {
                 List<SolrInputDocument> itemSolrInputDocuments = new ArrayList<>();
                 ItemJSONUtil itemJSONUtil = new ItemJSONUtil();
                 itemJSONUtil.setProducerTemplate(producerTemplate);
-                for (Iterator<ItemEntity> iterator = itemEntities.iterator(); iterator.hasNext(); ) {
-                    ItemEntity itemEntity = iterator.next();
+                for (ItemEntity itemEntity : itemEntities) {
                     Item item = itemJSONUtil.generateItemForIndex(itemEntity);
                     if (item != null) {
                         item.setTitleSort(bib.getTitleSort());
@@ -366,7 +365,7 @@ public class BibJSONUtil extends MarcUtil {
         reportEntity.setCreatedDate(new Date());
         reportEntity.setType(RecapCommonConstants.SOLR_INDEX_EXCEPTION);
         reportEntity.setFileName(RecapCommonConstants.SOLR_INDEX_FAILURE_REPORT);
-        InstitutionEntity institutionEntity = bibliographicEntity.getInstitutionEntity();
+        InstitutionEntity institutionEntity = null != bibliographicEntity ? bibliographicEntity.getInstitutionEntity() : null;
         String institutionCode = null != institutionEntity ? institutionEntity.getInstitutionCode() : RecapCommonConstants.NA;
         reportEntity.setInstitutionName(institutionCode);
 
@@ -435,10 +434,10 @@ public class BibJSONUtil extends MarcUtil {
         StringBuilder title=new StringBuilder();
         title.append(getDataFieldValueStartsWith(marcRecord, "245", Arrays.asList('a', 'b','n','p')) + " ");
         title.append(getDataFieldValueStartsWith(marcRecord, "246", Arrays.asList('a', 'b')) + " ");
-        title.append(getDataFieldValueStartsWith(marcRecord, "130", Arrays.asList('a')) + " ");
-        title.append(getDataFieldValueStartsWith(marcRecord, "730", Arrays.asList('a')) + " ");
-        title.append(getDataFieldValueStartsWith(marcRecord, "740", Arrays.asList('a')) + " ");
-        title.append(getDataFieldValueStartsWith(marcRecord, "830", Arrays.asList('a'))+ " ");
+        title.append(getDataFieldValueStartsWith(marcRecord, "130", Collections.singletonList('a')) + " ");
+        title.append(getDataFieldValueStartsWith(marcRecord, "730", Collections.singletonList('a')) + " ");
+        title.append(getDataFieldValueStartsWith(marcRecord, "740", Collections.singletonList('a')) + " ");
+        title.append(getDataFieldValueStartsWith(marcRecord, "830", Collections.singletonList('a'))+ " ");
         return title.toString();
     }
 
@@ -498,10 +497,10 @@ public class BibJSONUtil extends MarcUtil {
         Map<String, List<Character>> authorMap = new HashMap<>();
         authorMap.put("100", Arrays.asList('a','q'));
         authorMap.put("110", Arrays.asList('a','b'));
-        authorMap.put("111", Arrays.asList('a'));
-        authorMap.put("700", Arrays.asList('a'));
+        authorMap.put("111", Collections.singletonList('a'));
+        authorMap.put("700", Collections.singletonList('a'));
         authorMap.put("710", Arrays.asList('a','b'));
-        authorMap.put("711", Arrays.asList('a'));
+        authorMap.put("711", Collections.singletonList('a'));
 
 
         for (Map.Entry<String, List<Character>> entry : authorMap.entrySet()) {

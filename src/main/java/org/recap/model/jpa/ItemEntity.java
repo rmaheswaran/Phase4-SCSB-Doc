@@ -73,6 +73,13 @@ public class ItemEntity extends ItemAbstractEntity {
 
         return getOwningInstitutionItemId() != null ? getOwningInstitutionItemId().equals(that.getOwningInstitutionItemId()) : that.getOwningInstitutionItemId() == null;
     }
+
+    @Override
+    public int hashCode() {
+        int result =  getOwningInstitutionItemId() != null ? getOwningInstitutionItemId().hashCode() : 0;
+        result = 31 * result + (getOwningInstitutionId() != null ? getOwningInstitutionId().hashCode() : 0);
+        return result;
+    }
 }
 
 

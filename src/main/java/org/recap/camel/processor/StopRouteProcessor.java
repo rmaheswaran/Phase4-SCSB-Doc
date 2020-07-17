@@ -34,7 +34,7 @@ public class StopRouteProcessor implements Processor {
                     exchange.getContext().getRouteController().stopRoute(routeId);
                 } catch (Exception e) {
                     logger.error("Exception while stop route : {}" , routeId);
-                    logger.error(RecapCommonConstants.LOCAL_ITEM_ID, e.getStackTrace());
+                    logger.error(RecapCommonConstants.LOCAL_ITEM_ID, e.getStackTrace().toString());
                 }
             }
         };

@@ -83,8 +83,7 @@ public class DBReportUtil {
     }
 
     public List<ReportDataEntity> generateBibHoldingsFailureReportEntity(BibliographicEntity bibliographicEntity, HoldingsEntity holdingsEntity) {
-        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
-        reportDataEntities.addAll(generateBibFailureReportEntity(bibliographicEntity));
+        List<ReportDataEntity> reportDataEntities = new ArrayList<>(generateBibFailureReportEntity(bibliographicEntity));
         return getReportDataEntities(holdingsEntity, reportDataEntities);
     }
 
@@ -120,8 +119,7 @@ public class DBReportUtil {
      * @return the list
      */
     public List<ReportDataEntity> generateBibHoldingsFailureReportEntity(BibliographicEntity bibliographicEntity, HoldingsEntity holdingsEntity, String institutionName, Record bibRecord) {
-        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
-        reportDataEntities.addAll(generateBibFailureReportEntity(bibliographicEntity, bibRecord));
+        List<ReportDataEntity> reportDataEntities = new ArrayList<>(generateBibFailureReportEntity(bibliographicEntity, bibRecord));
         return getReportDataEntities(holdingsEntity, reportDataEntities);
     }
 
@@ -146,15 +144,13 @@ public class DBReportUtil {
      * @return the list
      */
     public List<ReportDataEntity> generateBibHoldingsAndItemsFailureReportEntities(BibliographicEntity bibliographicEntity, HoldingsEntity holdingsEntity, ItemEntity itemEntity, String institutionName, Record bibRecord) {
-        List<ReportDataEntity> reportEntities = new ArrayList<>();
-        reportEntities.addAll(generateBibHoldingsFailureReportEntity(bibliographicEntity, holdingsEntity, institutionName, bibRecord));
+        List<ReportDataEntity> reportEntities = new ArrayList<>(generateBibHoldingsFailureReportEntity(bibliographicEntity, holdingsEntity, institutionName, bibRecord));
         reportEntities = setReportEntities(reportEntities, itemEntity);
         return reportEntities;
     }
 
     public List<ReportDataEntity> generateBibHoldingsAndItemsFailureReportEntities(BibliographicEntity bibliographicEntity, HoldingsEntity holdingsEntity, ItemEntity itemEntity) {
-        List<ReportDataEntity> reportEntities = new ArrayList<>();
-        reportEntities.addAll(generateBibHoldingsFailureReportEntity(bibliographicEntity, holdingsEntity));
+        List<ReportDataEntity> reportEntities = new ArrayList<>(generateBibHoldingsFailureReportEntity(bibliographicEntity, holdingsEntity));
         reportEntities = setReportEntities(reportEntities, itemEntity);
         return reportEntities;
     }
@@ -184,7 +180,7 @@ public class DBReportUtil {
 
             if (itemEntity.getCollectionGroupId() != null) {
                 for (Map.Entry<String, Integer> entry : collectionGroupMap.entrySet()) {
-                    if (entry.getValue() == itemEntity.getCollectionGroupId()) {
+                    if (entry.getValue().equals(itemEntity.getCollectionGroupId())) {
                         ReportDataEntity collectionGroupDesignationEntity = new ReportDataEntity();
                         collectionGroupDesignationEntity.setHeaderName(RecapCommonConstants.COLLECTION_GROUP_DESIGNATION);
                         collectionGroupDesignationEntity.setHeaderValue(entry.getKey());
@@ -197,14 +193,14 @@ public class DBReportUtil {
             if (itemEntity.getCreatedDate() != null) {
                 ReportDataEntity createDateItemEntity = new ReportDataEntity();
                 createDateItemEntity.setHeaderName(RecapCommonConstants.CREATE_DATE_ITEM);
-                createDateItemEntity.setHeaderValue(new SimpleDateFormat("mm-dd-yyyy").format(itemEntity.getCreatedDate()));
+                createDateItemEntity.setHeaderValue(new SimpleDateFormat("MM-dd-yyyy").format(itemEntity.getCreatedDate()));
                 reportEntities.add(createDateItemEntity);
             }
 
             if (itemEntity.getLastUpdatedDate() != null) {
                 ReportDataEntity lastUpdateItemEntity = new ReportDataEntity();
                 lastUpdateItemEntity.setHeaderName(RecapCommonConstants.LAST_UPDATED_DATE_ITEM);
-                lastUpdateItemEntity.setHeaderValue(new SimpleDateFormat("mm-dd-yyyy").format(itemEntity.getLastUpdatedDate()));
+                lastUpdateItemEntity.setHeaderValue(new SimpleDateFormat("MM-dd-yyyy").format(itemEntity.getLastUpdatedDate()));
                 reportEntities.add(lastUpdateItemEntity);
             }
 
@@ -218,7 +214,7 @@ public class DBReportUtil {
 
         if (bibliographicEntity.getOwningInstitutionId() != null) {
             for (Map.Entry<String, Integer> entry : institutionEntitiesMap.entrySet()) {
-                if (entry.getValue() == bibliographicEntity.getOwningInstitutionId()) {
+                if (entry.getValue().equals(bibliographicEntity.getOwningInstitutionId())) {
                     owningInstitutionReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
                     owningInstitutionReportDataEntity.setHeaderValue(entry.getKey());
                     reportDataEntities.add(owningInstitutionReportDataEntity);
