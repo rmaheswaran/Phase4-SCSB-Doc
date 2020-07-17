@@ -125,10 +125,8 @@ public class SharedCollectionRestController {
             BibAvailabilityResponse bibAvailabilityResponse = new BibAvailabilityResponse();
             bibAvailabilityResponse.setErrorMessage(RecapConstants.BIB_ITEM_DOESNOT_EXIST);
             bibAvailabilityResponses.add(bibAvailabilityResponse);
-            responseEntity = new ResponseEntity(bibAvailabilityResponses, getHttpHeaders(), HttpStatus.OK);
-        } else {
-            responseEntity = new ResponseEntity(bibAvailabilityResponses, getHttpHeaders(), HttpStatus.OK);
         }
+        responseEntity = new ResponseEntity(bibAvailabilityResponses, getHttpHeaders(), HttpStatus.OK);
         return responseEntity;
     }
 
@@ -142,8 +140,7 @@ public class SharedCollectionRestController {
     @ResponseBody
     public ResponseEntity accessionBatch(@RequestBody List<AccessionRequest> accessionRequestList) {
         String responseMessage = getAccessionService().saveRequest(accessionRequestList);
-        ResponseEntity responseEntity = new ResponseEntity(responseMessage, getHttpHeaders(), HttpStatus.OK);
-        return responseEntity;
+        return new ResponseEntity(responseMessage, getHttpHeaders(), HttpStatus.OK);
     }
 
     /**

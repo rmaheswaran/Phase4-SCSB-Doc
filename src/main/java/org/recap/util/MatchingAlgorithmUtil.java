@@ -50,6 +50,9 @@ import java.util.Set;
 public class MatchingAlgorithmUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchingAlgorithmUtil.class);
+    private String pulMatchingCountStr = "pulMatchingCount";
+    private String culMatchingCountStr = "culMatchingCount";
+    private String nyplMatchingCountStr = "nyplMatchingCount";
 
     @Autowired
     private ProducerTemplate producerTemplate;
@@ -133,29 +136,27 @@ public class MatchingAlgorithmUtil {
                 if (!criteriaValueSet.contains(criteriaValue) && criteriaMap.get(criteriaValue).size() > 1) {
                     StringBuilder matchPointValue = new StringBuilder();
                     criteriaValueSet.add(criteriaValue);
-                    Set<Integer> tempBibIds = new HashSet<>();
-                    List<Integer> tempBibIdList = new ArrayList<>();
                     Set<Integer> bibIds = criteriaMap.get(criteriaValue);
-                    tempBibIds.addAll(bibIds);
+                    Set<Integer> tempBibIds = new HashSet<>(bibIds);
                     for (Integer bibId : bibIds) {
                         MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
                         matchPointValue.append(StringUtils.isNotBlank(matchPointValue.toString()) ? "," : "").append(getMatchCriteriaValue(matching, matchingBibEntity));
                         String[] criteriaValueList = matchPointValue.toString().split(",");
                         tempBibIds.addAll(getBibIdsForCriteriaValue(criteriaMap, criteriaValueSet, criteriaValue, matching, criteriaValueList, bibEntityMap, matchPointValue));
                     }
-                    tempBibIdList.addAll(tempBibIds);
+                    List<Integer> tempBibIdList = new ArrayList<>(tempBibIds);
                     Map<String, Integer> countsMap = saveReportForSingleMatch(matchPointValue.toString(), tempBibIdList, matching, bibEntityMap, false);
-                    pulMatchingCount = pulMatchingCount + countsMap.get("pulMatchingCount");
-                    culMatchingCount = culMatchingCount + countsMap.get("culMatchingCount");
-                    nyplMatchingCount = nyplMatchingCount + countsMap.get("nyplMatchingCount");
+                    pulMatchingCount = pulMatchingCount + countsMap.get(pulMatchingCountStr);
+                    culMatchingCount = culMatchingCount + countsMap.get(culMatchingCountStr);
+                    nyplMatchingCount = nyplMatchingCount + countsMap.get(nyplMatchingCountStr);
                 }
             }
         }
 
         Map countsMap = new HashMap();
-        countsMap.put("pulMatchingCount", pulMatchingCount);
-        countsMap.put("culMatchingCount", culMatchingCount);
-        countsMap.put("nyplMatchingCount", nyplMatchingCount);
+        countsMap.put(pulMatchingCountStr, pulMatchingCount);
+        countsMap.put(culMatchingCountStr, culMatchingCount);
+        countsMap.put(nyplMatchingCountStr, nyplMatchingCount);
         return countsMap;
     }
 
@@ -201,18 +202,18 @@ public class MatchingAlgorithmUtil {
                             matchingBibIds.add(bibEntity.getId());
                         }
                         Map<String, Integer> countsMap = saveReportForSingleMatch(matchPointValue, bibIds, matchingBibEntity.getMatching(), matchingBibEntityMap, true);
-                        pulMatchingCount = pulMatchingCount + countsMap.get("pulMatchingCount");
-                        culMatchingCount = culMatchingCount + countsMap.get("culMatchingCount");
-                        nyplMatchingCount = nyplMatchingCount + countsMap.get("nyplMatchingCount");
+                        pulMatchingCount = pulMatchingCount + countsMap.get(pulMatchingCountStr);
+                        culMatchingCount = culMatchingCount + countsMap.get(culMatchingCountStr);
+                        nyplMatchingCount = nyplMatchingCount + countsMap.get(nyplMatchingCountStr);
                     }
                 }
             }
         }
 
         Map countsMap = new HashMap();
-        countsMap.put("pulMatchingCount", pulMatchingCount);
-        countsMap.put("culMatchingCount", culMatchingCount);
-        countsMap.put("nyplMatchingCount", nyplMatchingCount);
+        countsMap.put(pulMatchingCountStr, pulMatchingCount);
+        countsMap.put(culMatchingCountStr, culMatchingCount);
+        countsMap.put(nyplMatchingCountStr, nyplMatchingCount);
         return countsMap;
     }
 
@@ -385,9 +386,9 @@ public class MatchingAlgorithmUtil {
             producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", reportEntitiesToSave);
         }
         Map countsMap = new HashMap();
-        countsMap.put("pulMatchingCount", pulMatchingCount);
-        countsMap.put("culMatchingCount", culMatchingCount);
-        countsMap.put("nyplMatchingCount", nyplMatchingCount);
+        countsMap.put(pulMatchingCountStr, pulMatchingCount);
+        countsMap.put(culMatchingCountStr, culMatchingCount);
+        countsMap.put(nyplMatchingCountStr, nyplMatchingCount);
         return countsMap;
     }
 
@@ -557,9 +558,8 @@ public class MatchingAlgorithmUtil {
         for(String criteriaValue : criteriaValues) {
             if(StringUtils.isNotBlank(criteriaValue)) {
                 if(criteriaMap.containsKey(criteriaValue)) {
-                    Set<Integer> bibIdSet = new HashSet<>();
                     Set<Integer> bibIds = criteriaMap.get(criteriaValue);
-                    bibIdSet.addAll(bibIds);
+                    Set<Integer> bibIdSet = new HashSet<>(bibIds);
                     bibIdSet.add(bibId);
                     criteriaMap.put(criteriaValue, bibIdSet);
                 } else {
@@ -662,9 +662,9 @@ public class MatchingAlgorithmUtil {
         }
 
         Map countsMap = new HashMap();
-        countsMap.put("pulMatchingCount", pulMatchingCount);
-        countsMap.put("culMatchingCount", culMatchingCount);
-        countsMap.put("nyplMatchingCount", nyplMatchingCount);
+        countsMap.put(pulMatchingCountStr, pulMatchingCount);
+        countsMap.put(culMatchingCountStr, culMatchingCount);
+        countsMap.put(nyplMatchingCountStr, nyplMatchingCount);
         return countsMap;
     }
 
@@ -818,8 +818,7 @@ public class MatchingAlgorithmUtil {
         int size = 0;
         if (CollectionUtils.isNotEmpty(matchingMatchPointsEntities)) {
             for (int i = 0; i < matchingMatchPointsEntities.size(); i += batchSize) {
-                List<MatchingMatchPointsEntity> matchingMatchPointsEntityList = new ArrayList<>();
-                matchingMatchPointsEntityList.addAll(matchingMatchPointsEntities.subList(i, Math.min(i + batchSize, matchingMatchPointsEntities.size())));
+                List<MatchingMatchPointsEntity> matchingMatchPointsEntityList = new ArrayList<>(matchingMatchPointsEntities.subList(i, Math.min(i + batchSize, matchingMatchPointsEntities.size())));
                 producerTemplate.sendBody("scsbactivemq:queue:saveMatchingMatchPointsQ", matchingMatchPointsEntityList);
                 size = size + matchingMatchPointsEntityList.size();
             }
@@ -928,9 +927,9 @@ public class MatchingAlgorithmUtil {
         MatchingCounter.setCulOpenCount(getCGDCountBasedOnInst(RecapCommonConstants.COLUMBIA, RecapCommonConstants.REPORTS_OPEN));
         MatchingCounter.setNyplOpenCount(getCGDCountBasedOnInst(RecapCommonConstants.NYPL, RecapCommonConstants.REPORTS_OPEN));
 
-        logger.info("PUL Initial Counter Value: " + MatchingCounter.getPulSharedCount());
-        logger.info("CUL Initial Counter Value: " + MatchingCounter.getCulSharedCount());
-        logger.info("NYPL Initial Counter Value: " + MatchingCounter.getNyplSharedCount());
+        logger.info("PUL Initial Counter Value: {}" , MatchingCounter.getPulSharedCount());
+        logger.info("CUL Initial Counter Value: {}" , MatchingCounter.getCulSharedCount());
+        logger.info("NYPL Initial Counter Value: {}" , MatchingCounter.getNyplSharedCount());
     }
 
 }

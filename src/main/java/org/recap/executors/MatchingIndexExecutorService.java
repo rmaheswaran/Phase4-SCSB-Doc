@@ -108,7 +108,7 @@ public abstract class MatchingIndexExecutorService {
                 }
 
                 int futureCount = 0;
-                List<List<Callable<Integer>>> partitions = Lists.partition(new ArrayList<Callable<Integer>>(callables), callableCountByCommitInterval);
+                List<List<Callable<Integer>>> partitions = Lists.partition(new ArrayList<>(callables), callableCountByCommitInterval);
                 for (List<Callable<Integer>> partitionCallables : partitions) {
 
                     List<Future<Integer>> futures = executorService.invokeAll(partitionCallables);

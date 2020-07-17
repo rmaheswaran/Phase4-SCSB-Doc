@@ -62,7 +62,7 @@ public class OngoingMatchingAlgorithmJobController {
     }
 
     @RequestMapping("/ongoingMatchingJob")
-    private String matchingJob(Model model) {
+    public String matchingJob(Model model) {
         model.addAttribute("matchingJobFromDate", new Date());
         return "ongoingMatchingJob";
     }

@@ -56,8 +56,7 @@ public abstract class BibDataResolver {
     }
 
     public ItemEntity getItemEntityFormMarcRecord(List<Record> object,Integer owningInstitutionId) {
-        List<Record> records  = object;
-        String owningInstitutionItemIdFromMarcRecord = getOwningInstitutionItemIdFromMarcRecord(records);
+        String owningInstitutionItemIdFromMarcRecord = getOwningInstitutionItemIdFromMarcRecord(object);
         if(StringUtils.isNotBlank(owningInstitutionItemIdFromMarcRecord)) {
             return itemDetailsRepository.findByOwningInstitutionItemIdAndOwningInstitutionId(owningInstitutionItemIdFromMarcRecord,owningInstitutionId);
         }
@@ -75,9 +74,7 @@ public abstract class BibDataResolver {
     public boolean isAccessionProcess(ItemEntity itemEntity, String owningInstitution) {
         if(null != itemEntity) {
             InstitutionEntity institutionEntity = itemEntity.getInstitutionEntity();
-            if(StringUtils.equals(owningInstitution, institutionEntity.getInstitutionCode())) {
-                return false;
-            }
+            return !StringUtils.equals(owningInstitution, institutionEntity.getInstitutionCode());
         }
         return true;
     }

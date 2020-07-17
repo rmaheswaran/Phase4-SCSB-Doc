@@ -7,13 +7,62 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.recap.RecapCommonConstants;
-import org.recap.model.jpa.*;
+import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.CollectionGroupEntity;
+import org.recap.model.jpa.HoldingsEntity;
+import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.ItemStatusEntity;
 import org.recap.model.search.resolver.BibValueResolver;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.search.resolver.ItemValueResolver;
-import org.recap.model.search.resolver.impl.bib.*;
-import org.recap.model.search.resolver.impl.holdings.*;
-import org.recap.model.search.resolver.impl.item.*;
+import org.recap.model.search.resolver.impl.bib.AuthorDisplayValueResolver;
+import org.recap.model.search.resolver.impl.bib.AuthorSearchValueResolver;
+import org.recap.model.search.resolver.impl.bib.BibCreatedDateValueResolver;
+import org.recap.model.search.resolver.impl.bib.BibIdValueResolver;
+import org.recap.model.search.resolver.impl.bib.ISBNValueResolver;
+import org.recap.model.search.resolver.impl.bib.ISSNValueResolver;
+import org.recap.model.search.resolver.impl.bib.ImprintValueResolver;
+import org.recap.model.search.resolver.impl.bib.IsDeletedBibValueResolver;
+import org.recap.model.search.resolver.impl.bib.LCCNValueResolver;
+import org.recap.model.search.resolver.impl.bib.LeaderMaterialTypeValueResolver;
+import org.recap.model.search.resolver.impl.bib.MaterialTypeValueResolver;
+import org.recap.model.search.resolver.impl.bib.NotesValueResolver;
+import org.recap.model.search.resolver.impl.bib.OCLCValueResolver;
+import org.recap.model.search.resolver.impl.bib.OwningInstitutionBibIdValueResolver;
+import org.recap.model.search.resolver.impl.bib.OwningInstitutionValueResolver;
+import org.recap.model.search.resolver.impl.bib.PublicationDateValueResolver;
+import org.recap.model.search.resolver.impl.bib.PublicationPlaceValueResolver;
+import org.recap.model.search.resolver.impl.bib.PublisherValueResolver;
+import org.recap.model.search.resolver.impl.bib.RootValueResolver;
+import org.recap.model.search.resolver.impl.bib.SubjectValueResolver;
+import org.recap.model.search.resolver.impl.bib.TitleDisplayValueResolver;
+import org.recap.model.search.resolver.impl.bib.TitleSearchValueResolver;
+import org.recap.model.search.resolver.impl.bib.TitleSortValueResolver;
+import org.recap.model.search.resolver.impl.holdings.HoldingsIdValueResolver;
+import org.recap.model.search.resolver.impl.holdings.HoldingsRootValueResolver;
+import org.recap.model.search.resolver.impl.holdings.IsDeletedHoldingsValueResolver;
+import org.recap.model.search.resolver.impl.holdings.OwningInstitutionHoldingsIdValueResolver;
+import org.recap.model.search.resolver.impl.holdings.SummaryHoldingsValueResolver;
+import org.recap.model.search.resolver.impl.item.AvailabilityDisplayValueResolver;
+import org.recap.model.search.resolver.impl.item.AvailabilitySearchValueResolver;
+import org.recap.model.search.resolver.impl.item.BarcodeValueResolver;
+import org.recap.model.search.resolver.impl.item.CallNumberDisplayValueResolver;
+import org.recap.model.search.resolver.impl.item.CallNumberSearchValueResolver;
+import org.recap.model.search.resolver.impl.item.CollectionGroupDesignationValueResolver;
+import org.recap.model.search.resolver.impl.item.CustomerCodeValueResolver;
+import org.recap.model.search.resolver.impl.item.HoldingsIdsValueResolver;
+import org.recap.model.search.resolver.impl.item.IsDeletedItemValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemBibIdValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemCreatedDateValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemIdValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemLastUpdatedByValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemLastUpdatedDateValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemOwningInstitutionValueResolver;
+import org.recap.model.search.resolver.impl.item.ItemRootValueResolver;
+import org.recap.model.search.resolver.impl.item.OwningInstitutionItemIdValueResolver;
+import org.recap.model.search.resolver.impl.item.UseRestrictionDisplayValueResolver;
+import org.recap.model.search.resolver.impl.item.UseRestrictionSearchValueResolver;
+import org.recap.model.search.resolver.impl.item.VolumePartYearValueResolver;
 import org.recap.model.solr.BibItem;
 import org.recap.model.solr.Item;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
@@ -26,7 +75,14 @@ import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class CommonUtil {
@@ -58,13 +114,13 @@ public class CommonUtil {
     public Item getItem(SolrDocument itemSolrDocument) {
         Item item = new Item();
         Collection<String> fieldNames = itemSolrDocument.getFieldNames();
-        List<ItemValueResolver> itemValueResolvers = getItemValueResolvers();
+        itemValueResolvers = getItemValueResolvers();
         for (Iterator<String> iterator = fieldNames.iterator(); iterator.hasNext(); ) {
             String fieldName = iterator.next();
             Object fieldValue = itemSolrDocument.getFieldValue(fieldName);
             for (Iterator<ItemValueResolver> itemValueResolverIterator = itemValueResolvers.iterator(); itemValueResolverIterator.hasNext(); ) {
                 ItemValueResolver itemValueResolver = itemValueResolverIterator.next();
-                if (itemValueResolver.isInterested(fieldName)) {
+                if (itemValueResolver.isInterested(fieldName).booleanValue()) {
                     itemValueResolver.setValue(item, fieldValue);
                 }
             }
@@ -195,9 +251,7 @@ public class CommonUtil {
      * @return
      */
     public Map<String, Object> addHoldingsEntityToMap(Map<String, Object> map, HoldingsEntity holdingsEntity, String owningInstitutionHoldingsId) {
-        if (StringUtils.isBlank(owningInstitutionHoldingsId)) {
-            owningInstitutionHoldingsId = UUID.randomUUID().toString();
-        } else if (owningInstitutionHoldingsId.length() > 100) {
+        if (StringUtils.isBlank(owningInstitutionHoldingsId) || owningInstitutionHoldingsId.length() > 100) {
             owningInstitutionHoldingsId = UUID.randomUUID().toString();
         }
         holdingsEntity.setOwningInstitutionHoldingsId(owningInstitutionHoldingsId);
@@ -217,7 +271,7 @@ public class CommonUtil {
             Object fieldValue = solrDocument.getFieldValue(fieldName);
             for (Iterator<BibValueResolver> valueResolverIterator = getBibValueResolvers().iterator(); valueResolverIterator.hasNext(); ) {
                 BibValueResolver valueResolver = valueResolverIterator.next();
-                if (valueResolver.isInterested(fieldName)) {
+                if (valueResolver.isInterested(fieldName).booleanValue()) {
                     valueResolver.setValue(bibItem, fieldValue);
                 }
             }

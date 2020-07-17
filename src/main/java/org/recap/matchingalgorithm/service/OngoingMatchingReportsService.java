@@ -37,13 +37,13 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Created by angelind on 21/6/17.
@@ -287,7 +287,7 @@ public class OngoingMatchingReportsService {
      */
     public List<MatchingSummaryReport> populateSummaryReport() {
         List<MatchingSummaryReport> matchingSummaryReports = new ArrayList<>();
-        Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().findByInstitutionCodeNotIn(Arrays.asList("HTC"));
+        Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().findByInstitutionCodeNotIn(Collections.singletonList("HTC"));
         for (Iterator<InstitutionEntity> iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
             InstitutionEntity institutionEntity = iterator.next();
             String institutionCode = institutionEntity.getInstitutionCode();

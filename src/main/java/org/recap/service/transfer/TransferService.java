@@ -236,7 +236,7 @@ public class TransferService {
                 transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_HOLDINGS_ATTACHED_WITH_DIFF_BIB);
             }
         }
-        else if (holdingsEntity.isDeleted()==true){
+        else if (holdingsEntity.isDeleted()){
             transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_HOLDING_DEACCESSIONED);
         }
         else {
@@ -461,18 +461,10 @@ public class TransferService {
             for (Iterator<HoldingsEntity> iterator = holdingsEntities.iterator(); iterator.hasNext(); ) {
                 HoldingsEntity holdingsEntity =  iterator.next();
                 boolean allItemDeleted = allItemDeleted(holdingsEntity);
-                if(allItemDeleted) {
-                    holdingsEntity.setDeleted(true);
-                } else {
-                    holdingsEntity.setDeleted(false);
-                }
+                holdingsEntity.setDeleted(allItemDeleted);
                 allDeleted = allDeleted & holdingsEntity.isDeleted();
             }
-            if(allDeleted) {
-                sourceBib.setDeleted(true);
-            } else {
-                sourceBib.setDeleted(false);
-            }
+            sourceBib.setDeleted(allDeleted);
         }
     }
 
@@ -615,7 +607,7 @@ public class TransferService {
                 BibliographicEntity destinationBibEntity =
                         getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(owningInstitutionId, owningInstitutionBibId);
                 if(null != destinationBibEntity) {
-                    if(destinationBibEntity.isDeleted()==false) {
+                    if(!destinationBibEntity.isDeleted()) {
                         transferValidationResponse.setDestBib(destinationBibEntity);
                     }
                     else {
@@ -646,7 +638,7 @@ public class TransferService {
                     if (holdingsEntity == null) {
                         transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB);
                     }
-                    else if(holdingsEntity.isDeleted()==true){
+                    else if(holdingsEntity.isDeleted()){
                         transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_HOLDING_DEACCESSIONED);
                     }
                     else {
@@ -703,9 +695,7 @@ public class TransferService {
     }
 
     public void saveReportForTransfer(String requestString, String responseString, String institution, String transferType) {
-        List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
-
-        reportDataEntityList.addAll(createReportDataEntityList(institution,
+        List<ReportDataEntity> reportDataEntityList = new ArrayList<>(createReportDataEntityList(institution,
                 requestString, responseString, transferType));
         helperUtil.saveReportEntity(institution,RecapConstants.TRANSFER_REPORT, RecapConstants.TRANSFER_REPORT, reportDataEntityList);
     }
