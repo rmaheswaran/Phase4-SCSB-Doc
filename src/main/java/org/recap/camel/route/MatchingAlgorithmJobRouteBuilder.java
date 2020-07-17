@@ -45,7 +45,7 @@ public class MatchingAlgorithmJobRouteBuilder {
                                     try {
                                         Map<String, String> requestMap = (Map<String, String>) exchange.getIn().getBody();
                                         jobId = requestMap.get(RecapCommonConstants.JOB_ID);
-                                        logger.info("Ongoing Matching Algorithm Job Initiated for Job Id : " + jobId);
+                                        logger.info("Ongoing Matching Algorithm Job Initiated for Job Id : {}" , jobId);
                                         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
                                         solrIndexRequest.setProcessType(requestMap.get(RecapCommonConstants.PROCESS_TYPE));
                                         solrIndexRequest.setCreatedDate(new SimpleDateFormat(RecapConstants.MATCHING_BATCH_JOB_DATE_FORMAT).parse(requestMap.get(RecapCommonConstants.CREATED_DATE)));

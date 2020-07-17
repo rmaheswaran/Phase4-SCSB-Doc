@@ -93,7 +93,7 @@ public class Main {
 	@Bean
 	public TomcatServletWebServerFactory servletContainerFactory() {
 		TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
-		factory.addConnectorCustomizers((TomcatConnectorCustomizer) connector -> connector.setMaxParameterCount(tomcatMaxParameterCount));
+		factory.addConnectorCustomizers( connector -> connector.setMaxParameterCount(tomcatMaxParameterCount));
 		return factory;
 	}
 

@@ -150,7 +150,7 @@ public class MatchingAlgorithmController {
             status.append(updateMvmCGDInDB());
             status.append(updateCGDInSolr(matchingAlgoDate));
             stopWatch.stop();
-            getLogger().info("Total Time taken to process the full Matching Algorithm Process : " + stopWatch.getTotalTimeSeconds());
+            getLogger().info("Total Time taken to process the full Matching Algorithm Process : {}" ,  stopWatch.getTotalTimeSeconds());
             status.append(RecapConstants.STATUS_DONE ).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "to run full Matching Algorithm Process : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
@@ -180,16 +180,16 @@ public class MatchingAlgorithmController {
             stopWatch1.start();
             getMatchingAlgorithmHelperService().findMatchingAndPopulateMatchPointsEntities();
             stopWatch1.stop();
-            getLogger().info("Time taken to save Match point Entity : " + stopWatch1.getTotalTimeSeconds());
+            getLogger().info("Time taken to save Match point Entity : {}" , stopWatch1.getTotalTimeSeconds());
             stopWatch1 = new StopWatch();
             stopWatch1.start();
             getMatchingAlgorithmHelperService().populateMatchingBibEntities();
             stopWatch1.stop();
-            getLogger().info("Time taken to save Matching Bib Entity : " + stopWatch1.getTotalTimeSeconds());
+            getLogger().info("Time taken to save Matching Bib Entity : {}" , stopWatch1.getTotalTimeSeconds());
             runReportsForMatchingAlgorithm(Integer.valueOf(getMatchingAlgoBatchSize()));
 
             stopWatch.stop();
-            getLogger().info("Total Time taken to process Matching Algorithm : " + stopWatch.getTotalTimeSeconds());
+            getLogger().info("Total Time taken to process Matching Algorithm : {}" , stopWatch.getTotalTimeSeconds());
             status.append(RecapConstants.STATUS_DONE ).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "for matching and save reports : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
@@ -213,7 +213,7 @@ public class MatchingAlgorithmController {
             stopWatch.start();
             runReportsForMatchingAlgorithm(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
-            getLogger().info("Total Time taken to process Matching Algorithm Reports : " + stopWatch.getTotalTimeSeconds());
+            getLogger().info("Total Time taken to process Matching Algorithm Reports :{} " , stopWatch.getTotalTimeSeconds());
             status.append(RecapConstants.STATUS_DONE ).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "to save reports only : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
@@ -237,7 +237,7 @@ public class MatchingAlgorithmController {
             stopWatch.start();
             getMatchingAlgorithmUpdateCGDService().updateCGDProcessForMonographs(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
-            getLogger().info("Total Time taken to Update Monographs CGD In DB For Matching Algorithm : " + stopWatch.getTotalTimeSeconds());
+            getLogger().info("Total Time taken to Update Monographs CGD In DB For Matching Algorithm : {}" , stopWatch.getTotalTimeSeconds());
             status.append(RecapConstants.STATUS_DONE ).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update monograph CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
@@ -261,7 +261,7 @@ public class MatchingAlgorithmController {
             stopWatch.start();
             getMatchingAlgorithmUpdateCGDService().updateCGDProcessForSerials(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
-            getLogger().info("Total Time taken to Update Serials CGD In DB For Matching Algorithm : " + stopWatch.getTotalTimeSeconds());
+            getLogger().info("Total Time taken to Update Serials CGD In DB For Matching Algorithm : {}" , stopWatch.getTotalTimeSeconds());
             status.append(RecapConstants.STATUS_DONE ).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update Serial CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
@@ -285,7 +285,7 @@ public class MatchingAlgorithmController {
             stopWatch.start();
             getMatchingAlgorithmUpdateCGDService().updateCGDProcessForMVMs(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
-            getLogger().info("Total Time taken to Update MVMs CGD In DB For Matching Algorithm : " + stopWatch.getTotalTimeSeconds());
+            getLogger().info("Total Time taken to Update MVMs CGD In DB For Matching Algorithm : {}" , stopWatch.getTotalTimeSeconds());
             status.append(RecapConstants.STATUS_DONE ).append("\n");
             status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update MVM CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
@@ -305,13 +305,13 @@ public class MatchingAlgorithmController {
     @PostMapping(value = "/matchingAlgorithm/updateCGDInSolr")
     public String updateCGDInSolr(@Valid @ModelAttribute("matchingAlgoDate") String matchingAlgoDate) {
         StringBuilder status = new StringBuilder();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm/dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         Date updatedDate = new Date();
         if(StringUtils.isNotBlank(matchingAlgoDate)) {
             try {
                 updatedDate = sdf.parse(matchingAlgoDate);
             } catch (ParseException e) {
-                getLogger().error("Exception while parsing Date : " + e.getMessage());
+                getLogger().error("Exception while parsing Date : {}" , e.getMessage());
             }
         }
         try {
@@ -319,7 +319,7 @@ public class MatchingAlgorithmController {
             stopWatch.start();
             Integer totalProcessedRecords = getMatchingBibItemIndexExecutorService().indexingForMatchingAlgorithm(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, updatedDate);
             stopWatch.stop();
-            getLogger().info("Total Time taken to Update CGD In Solr For Matching Algorithm : " + stopWatch.getTotalTimeSeconds());
+            getLogger().info("Total Time taken to Update CGD In Solr For Matching Algorithm : {}" , stopWatch.getTotalTimeSeconds());
             String recordsProcessed = "Total number of records processed : " + totalProcessedRecords;
             status.append(RecapConstants.STATUS_DONE).append("\n");
             status.append(recordsProcessed).append("\n");
@@ -359,7 +359,7 @@ public class MatchingAlgorithmController {
         culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
         nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
         stopWatch.stop();
-        getLogger().info("Time taken to save OCLC&ISBN Combination Reports : " + stopWatch.getTotalTimeSeconds());
+        getLogger().info("Time taken to save OCLC&ISBN Combination Reports : {}" , stopWatch.getTotalTimeSeconds());
         stopWatch = new StopWatch();
         stopWatch.start();
         matchingCountsMap = getMatchingAlgorithmHelperService().populateReportsForOCLCAndISSN(batchSize);
@@ -367,7 +367,7 @@ public class MatchingAlgorithmController {
         culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
         nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
         stopWatch.stop();
-        getLogger().info("Time taken to save OCLC&ISSN Combination Reports : " + stopWatch.getTotalTimeSeconds());
+        getLogger().info("Time taken to save OCLC&ISSN Combination Reports : {}" , stopWatch.getTotalTimeSeconds());
         stopWatch = new StopWatch();
         stopWatch.start();
         matchingCountsMap = getMatchingAlgorithmHelperService().populateReportsForOCLCAndLCCN(batchSize);
@@ -375,7 +375,7 @@ public class MatchingAlgorithmController {
         culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
         nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
         stopWatch.stop();
-        getLogger().info("Time taken to save OCLC&LCCN Combination Reports : " + stopWatch.getTotalTimeSeconds());
+        getLogger().info("Time taken to save OCLC&LCCN Combination Reports : {}" , stopWatch.getTotalTimeSeconds());
         stopWatch = new StopWatch();
         stopWatch.start();
         matchingCountsMap = getMatchingAlgorithmHelperService().populateReportsForISBNAndISSN(batchSize);
@@ -383,7 +383,7 @@ public class MatchingAlgorithmController {
         culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
         nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
         stopWatch.stop();
-        getLogger().info("Time taken to save ISBN&ISSN Combination Reports : " + stopWatch.getTotalTimeSeconds());
+        getLogger().info("Time taken to save ISBN&ISSN Combination Reports : {}" , stopWatch.getTotalTimeSeconds());
         stopWatch = new StopWatch();
         stopWatch.start();
         matchingCountsMap = getMatchingAlgorithmHelperService().populateReportsForISBNAndLCCN(batchSize);
@@ -391,7 +391,7 @@ public class MatchingAlgorithmController {
         culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
         nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
         stopWatch.stop();
-        getLogger().info("Time taken to save ISBN&LCCN Combination Reports : " + stopWatch.getTotalTimeSeconds());
+        getLogger().info("Time taken to save ISBN&LCCN Combination Reports : {}" , stopWatch.getTotalTimeSeconds());
         stopWatch = new StopWatch();
         stopWatch.start();
         matchingCountsMap = getMatchingAlgorithmHelperService().populateReportsForISSNAndLCCN(batchSize);
@@ -399,7 +399,7 @@ public class MatchingAlgorithmController {
         culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
         nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
         stopWatch.stop();
-        getLogger().info("Time taken to save ISSN&LCCN Combination Reports : " + stopWatch.getTotalTimeSeconds());
+        getLogger().info("Time taken to save ISSN&LCCN Combination Reports : {}" , stopWatch.getTotalTimeSeconds());
         stopWatch = new StopWatch();
         stopWatch.start();
         matchingCountsMap = getMatchingAlgorithmHelperService().populateReportsForSingleMatch(batchSize);
@@ -407,7 +407,7 @@ public class MatchingAlgorithmController {
         culMatchingCount = culMatchingCount + matchingCountsMap.get(RecapConstants.CUL_MATCHING_COUNT);
         nyplMatchingCount = nyplMatchingCount + matchingCountsMap.get(RecapConstants.NYPL_MATCHING_COUNT);
         stopWatch.stop();
-        getLogger().info("Time taken to save Single Matching Reports : " + stopWatch.getTotalTimeSeconds());
+        getLogger().info("Time taken to save Single Matching Reports : {}" , stopWatch.getTotalTimeSeconds());
 
         getMatchingAlgorithmHelperService().saveMatchingSummaryCount(pulMatchingCount, culMatchingCount, nyplMatchingCount);
     }
@@ -426,14 +426,14 @@ public class MatchingAlgorithmController {
         stopwatch.start();
         MatchingCounter.reset();
         getMatchingAlgorithmUpdateCGDService().getItemsCountForSerialsMatching(Integer.valueOf(getMatchingAlgoBatchSize()));
-        getLogger().info("Total PUL Shared Serial Items in Matching : " + MatchingCounter.getPulCGDUpdatedSharedCount());
-        getLogger().info("Total CUL Shared Serial Items in Matching : " + MatchingCounter.getCulCGDUpdatedSharedCount());
-        getLogger().info("Total NYPL Shared Serial Items in Matching : " + MatchingCounter.getNyplCGDUpdatedSharedCount());
+        getLogger().info("Total PUL Shared Serial Items in Matching : {}" , MatchingCounter.getPulCGDUpdatedSharedCount());
+        getLogger().info("Total CUL Shared Serial Items in Matching : {}" , MatchingCounter.getCulCGDUpdatedSharedCount());
+        getLogger().info("Total NYPL Shared Serial Items in Matching : {}" , MatchingCounter.getNyplCGDUpdatedSharedCount());
         response.append("PUL Shared Serial Items Count : ").append(MatchingCounter.getPulCGDUpdatedSharedCount()).append("\n");
         response.append("CUL Shared Serial Items Count : ").append(MatchingCounter.getCulCGDUpdatedSharedCount()).append("\n");
         response.append("NYPL Shared Serial Items Count : ").append(MatchingCounter.getNyplCGDUpdatedSharedCount());
         stopwatch.stop();
-        getLogger().info("Total Time taken to get the serial items count : " + stopwatch.getTotalTimeSeconds() + " seconds");
+        getLogger().info("Total Time taken to get the serial items count : {}" , stopwatch.getTotalTimeSeconds() + " seconds");
         return response.toString();
     }
 

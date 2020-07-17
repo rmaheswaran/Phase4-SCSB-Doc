@@ -23,7 +23,12 @@ import org.recap.model.jpa.AccessionEntity;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.repository.jpa.*;
+import org.recap.repository.jpa.AccessionDetailsRepository;
+import org.recap.repository.jpa.BibliographicDetailsRepository;
+import org.recap.repository.jpa.CustomerCodeDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.repository.jpa.ItemDetailsRepository;
+import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.service.authorization.NyplOauthTokenApiService;
 import org.recap.service.partnerservice.ColumbiaService;
 import org.recap.service.partnerservice.NYPLService;
@@ -44,9 +49,17 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by chenchulakshmig on 20/10/16.
@@ -454,24 +467,32 @@ public class AccessionServiceUT extends BaseTestCase {
 
     private File getBibContentFile(String institution) throws URISyntaxException {
         URL resource = null;
-        if(institution.equals("PUL")){
-            resource = getClass().getResource("PUL-BibContent.xml");
-        } else if(institution.equals("CUL")){
-            resource = getClass().getResource("CUL-BibContent.xml");
-        } else if(institution.equals("NYPL")){
-            resource = getClass().getResource("NYPL-BibContent.xml");
+        switch (institution) {
+            case "PUL":
+                resource = getClass().getResource("PUL-BibContent.xml");
+                break;
+            case "CUL":
+                resource = getClass().getResource("CUL-BibContent.xml");
+                break;
+            case "NYPL":
+                resource = getClass().getResource("NYPL-BibContent.xml");
+                break;
         }
         return new File(resource.toURI());
     }
 
     private File getHoldingsContentFile(String institution) throws URISyntaxException {
         URL resource = null;
-        if(institution.equals("PUL")){
-            resource = getClass().getResource("PUL-HoldingsContent.xml");
-        } else if(institution.equals("CUL")){
-            resource = getClass().getResource("CUL-HoldingsContent.xml");
-        } else if(institution.equals("NYPL")){
-            resource = getClass().getResource("NYPL-HoldingsContent.xml");
+        switch (institution) {
+            case "PUL":
+                resource = getClass().getResource("PUL-HoldingsContent.xml");
+                break;
+            case "CUL":
+                resource = getClass().getResource("CUL-HoldingsContent.xml");
+                break;
+            case "NYPL":
+                resource = getClass().getResource("NYPL-HoldingsContent.xml");
+                break;
         }
         return new File(resource.toURI());
     }

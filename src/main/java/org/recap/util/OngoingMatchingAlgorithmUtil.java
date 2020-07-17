@@ -94,7 +94,6 @@ public class OngoingMatchingAlgorithmUtil {
     @Autowired
     private OngoingMatchingReportsService ongoingMatchingReportsService;
 
-    private List<BibValueResolver> bibValueResolvers;
     private Map collectionGroupMap;
     private Map institutionMap;
 
@@ -149,8 +148,7 @@ public class OngoingMatchingAlgorithmUtil {
             SolrQuery solrQuery = new SolrQuery(query);
             solrQuery.setStart(start);
             solrQuery.setRows(batchSize);
-            QueryResponse queryResponse = solrTemplate.getSolrClient().query(solrQuery);
-            return queryResponse;
+            return solrTemplate.getSolrClient().query(solrQuery);
 
         } catch (SolrServerException | IOException e) {
             logger.error(RecapCommonConstants.LOG_ERROR,e);
@@ -176,7 +174,7 @@ public class OngoingMatchingAlgorithmUtil {
             }
         }
         stopWatch.stop();
-        logger.info("Total Time taken to execute matching algorithm only : " + stopWatch.getTotalTimeSeconds());
+        logger.info("Total Time taken to execute matching algorithm only : {}" , stopWatch.getTotalTimeSeconds());
         return status;
     }
 
@@ -233,7 +231,6 @@ public class OngoingMatchingAlgorithmUtil {
      * @return
      */
     private Set<String> getMatchingBibsAndMatchPoints(SolrDocument solrDocument, Map<Integer, BibItem> bibItemMap) {
-        Map<Integer, BibItem> tempMap;
         Set<String> matchPointString = new HashSet<>();
         addToBibItemMap(solrDocument, bibItemMap, matchPointString, RecapCommonConstants.OCLC_NUMBER);
         addToBibItemMap(solrDocument, bibItemMap, matchPointString, RecapCommonConstants.ISBN_CRITERIA);

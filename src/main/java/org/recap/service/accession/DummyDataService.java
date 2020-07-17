@@ -23,13 +23,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -92,19 +92,18 @@ public class DummyDataService {
             itemEntity.setCustomerCode(customerCode);
             itemEntity.setItemAvailabilityStatusId((Integer) getItemStatusMap().get(RecapCommonConstants.NOT_AVAILABLE));
             itemEntity.setDeleted(false);
-            itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
+            itemEntity.setHoldingsEntities(Collections.singletonList(holdingsEntity));
             itemEntity.setCatalogingStatus(RecapCommonConstants.INCOMPLETE_STATUS);
             List<ItemEntity> itemEntityList = new ArrayList<>();
             itemEntityList.add(itemEntity);
             holdingsEntity.setItemEntities(itemEntityList);
 
-            bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
-            bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
+            bibliographicEntity.setHoldingsEntities(Collections.singletonList(holdingsEntity));
+            bibliographicEntity.setItemEntities(Collections.singletonList(itemEntity));
         } catch (Exception e) {
             logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
-        BibliographicEntity savedBibliographicEntity = accessionDAO.saveBibRecord(bibliographicEntity);
-        return savedBibliographicEntity;
+        return accessionDAO.saveBibRecord(bibliographicEntity);
     }
 
     public HoldingsEntity getHoldingsWithDummyDetails(Integer owningInstitutionId, Date currentDate, String createdBy, String owningInstitutionHoldingsId) {
@@ -153,8 +152,7 @@ public class DummyDataService {
             itemStatusMap = new HashMap();
             try {
                 Iterable<ItemStatusEntity> itemStatusEntities = itemStatusDetailsRepository.findAll();
-                for (Iterator iterator = itemStatusEntities.iterator(); iterator.hasNext(); ) {
-                    ItemStatusEntity itemStatusEntity = (ItemStatusEntity) iterator.next();
+                for (ItemStatusEntity itemStatusEntity : itemStatusEntities) {
                     itemStatusMap.put(itemStatusEntity.getStatusCode(), itemStatusEntity.getId());
                 }
             } catch (Exception e) {
@@ -171,12 +169,10 @@ public class DummyDataService {
         String line;
         try {
             while ((line = reader.readLine()) != null) {
-                if (line.isEmpty()) {
-                    out.append("\n");
-                } else {
+                if (!line.isEmpty()) {
                     out.append(line);
-                    out.append("\n");
                 }
+                out.append("\n");
             }
         } catch (IOException e) {
             logger.error(RecapConstants.EXCEPTION,e);

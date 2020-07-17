@@ -391,9 +391,7 @@ public class MarcUtil {
         VariableField variableField = record.getVariableField(field);
         if (variableField != null) {
             DataField dataField = (DataField) variableField;
-            if (dataField != null) {
-                return dataField;
-            }
+            return dataField;
         }
         return null;
     }
@@ -441,17 +439,13 @@ public class MarcUtil {
      * @param record the record
      * @return the bib marc record
      */
-    public BibMarcRecord buildBibMarcRecord(Record record) {
-        Record bibRecord = record;
-        List<VariableField> holdingsVariableFields = new ArrayList<>();
-        List<VariableField> holdings866VariableFields = new ArrayList<>();
-        List<VariableField> itemVariableFields = new ArrayList<>();
+    public BibMarcRecord buildBibMarcRecord(Record bibRecord) {
         String[] holdingsTags = {"852"};
         String[] holdings866Tags = {"866"};
         String[] itemTags = {"876"};
-        holdingsVariableFields.addAll(bibRecord.getVariableFields(holdingsTags));
-        holdings866VariableFields.addAll(bibRecord.getVariableFields(holdings866Tags));
-        itemVariableFields.addAll(bibRecord.getVariableFields(itemTags));
+        List<VariableField> holdingsVariableFields = new ArrayList<>(bibRecord.getVariableFields(holdingsTags));
+        List<VariableField> holdings866VariableFields = new ArrayList<>(bibRecord.getVariableFields(holdings866Tags));
+        List<VariableField> itemVariableFields = new ArrayList<>(bibRecord.getVariableFields(itemTags));
 
         if (org.apache.commons.collections.CollectionUtils.isNotEmpty(holdingsVariableFields)) {
             for (VariableField holdingsVariableField : holdingsVariableFields) {
