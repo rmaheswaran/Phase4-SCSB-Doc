@@ -125,10 +125,10 @@ public class AccessionSummaryRecordGenerator {
     }
 
     private void removeFromItemFailureReasonCountMap(Map<String, Integer> itemFailureReasonCountMap, AccessionSummaryRecord accessionSummaryRecord) {
-        Map.Entry<String, Integer> ItemEntry = itemFailureReasonCountMap.entrySet().iterator().next();
-        accessionSummaryRecord.setReasonForFailureItem(ItemEntry.getKey());
-        accessionSummaryRecord.setFailedItemCount(ItemEntry.getValue().toString());
-        itemFailureReasonCountMap.remove(ItemEntry.getKey());
+        Map.Entry<String, Integer> itemEntry = itemFailureReasonCountMap.entrySet().iterator().next();
+        accessionSummaryRecord.setReasonForFailureItem(itemEntry.getKey());
+        accessionSummaryRecord.setFailedItemCount(itemEntry.getValue().toString());
+        itemFailureReasonCountMap.remove(itemEntry.getKey());
     }
 
 }

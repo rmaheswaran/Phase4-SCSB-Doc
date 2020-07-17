@@ -9,7 +9,15 @@ import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.transfer.*;
+import org.recap.model.transfer.Destination;
+import org.recap.model.transfer.HoldingTransferResponse;
+import org.recap.model.transfer.HoldingsTransferRequest;
+import org.recap.model.transfer.ItemDestination;
+import org.recap.model.transfer.ItemSource;
+import org.recap.model.transfer.ItemTransferRequest;
+import org.recap.model.transfer.ItemTransferResponse;
+import org.recap.model.transfer.Source;
+import org.recap.model.transfer.TransferRequest;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -23,9 +31,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by Anithav on 30/06/20.

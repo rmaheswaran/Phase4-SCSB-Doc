@@ -4,17 +4,17 @@ import org.recap.RecapConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.MediaType;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.HostnameVerifier;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,9 +72,9 @@ public class ColumbiaService {
         String bibDataResponse = null;
         String response = null;
         try {
-            logger.info("CUL BIBDATA URL = "+getIlsColumbiaBibData());
+            logger.info("CUL BIBDATA URL = {}", getIlsColumbiaBibData());
             HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Arrays.asList(MediaType.APPLICATION_XML));
+            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_XML));
             HttpEntity requestEntity = new HttpEntity(headers);
             Map<String, String> params = new HashMap<>();
             params.put("barcode", itemBarcode);

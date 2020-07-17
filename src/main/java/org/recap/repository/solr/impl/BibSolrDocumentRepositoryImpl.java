@@ -27,13 +27,13 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Created by rajeshbabuk on 8/7/16.
@@ -79,10 +79,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
     }
 
     private boolean isEmptyField(SearchRecordsRequest searchRecordsRequest) {
-        if (StringUtils.isBlank(searchRecordsRequest.getFieldName()) && StringUtils.isNotBlank(searchRecordsRequest.getFieldValue())) {
-            return true;
-        }
-        return false;
+        return StringUtils.isBlank(searchRecordsRequest.getFieldName()) && StringUtils.isNotBlank(searchRecordsRequest.getFieldValue());
     }
 
     private List<BibItem> searchByItem(SearchRecordsRequest searchRecordsRequest) throws SolrServerException, IOException {
@@ -100,8 +97,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         SolrDocumentList itemSolrDocumentList = queryResponse.getResults();
         if (CollectionUtils.isNotEmpty(itemSolrDocumentList)) {
             setCountsByItem(searchRecordsRequest, itemSolrDocumentList);
-            for (Iterator<SolrDocument> iterator = itemSolrDocumentList.iterator(); iterator.hasNext(); ) {
-                SolrDocument itemSolrDocument = iterator.next();
+            for (SolrDocument itemSolrDocument : itemSolrDocumentList) {
                 Item item = commonUtil.getItem(itemSolrDocument);
                 bibItems.addAll(getBibItemsAndHoldings(item, searchRecordsRequest.isDeleted(), searchRecordsRequest.getCatalogingStatus()));
             }
@@ -119,8 +115,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
         if(CollectionUtils.isNotEmpty(bibSolrDocumentList)) {
             setCountsByBib(searchRecordsRequest, bibSolrDocumentList);
-            for (Iterator<SolrDocument> iterator = bibSolrDocumentList.iterator(); iterator.hasNext(); ) {
-                SolrDocument bibSolrDocument = iterator.next();
+            for (SolrDocument bibSolrDocument : bibSolrDocumentList) {
                 BibItem bibItem = new BibItem();
                 populateBibItem(bibSolrDocument, bibItem);
                 populateItemHoldingsInfo(bibItem, searchRecordsRequest.isDeleted(), searchRecordsRequest.getCatalogingStatus());
@@ -144,7 +139,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
                     String bibCatalogingStatus = (String) solrDocument.getFieldValue(RecapConstants.BIB_CATALOGING_STATUS);
                     if (isDeletedBib == isDeleted && catalogingStatus.equals(bibCatalogingStatus)) {
                         populateBibItem(solrDocument, bibItem);
-                        bibItem.setItems(Arrays.asList(item));
+                        bibItem.setItems(Collections.singletonList(item));
                     }
                 }
                 addHoldingsToBibItem(isDeleted, bibItem, solrDocument, docType);
@@ -196,14 +191,11 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
     }
 
     private boolean isItemField(SearchRecordsRequest searchRecordsRequest) {
-        if (StringUtils.isNotBlank(searchRecordsRequest.getFieldName())
+        return StringUtils.isNotBlank(searchRecordsRequest.getFieldName())
                 && (searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.BARCODE)
                 || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.CALL_NUMBER)
                 || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapConstants.ITEM_CATALOGING_STATUS)
-                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.CUSTOMER_CODE))) {
-            return true;
-        }
-        return false;
+                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.CUSTOMER_CODE));
     }
 
     private void setCountsByBib(SearchRecordsRequest searchRecordsRequest, SolrDocumentList bibSolrDocuments) throws IOException, SolrServerException {

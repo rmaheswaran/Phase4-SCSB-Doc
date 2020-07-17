@@ -81,10 +81,10 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
         Map<String, Object> bibMap = processAndValidateBibliographicEntity(bibRecord, owningInstitutionId, currentDate,errorMessage);
         BibliographicEntity bibliographicEntity = (BibliographicEntity) bibMap.get(RecapCommonConstants.BIBLIOGRAPHICENTITY);
 
-        map.put(RecapCommonConstants.FAILED_BIB_COUNT,(int)bibMap.get(RecapCommonConstants.FAILED_BIB_COUNT));
-        map.put(RecapCommonConstants.SUCCESS_BIB_COUNT , (int)bibMap.get(RecapCommonConstants.SUCCESS_BIB_COUNT));
-        map.put(RecapCommonConstants.REASON_FOR_BIB_FAILURE ,(String)bibMap.get(RecapCommonConstants.REASON_FOR_BIB_FAILURE));
-        map.put(RecapCommonConstants.EXIST_BIB_COUNT ,(int)bibMap.get(RecapCommonConstants.EXIST_BIB_COUNT));
+        map.put(RecapCommonConstants.FAILED_BIB_COUNT, bibMap.get(RecapCommonConstants.FAILED_BIB_COUNT));
+        map.put(RecapCommonConstants.SUCCESS_BIB_COUNT , bibMap.get(RecapCommonConstants.SUCCESS_BIB_COUNT));
+        map.put(RecapCommonConstants.REASON_FOR_BIB_FAILURE , bibMap.get(RecapCommonConstants.REASON_FOR_BIB_FAILURE));
+        map.put(RecapCommonConstants.EXIST_BIB_COUNT , bibMap.get(RecapCommonConstants.EXIST_BIB_COUNT));
 
         if (errorMessage.length()==0) {
             List<HoldingsMarcRecord> holdingsMarcRecords = bibMarcRecord.getHoldingsMarcRecords();
@@ -111,7 +111,7 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
                                 failedItemCount = failedItemCount + (int) itemMap.get(RecapCommonConstants.FAILED_ITEM_COUNT);
                             }
                             if(itemMap.containsKey(RecapCommonConstants.ITEMBARCODE)){
-                                map.put(RecapCommonConstants.ITEMBARCODE,(String)itemMap.get(RecapCommonConstants.ITEMBARCODE));
+                                map.put(RecapCommonConstants.ITEMBARCODE, itemMap.get(RecapCommonConstants.ITEMBARCODE));
                             }
                             if(itemMap.containsKey(RecapCommonConstants.REASON_FOR_ITEM_FAILURE)){
                                 String reason = (String)itemMap.get(RecapCommonConstants.REASON_FOR_ITEM_FAILURE);

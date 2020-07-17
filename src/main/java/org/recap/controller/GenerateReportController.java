@@ -83,7 +83,7 @@ public class GenerateReportController {
             status = "The Generated Report File Name : " + generatedReportFileName;
         }
         stopWatch.stop();
-        logger.info("Total time taken to generate File : " + stopWatch.getTotalTimeSeconds());
+        logger.info("Total time taken to generate File : {}" , stopWatch.getTotalTimeSeconds());
         return status;
     }
 

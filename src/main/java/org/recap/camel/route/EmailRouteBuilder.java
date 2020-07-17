@@ -118,12 +118,10 @@ public class EmailRouteBuilder {
                     String line;
                     try {
                         while ((line = reader.readLine()) != null) {
-                            if (line.isEmpty()) {
-                                out.append("\n");
-                            } else {
+                            if (!line.isEmpty()) {
                                 out.append(line);
-                                out.append("\n");
                             }
+                            out.append("\n");
                         }
                     } catch (IOException e) {
                         logger.error(RecapCommonConstants.LOG_ERROR, e);

@@ -24,12 +24,12 @@ public class FTPSubmitCollectionReportGenerator implements ReportGeneratorInterf
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION) ? true : false;
+        return reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION);
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP) ? true : false;
+        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP);
     }
 
     @Override
@@ -42,8 +42,8 @@ public class FTPSubmitCollectionReportGenerator implements ReportGeneratorInterf
             }
         }
         if(CollectionUtils.isNotEmpty(submitCollectionReportRecordList)){
-            fileName = RecapConstants.SUBMIT_COLLECTION+submitCollectionReportRecordList.get(0).getOwningInstitution();
-            producerTemplate.sendBodyAndHeader(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q,submitCollectionReportRecordList,"fileName",fileName);
+            String reportFileName = RecapConstants.SUBMIT_COLLECTION+submitCollectionReportRecordList.get(0).getOwningInstitution();
+            producerTemplate.sendBodyAndHeader(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q,submitCollectionReportRecordList,"fileName",reportFileName);
             return RecapCommonConstants.SUCCESS;
         }
         else {

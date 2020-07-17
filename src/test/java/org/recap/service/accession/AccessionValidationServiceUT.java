@@ -35,8 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by premkb on 3/6/17.
@@ -62,7 +63,7 @@ public class AccessionValidationServiceUT extends BaseTestCase{
         accessionRequest.setItemBarcode("CU24049476");
         accessionRequest.setCustomerCode("PA");
         boolean isValidBoundWithRecord = accessionValidationService.validateBoundWithMarcRecordFromIls(records,accessionRequest);
-        assertEquals(true,isValidBoundWithRecord);
+        assertTrue(isValidBoundWithRecord);
     }
 
     @Test
@@ -74,7 +75,7 @@ public class AccessionValidationServiceUT extends BaseTestCase{
         accessionRequest.setItemBarcode("32101075852200");
         accessionRequest.setCustomerCode("PA");
         boolean isValidBoundWithRecord = accessionValidationService.validateBoundWithMarcRecordFromIls(records,accessionRequest);
-        assertEquals(false,isValidBoundWithRecord);
+        assertFalse(isValidBoundWithRecord);
     }
 
     @Test
@@ -83,7 +84,7 @@ public class AccessionValidationServiceUT extends BaseTestCase{
         String scsbXmlString = FileUtils.readFileToString(bibContentFile, "UTF-8");
         List<BibRecord> bibRecordList = getBibRecordList(scsbXmlString);
         boolean isValidBoundWithRecord = accessionValidationService.validateBoundWithScsbRecordFromIls(bibRecordList);
-        assertEquals(true,isValidBoundWithRecord);
+        assertTrue(isValidBoundWithRecord);
     }
 
     @Test
@@ -92,7 +93,7 @@ public class AccessionValidationServiceUT extends BaseTestCase{
         String scsbXmlString = FileUtils.readFileToString(bibContentFile, "UTF-8");
         List<BibRecord> bibRecordList = getBibRecordList(scsbXmlString);
         boolean isValidBoundWithRecord = accessionValidationService.validateBoundWithScsbRecordFromIls(bibRecordList);
-        assertEquals(false,isValidBoundWithRecord);
+        assertFalse(isValidBoundWithRecord);
     }
 
     @Test
@@ -109,7 +110,7 @@ public class AccessionValidationServiceUT extends BaseTestCase{
         BibliographicEntity convertedBibliographicEntity = (BibliographicEntity) map.get("bibliographicEntity");
         StringBuilder errorMessage = new StringBuilder();
         boolean isValid = accessionValidationService.validateItem(convertedBibliographicEntity,false,false,errorMessage);
-        assertEquals(true,isValid);
+        assertTrue(isValid);
     }
 
     @Test
@@ -126,7 +127,7 @@ public class AccessionValidationServiceUT extends BaseTestCase{
         BibliographicEntity convertedBibliographicEntity = (BibliographicEntity) map.get("bibliographicEntity");
         StringBuilder errorMessage = new StringBuilder();
         boolean isValid = accessionValidationService.validateItem(convertedBibliographicEntity,false,false,errorMessage);
-        assertEquals(false,isValid);
+        assertFalse(isValid);
     }
 
     private List<Record> readMarcXml(String marcXmlString) {
