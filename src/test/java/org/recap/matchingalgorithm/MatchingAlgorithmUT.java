@@ -82,7 +82,7 @@ public class MatchingAlgorithmUT extends BaseTestCase {
 
         stopWatch.stop();
         logger.info("Total Time taken : " + stopWatch.getTotalTimeSeconds());
-        Mockito.when(matchingBibDetailsRepository.count()).thenReturn(new Long(1));
+        Mockito.when(matchingBibDetailsRepository.count()).thenReturn(Long.valueOf(1));
         long savedBibsCount = matchingBibDetailsRepository.count();
         assertTrue(savedBibsCount>0);
     }
@@ -110,7 +110,7 @@ public class MatchingAlgorithmUT extends BaseTestCase {
     @Test
     public void runWholeMatchingAlgorithm() throws Exception {
         Date matchingAlgoDate = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm/dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         String matchingAlgoDateString = sdf.format(matchingAlgoDate);
         Mockito.when(matchingAlgorithmController.matchingAlgorithmFull(matchingAlgoDateString)).thenReturn("Status  : Done");
         String status = matchingAlgorithmController.matchingAlgorithmFull(matchingAlgoDateString);

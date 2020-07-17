@@ -78,14 +78,13 @@ public class BulkAccessionService extends AccessionService{
 
                     if (!accessionValidationResponse.isValid()) {
                         String message = accessionValidationResponse.getMessage();
-                        List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
-                        reportDataEntityList.addAll(getAccessionHelperUtil().createReportDataEntityList(accessionRequest, message));
+                        List<ReportDataEntity> reportDataEntityList = new ArrayList<>(getAccessionHelperUtil().createReportDataEntityList(accessionRequest, message));
                         saveReportEntity(owningInstitution, reportDataEntityList);
                         addCountToSummary(accessionSummary, message);
                         continue;
                     }
 
-                    BibDataCallable bibDataCallable = (BibDataCallable) applicationContext.getBean(BibDataCallable.class);
+                    BibDataCallable bibDataCallable = applicationContext.getBean(BibDataCallable.class);
                     bibDataCallable.setAccessionRequest(accessionRequest);
                     bibDataCallable.setOwningInstitution(owningInstitution);
                     futures.add(executorService.submit(bibDataCallable));

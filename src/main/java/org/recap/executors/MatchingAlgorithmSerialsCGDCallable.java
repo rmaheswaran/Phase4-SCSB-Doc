@@ -60,8 +60,8 @@ public class MatchingAlgorithmSerialsCGDCallable implements Callable {
             List<Integer> bibIdList = new ArrayList<>();
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
                     institutionMap, itemChangeLogDetailsRepository, RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository);
-            for(int i=0; i< bibIds.length; i++) {
-                bibIdList.add(Integer.valueOf(bibIds[i]));
+            for (String id : bibIds) {
+                bibIdList.add(Integer.valueOf(id));
             }
             matchingAlgorithmCGDProcessor.populateItemEntityMap(itemEntityMap, bibIdList);
             matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);

@@ -261,7 +261,7 @@ public class ReportsServiceUtil {
                 for (SolrDocument itemDocument : result) {
                     Item item = commonUtil.getItem(itemDocument);
                     itemList.add(item);
-                    bibIdList.add((Integer)item.getItemBibIdList().get(0));
+                    bibIdList.add(item.getItemBibIdList().get(0));
                 }
             }
 

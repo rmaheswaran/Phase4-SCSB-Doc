@@ -27,14 +27,14 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -50,6 +50,9 @@ import java.util.concurrent.ExecutionException;
 public class MatchingAlgorithmHelperService {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchingAlgorithmHelperService.class);
+    private String pulMatchingCountStr = "pulMatchingCount";
+    private String culMatchingCountStr = "culMatchingCount";
+    private String nyplMatchingCountStr = "nyplMatchingCount";
 
     @Autowired
     private MatchingBibDetailsRepository matchingBibDetailsRepository;
@@ -218,9 +221,8 @@ public class MatchingAlgorithmHelperService {
                 StringBuilder oclcNumbers  = new StringBuilder();
                 StringBuilder isbns = new StringBuilder();
                 oclcNumberSet.add(oclc);
-                Set<Integer> tempBibIds = new HashSet<>();
                 Set<Integer> bibIds = oclcAndBibIdMap.get(oclc);
-                tempBibIds.addAll(bibIds);
+                Set<Integer> tempBibIds = new HashSet<>(bibIds);
                 for(Integer bibId : bibIds) {
                     MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
                     oclcNumbers.append(StringUtils.isNotBlank(oclcNumbers.toString()) ? "," : "").append(matchingBibEntity.getOclc());
@@ -266,9 +268,8 @@ public class MatchingAlgorithmHelperService {
                 StringBuilder oclcNumbers  = new StringBuilder();
                 StringBuilder issns = new StringBuilder();
                 oclcNumberSet.add(oclc);
-                Set<Integer> tempBibIds = new HashSet<>();
                 Set<Integer> bibIds = oclcAndBibIdMap.get(oclc);
-                tempBibIds.addAll(bibIds);
+                Set<Integer> tempBibIds = new HashSet<>(bibIds);
                 for(Integer bibId : bibIds) {
                     MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
                     oclcNumbers.append(StringUtils.isNotBlank(oclcNumbers.toString()) ? "," : "").append(matchingBibEntity.getOclc());
@@ -313,9 +314,8 @@ public class MatchingAlgorithmHelperService {
                 StringBuilder oclcNumbers  = new StringBuilder();
                 StringBuilder lccns = new StringBuilder();
                 oclcNumberSet.add(oclc);
-                Set<Integer> tempBibIds = new HashSet<>();
                 Set<Integer> bibIds = oclcAndBibIdMap.get(oclc);
-                tempBibIds.addAll(bibIds);
+                Set<Integer> tempBibIds = new HashSet<>(bibIds);
                 for(Integer bibId : bibIds) {
                     MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
                     oclcNumbers.append(StringUtils.isNotBlank(oclcNumbers.toString()) ? "," : "").append(matchingBibEntity.getOclc());
@@ -360,9 +360,8 @@ public class MatchingAlgorithmHelperService {
                 StringBuilder isbns  = new StringBuilder();
                 StringBuilder issns = new StringBuilder();
                 isbnSet.add(isbn);
-                Set<Integer> tempBibIds = new HashSet<>();
                 Set<Integer> bibIds = isbnAndBibIdMap.get(isbn);
-                tempBibIds.addAll(bibIds);
+                Set<Integer> tempBibIds = new HashSet<>(bibIds);
                 for(Integer bibId : bibIds) {
                     MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
                     isbns.append(StringUtils.isNotBlank(isbns.toString()) ? "," : "").append(matchingBibEntity.getIsbn());
@@ -406,9 +405,8 @@ public class MatchingAlgorithmHelperService {
                 StringBuilder isbns  = new StringBuilder();
                 StringBuilder lccns = new StringBuilder();
                 isbnSet.add(isbn);
-                Set<Integer> tempBibIds = new HashSet<>();
                 Set<Integer> bibIds = isbnAndBibIdMap.get(isbn);
-                tempBibIds.addAll(bibIds);
+                Set<Integer> tempBibIds = new HashSet<>(bibIds);
                 for(Integer bibId : bibIds) {
                     MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
                     isbns.append(StringUtils.isNotBlank(isbns.toString()) ? "," : "").append(matchingBibEntity.getIsbn());
@@ -453,9 +451,8 @@ public class MatchingAlgorithmHelperService {
                 StringBuilder issns  = new StringBuilder();
                 StringBuilder lccns = new StringBuilder();
                 issnSet.add(issn);
-                Set<Integer> tempBibIds = new HashSet<>();
                 Set<Integer> bibIds = issnAndBibIdMap.get(issn);
-                tempBibIds.addAll(bibIds);
+                Set<Integer> tempBibIds = new HashSet<>(bibIds);
                 for(Integer bibId : bibIds) {
                     MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
                     issns.append(StringUtils.isNotBlank(issns.toString()) ? "," : "").append(matchingBibEntity.getIssn());
@@ -540,25 +537,25 @@ public class MatchingAlgorithmHelperService {
         List<MatchingBibEntity> matchingBibEntityList = matchingBibEntities.getContent();
         Set<Integer> matchingBibIds = new HashSet<>();
         Map<String,Integer> countsMap = getMatchingAlgorithmUtil().processPendingMatchingBibs(matchingBibEntityList, matchingBibIds);
-        pulMatchingCount = pulMatchingCount + countsMap.get("pulMatchingCount");
-        culMatchingCount = culMatchingCount + countsMap.get("culMatchingCount");
-        nyplMatchingCount = nyplMatchingCount + countsMap.get("nyplMatchingCount");
+        pulMatchingCount = pulMatchingCount + countsMap.get(pulMatchingCountStr);
+        culMatchingCount = culMatchingCount + countsMap.get(culMatchingCountStr);
+        nyplMatchingCount = nyplMatchingCount + countsMap.get(nyplMatchingCountStr);
 
         for(int pageNum=1; pageNum < totalPages; pageNum++) {
             matchingBibEntities = getMatchingBibDetailsRepository().findByStatus(PageRequest.of(pageNum, batchSize), RecapConstants.PENDING);
             matchingBibEntityList = matchingBibEntities.getContent();
             countsMap = getMatchingAlgorithmUtil().processPendingMatchingBibs(matchingBibEntityList, matchingBibIds);
-            pulMatchingCount = pulMatchingCount + countsMap.get("pulMatchingCount");
-            culMatchingCount = culMatchingCount + countsMap.get("culMatchingCount");
-            nyplMatchingCount = nyplMatchingCount + countsMap.get("nyplMatchingCount");
+            pulMatchingCount = pulMatchingCount + countsMap.get(pulMatchingCountStr);
+            culMatchingCount = culMatchingCount + countsMap.get(culMatchingCountStr);
+            nyplMatchingCount = nyplMatchingCount + countsMap.get(nyplMatchingCountStr);
         }
 
         getMatchingBibDetailsRepository().updateStatus(RecapCommonConstants.COMPLETE_STATUS, RecapConstants.PENDING);
 
         countsMap = new HashMap();
-        countsMap.put("pulMatchingCount", pulMatchingCount);
-        countsMap.put("culMatchingCount", culMatchingCount);
-        countsMap.put("nyplMatchingCount", nyplMatchingCount);
+        countsMap.put(pulMatchingCountStr, pulMatchingCount);
+        countsMap.put(culMatchingCountStr, culMatchingCount);
+        countsMap.put(nyplMatchingCountStr, nyplMatchingCount);
         return countsMap;
     }
 
@@ -593,7 +590,7 @@ public class MatchingAlgorithmHelperService {
         reportDataEntities.add(nyplCountReportDataEntity);
 
         reportEntity.addAll(reportDataEntities);
-        getProducerTemplate().sendBody("scsbactivemq:queue:saveMatchingReportsQ", Arrays.asList(reportEntity));
+        getProducerTemplate().sendBody("scsbactivemq:queue:saveMatchingReportsQ", Collections.singletonList(reportEntity));
     }
 
     /**
@@ -636,7 +633,10 @@ public class MatchingAlgorithmHelperService {
                 Future future = iterator.next();
                 try {
                     size += (Integer) future.get();
-                } catch (InterruptedException | ExecutionException e) {
+                } catch (InterruptedException e) {
+                    logger.error(RecapCommonConstants.LOG_ERROR,e);
+                    Thread.currentThread().interrupt();
+                } catch (ExecutionException e) {
                     logger.error(RecapCommonConstants.LOG_ERROR,e);
                 }
             }
