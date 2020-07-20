@@ -496,7 +496,7 @@ public class AccessionService {
         String response = null;
         stopWatch = new StopWatch();
         stopWatch.start();
-        List<Record> records = marcUtil.readMarcXml((String) object);
+        List<Record> records = (List<Record>) object;
         boolean isBoundWithItem = isBoundWithItemForMarcRecord(records);
         boolean isValidBoundWithRecord = true;
         if(isBoundWithItem) {
