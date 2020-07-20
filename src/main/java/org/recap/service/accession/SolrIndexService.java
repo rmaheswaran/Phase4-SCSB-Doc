@@ -38,6 +38,9 @@ public class SolrIndexService {
     private ProducerTemplate producerTemplate;
 
     @Resource(name = "recapSolrTemplate")
+    private SolrTemplate recapSolrTemplate;
+
+    @Resource
     private SolrTemplate solrTemplate;
 
     @Autowired
@@ -69,6 +72,15 @@ public class SolrIndexService {
      */
     public ProducerTemplate getProducerTemplate() {
         return producerTemplate;
+    }
+
+    /**
+     * Gets Recap Core recapSolrTemplate object.
+     *
+     * @return the recapSolrTemplate object.
+     */
+    public SolrTemplate getRecapSolrTemplate() {
+        return recapSolrTemplate;
     }
 
     /**
@@ -126,8 +138,8 @@ public class SolrIndexService {
         if (solrInputDocument !=null) {
             StopWatch stopWatchIndexDocument = new StopWatch();
             stopWatchIndexDocument.start();
-            getSolrTemplate().saveDocument("",solrInputDocument);
-      //      getSolrTemplate().saveDocument(solrCore, solrInputDocument);
+            getSolrTemplate().saveDocument(solrCore, solrInputDocument);
+            getSolrTemplate().commit(solrCore);
             stopWatchIndexDocument.stop();
             logger.info("Time taken to index the doc--->{}sec",stopWatchIndexDocument.getTotalTimeSeconds());
         }
@@ -167,8 +179,8 @@ public class SolrIndexService {
      * @throws SolrServerException the solr server exception
      */
     public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
-        solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue,1);
-        solrTemplate.commit(solrCore);
+        getRecapSolrTemplate().getSolrClient().deleteByQuery(docIdParam+":"+docIdValue,1);
+        getRecapSolrTemplate().commit(solrCore);
     }
 
     /**
@@ -179,7 +191,7 @@ public class SolrIndexService {
      * @throws SolrServerException
      */
     public void deleteBySolrQuery(String query) throws IOException, SolrServerException {
-        solrTemplate.getSolrClient().deleteByQuery(query,1);
-        solrTemplate.commit(solrCore);
+        getRecapSolrTemplate().getSolrClient().deleteByQuery(query,1);
+        getRecapSolrTemplate().commit(solrCore);
     }
 }
