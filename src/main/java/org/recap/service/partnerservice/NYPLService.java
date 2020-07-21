@@ -77,8 +77,8 @@ public class NYPLService {
         RestTemplate restTemplate = getRestTemplate();
         ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(connectionTimeout);
         ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setReadTimeout(readTimeout);
-        String bibDataResponse = null;
-        String response = null;
+        String bibDataResponse;
+        String response;
         try {
             String authorization = "Bearer " + getNyplOauthTokenApiService().generateAccessTokenForNyplApi();
             HttpHeaders headers = getHttpHeaders();
