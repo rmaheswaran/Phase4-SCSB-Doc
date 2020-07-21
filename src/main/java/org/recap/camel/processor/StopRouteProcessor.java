@@ -6,6 +6,8 @@ import org.recap.RecapCommonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 
 /**
  * Created by angelind on 22/6/17.
@@ -34,8 +36,7 @@ public class StopRouteProcessor implements Processor {
                     exchange.getContext().getRouteController().stopRoute(routeId);
                 } catch (Exception e) {
                     logger.error("Exception while stop route : {}" , routeId);
-                    logger.error(RecapCommonConstants.LOCAL_ITEM_ID, e.getStackTrace().toString());
-                }
+                    logger.error(RecapCommonConstants.LOCAL_ITEM_ID, Arrays.toString(e.getStackTrace()));           }
             }
         };
         stopThread.start();
