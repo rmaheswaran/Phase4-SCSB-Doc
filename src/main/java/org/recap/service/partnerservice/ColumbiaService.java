@@ -69,8 +69,8 @@ public class ColumbiaService {
         ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(getConnectionTimeout());
         ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setReadTimeout(getReadTimeout());
 
-        String bibDataResponse = null;
-        String response = null;
+        String bibDataResponse;
+        String response;
         try {
             logger.info("CUL BIBDATA URL = {}", getIlsColumbiaBibData());
             HttpHeaders headers = new HttpHeaders();
