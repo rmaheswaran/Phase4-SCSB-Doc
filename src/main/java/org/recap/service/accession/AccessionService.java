@@ -610,9 +610,10 @@ public class AccessionService {
     private boolean isItemDeaccessioned(List<ItemEntity> itemEntityList){
         boolean itemDeleted = false;
         if (itemEntityList != null && !itemEntityList.isEmpty()) {
-            for(ItemEntity itemEntity : itemEntityList){
+            itemEntityList.get(0).isDeleted();
+       /*     for(ItemEntity itemEntity : itemEntityList){
                 return itemEntity.isDeleted();
-            }
+            }*/
         }
         return itemDeleted;
     }
@@ -726,7 +727,12 @@ public class AccessionService {
                     return RecapConstants.SUCCESS_INCOMPLETE_RECORD;
                 }
             } else{
-                return RecapConstants.FAILED+RecapCommonConstants.HYPHEN+errorMessage.toString();
+                if(errorMessage != null) {
+                    return RecapConstants.FAILED + RecapCommonConstants.HYPHEN + errorMessage.toString();
+                }
+                else {
+                    return RecapConstants.FAILED;
+                }
             }
 
         }

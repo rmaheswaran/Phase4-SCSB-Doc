@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -384,14 +383,14 @@ public class BibJSONUtil extends MarcUtil {
         exceptionMsgDataEntity.setHeaderValue(StringUtils.isNotBlank(e.getMessage()) ? e.getMessage() : e.toString());
         reportDataEntities.add(exceptionMsgDataEntity);
 
-        if(bibliographicEntity.getBibliographicId() != null) {
+        if(bibliographicEntity != null && bibliographicEntity.getBibliographicId() != null) {
             ReportDataEntity bibIdDataEntity = new ReportDataEntity();
             bibIdDataEntity.setHeaderName(RecapCommonConstants.BIB_ID);
             bibIdDataEntity.setHeaderValue(String.valueOf(bibliographicEntity.getBibliographicId()));
             reportDataEntities.add(bibIdDataEntity);
         }
 
-        if(StringUtils.isNotBlank(bibliographicEntity.getOwningInstitutionBibId())) {
+        if(bibliographicEntity != null && StringUtils.isNotBlank(bibliographicEntity.getOwningInstitutionBibId())) {
             ReportDataEntity owningInstBibIdDataEntity = new ReportDataEntity();
             owningInstBibIdDataEntity.setHeaderName(RecapCommonConstants.OWNING_INST_BIB_ID);
             owningInstBibIdDataEntity.setHeaderValue(bibliographicEntity.getOwningInstitutionBibId());

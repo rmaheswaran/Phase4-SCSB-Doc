@@ -18,7 +18,6 @@ import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.matchingReports.MatchingSummaryReport;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.search.resolver.BibValueResolver;
 import org.recap.model.solr.BibItem;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
