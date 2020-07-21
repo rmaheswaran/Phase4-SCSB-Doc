@@ -42,8 +42,8 @@ public class CsvUtil {
         } finally {
             if(csvOutput != null) {
                 csvOutput.flush();
+                csvOutput.close();
             }
-            csvOutput.close();
         }
         return file;
     }
