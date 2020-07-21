@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.HostnameVerifier;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,12 +61,12 @@ public class PrincetonService {
         ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(connectionTimeout);
         ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setReadTimeout(readTimeout);
 
-        String bibDataResponse = null;
-        String response = null;
+        String bibDataResponse;
+        String response;
         try {
             getLogger().info("PUL BIBDATA URL = {}" , getIlsprincetonBibData());
             HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Arrays.asList(MediaType.APPLICATION_XML));
+            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_XML));
             HttpEntity requestEntity = new HttpEntity(headers);
             Map<String, String> params = new HashMap<>();
             params.put("barcode", itemBarcode);

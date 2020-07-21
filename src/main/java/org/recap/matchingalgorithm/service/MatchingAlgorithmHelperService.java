@@ -50,9 +50,6 @@ import java.util.concurrent.ExecutionException;
 public class MatchingAlgorithmHelperService {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchingAlgorithmHelperService.class);
-    private String pulMatchingCountStr = "pulMatchingCount";
-    private String culMatchingCountStr = "culMatchingCount";
-    private String nyplMatchingCountStr = "nyplMatchingCount";
 
     @Autowired
     private MatchingBibDetailsRepository matchingBibDetailsRepository;
@@ -537,8 +534,11 @@ public class MatchingAlgorithmHelperService {
         List<MatchingBibEntity> matchingBibEntityList = matchingBibEntities.getContent();
         Set<Integer> matchingBibIds = new HashSet<>();
         Map<String,Integer> countsMap = getMatchingAlgorithmUtil().processPendingMatchingBibs(matchingBibEntityList, matchingBibIds);
+        String pulMatchingCountStr = "pulMatchingCount";
         pulMatchingCount = pulMatchingCount + countsMap.get(pulMatchingCountStr);
+        String culMatchingCountStr = "culMatchingCount";
         culMatchingCount = culMatchingCount + countsMap.get(culMatchingCountStr);
+        String nyplMatchingCountStr = "nyplMatchingCount";
         nyplMatchingCount = nyplMatchingCount + countsMap.get(nyplMatchingCountStr);
 
         for(int pageNum=1; pageNum < totalPages; pageNum++) {
@@ -623,7 +623,7 @@ public class MatchingAlgorithmHelperService {
     private Integer executeCallables(Integer size, ExecutorService executorService, List<Callable<Integer>> callables) {
         List<Future<Integer>> futures = null;
         try {
-            futures = getFutures(executorService, callables, futures);
+            futures = getFutures(executorService, callables);
         } catch (Exception e) {
             logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
@@ -644,8 +644,8 @@ public class MatchingAlgorithmHelperService {
         return size;
     }
 
-    private List<Future<Integer>> getFutures(ExecutorService executorService, List<Callable<Integer>> callables, List<Future<Integer>> futures) throws InterruptedException {
-        futures = executorService.invokeAll(callables);
+    private List<Future<Integer>> getFutures(ExecutorService executorService, List<Callable<Integer>> callables) throws InterruptedException {
+        List<Future<Integer>> futures = executorService.invokeAll(callables);
         futures
                 .stream()
                 .map(future -> {
