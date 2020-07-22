@@ -37,9 +37,6 @@ public class SolrIndexService {
     @Autowired
     private ProducerTemplate producerTemplate;
 
-    @Resource(name = "recapSolrTemplate")
-    private SolrTemplate recapSolrTemplate;
-
     @Resource
     private SolrTemplate solrTemplate;
 
@@ -72,15 +69,6 @@ public class SolrIndexService {
      */
     public ProducerTemplate getProducerTemplate() {
         return producerTemplate;
-    }
-
-    /**
-     * Gets Recap Core recapSolrTemplate object.
-     *
-     * @return the recapSolrTemplate object.
-     */
-    public SolrTemplate getRecapSolrTemplate() {
-        return recapSolrTemplate;
     }
 
     /**
@@ -179,8 +167,7 @@ public class SolrIndexService {
      * @throws SolrServerException the solr server exception
      */
     public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
-        getRecapSolrTemplate().getSolrClient().deleteByQuery(docIdParam+":"+docIdValue,1);
-        getRecapSolrTemplate().commit(solrCore);
+        getSolrTemplate().getSolrClient().deleteByQuery(solrCore,docIdParam+":"+docIdValue,1);
     }
 
     /**
@@ -191,7 +178,6 @@ public class SolrIndexService {
      * @throws SolrServerException
      */
     public void deleteBySolrQuery(String query) throws IOException, SolrServerException {
-        getRecapSolrTemplate().getSolrClient().deleteByQuery(query,1);
-        getRecapSolrTemplate().commit(solrCore);
+        getSolrTemplate().getSolrClient().deleteByQuery(solrCore, query,1);
     }
 }
