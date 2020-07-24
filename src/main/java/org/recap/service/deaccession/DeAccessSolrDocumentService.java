@@ -42,7 +42,7 @@ public class DeAccessSolrDocumentService {
     @Autowired
     private ItemDetailsRepository itemDetailsRepository;
 
-    @Resource(name = "recapSolrTemplate")
+    @Resource
     private SolrTemplate solrTemplate;
 
     /**
@@ -113,8 +113,8 @@ public class DeAccessSolrDocumentService {
         SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
         StopWatch stopWatchIndexDocument = new StopWatch();
         stopWatchIndexDocument.start();
-      //  getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);
-        getSolrTemplate().saveDocument("", bibSolrInputDocument);
+        getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);
+        getSolrTemplate().commit(solrCore);
         stopWatchIndexDocument.stop();
         logger.info("Time taken to index the doc for Bib Solr Document from Deaccession Service --->{}sec", stopWatchIndexDocument.getTotalTimeSeconds());
     }
