@@ -26,8 +26,8 @@ public class SolrQueryBuilder {
 
     private String and = " AND ";
     private String or = " OR ";
-    private String coreParentFilterQuery = "({!parent which=\"ContentType:parent\"})";
-    private String coreChildFilterQuery = "({!child of=\"ContentType:parent\"})";
+    private String coreParentFilterQuery = "{!parent which=\"ContentType:parent\"}";
+    private String coreChildFilterQuery = "{!child of=\"ContentType:parent\"}";
 
     /**
      * Gets query string for item criteria for parent.
