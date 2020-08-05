@@ -1,6 +1,7 @@
 package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
+import org.apache.commons.lang3.StringUtils;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.AccessionSummaryRecord;
@@ -37,10 +38,12 @@ public class CommonReportGenerator {
             List<SubmitCollectionReportRecord> submitCollectionReportRecords = submitCollectionReportGenerator.prepareSubmitCollectionRejectionRecord(reportEntity);
             submitCollectionReportRecordList.addAll(submitCollectionReportRecords);
         }
-        producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, "fileName", fileName);
-
-        DateFormat df = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
+        DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
         generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";
+        if (StringUtils.containsIgnoreCase(reportQueue, RecapConstants.SUBMIT_COLLECTION_SUMMARY_Q_SUFFIX)) {
+            fileName = generatedFileName;
+        }
+        producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileName);
         return generatedFileName;
 
     }
@@ -50,7 +53,7 @@ public class CommonReportGenerator {
         List<AccessionSummaryRecord> accessionSummaryRecordList;
         AccessionSummaryRecordGenerator accessionSummaryRecordGenerator = new AccessionSummaryRecordGenerator();
         accessionSummaryRecordList = accessionSummaryRecordGenerator.prepareAccessionSummaryReportRecord(reportEntityList);
-        producerTemplate.sendBodyAndHeader(reportQueue, accessionSummaryRecordList, "fileName", fileName);
+        producerTemplate.sendBodyAndHeader(reportQueue, accessionSummaryRecordList, RecapConstants.FILE_NAME, fileName);
         DateFormat df = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
         generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";
         return generatedFileName;
