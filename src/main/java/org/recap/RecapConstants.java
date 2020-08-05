@@ -48,6 +48,7 @@ public final class RecapConstants {
     public static final String FTP_SERIAL_MVM_REPORT_ROUTE_ID = "ftpSerialMvmReportsRoute";
     public static final String FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID = "ftpMatchingSummaryReportRoute";
 
+    public static final String SUBMIT_COLLECTION_SUMMARY_Q_SUFFIX = "SubmitCollectionSummaryReportQ";
     public static final String SUMMARY_REPORT_FILE_NAME = "MatchingCGDSummaryReport";
     public static final String MATCHING_SUMMARY_MONOGRAPH = "MatchingMonographCGDSummary";
     public static final String MATCHING_SUMMARY_SERIAL = "MatchingSerialCGDSummary";
