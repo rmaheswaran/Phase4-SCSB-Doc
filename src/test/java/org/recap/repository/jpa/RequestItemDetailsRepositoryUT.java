@@ -53,7 +53,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         List<Integer> requestingInstIdsList = new ArrayList<>(Arrays.asList(requestingInstIds));
         long count = requestItemDetailsRepository.getIlRequestCounts(fromDate,toDate,1,requestingInstIdsList);
         assertNotNull(count);
-        assertEquals(2,count);
+        assertEquals(1,count);
     }
 
     @Test
@@ -207,7 +207,7 @@ public class RequestItemDetailsRepositoryUT extends BaseTestCase {
         List<String> requestTypeIdList = new ArrayList<>(Arrays.asList(requestTypeId));
         long count = requestItemDetailsRepository.getPhysicalAndEDDCounts(fromDate,toDate,2,cgdIdList,requestTypeIdList);
         assertNotNull(count);
-        assertEquals(16,count);
+        assertEquals(1,count);
     }
 
     @Test
