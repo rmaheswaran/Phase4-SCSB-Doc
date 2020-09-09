@@ -8,12 +8,14 @@ import org.recap.model.csv.DeAccessionSummaryRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by hemalathas on 22/2/17.
@@ -25,6 +27,12 @@ public class DeAccessionSummaryRecordGeneratorUT extends BaseTestCase{
         DeAccessionSummaryRecordGenerator deAccessionSummaryRecordGenerator = new DeAccessionSummaryRecordGenerator();
         ReportEntity reportEntity = getReportEntity();
         DeAccessionSummaryRecord deAccessionSummaryRecord = deAccessionSummaryRecordGenerator.prepareDeAccessionSummaryReportRecord(reportEntity);
+        Method getterMethod= deAccessionSummaryRecordGenerator.getGetterMethod("Barcode");
+        Method setterMethod= deAccessionSummaryRecordGenerator.getSetterMethod("test");
+        Method getterMethodExp= deAccessionSummaryRecordGenerator.getGetterMethod("test");
+        assertNull(setterMethod);
+        assertNull(getterMethodExp);
+        assertNotNull(getterMethod);
         assertNotNull(deAccessionSummaryRecord);
         assertEquals(deAccessionSummaryRecord.getBarcode(),"123");
         assertEquals(deAccessionSummaryRecord.getCollectionGroupCode(),"Shared");

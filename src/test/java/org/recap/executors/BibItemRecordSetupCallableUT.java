@@ -3,7 +3,6 @@ package org.recap.executors;
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -17,6 +16,7 @@ import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.solr.core.SolrTemplate;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +27,7 @@ import static junit.framework.TestCase.assertNotNull;
 /**
  * Created by premkb on 1/8/16.
  */
-@Ignore
+
 public class BibItemRecordSetupCallableUT extends BaseTestCase {
 
     @Autowired
@@ -42,7 +42,7 @@ public class BibItemRecordSetupCallableUT extends BaseTestCase {
     @Mock
     HoldingsDetailsRepository mockHoldingsDetailsRepository;
 
-    @Autowired
+    @Resource(name = "recapSolrTemplate")
     SolrTemplate mockSolrTemplate;
 
     @Autowired
