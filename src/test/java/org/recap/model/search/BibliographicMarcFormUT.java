@@ -13,7 +13,7 @@ import static junit.framework.TestCase.assertNotNull;
 /**
  * Created by premkb on 2/8/16.
  */
-@Ignore
+
 public class BibliographicMarcFormUT {
 
     private String bibContent = "<collection xmlns=\"http://www.loc.gov/MARC21/slim\">\n"+
