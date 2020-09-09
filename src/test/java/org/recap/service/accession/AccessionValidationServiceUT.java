@@ -95,10 +95,60 @@ public class AccessionValidationServiceUT extends BaseTestCase{
         boolean isValidBoundWithRecord = accessionValidationService.validateBoundWithScsbRecordFromIls(bibRecordList);
         assertFalse(isValidBoundWithRecord);
     }
+    @Test
+    public void validateValidHoldingRecord() throws Exception {
+        BibliographicEntity bibliographicEntity = saveBibSingleHoldingsSingleItem("32456723441256","PA","24252","PUL","9919400","74534419");
+        File bibContentFile = getXmlContent("MarcRecord.xml");
+        String marcXmlString = FileUtils.readFileToString(bibContentFile, "UTF-8");
+        List<Record> records = readMarcXml(marcXmlString);
+        AccessionRequest accessionRequest = new AccessionRequest();
+        accessionRequest.setCustomerCode("PA");
+        accessionRequest.setItemBarcode("32101095533293");
+        Map map = marcToBibEntityConverter.convert(records.get(0), "PUL",accessionRequest);
+        assertNotNull(map);
+        BibliographicEntity convertedBibliographicEntity = (BibliographicEntity) map.get("bibliographicEntity");
+        StringBuilder errorMessage = new StringBuilder();
+        boolean isValid = accessionValidationService.validateItemAndHolding(convertedBibliographicEntity,false,false,errorMessage);
+        assertTrue(isValid);
+    }
+
+    @Test
+    public void validateInvalidHoldingRecordNonBoundwith() throws Exception {
+        BibliographicEntity bibliographicEntity = saveBibSingleHoldingsSingleItem("32456723441256","CU","24252","PUL","9919401","7453441");
+        File bibContentFile = getXmlContent("MarcRecord.xml");
+        String marcXmlString = FileUtils.readFileToString(bibContentFile, "UTF-8");
+        List<Record> records = readMarcXml(marcXmlString);
+        AccessionRequest accessionRequest = new AccessionRequest();
+        accessionRequest.setCustomerCode("PA");
+        accessionRequest.setItemBarcode("32101095533293");
+        Map map = marcToBibEntityConverter.convert(records.get(0), "PUL",accessionRequest);
+        assertNotNull(map);
+        BibliographicEntity convertedBibliographicEntity = (BibliographicEntity) map.get("bibliographicEntity");
+        StringBuilder errorMessage = new StringBuilder();
+        boolean isValid = accessionValidationService.validateHolding(convertedBibliographicEntity,false,false,errorMessage);
+        assertFalse(isValid);
+    }
+
+    @Test
+    public void validateInvalidHoldingRecordBoundwith() throws Exception {
+        BibliographicEntity bibliographicEntity = saveBibHoldingsItems("32456723441256","PA","24252","PUL","9919401","6224132","7453441");
+        BibliographicEntity bibliographicEntity1 = saveBibHoldingsItems("32456723441256","PA","24252","PUL","9919402","6224132","7453441");
+        File bibContentFile = getXmlContent("ValidBoundWithMarc.xml");
+        String marcXmlString = FileUtils.readFileToString(bibContentFile, "UTF-8");
+        List<Record> records = readMarcXml(marcXmlString);
+        AccessionRequest accessionRequest = new AccessionRequest();
+        accessionRequest.setCustomerCode("PA");
+        accessionRequest.setItemBarcode("32101075852200");
+        Map map = marcToBibEntityConverter.convert(records.get(0), "PUL",accessionRequest);
+        assertNotNull(map);
+        BibliographicEntity convertedBibliographicEntity = (BibliographicEntity) map.get("bibliographicEntity");
+        StringBuilder errorMessage = new StringBuilder();
+        boolean isValid = accessionValidationService.validateHolding(convertedBibliographicEntity,true,true,errorMessage);
+    }
 
     @Test
     public void validateValidItemRecord() throws Exception {
-        BibliographicEntity bibliographicEntity = saveBibSingleHoldingsSingleItem("32456723441256","PA","24252","PUL","9919400","74534419");
+        BibliographicEntity bibliographicEntity = saveBibSingleHoldingsSingleItem("32456723441256","PA","24252","PUL","991940","74534419");
         File bibContentFile = getXmlContent("MarcRecord.xml");
         String marcXmlString = FileUtils.readFileToString(bibContentFile, "UTF-8");
         List<Record> records = readMarcXml(marcXmlString);
@@ -153,6 +203,42 @@ public class AccessionValidationServiceUT extends BaseTestCase{
         return bibRecords.getBibRecordList();
     }
 
+    public BibliographicEntity saveBibHoldingsItems( String itemBarcode, String customerCode, String callnumber, String institution, String owningInstBibId, String owningInstHoldingId, String owningInstItemId) throws Exception {
+        File bibContentFile = getBibContentFile(institution);
+        File holdingsContentFile = getHoldingsContentFile(institution);
+        String sourceBibContent = FileUtils.readFileToString(bibContentFile, "UTF-8");
+        String sourceHoldingsContent = FileUtils.readFileToString(holdingsContentFile, "UTF-8");
+
+        BibliographicEntity bibliographicEntity = new BibliographicEntity();
+        bibliographicEntity.setContent(sourceBibContent.getBytes());
+        bibliographicEntity.setCreatedDate(new Date());
+        bibliographicEntity.setLastUpdatedDate(new Date());
+        bibliographicEntity.setCreatedBy("tst");
+        bibliographicEntity.setLastUpdatedBy("tst");
+        bibliographicEntity.setOwningInstitutionId(1);
+        bibliographicEntity.setOwningInstitutionBibId(owningInstBibId);
+        HoldingsEntity holdingsEntity = new HoldingsEntity();
+        holdingsEntity.setContent(sourceHoldingsContent.getBytes());
+        holdingsEntity.setCreatedDate(new Date());
+        holdingsEntity.setLastUpdatedDate(new Date());
+        holdingsEntity.setCreatedBy("tst");
+        holdingsEntity.setLastUpdatedBy("tst");
+        holdingsEntity.setOwningInstitutionId(1);
+        holdingsEntity.setOwningInstitutionHoldingsId(String.valueOf(owningInstHoldingId));
+
+        ItemEntity itemEntity = getItemEntity(itemBarcode,customerCode,callnumber,owningInstItemId);
+        itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
+        itemEntity.setBibliographicEntities(Arrays.asList(bibliographicEntity));
+        bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
+        bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
+        holdingsEntity.setItemEntities(Arrays.asList(itemEntity));
+
+        BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
+        entityManager.refresh(savedBibliographicEntity);
+        return savedBibliographicEntity;
+
+    }
+
     public BibliographicEntity saveBibSingleHoldingsSingleItem(String itemBarcode, String customerCode, String callnumber, String institution,String owningInstBibId, String owningInstItemId) throws Exception {
         File bibContentFile = getBibContentFile(institution);
         File holdingsContentFile = getHoldingsContentFile(institution);
@@ -175,7 +261,7 @@ public class AccessionValidationServiceUT extends BaseTestCase{
         holdingsEntity.setCreatedBy("tst");
         holdingsEntity.setLastUpdatedBy("tst");
         holdingsEntity.setOwningInstitutionId(1);
-        holdingsEntity.setOwningInstitutionHoldingsId(String.valueOf(random.nextInt()));
+        holdingsEntity.setOwningInstitutionHoldingsId("9734816");
 
         ItemEntity itemEntity = getItemEntity(itemBarcode,customerCode,callnumber,owningInstItemId);
         itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));

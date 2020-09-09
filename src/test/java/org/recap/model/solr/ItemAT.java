@@ -1,4 +1,5 @@
-/*
+
+
 package org.recap.model.solr;
 
 import org.junit.Before;
@@ -12,14 +13,10 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-@Ignore
+
 public class ItemAT extends  BaseTestCase {
 
-    @Before
-    public void setUp() throws Exception {
-        assertNotNull(itemCrudRepository);
-        itemCrudRepository.deleteAll();
-    }
+
 
     @Test
     public void indexItem() throws Exception {
@@ -93,4 +90,5 @@ public class ItemAT extends  BaseTestCase {
         assertTrue(indexedItem.getItemBibIdList().equals(itemBibIdList));
     }
 }
-*/
+
+
