@@ -1,19 +1,24 @@
 package org.recap.util;
 
+import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.recap.BaseTestCase;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.OngoingAccessionReportRecord;
+import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by hemalathas on 22/2/17.
@@ -29,8 +34,15 @@ public class OngoingAccessionReportGeneratorUT extends BaseTestCase{
         assertEquals(ongoingAccessionReportRecord.getCustomerCode(),"PB");
         assertEquals(ongoingAccessionReportRecord.getItemBarcode(),"123");
         assertEquals(ongoingAccessionReportRecord.getMessage(),"Test");
-
+        Method getterMethodExp= ongoingAccessionReportGenerator.getGetterMethod("Barcode");
+        Method getterMethod= ongoingAccessionReportGenerator.getGetterMethod("itemBarcode");
+        Method setterMethodExp= ongoingAccessionReportGenerator.getSetterMethod("Barcode");
+        assertNull(getterMethodExp);
+        assertNull(setterMethodExp);
+        assertNotNull(getterMethod);
     }
+
+
 
     private ReportEntity getReportEntity(){
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();

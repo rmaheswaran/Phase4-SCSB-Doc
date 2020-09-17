@@ -2,6 +2,7 @@ package org.recap.service.accession;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
@@ -18,18 +19,21 @@ import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.solr.main.BibSolrCrudRepository;
 import org.recap.service.accession.SolrIndexService;
 import org.recap.util.BibJSONUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -39,6 +43,9 @@ import static org.junit.Assert.assertNull;
  * Created by rajeshbabuk on 10/11/16.
  */
 public class SolrIndexServiceUT extends BaseTestCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(SolrIndexServiceUT.class);
+
 
     @Mock
     SolrIndexService solrIndexService;
@@ -53,16 +60,19 @@ public class SolrIndexServiceUT extends BaseTestCase {
     ProducerTemplate producerTemplate;
 
     @Mock
-    SolrTemplate solrTemplate;
+    SolrTemplate mockedSolrTemplate;
 
     @Mock
     BibliographicDetailsRepository mockedBibliographicDetailsRepository;
 
     @Mock
-    HoldingsDetailsRepository holdingsDetailsRepository;
+    HoldingsDetailsRepository mockedHoldingsDetailsRepository;
 
     @Mock
-    BibJSONUtil bibJSONUtil;
+    BibJSONUtil mockedBibJSONUtil;
+
+    @Resource(name = "recapSolrTemplate")
+    private SolrTemplate solrTemplate;
 
     @Value("${solr.parent.core}")
     String solrCore;
@@ -85,7 +95,7 @@ public class SolrIndexServiceUT extends BaseTestCase {
     }
 
     public SolrTemplate getSolrTemplate() {
-        return solrTemplate;
+        return mockedSolrTemplate;
     }
 
     public BibliographicDetailsRepository getBibliographicDetailsRepository() {
@@ -93,7 +103,7 @@ public class SolrIndexServiceUT extends BaseTestCase {
     }
 
     public HoldingsDetailsRepository getHoldingsDetailsRepository() {
-        return holdingsDetailsRepository;
+        return mockedHoldingsDetailsRepository;
     }
 
 
@@ -106,13 +116,22 @@ public class SolrIndexServiceUT extends BaseTestCase {
         assertNotNull(savedBibliographicEntity);
         assertNotNull(savedBibliographicEntity.getHoldingsEntities());
         assertNotNull(savedBibliographicEntity.getItemEntities());
-        Mockito.when(solrIndexService.getBibJSONUtil()).thenReturn(bibJSONUtil);
+        ReflectionTestUtils.setField(solrIndexService,"solrCore","recap");
+        Mockito.when(solrIndexService.getSolrTemplate()).thenReturn(mockedSolrTemplate);
+        Mockito.when(solrIndexService.getBibJSONUtil()).thenReturn(mockedBibJSONUtil);
         Mockito.when(solrIndexService.getProducerTemplate()).thenReturn(producerTemplate);
         Mockito.when(solrIndexService.getBibliographicDetailsRepository()).thenReturn(mockedBibliographicDetailsRepository);
+        Mockito.when(solrIndexService.getHoldingsDetailsRepository()).thenReturn(mockedHoldingsDetailsRepository);
         Mockito.when(solrIndexService.getBibliographicDetailsRepository().findByBibliographicId(bibliographicId)).thenReturn(savedBibliographicEntity);
-        Mockito.when(solrIndexService.getBibJSONUtil().generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingsDetailsRepository())).thenReturn(new SolrInputDocument());
+        Mockito.when(solrIndexService.indexBibliographicEntity(savedBibliographicEntity)).thenCallRealMethod();
+        SolrInputDocument solrInputDocument = new SolrInputDocument();
+        solrInputDocument.setField("id", "123");
+        solrInputDocument.setField("Title_search", "Title1");
+        solrInputDocument.setField("Author_search", "Author1");
+        Mockito.when(solrIndexService.getBibJSONUtil().generateBibAndItemsForIndex(Mockito.any(),Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(solrInputDocument);
         Mockito.when(solrIndexService.indexByBibliographicId(bibliographicId)).thenCallRealMethod();
-        SolrInputDocument solrInputDocument = solrIndexService.indexByBibliographicId(bibliographicId);
+        SolrInputDocument solrInputDocument1 = solrIndexService.indexByBibliographicId(bibliographicId);
+        assertNotNull(solrInputDocument1);
     }
 
     @Test
@@ -122,16 +141,51 @@ public class SolrIndexServiceUT extends BaseTestCase {
         Mockito.when(solrIndexService.getHoldingsDetailsRepository()).thenCallRealMethod();
         Mockito.when(solrIndexService.getProducerTemplate()).thenCallRealMethod();
         Mockito.when(solrIndexService.getSolrTemplate()).thenCallRealMethod();
-        assertNotEquals(bibJSONUtil,solrIndexService.getBibJSONUtil());
+        Mockito.when(solrIndexService.getLogger()).thenCallRealMethod();
+        assertNotEquals(mockedBibJSONUtil,solrIndexService.getBibJSONUtil());
         assertNotEquals(mockedBibliographicDetailsRepository,solrIndexService.getBibliographicDetailsRepository());
-        assertNotEquals(holdingsDetailsRepository,solrIndexService.getHoldingsDetailsRepository());
-        assertNotEquals(solrTemplate,solrIndexService.getSolrTemplate());
+        assertNotEquals(mockedHoldingsDetailsRepository,solrIndexService.getHoldingsDetailsRepository());
+        assertNotEquals(mockedSolrTemplate,solrIndexService.getSolrTemplate());
         assertNotEquals(producerTemplate,solrIndexService.getProducerTemplate());
+        assertNotEquals(logger,solrIndexService.getLogger());
     }
 
-    public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
-        UpdateResponse updateResponse = solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue);
-        solrTemplate.commit(solrCore);
+   public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
+        UpdateResponse updateResponse = mockedSolrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue);
+        mockedSolrTemplate.commit(solrCore);
+    }
+
+    @Test
+    public void indexByOwnInstBibId() throws Exception {
+        BibliographicEntity bibliographicEntity = getBibEntityWithHoldingsAndItem();
+        List<BibliographicEntity> bibliographicEntityList =new ArrayList<>();
+        bibliographicEntityList.add(bibliographicEntity);
+        BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
+        entityManager.refresh(savedBibliographicEntity);
+        Integer owningInstitutionId = savedBibliographicEntity.getOwningInstitutionId();
+        assertNotNull(savedBibliographicEntity);
+        assertNotNull(savedBibliographicEntity.getHoldingsEntities());
+        assertNotNull(savedBibliographicEntity.getItemEntities());
+        List<String> owningInstBibIdList=new ArrayList<>();
+        Integer bibliographicId = savedBibliographicEntity.getBibliographicId();
+        owningInstBibIdList.add("777");
+        ReflectionTestUtils.setField(solrIndexService,"solrCore","recap");
+        ReflectionTestUtils.setField(solrIndexService,"submitCollectionOwnInstBibIdListPartitionSize",5000);
+        ReflectionTestUtils.setField(solrIndexService,"bibliographicDetailsRepository",mockedBibliographicDetailsRepository);
+        Mockito.when(solrIndexService.getSolrTemplate()).thenReturn(mockedSolrTemplate);
+        Mockito.when(solrIndexService.getBibJSONUtil()).thenReturn(mockedBibJSONUtil);
+        Mockito.when(solrIndexService.getProducerTemplate()).thenReturn(producerTemplate);
+        Mockito.when(solrIndexService.getBibliographicDetailsRepository()).thenReturn(mockedBibliographicDetailsRepository);
+        Mockito.when(solrIndexService.getHoldingsDetailsRepository()).thenReturn(mockedHoldingsDetailsRepository);
+        Mockito.when(solrIndexService.indexBibliographicEntity(savedBibliographicEntity)).thenCallRealMethod();
+        SolrInputDocument solrInputDocument = new SolrInputDocument();
+        solrInputDocument.setField("id", "123");
+        solrInputDocument.setField("Title_search", "Title1");
+        solrInputDocument.setField("Author_search", "Author1");
+        Mockito.when(solrIndexService.getBibliographicIdForIndexing(owningInstBibIdList,owningInstitutionId)).thenCallRealMethod();
+        Mockito.when(solrIndexService.getBibliographicDetailsRepository().findByOwningInstitutionBibIdInAndOwningInstitutionId(Mockito.anyList(),Mockito.anyInt())).thenReturn(bibliographicEntityList);
+        Mockito.doCallRealMethod().when(solrIndexService).indexByOwnInstBibId(owningInstBibIdList,owningInstitutionId);
+        solrIndexService.indexByOwnInstBibId(owningInstBibIdList,owningInstitutionId);
     }
 
     @Test
@@ -152,7 +206,7 @@ public class SolrIndexServiceUT extends BaseTestCase {
 
     }
 
-    private BibliographicEntity getBibEntityWithHoldingsAndItem() throws Exception {
+    public BibliographicEntity getBibEntityWithHoldingsAndItem() throws Exception {
         Random random = new Random();
         File bibContentFile = getBibContentFile();
         File holdingsContentFile = getHoldingsContentFile();
@@ -166,8 +220,9 @@ public class SolrIndexServiceUT extends BaseTestCase {
         bibliographicEntity.setCreatedBy("tst");
         bibliographicEntity.setLastUpdatedBy("tst");
         bibliographicEntity.setOwningInstitutionId(1);
-        bibliographicEntity.setOwningInstitutionBibId(String.valueOf(random.nextInt()));
+        bibliographicEntity.setOwningInstitutionBibId("777");
         bibliographicEntity.setDeleted(false);
+        bibliographicEntity.setBibliographicId(333);
 
         HoldingsEntity holdingsEntity = new HoldingsEntity();
         holdingsEntity.setContent(sourceHoldingsContent.getBytes());
@@ -183,8 +238,7 @@ public class SolrIndexServiceUT extends BaseTestCase {
         itemEntity.setLastUpdatedDate(new Date());
         itemEntity.setOwningInstitutionItemId(String.valueOf(random.nextInt()));
         itemEntity.setOwningInstitutionId(1);
-        String barcode = String.valueOf(random.nextInt());
-        itemEntity.setBarcode(barcode);
+        itemEntity.setBarcode(String.valueOf(random.nextInt()));
         itemEntity.setCallNumber("x.12321");
         itemEntity.setCollectionGroupId(1);
         itemEntity.setCallNumberType("1");
@@ -193,6 +247,7 @@ public class SolrIndexServiceUT extends BaseTestCase {
         itemEntity.setCreatedBy("tst");
         itemEntity.setLastUpdatedBy("tst");
         itemEntity.setItemAvailabilityStatusId(1);
+        //itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         itemEntity.setDeleted(false);
 
         holdingsEntity.setItemEntities(Arrays.asList(itemEntity));
