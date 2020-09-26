@@ -3,25 +3,36 @@ package org.recap.matchingalgorithm.service;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
+import org.recap.RecapCommonConstants;
+import org.recap.RecapConstants;
+import org.recap.model.jpa.MatchingBibInfoDetail;
+import org.recap.model.jpa.ReportDataEntity;
 import org.recap.repository.jpa.MatchingBibInfoDetailRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by premkb on 29/1/17.
  */
-public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
+
+public class MatchingBibInfoDetailServiceUT extends BaseTestCaseUT {
 
     @Mock
     private MatchingBibInfoDetailService matchingBibInfoDetailService;
@@ -39,7 +50,7 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
     private Integer batchSize;
 
 
-    /*@Test
+    @Test
     public void populateMatchingBibInfo(){
         List<String> typeList = new ArrayList<>();
         typeList.add(RecapConstants.SINGLE_MATCH);
@@ -48,22 +59,10 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
         headerNameList.add(RecapCommonConstants.BIB_ID);
         headerNameList.add(RecapCommonConstants.OWNING_INSTITUTION);
         headerNameList.add(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
-        ReportDataEntity reportDataEntity = new ReportDataEntity();
-        reportDataEntity.setRecordNum("1");
-        reportDataEntity.setHeaderName("BibId");
-        reportDataEntity.setHeaderValue("1");
-        ReportDataEntity reportDataEntity1 = new ReportDataEntity();
-        reportDataEntity1.setRecordNum("1");
-        reportDataEntity1.setHeaderName("OwningInstitution");
-        reportDataEntity1.setHeaderValue("1");
-        ReportDataEntity reportDataEntity2 = new ReportDataEntity();
-        reportDataEntity2.setRecordNum("1");
-        reportDataEntity2.setHeaderName("OwningInstitutionBibId");
-        reportDataEntity2.setHeaderValue("Ad4654564");
         List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
-        reportDataEntityList.add(reportDataEntity);
-        reportDataEntityList.add(reportDataEntity1);
-        reportDataEntityList.add(reportDataEntity2);
+        reportDataEntityList.add(0,getReportDataEntity("1","BibId","1"));
+        reportDataEntityList.add(1,getReportDataEntity("1","OwningInstitution","1"));
+        reportDataEntityList.add(2,getReportDataEntity("1","OwningInstitutionBibId","Ad4654564"));
         MatchingBibInfoDetail matchingBibInfoDetail = new MatchingBibInfoDetail();
         matchingBibInfoDetail.setBibId("1234");
         Date fromDate = new Date();
@@ -86,11 +85,19 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
         Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo(fromDate,toDate)).thenCallRealMethod();
         String respone  = matchingBibInfoDetailService.populateMatchingBibInfo(fromDate,toDate);
         assertNotNull(respone);
-        assertEquals(respone,"Success");
+        assertEquals(RecapCommonConstants.SUCCESS,respone);
         Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo()).thenCallRealMethod();
         String response = matchingBibInfoDetailService.populateMatchingBibInfo();
         assertNotNull(response);
-    }*/
+    }
+
+    private ReportDataEntity getReportDataEntity(String num, String name, String value) {
+        ReportDataEntity reportDataEntity = new ReportDataEntity();
+        reportDataEntity.setRecordNum(num);
+        reportDataEntity.setHeaderName(name);
+        reportDataEntity.setHeaderValue(value);
+        return reportDataEntity;
+    }
 
     @Test
     public void checkGetterServices(){
@@ -138,7 +145,7 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
 
             @Override
             public List<Integer> getContent() {
-                return null;
+                return (Arrays.asList(1));
             }
 
             @Override

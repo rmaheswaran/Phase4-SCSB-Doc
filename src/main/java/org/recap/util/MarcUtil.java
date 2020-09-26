@@ -536,7 +536,7 @@ public class MarcUtil {
                     ItemMarcRecord itemMarcRecord = new ItemMarcRecord();
                     ContentType itemContent = item.getContent();
                     CollectionType itemContentCollection = itemContent.getCollection();
-                    String itemXmlContent = itemContentCollection.serialize(recordType);
+                    String itemXmlContent = itemContentCollection.serialize(itemContentCollection);
                     Record itemContentRecord = getRecordFromContent(itemXmlContent.getBytes());
                     itemMarcRecord.setItemRecord(itemContentRecord);
                     itemMarcRecords.add(itemMarcRecord);

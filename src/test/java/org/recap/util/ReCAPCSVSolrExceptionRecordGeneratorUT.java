@@ -8,12 +8,14 @@ import org.recap.model.csv.SolrExceptionReportReCAPCSVRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by hemalathas on 22/2/17.
@@ -36,6 +38,12 @@ public class ReCAPCSVSolrExceptionRecordGeneratorUT extends BaseTestCase{
         assertNotNull(solrExceptionReportReCAPCSVRecord1);
         assertEquals(solrExceptionReportReCAPCSVRecord1.getOwningInstitution(),"PUL");
         assertEquals(solrExceptionReportReCAPCSVRecord1.getExceptionMessage(),RecapConstants.ITEM_ALREADY_ACCESSIONED);
+        Method getterMethod= reCAPCSVSolrExceptionRecordGenerator.getGetterMethod("docType");
+        Method setterMethod= reCAPCSVSolrExceptionRecordGenerator.getSetterMethod("test");
+        Method getterMethodExp= reCAPCSVSolrExceptionRecordGenerator.getGetterMethod("test");
+        assertNull(setterMethod);
+        assertNull(getterMethodExp);
+        assertNotNull(getterMethod);
     }
 
     private ReportEntity getReportEntity(){
