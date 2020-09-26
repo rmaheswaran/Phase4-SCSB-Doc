@@ -8,16 +8,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
 import org.recap.controller.BaseControllerUT;
 import org.recap.controller.SharedCollectionRestController;
 import org.recap.model.BibItemAvailabityStatusRequest;
 import org.recap.model.ItemAvailabityStatusRequest;
-import org.recap.model.accession.AccessionRequest;
-import org.recap.model.accession.AccessionResponse;
-import org.recap.model.accession.AccessionSummary;
-import org.recap.model.jpa.AccessionEntity;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -25,8 +19,6 @@ import org.recap.repository.jpa.AccessionDetailsRepository;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.solr.main.BibSolrCrudRepository;
 import org.recap.service.ItemAvailabilityService;
-import org.recap.service.accession.AccessionService;
-import org.recap.service.accession.BulkAccessionService;
 import org.recap.service.accession.SolrIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -70,13 +62,7 @@ public class SharedCollectionRestControllerUT extends BaseControllerUT {
     private SharedCollectionRestController sharedCollectionRestController;
 
     @Mock
-    private AccessionService accessionService;
-
-    @Mock
     private ItemAvailabilityService itemAvailabilityService;
-
-    @Mock
-    private BulkAccessionService bulkAccessionService;
 
     @Mock
     private AccessionDetailsRepository accessionDetailsRepository;
@@ -109,111 +95,7 @@ public class SharedCollectionRestControllerUT extends BaseControllerUT {
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
     }
 
-    @Test
-    public void accessionBatch() throws Exception {
-        List<AccessionRequest> accessionRequestList = new ArrayList<>();
-        AccessionRequest accessionRequest = new AccessionRequest();
-        accessionRequest.setCustomerCode("PB");
-        accessionRequest.setItemBarcode("32101062128309");
-        accessionRequestList.add(accessionRequest);
-        Mockito.when(mockedSharedCollectionRestController.getAccessionService()).thenReturn(accessionService);
-        Mockito.when(mockedSharedCollectionRestController.getInputLimit()).thenReturn(10);
-        Mockito.when(mockedSharedCollectionRestController.getAccessionService().saveRequest(accessionRequestList)).thenReturn(RecapCommonConstants.SUCCESS);
-        Mockito.when(mockedSharedCollectionRestController.accessionBatch(accessionRequestList)).thenCallRealMethod();
-        ResponseEntity responseEntity = mockedSharedCollectionRestController.accessionBatch(accessionRequestList);
-        assertNotNull(responseEntity);
-        assertEquals(responseEntity.getBody(),RecapCommonConstants.SUCCESS);
-    }
 
-    @Test
-    public void accession() throws Exception {
-        List<AccessionRequest> accessionRequestList = new ArrayList<>();
-        AccessionRequest accessionRequest = new AccessionRequest();
-        accessionRequest.setCustomerCode("PB");
-        accessionRequest.setItemBarcode("32101062128309");
-        accessionRequestList.add(accessionRequest);
-        List<AccessionResponse> accessionResponseList = new ArrayList<>();
-        AccessionResponse accessionResponse = new AccessionResponse();
-        accessionResponse.setItemBarcode("32101062128309");
-        accessionResponse.setMessage(RecapCommonConstants.SUCCESS);
-        accessionResponseList.add(accessionResponse);
-        Mockito.when(mockedSharedCollectionRestController.getAccessionService()).thenReturn(accessionService);
-        Mockito.when(mockedSharedCollectionRestController.getBulkAccessionService()).thenReturn(bulkAccessionService);
-        Mockito.when(mockedSharedCollectionRestController.getInputLimit()).thenReturn(10);
-        Mockito.when(accessionService.getProducerTemplate()).thenReturn(producerTemplate);
-        Mockito.when(mockedSharedCollectionRestController.getAccessionService().processRequest(accessionRequestList)).thenReturn(accessionResponseList);
-        Mockito.doCallRealMethod().when(bulkAccessionService).createSummaryReport(Mockito.any(),Mockito.any());
-        Mockito.when(mockedSharedCollectionRestController.accession(accessionRequestList, exchange)).thenCallRealMethod();
-        ResponseEntity responseEntity = mockedSharedCollectionRestController.accession(accessionRequestList, exchange);
-        assertNotNull(responseEntity);
-    }
-
-    @Test
-    public void accession_Excess_limit() throws Exception {
-       int inputLimit =2;
-        List<AccessionRequest> accessionRequestList = new ArrayList<>();
-        AccessionRequest accessionRequest = new AccessionRequest();
-        accessionRequest.setCustomerCode("PB");
-        accessionRequest.setItemBarcode("32101062128309");
-        AccessionRequest accessionRequest1 = new AccessionRequest();
-        accessionRequest1.setCustomerCode("PB");
-        accessionRequest1.setItemBarcode("32101062128310");
-        AccessionRequest accessionRequest2 = new AccessionRequest();
-        accessionRequest2.setCustomerCode("PB");
-        accessionRequest2.setItemBarcode("32101062128311");
-        accessionRequestList.add(accessionRequest);
-        accessionRequestList.add(accessionRequest1);
-        accessionRequestList.add(accessionRequest2);
-        List<AccessionResponse> accessionResponseList = new ArrayList<>();
-        AccessionResponse accessionResponse = new AccessionResponse();
-        accessionResponse.setItemBarcode("32101062128309");
-        accessionResponse.setMessage(RecapConstants.ONGOING_ACCESSION_LIMIT_EXCEED_MESSAGE + inputLimit);
-        AccessionResponse accessionResponse1 = new AccessionResponse();
-        accessionResponse1.setItemBarcode("32101062128310");
-        accessionResponse1.setMessage(RecapConstants.ONGOING_ACCESSION_LIMIT_EXCEED_MESSAGE + inputLimit);
-        AccessionResponse accessionResponse2 = new AccessionResponse();
-        accessionResponse2.setItemBarcode("32101062128311");
-        accessionResponse2.setMessage(RecapConstants.ONGOING_ACCESSION_LIMIT_EXCEED_MESSAGE + inputLimit);
-        accessionResponseList.add(accessionResponse);
-        accessionResponseList.add(accessionResponse1);
-        accessionResponseList.add(accessionResponse2);
-        Mockito.when(mockedSharedCollectionRestController.getAccessionService()).thenReturn(accessionService);
-        Mockito.when(mockedSharedCollectionRestController.getBulkAccessionService()).thenReturn(bulkAccessionService);
-        Mockito.when(mockedSharedCollectionRestController.getInputLimit()).thenReturn(inputLimit);
-        Mockito.when(accessionService.getProducerTemplate()).thenReturn(producerTemplate);
-        Mockito.when(mockedSharedCollectionRestController.getAccessionService().processRequest(accessionRequestList)).thenReturn(accessionResponseList);
-        Mockito.doCallRealMethod().when(bulkAccessionService).createSummaryReport(Mockito.any(),Mockito.any());
-        Mockito.when(mockedSharedCollectionRestController.accession(accessionRequestList, exchange)).thenCallRealMethod();
-        ResponseEntity responseEntity = mockedSharedCollectionRestController.accession(accessionRequestList, exchange);
-        assertNotNull(responseEntity);
-    }
-
-    @Test
-    public void testOngoingAccessionJob(){
-        AccessionEntity accessionEntity = new AccessionEntity();
-        accessionEntity.setCreatedDate(new Date());
-        String accessionType = RecapConstants.BULK_ACCESSION_SUMMARY;
-        accessionEntity.setAccessionStatus("Complete");
-        accessionEntity.setAccessionRequest("Test");
-        accessionEntity.setId(1);
-        AccessionRequest accessionRequest = new AccessionRequest();
-        List<AccessionRequest> accessionRequestList = new ArrayList<>();
-        accessionRequestList.add(accessionRequest);
-        AccessionResponse accessionResponse = new AccessionResponse();
-        accessionResponse.setItemBarcode("33458456586745");
-        accessionResponse.setMessage("Success");
-        AccessionSummary accessionSummary = new AccessionSummary("Test");
-        accessionSummary.setSuccessRecords(1);
-        Mockito.when(mockedSharedCollectionRestController.getBulkAccessionService()).thenReturn(bulkAccessionService);
-        Mockito.when(accessionService.getAccessionDetailsRepository()).thenReturn(accessionDetailsRepository);
-        Mockito.when(mockedSharedCollectionRestController.getAccessionService()).thenReturn(accessionService);
-        Mockito.when(mockedSharedCollectionRestController.getBulkAccessionService().getAccessionEntities(RecapConstants.PENDING)).thenReturn(Arrays.asList(accessionEntity));
-        Mockito.when(mockedSharedCollectionRestController.getBulkAccessionService().getAccessionRequest(Mockito.any())).thenReturn(accessionRequestList);
-        Mockito.when(mockedSharedCollectionRestController.ongoingAccessionJob(exchange)).thenCallRealMethod();
-        String response = mockedSharedCollectionRestController.ongoingAccessionJob(exchange);
-        assertNotNull(response);
-
-    }
 
     private BibliographicEntity saveBibEntityWithHoldingsAndItem(String itemBarcode) throws Exception {
         Random random = new Random();
