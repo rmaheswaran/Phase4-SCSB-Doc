@@ -1,27 +1,43 @@
 package org.recap.matchingalgorithm.service;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
+import org.recap.RecapCommonConstants;
+import org.recap.RecapConstants;
+import org.recap.model.jpa.MatchingBibInfoDetail;
+import org.recap.model.jpa.ReportDataEntity;
 import org.recap.repository.jpa.MatchingBibInfoDetailRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by premkb on 29/1/17.
  */
-public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
+
+@RunWith(SpringRunner.class)
+@TestPropertySource("classpath:application.properties")
+public class MatchingBibInfoDetailServiceUT  extends BaseTestCaseUT {
 
     @Mock
     private MatchingBibInfoDetailService matchingBibInfoDetailService;
@@ -39,7 +55,7 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
     private Integer batchSize;
 
 
-    /*@Test
+    @Test
     public void populateMatchingBibInfo(){
         List<String> typeList = new ArrayList<>();
         typeList.add(RecapConstants.SINGLE_MATCH);
@@ -90,7 +106,7 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
         Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo()).thenCallRealMethod();
         String response = matchingBibInfoDetailService.populateMatchingBibInfo();
         assertNotNull(response);
-    }*/
+    }
 
     @Test
     public void checkGetterServices(){
@@ -138,7 +154,7 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCase {
 
             @Override
             public List<Integer> getContent() {
-                return null;
+                return (Arrays.asList(1));
             }
 
             @Override

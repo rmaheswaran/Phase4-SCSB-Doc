@@ -615,7 +615,7 @@ public class OngoingMatchingAlgorithmUtil {
     public BibItem populateBibItem(SolrDocument solrDocument) {
         Collection<String> fieldNames = solrDocument.getFieldNames();
         BibItem bibItem = new BibItem();
-        commonUtil.getBibItemFromSolrFieldNames(solrDocument, fieldNames, bibItem);
+        bibItem=commonUtil.getBibItemFromSolrFieldNames(solrDocument, fieldNames, bibItem);
         return bibItem;
     }
 
