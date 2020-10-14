@@ -31,8 +31,8 @@ public class FTPSubmitCollectionFailureReportRouteBuilder {
      */
     @Autowired
     public FTPSubmitCollectionFailureReportRouteBuilder(CamelContext context,
-                                                        @Value("${ftp.userName}") String ftpUserName, @Value("${ftp.submit.collection.report}") String ftpRemoteServer,
-                                                        @Value("${ftp.knownHost}") String ftpKnownHost, @Value("${ftp.privateKey}") String ftpPrivateKey) {
+                                                        @Value("${ftp.server.userName}") String ftpUserName, @Value("${ftp.submit.collection.report.dir}") String ftpRemoteServer,
+                                                        @Value("${ftp.server.knownHost}") String ftpKnownHost, @Value("${ftp.server.privateKey}") String ftpPrivateKey) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
