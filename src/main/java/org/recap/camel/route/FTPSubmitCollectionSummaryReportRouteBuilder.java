@@ -6,6 +6,7 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
+import org.recap.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +33,14 @@ public class FTPSubmitCollectionSummaryReportRouteBuilder {
      * @param ftpPrivateKey                   the ftp private key
      */
     @Autowired
-    public FTPSubmitCollectionSummaryReportRouteBuilder(CamelContext context,
-                                                        @Value("${ftp.userName}") String ftpUserName, @Value("${ftp.submit.collection.report}") String submitCollectionFtpLocation,
-                                                        @Value("${ftp.submit.collection.pul.report}") String submitCollectionPULFtpLocation,
-                                                        @Value("${ftp.submit.collection.cul.report}") String submitCollectionCULFtpLocation,
-                                                        @Value("${ftp.submit.collection.nypl.report}") String submitCollectionNYPLFtpLocation,
-                                                        @Value("${ftp.knownHost}") String ftpKnownHost, @Value("${ftp.privateKey}") String ftpPrivateKey) {
+    public FTPSubmitCollectionSummaryReportRouteBuilder(CamelContext context, PropertyUtil propertyUtil,
+                                                        @Value("${ftp.server.userName}") String ftpUserName, @Value("${ftp.submit.collection.report.dir}") String submitCollectionFtpLocation,
+                                                        @Value("${ftp.server.knownHost}") String ftpKnownHost, @Value("${ftp.server.privateKey}") String ftpPrivateKey) {
         try {
+            String submitCollectionPULFtpLocation = propertyUtil.getPropertyByInstitutionAndKey(RecapCommonConstants.PRINCETON, "ftp.submit.collection.report.dir");
+            String submitCollectionCULFtpLocation = propertyUtil.getPropertyByInstitutionAndKey(RecapCommonConstants.COLUMBIA, "ftp.submit.collection.report.dir");
+            String submitCollectionNYPLFtpLocation = propertyUtil.getPropertyByInstitutionAndKey(RecapCommonConstants.NYPL, "ftp.submit.collection.report.dir");
+
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {

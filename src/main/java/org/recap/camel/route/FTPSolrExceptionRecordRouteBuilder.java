@@ -30,8 +30,8 @@ public class FTPSolrExceptionRecordRouteBuilder {
      */
     @Autowired
     public FTPSolrExceptionRecordRouteBuilder(CamelContext context,
-                                         @Value("${ftp.userName}") String ftpUserName, @Value("${ftp.solr.remote.server}") String ftpRemoteServer,
-                                         @Value("${ftp.knownHost}") String ftpKnownHost, @Value("${ftp.privateKey}") String ftpPrivateKey) {
+                                         @Value("${ftp.server.userName}") String ftpUserName, @Value("${ftp.solr.reports.dir}") String ftpRemoteServer,
+                                         @Value("${ftp.server.knownHost}") String ftpKnownHost, @Value("${ftp.server.privateKey}") String ftpPrivateKey) {
 
         try {
             context.addRoutes(new RouteBuilder() {
