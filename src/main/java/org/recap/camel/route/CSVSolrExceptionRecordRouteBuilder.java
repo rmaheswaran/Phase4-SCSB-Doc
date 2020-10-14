@@ -28,7 +28,7 @@ public class CSVSolrExceptionRecordRouteBuilder {
      * @param solrReportsDirectory the matching reports directory
      */
     @Autowired
-    public CSVSolrExceptionRecordRouteBuilder(CamelContext context, @Value("${solr.report.directory}") String solrReportsDirectory) {
+    public CSVSolrExceptionRecordRouteBuilder(CamelContext context, @Value("${solr.exception.report.directory}") String solrReportsDirectory) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
