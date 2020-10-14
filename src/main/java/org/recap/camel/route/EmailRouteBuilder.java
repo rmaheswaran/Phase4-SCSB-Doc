@@ -44,9 +44,9 @@ public class EmailRouteBuilder {
      * @param smtpServer        the smtp server
      */
     @Autowired
-    public EmailRouteBuilder(CamelContext context, @Value("${scsb.email.username}") String username, @Value("${scsb.email.password.file}") String passwordDirectory,
-                             @Value("${scsb.email.from}") String from, @Value("${scsb.updateCgd.email.to}") String upadteCgdTo,@Value("${scsb.updateCgd.email.cc}") String updateCGDCC, @Value("${scsb.batch.job.email.to}") String batchJobTo,
-                             @Value("${scsb.updateCgd.email.subject}") String updateCgdSubject, @Value("${scsb.batch.job.email.subject}") String batchJobSubject, @Value("${scsb.email.smtpServer}") String smtpServer) {
+    public EmailRouteBuilder(CamelContext context, @Value("${email.smtp.server.username}") String username, @Value("${email.smtp.server.password.file}") String passwordDirectory,
+                             @Value("${email.smtp.server.address.from}") String from, @Value("${email.scsb.updateCgd.to}") String upadteCgdTo,@Value("${email.scsb.updateCgd.cc}") String updateCGDCC, @Value("${email.scsb.batch.job.to}") String batchJobTo,
+                             @Value("${email.scsb.updateCgd.subject}") String updateCgdSubject, @Value("${email.scsb.batch.job.subject}") String batchJobSubject, @Value("${email.smtp.server}") String smtpServer) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override

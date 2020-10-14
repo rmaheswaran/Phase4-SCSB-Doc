@@ -33,8 +33,8 @@ public class FTPOngoingAccessionReportRouteBuilder {
      */
     @Autowired
     public FTPOngoingAccessionReportRouteBuilder(CamelContext context,
-                                                 @Value("${ftp.userName}") String ftpUserName, @Value("${ftp.ongoing.accession.collection.report}") String ftpRemoteServer,
-                                                 @Value("${ftp.knownHost}") String ftpKnownHost, @Value("${ftp.privateKey}") String ftpPrivateKey, ApplicationContext applicationContext) {
+                                                 @Value("${ftp.server.userName}") String ftpUserName, @Value("${ftp.ongoing.accession.collection.report.dir}") String ftpRemoteServer,
+                                                 @Value("${ftp.server.knownHost}") String ftpKnownHost, @Value("${ftp.server.privateKey}") String ftpPrivateKey, ApplicationContext applicationContext) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
