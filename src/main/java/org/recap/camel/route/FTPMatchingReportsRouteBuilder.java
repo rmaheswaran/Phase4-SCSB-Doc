@@ -35,8 +35,8 @@ public class FTPMatchingReportsRouteBuilder {
      * @param applicationContext          the application context
      */
     public FTPMatchingReportsRouteBuilder(CamelContext camelContext, @Value("${ongoing.matching.report.directory}") String matchingReportsDirectory,
-                                          @Value("${ftp.matchingAlgorithm.remote.server}") String ftpMatchingReportsDirectory, @Value("${ftp.userName}") String ftpUserName,
-                                          @Value("${ftp.privateKey}") String ftpPrivateKey, @Value("${ftp.knownHost}") String ftpKnownHost, ApplicationContext applicationContext) {
+                                          @Value("${ftp.matchingAlgorithm.remote.server}") String ftpMatchingReportsDirectory, @Value("${ftp.server.userName}") String ftpUserName,
+                                          @Value("${ftp.server.privateKey}") String ftpPrivateKey, @Value("${ftp.server.knownHost}") String ftpKnownHost, ApplicationContext applicationContext) {
         try {
             camelContext.addRoutes(new RouteBuilder() {
                 @Override

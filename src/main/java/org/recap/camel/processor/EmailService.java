@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.camel.EmailPayLoad;
+import org.recap.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +49,11 @@ public class EmailService {
     @Value("${accession.reports.email.nypl.to}")
     private String accessionNyplEmailTo;
 
-    @Value("${recap.assist.email.to}")
+    @Value("${recap-las.email.recap.assist.email.to}")
     private String recapSupportEmailTo;
+
+    @Autowired
+    private PropertyUtil propertyUtil;
 
     /**
      * Instantiates a new Email service.
@@ -135,6 +139,10 @@ public class EmailService {
     }
 
     private void getCc(EmailPayLoad emailPayLoad) {
+        matchingPulEmailTo = propertyUtil.getPropertyByInstitutionAndKey(RecapCommonConstants.PRINCETON, "email.matching.reports.to");
+        matchingCulEmailTo = propertyUtil.getPropertyByInstitutionAndKey(RecapCommonConstants.COLUMBIA, "email.matching.reports.to");
+        matchingNyplEmailTo = propertyUtil.getPropertyByInstitutionAndKey(RecapCommonConstants.NYPL, "email.matching.reports.to");
+
         StringBuilder cc = new StringBuilder();
         cc.append(StringUtils.isNotBlank(matchingPulEmailTo) ? matchingPulEmailTo + "," : "");
         cc.append(StringUtils.isNotBlank(matchingCulEmailTo) ? matchingCulEmailTo + "," : "");
@@ -143,12 +151,6 @@ public class EmailService {
     }
 
     private void getCcBasedOnInstitution(EmailPayLoad emailPayLoad) {
-        if (RecapCommonConstants.NYPL.equalsIgnoreCase(institutionCode)) {
-            emailPayLoad.setCc(accessionNyplEmailTo);
-        } else if (RecapCommonConstants.COLUMBIA.equalsIgnoreCase(institutionCode)) {
-            emailPayLoad.setCc(accessionCulEmailTo);
-        } else if (RecapCommonConstants.PRINCETON.equalsIgnoreCase(institutionCode)) {
-            emailPayLoad.setCc(accessionPulEmailTo);
-        }
+        emailPayLoad.setCc(propertyUtil.getPropertyByInstitutionAndKey(institutionCode, "email.accession.reports.to"));
     }
 }
