@@ -146,6 +146,8 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
         mockMatchingAlgorithmUtil.updateMonographicSetRecords(nonMonographRecordNums,1);
         mockMatchingAlgorithmUtil.saveMatchingMatchPointEntities(matchingMatchPointsEntities);
         mockMatchingAlgorithmUtil.updateExceptionRecords(Arrays.asList(1,2,3),1);
+        assertNotNull(reportDataEntityEmpty);
+        assertNotNull(reportDataEntity1);
     }
 
     @Test

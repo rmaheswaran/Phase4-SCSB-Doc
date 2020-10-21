@@ -1,33 +1,17 @@
-/*
+
 package org.recap.model.solr;
-
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.recap.BaseTestCase;
-import org.springframework.beans.factory.annotation.Value;
-
+import org.recap.BaseTestCaseUT;
 import java.util.Date;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-*/
+
 /**
  * Created by rajeshbabuk on 13/9/16.
- *//*
+ */
 
-@Ignore
-public class HoldingsAT extends BaseTestCase {
 
-    @Value("${solr.parent.core}")
-    String solrCore;
-
-    @Before
-    public void setUp() throws Exception {
-        assertNotNull(holdingsSolrCrudRepository);
-        holdingsSolrCrudRepository.deleteAll();
-    }
+public class HoldingsAT extends BaseTestCaseUT {
 
     @Test
     public void indexHoldings() throws Exception {
@@ -45,11 +29,7 @@ public class HoldingsAT extends BaseTestCase {
         holdings.setOwningInstitution("NYPL");
         holdings.setOwningInstitutionHoldingsId("1");
 
-        Holdings indexedHoldings = holdingsSolrCrudRepository.save(holdings);
-        solrTemplate.softCommit(solrCore);
 
-        Holdings fetchedHoldings = holdingsSolrCrudRepository.findByHoldingsId(indexedHoldings.getHoldingsId());
-        assertNotNull(fetchedHoldings);
         assertNotNull(holdings.getRoot());
         assertNotNull(holdings.getId());
         assertNotNull(holdings.getHoldingsCreatedBy());
@@ -58,10 +38,10 @@ public class HoldingsAT extends BaseTestCase {
         assertNotNull(holdings.getHoldingsLastUpdatedDate());
         assertNotNull(holdings.isDeletedHoldings());
         assertNotNull(holdings.getOwningInstitutionHoldingsId());
-        assertEquals(fetchedHoldings.getHoldingsId(), new Integer(1001));
-        assertEquals(fetchedHoldings.getDocType(), "Holdings");
-        assertEquals(fetchedHoldings.getSummaryHoldings(), "Test Summary Holdings Info");
-        assertEquals(fetchedHoldings.getOwningInstitution(), "NYPL");
+        assertNotNull(holdings.getHoldingsId());
+        assertNotNull(holdings.getDocType());
+        assertNotNull(holdings.getSummaryHoldings());
+        assertNotNull(holdings.getOwningInstitution());
     }
 }
-*/
+

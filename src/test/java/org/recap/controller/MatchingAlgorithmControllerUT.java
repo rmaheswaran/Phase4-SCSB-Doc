@@ -36,8 +36,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -113,13 +111,10 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
     ReportDetailRepository reportDetailRepository;
 
     @Mock
-    private ActiveMqQueuesInfo activeMqQueuesInfo;
+    ActiveMqQueuesInfo activeMqQueuesInfo;
 
     @Mock
-    private MatchingBibInfoDetailRepository matchingBibInfoDetailRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
+    MatchingBibInfoDetailRepository matchingBibInfoDetailRepository;
 
     @Mock
     private Map collectionGroupMap;
@@ -376,8 +371,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setInstitutionCode("UC");
         institutionEntity.setInstitutionName("University of Chicago");
-        InstitutionEntity entity = institutionDetailRepository.save(institutionEntity);
-        assertNotNull(entity);
+        assertNotNull(institutionEntity);
 
         Random random = new Random();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
@@ -415,12 +409,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
 
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
-        BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
-        entityManager.refresh(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity.getHoldingsEntities());
-        assertNotNull(savedBibliographicEntity.getItemEntities());
-        return savedBibliographicEntity;
+        return bibliographicEntity;
     }
 
     public Page<Integer> getRecordNumber(){

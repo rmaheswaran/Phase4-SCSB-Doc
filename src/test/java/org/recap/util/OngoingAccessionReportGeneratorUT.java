@@ -1,7 +1,8 @@
 package org.recap.util;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.OngoingAccessionReportRecord;
@@ -20,17 +21,20 @@ import static org.junit.Assert.assertNull;
 /**
  * Created by hemalathas on 22/2/17.
  */
-public class OngoingAccessionReportGeneratorUT extends BaseTestCase{
+public class OngoingAccessionReportGeneratorUT extends BaseTestCaseUT {
+
+    @InjectMocks
+    OngoingAccessionReportGenerator ongoingAccessionReportGenerator;
+
 
     @Test
     public void testOngoingAccessionReportGeneration(){
-        OngoingAccessionReportGenerator ongoingAccessionReportGenerator = new OngoingAccessionReportGenerator();
         ReportEntity reportEntity = getReportEntity();
         OngoingAccessionReportRecord ongoingAccessionReportRecord = ongoingAccessionReportGenerator.prepareOngoingAccessionReportRecord(reportEntity);
         assertNotNull(ongoingAccessionReportRecord);
-        assertEquals(ongoingAccessionReportRecord.getCustomerCode(),"PB");
-        assertEquals(ongoingAccessionReportRecord.getItemBarcode(),"123");
-        assertEquals(ongoingAccessionReportRecord.getMessage(),"Test");
+        assertEquals("PB",ongoingAccessionReportRecord.getCustomerCode());
+        assertEquals("123",ongoingAccessionReportRecord.getItemBarcode());
+        assertEquals("Test",ongoingAccessionReportRecord.getMessage());
         Method getterMethodExp= ongoingAccessionReportGenerator.getGetterMethod("Barcode");
         Method getterMethod= ongoingAccessionReportGenerator.getGetterMethod("itemBarcode");
         Method setterMethodExp= ongoingAccessionReportGenerator.getSetterMethod("Barcode");

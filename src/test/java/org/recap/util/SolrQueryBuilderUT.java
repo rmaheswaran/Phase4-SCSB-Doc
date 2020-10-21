@@ -2,115 +2,56 @@ package org.recap.util;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
+import org.recap.RecapCommonConstants;
+import org.recap.RecapConstants;
 import org.recap.model.search.SearchRecordsRequest;
 
 import java.util.Arrays;
 
+
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
 /**
  * Created by peris on 9/30/16.
  */
-public class SolrQueryBuilderUT {
-    @Test
-    public void allFieldsNoValueQuery() throws Exception {
-        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-        searchRecordsRequest.setFieldName("");
-        searchRecordsRequest.setFieldValue("");
-        searchRecordsRequest.getOwningInstitutions().addAll(Arrays.asList("NYPL", "CUL", "PUL"));
-        searchRecordsRequest.getCollectionGroupDesignations().addAll(Arrays.asList("Shared", "Private", "Open"));
-        searchRecordsRequest.getAvailability().addAll(Arrays.asList("Available", "Not Available"));
-        searchRecordsRequest.getUseRestrictions().addAll(Arrays.asList("No Restrictions", "In Library Use", "Supervised Use"));
-        searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
+public class SolrQueryBuilderUT extends BaseTestCaseUT {
 
-        SolrQueryBuilder solrQueryBuilder = new SolrQueryBuilder();
-        SolrQuery quryForAllFieldsNoValue = solrQueryBuilder.getQueryForParentAndChildCriteria(searchRecordsRequest);
-        System.out.println(quryForAllFieldsNoValue);
+    @InjectMocks
+    SolrQueryBuilder solrQueryBuilder;
+
+    @Test
+    public void getQueryForParentAndChildCriteria() throws Exception {
+        SearchRecordsRequest[] searchRecordsRequests = {getSearchRecordsRequest("Title_search","Scotland"),getSearchRecordsRequest("","Scotland"),getSearchRecordsRequest("","")};
+        for (SearchRecordsRequest searchRecordsRequest:
+                searchRecordsRequests) {
+            SolrQuery quryForAllFieldsNoValue = solrQueryBuilder.getQueryForParentAndChildCriteria(searchRecordsRequest);
+            assertNotNull(quryForAllFieldsNoValue);
+        }
     }
 
     @Test
-    public void allFieldsSpecificValueQuery() throws Exception {
-        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-        searchRecordsRequest.setFieldName("");
-        searchRecordsRequest.setFieldValue("Scotland");
-        searchRecordsRequest.getOwningInstitutions().addAll(Arrays.asList("NYPL", "CUL", "PUL"));
-        searchRecordsRequest.getCollectionGroupDesignations().addAll(Arrays.asList("Shared", "Private", "Open"));
-        searchRecordsRequest.getAvailability().addAll(Arrays.asList("Available", "Not Available"));
-        searchRecordsRequest.getUseRestrictions().addAll(Arrays.asList("No Restrictions", "In Library Use", "Supervised Use"));
-        searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
-
-        SolrQueryBuilder solrQueryBuilder = new SolrQueryBuilder();
-        SolrQuery quryForAllFieldsNoValue = solrQueryBuilder.getQueryForParentAndChildCriteria(searchRecordsRequest);
-        System.out.println(quryForAllFieldsNoValue);
+    public void getQueryForChildAndParentCriteria() throws Exception {
+        SearchRecordsRequest[] searchRecordsRequests = {getSearchRecordsRequest("BibLastUpdated","2016-10-21T14:30Z TO NOW"),getSearchRecordsRequest(RecapCommonConstants.BARCODE,"123125123"),getSearchRecordsRequest(RecapCommonConstants.CALL_NUMBER,"1234")};
+        for (SearchRecordsRequest searchRecordsRequest:
+        searchRecordsRequests) {
+            SolrQuery quryForAllFieldsNoValue = solrQueryBuilder.getQueryForChildAndParentCriteria(searchRecordsRequest);
+            assertNotNull(quryForAllFieldsNoValue);
+        }
     }
 
-    @Test
-    public void SpecificFieldsSpecificValueQuery() throws Exception {
+    private SearchRecordsRequest getSearchRecordsRequest(String name, String value) {
         SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-        searchRecordsRequest.setFieldName("Title_search");
-        searchRecordsRequest.setFieldValue("Scotland");
-        searchRecordsRequest.getOwningInstitutions().addAll(Arrays.asList("NYPL", "CUL", "PUL"));
-        searchRecordsRequest.getCollectionGroupDesignations().addAll(Arrays.asList("Shared", "Private", "Open"));
-        searchRecordsRequest.getAvailability().addAll(Arrays.asList("Available", "Not Available"));
-        searchRecordsRequest.getUseRestrictions().addAll(Arrays.asList("No Restrictions", "In Library Use", "Supervised Use"));
-        searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
-
-        SolrQueryBuilder solrQueryBuilder = new SolrQueryBuilder();
-        SolrQuery quryForAllFieldsNoValue = solrQueryBuilder.getQueryForParentAndChildCriteria(searchRecordsRequest);
-        System.out.println(quryForAllFieldsNoValue);
-    }
-
-    /**
-     * IF the getSolrQueryForCriteria() is called with Item field/value combinatin, the query would still return
-     * only Bib Criteria. You will need to call getItemSolrQueryForCriteria()
-     * @throws Exception
-     */
-    @Test
-    public void ItemFieldSpecificValueQuery() throws Exception {
-        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-        searchRecordsRequest.setFieldName("Barcode");
-        searchRecordsRequest.setFieldValue("1231");
-        searchRecordsRequest.getOwningInstitutions().addAll(Arrays.asList("NYPL", "CUL", "PUL"));
-        searchRecordsRequest.getCollectionGroupDesignations().addAll(Arrays.asList("Shared", "Private", "Open"));
-        searchRecordsRequest.getAvailability().addAll(Arrays.asList("Available", "Not Available"));
-        searchRecordsRequest.getUseRestrictions().addAll(Arrays.asList("No Restrictions", "In Library Use", "Supervised Use"));
-        searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
-
-        SolrQueryBuilder solrQueryBuilder = new SolrQueryBuilder();
-        SolrQuery quryForAllFieldsNoValue = solrQueryBuilder.getQueryForChildAndParentCriteria(searchRecordsRequest);
-        System.out.println(quryForAllFieldsNoValue);
-    }
-
-    @Test
-    public void itemQuery() throws Exception {
-        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-        searchRecordsRequest.setFieldName("Barcode");
-        searchRecordsRequest.setFieldValue("123125123");
-        searchRecordsRequest.getOwningInstitutions().addAll(Arrays.asList("NYPL", "CUL", "PUL"));
-        searchRecordsRequest.getCollectionGroupDesignations().addAll(Arrays.asList("Shared", "Private", "Open"));
-        searchRecordsRequest.getAvailability().addAll(Arrays.asList("Available", "Not Available"));
-        searchRecordsRequest.getUseRestrictions().addAll(Arrays.asList("No Restrictions", "In Library Use", "Supervised Use"));
-        searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
-
-        SolrQueryBuilder solrQueryBuilder = new SolrQueryBuilder();
-        SolrQuery quryForAllFieldsNoValue = solrQueryBuilder.getQueryForChildAndParentCriteria(searchRecordsRequest);
-        System.out.println(quryForAllFieldsNoValue);
-    }
-
-    @Test
-    public void dataDumpQueryForIncremental() throws Exception {
-        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-        searchRecordsRequest.setFieldName("BibLastUpdatedDate");
-        searchRecordsRequest.setFieldValue("2016-10-21T14:30Z TO NOW");
+        searchRecordsRequest.setFieldName(name);
+        searchRecordsRequest.setFieldValue(value);
         searchRecordsRequest.getOwningInstitutions().addAll(Arrays.asList("CUL", "PUL"));
         searchRecordsRequest.getCollectionGroupDesignations().addAll(Arrays.asList("Shared", "Private", "Open"));
         searchRecordsRequest.getAvailability().addAll(Arrays.asList("Available", "Not Available"));
         searchRecordsRequest.getUseRestrictions().addAll(Arrays.asList("No Restrictions", "In Library Use", "Supervised Use"));
         searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
-
-        SolrQueryBuilder solrQueryBuilder = new SolrQueryBuilder();
-        SolrQuery quryForAllFieldsNoValue = solrQueryBuilder.getQueryForChildAndParentCriteria(searchRecordsRequest);
-        System.out.println(quryForAllFieldsNoValue);
+        return searchRecordsRequest;
     }
 
     @Test
@@ -120,12 +61,79 @@ public class SolrQueryBuilderUT {
         searchRecordsRequest.setFieldValue("2016-10-21T14:30Z TO NOW");
         searchRecordsRequest.getOwningInstitutions().addAll(Arrays.asList("CUL", "PUL"));
         searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
-
-        SolrQueryBuilder solrQueryBuilder = new SolrQueryBuilder();
         SolrQuery queryForAllFieldsNoValue = solrQueryBuilder.getDeletedQueryForDataDump(searchRecordsRequest,true);
         System.out.println(queryForAllFieldsNoValue);
         assertNotNull(queryForAllFieldsNoValue);
     }
 
+    @Test
+    public void fetchCreatedOrUpdatedBibs(){
+        String fetchCreatedOrUpdatedBibs = solrQueryBuilder.fetchCreatedOrUpdatedBibs("2016-10-21T14:30Z TO NOW");
+        assertNotNull(fetchCreatedOrUpdatedBibs);
+    }
+
+    @Test
+    public void buildSolrQueryForDeaccessionReports(){
+        SolrQuery buildSolrQueryForDeaccessionReports = solrQueryBuilder.buildSolrQueryForDeaccessionReports("2016-10-21T14:30Z TO NOW","PUL",true,"Private");
+        assertNotNull(buildSolrQueryForDeaccessionReports);
+    }
+
+    @Test
+    public void getDeletedQueryForDataDumpNonPrivate(){
+        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
+        searchRecordsRequest.setFieldName(RecapCommonConstants.TITLE_STARTS_WITH);
+        searchRecordsRequest.setFieldValue("test");
+        searchRecordsRequest.setAvailability(null);
+        searchRecordsRequest.setOwningInstitutions(null);
+        searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
+        SolrQuery queryForAllFieldsNoValue = solrQueryBuilder.getDeletedQueryForDataDump(searchRecordsRequest,false);
+        System.out.println(queryForAllFieldsNoValue);
+        assertNotNull(queryForAllFieldsNoValue);
+    }
+
+    @Test
+    public void getCountQueryForParentAndChildCriteria(){
+        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
+        searchRecordsRequest.setFieldName("test");
+        searchRecordsRequest.setFieldValue("test");
+        searchRecordsRequest.setAvailability(null);
+        searchRecordsRequest.setOwningInstitutions(null);
+        searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
+        SolrQuery queryForAllFieldsNoValue = solrQueryBuilder.getCountQueryForParentAndChildCriteria(searchRecordsRequest);
+        SolrQuery query = solrQueryBuilder.buildSolrQueryToGetBibDetails(Arrays.asList(1),1);
+        assertEquals(RecapConstants.BIB_DOC_TYPE,query.getQuery());
+        SolrQuery queryBib = solrQueryBuilder.getSolrQueryForBibItem("test");
+        assertEquals("test",queryBib.getQuery());
+        assertNotNull(queryForAllFieldsNoValue);
+    }
+
+    @Test
+    public void getCountQueryForChildAndParentCriteria(){
+        String[] names={RecapCommonConstants.CALL_NUMBER,"test","",RecapCommonConstants.TITLE_STARTS_WITH};
+        for (String name: names) {
+            SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
+            searchRecordsRequest.setFieldName(name);
+            searchRecordsRequest.setFieldValue("2016-10-21T14:30Z TO NOW");
+            searchRecordsRequest.setAvailability(null);
+            searchRecordsRequest.setOwningInstitutions(null);
+            searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
+            SolrQuery queryForAllFieldsNoValue = solrQueryBuilder.getCountQueryForChildAndParentCriteria(searchRecordsRequest);
+            assertNotNull(queryForAllFieldsNoValue);
+        }
+    }
+    @Test
+    public void getQueryForParentAndChildCriteriaForDeletedDataDump(){
+        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
+        searchRecordsRequest.setFieldName("name");
+        searchRecordsRequest.setFieldValue("2016-10-21T14:30Z TO NOW \\ ?*+{}[]'^~()!$%#./@");
+        searchRecordsRequest.setAvailability(null);
+        searchRecordsRequest.setOwningInstitutions(null);
+        SolrQuery queryForParentAndChildCriteriaForDeletedDataDump=solrQueryBuilder.getQueryForParentAndChildCriteriaForDeletedDataDump(searchRecordsRequest);
+        assertNotNull(queryForParentAndChildCriteriaForDeletedDataDump);
+        String solrQueryForOngoingMatching=solrQueryBuilder.solrQueryForOngoingMatching("fieldName",Arrays.asList("1\\"));
+        assertNotNull(solrQueryForOngoingMatching);
+        String solrQueryForOngoingMatching1=solrQueryBuilder.solrQueryForOngoingMatching("fieldName",("1\\"));
+        assertNotNull(solrQueryForOngoingMatching1);
+    }
 
 }
