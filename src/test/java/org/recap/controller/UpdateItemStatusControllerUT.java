@@ -3,10 +3,11 @@ package org.recap.controller;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -15,8 +16,6 @@ import org.recap.util.UpdateCgdUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -25,21 +24,17 @@ import java.util.Date;
 import java.util.Random;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
  * Created by hemalathas on 25/1/17.
  */
-public class UpdateItemStatusControllerUT extends BaseTestCase{
+public class UpdateItemStatusControllerUT extends BaseTestCaseUT {
 
     private static final Logger logger = LoggerFactory.getLogger(UpdateItemStatusControllerUT.class);
 
-    @Mock
+    @InjectMocks
     UpdateItemStatusController updateItemStatusController;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Mock
     ItemDetailsRepository itemDetailsRepository;
@@ -54,25 +49,13 @@ public class UpdateItemStatusControllerUT extends BaseTestCase{
 
     @Test
     public void testUpdateCgdForItem() throws Exception {
-        BibliographicEntity bibliographicEntity = saveBibSingleHoldingsSingleItem();
-        String itemBarcode = bibliographicEntity.getItemEntities().get(0).getBarcode();
-        Mockito.when(updateItemStatusController.getItemDetailsRepository()).thenReturn(itemDetailsRepository);
-        Mockito.when(updateItemStatusController.getUpdateCgdUtil()).thenReturn(updateCgdUtil);
-        Mockito.when(updateItemStatusController.getItemDetailsRepository().findByBarcode(itemBarcode)).thenReturn(bibliographicEntity.getItemEntities());
+        String itemBarcode = saveBibSingleHoldingsSingleItem().getItemEntities().get(0).getBarcode();
+        Mockito.when(updateItemStatusController.getItemDetailsRepository().findByBarcode(itemBarcode)).thenReturn(saveBibSingleHoldingsSingleItem().getItemEntities());
         Mockito.when(updateItemStatusController.updateCgdForItem(itemBarcode)).thenCallRealMethod();
-        Mockito.when(updateItemStatusController.getLogger()).thenCallRealMethod();
         updateItemStatusController.getLogger();
         String status = updateItemStatusController.updateCgdForItem(itemBarcode);
         assertNotNull(status);
-        assertEquals(status,"Solr Indexing Successful");
-    }
-
-    @Test
-    public void checkGetterServices(){
-        Mockito.when(updateItemStatusController.getItemDetailsRepository()).thenCallRealMethod();
-        Mockito.when(updateItemStatusController.getUpdateCgdUtil()).thenCallRealMethod();
-        assertNotEquals(itemDetailsRepository,updateItemStatusController.getItemDetailsRepository());
-        assertNotEquals(updateCgdUtil,updateItemStatusController.getUpdateCgdUtil());
+        assertEquals("Solr Indexing Successful",status);
     }
 
     public BibliographicEntity saveBibSingleHoldingsSingleItem() throws Exception {
@@ -115,13 +98,7 @@ public class UpdateItemStatusControllerUT extends BaseTestCase{
 
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
-
-        BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
-        entityManager.refresh(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity.getHoldingsEntities());
-        assertNotNull(savedBibliographicEntity.getItemEntities());
-        return savedBibliographicEntity;
+        return bibliographicEntity;
     }
 
     private File getBibContentFile() throws URISyntaxException {

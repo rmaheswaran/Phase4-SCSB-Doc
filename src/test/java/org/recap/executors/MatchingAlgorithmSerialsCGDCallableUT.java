@@ -2,11 +2,13 @@ package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.matchingalgorithm.MatchingCounter;
@@ -38,7 +40,8 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 5/7/17.
  */
-public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCase{
+
+public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT {
 
     @Mock
     private ReportDataDetailsRepository reportDataDetailsRepository;
@@ -52,10 +55,9 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCase{
     private ItemDetailsRepository itemDetailsRepository;
     @Mock
     private MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor;
-    @Autowired
+    @Mock
     ProducerTemplate producerTemplate;
-    @PersistenceContext
-    private EntityManager entityManager;
+
     @Mock
     private Map collectionGroupMap;
 
@@ -104,8 +106,6 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCase{
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setInstitutionCode("UC");
         institutionEntity.setInstitutionName("University of Chicago");
-        InstitutionEntity entity = institutionDetailRepository.save(institutionEntity);
-        assertNotNull(entity);
 
         Random random = new Random();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();

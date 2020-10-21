@@ -1,7 +1,8 @@
 package org.recap.util;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.SolrExceptionReportReCAPCSVRecord;
@@ -20,7 +21,10 @@ import static org.junit.Assert.assertNull;
 /**
  * Created by hemalathas on 22/2/17.
  */
-public class ReCAPCSVSolrExceptionRecordGeneratorUT extends BaseTestCase{
+public class ReCAPCSVSolrExceptionRecordGeneratorUT extends BaseTestCaseUT {
+
+    @InjectMocks
+    ReCAPCSVSolrExceptionRecordGenerator reCAPCSVSolrExceptionRecordGenerator;
 
     @Test
     public void testSolrExceptionRecordGenerator(){
@@ -33,11 +37,10 @@ public class ReCAPCSVSolrExceptionRecordGeneratorUT extends BaseTestCase{
         solrExceptionReportReCAPCSVRecord.setItemId("1");
         solrExceptionReportReCAPCSVRecord.setExceptionMessage("Title is mandatory");
         ReportEntity reportEntity = getReportEntity();
-        ReCAPCSVSolrExceptionRecordGenerator reCAPCSVSolrExceptionRecordGenerator = new ReCAPCSVSolrExceptionRecordGenerator();
         SolrExceptionReportReCAPCSVRecord solrExceptionReportReCAPCSVRecord1 = reCAPCSVSolrExceptionRecordGenerator.prepareSolrExceptionReportReCAPCSVRecord(reportEntity,solrExceptionReportReCAPCSVRecord);
         assertNotNull(solrExceptionReportReCAPCSVRecord1);
-        assertEquals(solrExceptionReportReCAPCSVRecord1.getOwningInstitution(),"PUL");
-        assertEquals(solrExceptionReportReCAPCSVRecord1.getExceptionMessage(),RecapConstants.ITEM_ALREADY_ACCESSIONED);
+        assertEquals("PUL",solrExceptionReportReCAPCSVRecord1.getOwningInstitution());
+        assertEquals(RecapConstants.ITEM_ALREADY_ACCESSIONED,solrExceptionReportReCAPCSVRecord1.getExceptionMessage());
         Method getterMethod= reCAPCSVSolrExceptionRecordGenerator.getGetterMethod("docType");
         Method setterMethod= reCAPCSVSolrExceptionRecordGenerator.getSetterMethod("test");
         Method getterMethodExp= reCAPCSVSolrExceptionRecordGenerator.getGetterMethod("test");

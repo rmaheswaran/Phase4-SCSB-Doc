@@ -46,18 +46,17 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCase{
     private BibliographicDetailsRepository mockedBibliographicDetailsRepository;
     @Mock
     private ItemChangeLogDetailsRepository itemChangeLogDetailsRepository;
-    @Autowired
+    @Mock
     private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
     @Mock
     private ItemDetailsRepository itemDetailsRepository;
     @Mock
     private MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor;
-    @Autowired
+
+    @Mock
     ProducerTemplate producerTemplate;
     @Mock
     private Map collectionGroupMap;
-    @PersistenceContext
-    private EntityManager entityManager;
 
     long from = Long.valueOf(0);
     int pageNum = 1;
@@ -108,8 +107,6 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCase{
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setInstitutionCode("UC");
         institutionEntity.setInstitutionName("University of Chicago");
-        InstitutionEntity entity = institutionDetailRepository.save(institutionEntity);
-        assertNotNull(entity);
 
         Random random = new Random();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();

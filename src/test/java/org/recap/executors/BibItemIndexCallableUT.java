@@ -1,8 +1,13 @@
 package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
+import org.apache.solr.common.SolrInputDocument;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
@@ -20,28 +25,35 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Created by hemalathas on 19/1/17.
  */
-public class BibItemIndexCallableUT extends BaseTestCase {
 
-    @Autowired
+public class BibItemIndexCallableUT extends BaseTestCaseUT {
+
+    @Mock
     ProducerTemplate producerTemplate;
 
-    @Autowired
+    @Mock
     SolrTemplate solrTemplate;
 
-    @Autowired
+    @Mock
     HoldingsDetailsRepository holdingsDetailsRepository;
 
-    @Autowired
+    @Mock
     BibliographicDetailsRepository bibliographicDetailsRepository;
+
+    @InjectMocks
+    BibItemIndexCallable mockBibItemIndexCallable = new BibItemIndexCallable("","",1,1,bibliographicDetailsRepository,holdingsDetailsRepository,1,new Date(),producerTemplate,solrTemplate, null, null);
+
+
+
 
     @Test
     public void testBibItemIndexCallable() throws Exception{
         int page = 1;
         int size = 1;
         Page<BibliographicEntity> bibliographicEntities = new SolrResultPage<>(getBibliographicEntityList());
-        BibItemIndexCallable mockBibItemIndexCallable = new BibItemIndexCallable("","",1,1,bibliographicDetailsRepository,holdingsDetailsRepository,1,new Date(),producerTemplate,solrTemplate, null, null);
+       // BibItemIndexCallable mockBibItemIndexCallable = new BibItemIndexCallable("","",1,1,bibliographicDetailsRepository,holdingsDetailsRepository,1,new Date(),producerTemplate,solrTemplate, null, null);
         //when(bibliographicDetailsRepository.findAll(new PageRequest(page, size))).thenReturn(bibliographicEntities);
-        int response = (int) mockBibItemIndexCallable.call();
+        Object response = mockBibItemIndexCallable.call();
         assertNotNull(response);
     }
 

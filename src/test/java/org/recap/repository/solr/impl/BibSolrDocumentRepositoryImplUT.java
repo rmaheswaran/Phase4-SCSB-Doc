@@ -1,73 +1,189 @@
 package org.recap.repository.solr.impl;
 
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
+import org.recap.RecapConstants;
+import org.recap.model.search.SearchRecordsRequest;
+import org.recap.model.search.resolver.BibValueResolver;
+import org.recap.model.search.resolver.HoldingsValueResolver;
+import org.recap.model.search.resolver.ItemValueResolver;
+import org.recap.model.solr.BibItem;
+import org.recap.model.solr.Holdings;
+import org.recap.model.solr.Item;
+import org.recap.util.CommonUtil;
+import org.recap.util.SolrQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 22/2/17.
  */
-public class BibSolrDocumentRepositoryImplUT extends BaseTestCase{
 
-    @Autowired
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({SolrTemplate.class, SolrClient.class})
+@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
+public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
+
+    @InjectMocks
     BibSolrDocumentRepositoryImpl bibSolrDocumentRepository;
 
-   /* @Test
-    public void populateBibItem() {
-        BibItem bibItem = new BibItem();
-        Map<String,Object> map = bibValueResolvers();
-        for (Map.Entry<String,Object> entry : map.entrySet()) {
-            String fieldName = entry.getKey();
-            Object fieldValue = entry.getValue();
-            for (Iterator<BibValueResolver> valueResolverIterator = bibSolrDocumentRepository.getBibValueResolvers().iterator(); valueResolverIterator.hasNext(); ) {
-                assertNotNull(valueResolverIterator);
-                BibValueResolver valueResolver = valueResolverIterator.next();
-                if (valueResolver.isInterested(fieldName)) {
-                    valueResolver.setValue(bibItem, fieldValue);
-                }
-            }
-        }
-    }*/
+    @Mock
+    private CommonUtil commonUtil;
 
-   /* @Test
-    public void populateItem(){
-        Item item = new Item();
-        Map<String,Object> map = itemValueResolvers();
-        for (Map.Entry<String,Object> entry : map.entrySet()) {
-            String fieldName = entry.getKey();
-            Object fieldValue = entry.getValue();
-            for (Iterator<ItemValueResolver> itemValueResolverIterator = bibSolrDocumentRepository.getItemValueResolvers().iterator(); itemValueResolverIterator.hasNext(); ) {
-                assertNotNull(itemValueResolverIterator);
-                ItemValueResolver itemValueResolver = itemValueResolverIterator.next();
-                if (itemValueResolver.isInterested(fieldName)) {
-                    itemValueResolver.setValue(item, fieldValue);
-                }
-            }
-        }
-    }*/
+    @Mock
+    private SolrQueryBuilder solrQueryBuilder;
 
-    /*@Test
-    public void testHoldings(){
-        Holdings holdings = new Holdings();
-        Map<String,Object> map = holdingValueResolvers();
-        for (Map.Entry<String,Object> entry : map.entrySet()) {
-            String fieldName = entry.getKey();
-            Object fieldValue = entry.getValue();
-            for (Iterator<HoldingsValueResolver> holdingsValueResolverIterator = bibSolrDocumentRepository.getHoldingsValueResolvers().iterator(); holdingsValueResolverIterator.hasNext(); ) {
-                assertNotNull(holdingsValueResolverIterator);
-                HoldingsValueResolver holdingsValueResolver = holdingsValueResolverIterator.next();
-                if(holdingsValueResolver.isInterested(fieldName)) {
-                    holdingsValueResolver.setValue(holdings, fieldValue);
-                }
-            }
-        }
+    @Test
+    public void searchIsEmptyField() throws Exception{
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        searchRecordsRequest.setRequestingInstitution("NYPL");
+        searchRecordsRequest.setFieldValue("Shared");
+        searchRecordsRequest.setFieldName("");
+        searchRecordsRequest.setPageSize(1);
+        searchRecordsRequest.setPageNumber(1);
+        searchRecordsRequest.setCatalogingStatus("Shared");
+        SolrQuery queryForParentAndChildCriteria=new SolrQuery();
+        Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        SolrDocumentList solrDocumentList = getSolrDocumentList();
+        Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+       // Mockito.when(queryResponse.getResults().getNumFound()).thenReturn(1l);
+        Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenReturn(solrDocumentList);
+        BibItem bibItem=new BibItem();
+        SolrDocument bibSolrDocument = getSolrDocumentList().get(0);
+        Collection<String> fieldNames = getSolrDocumentList().get(0).getFieldNames();
+        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(),Mockito.anyCollection(),Mockito.any())).thenReturn(bibItem);
+        Item item=new Item();
+        item.setDocType("doctype");
+        Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(item);
 
-    }*/
+        Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
+        assertEquals(true,search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+    }
+
+    @Test
+    public void searchIsItemField() throws Exception{
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        searchRecordsRequest.setRequestingInstitution("NYPL");
+        searchRecordsRequest.setFieldValue("NA");
+        searchRecordsRequest.setFieldName(RecapCommonConstants.CUSTOMER_CODE);
+        searchRecordsRequest.setPageSize(1);
+        searchRecordsRequest.setPageNumber(1);
+        searchRecordsRequest.setCatalogingStatus("Shared");
+        SolrQuery queryForParentAndChildCriteria=new SolrQuery();
+        Mockito.when(solrQueryBuilder.getQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        Mockito.when(solrQueryBuilder.getCountQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        SolrDocumentList solrDocumentList = getSolrDocumentList();
+        Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+        Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenReturn(solrDocumentList);
+        BibItem bibItem=new BibItem();
+        SolrDocument bibSolrDocument = getSolrDocumentList().get(0);
+        Collection<String> fieldNames = getSolrDocumentList().get(0).getFieldNames();
+        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(),Mockito.anyCollection(),Mockito.any())).thenReturn(bibItem);
+        Item item=new Item();
+        item.setDocType("doctype");
+        Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(item);
+
+        Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
+        assertEquals(true,search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+    }
+
+    @Test
+    public void getPageNumberOnPageSizeChange() throws Exception{
+        String[] fields={RecapCommonConstants.CUSTOMER_CODE,"","test"};
+        for (String field:fields) {
+            SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
+            searchRecordsRequest.setRequestingInstitution("NYPL");
+            searchRecordsRequest.setFieldValue("NA");
+            searchRecordsRequest.setFieldName(field);
+            searchRecordsRequest.setPageSize(1);
+            searchRecordsRequest.setPageNumber(1);
+            searchRecordsRequest.setCatalogingStatus("Shared");
+            SolrQuery queryForParentAndChildCriteria = new SolrQuery();
+            Mockito.when(solrQueryBuilder.getQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+            Mockito.when(solrQueryBuilder.getCountQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+            SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+            SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+            ReflectionTestUtils.setField(bibSolrDocumentRepository, "solrTemplate", mocksolrTemplate1);
+            PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+            QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
+            Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+            SolrDocumentList solrDocumentList = getSolrDocumentList();
+            Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+            Mockito.when(commonUtil.getSolrDocumentsByDocType(null, mocksolrTemplate1)).thenReturn(solrDocumentList);
+            BibItem bibItem = new BibItem();
+            SolrDocument bibSolrDocument = getSolrDocumentList().get(0);
+            Collection<String> fieldNames = getSolrDocumentList().get(0).getFieldNames();
+            Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(), Mockito.anyCollection(), Mockito.any())).thenReturn(bibItem);
+            Item item = new Item();
+            item.setDocType("doctype");
+            Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(item);
+
+            int page = bibSolrDocumentRepository.getPageNumberOnPageSizeChange(searchRecordsRequest);
+            assertEquals(1, page);
+        }
+    }
+
+    private SolrDocumentList getSolrDocumentList() {
+        SolrDocumentList solrDocumentList = new SolrDocumentList();
+        SolrDocument solrDocument = new SolrDocument();
+        solrDocument.setField(RecapCommonConstants.DOCTYPE,RecapCommonConstants.ITEM);
+        solrDocument.setField(RecapCommonConstants.IS_DELETED_ITEM,false);
+        solrDocument.setField(RecapConstants.ITEM_CATALOGING_STATUS,"Shared");
+        solrDocument.setField("test","all");
+        SolrDocument solrDocument1 = new SolrDocument();
+        solrDocument1.setField(RecapCommonConstants.DOCTYPE,RecapCommonConstants.HOLDINGS);
+        solrDocument1.setField(RecapCommonConstants.IS_DELETED_HOLDINGS,false);
+        SolrDocument solrDocument2 = new SolrDocument();
+        solrDocument2.setField(RecapCommonConstants.DOCTYPE,RecapCommonConstants.BIB);
+        solrDocument2.setField(RecapCommonConstants.IS_DELETED_BIB,false);
+        solrDocument2.setField(RecapConstants.BIB_CATALOGING_STATUS,"Shared");
+        solrDocumentList.setNumFound(1l);
+        solrDocumentList.add(0,solrDocument);
+        solrDocumentList.add(1,solrDocument1);
+        solrDocumentList.add(2,solrDocument2);
+        return  solrDocumentList;
+    }
 
 
     public Map bibValueResolvers(){

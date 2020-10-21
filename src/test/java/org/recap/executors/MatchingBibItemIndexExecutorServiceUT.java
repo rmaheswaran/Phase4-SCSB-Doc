@@ -1,3 +1,4 @@
+
 package org.recap.executors;
 
 import lombok.SneakyThrows;
@@ -6,10 +7,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jms.JmsQueueEndpoint;
 import org.apache.camel.component.solr.SolrConstants;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.solr.common.SolrInputDocument;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -20,22 +20,13 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.admin.SolrAdmin;
+import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.solr.SolrIndexRequest;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.HoldingsDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.solr.main.BibSolrCrudRepository;
-import org.recap.repository.solr.temp.BibCrudRepositoryMultiCoreSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.recap.util.DateUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -46,131 +37,78 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 
+import static org.junit.Assert.assertTrue;
+
+
 /**
- * Created by premkb on 29/7/16.
+ * Created by angelind on 30/1/17.
  */
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SolrTemplate.class)
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
-public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
-
-    private static final Logger logger = LoggerFactory.getLogger(BibItemIndexExecutorServiceUT.class);
+public class MatchingBibItemIndexExecutorServiceUT extends BaseTestCaseUT {
 
     @InjectMocks
-    BibItemIndexExecutorService bibItemIndexExecutorService;
+    MatchingBibItemIndexExecutorService matchingBibItemIndexExecutorService;
 
     @Mock
-    BibliographicDetailsRepository mockBibliographicDetailsRepository;
+    DateUtil dateUtil;
 
     @Mock
-    SolrAdmin mockSolrAdmin;
-
-    @Mock
-    BibItemIndexCallable mockBibItemIndexCallable;
-
-    @Mock
-    BibCrudRepositoryMultiCoreSupport mockBibCrudRepositoryMultiCoreSupport;
-
-    @Mock
-    InstitutionDetailsRepository institutionDetailsRepository;
-
-    @Mock
-    BibSolrCrudRepository bibSolrCrudRepository;
+    private BibliographicDetailsRepository bibliographicDetailsRepository;
 
     @Mock
     ProducerTemplate producerTemplate;
 
-    @Mock
-    SolrTemplate solrTemplate;
+    @Value("${matching.algorithm.indexing.batchsize}")
+    Integer batchSize;
 
-    @Mock
-    HoldingsDetailsRepository holdingsDetailsRepository;
+    @Value("${matching.algorithm.commit.interval}")
+    Integer commitInterval;
 
     @Mock
     CamelContext camelContext;
 
-    @Value("${solr.router.uri.type}")
-    String solrRouterURI;
-
-    @Value("${solr.server.protocol}")
-    String solrServerProtocol;
+    @Value("${solr.parent.core}")
+    String solrCore;
 
     @Value("${solr.url}")
     String solrUrl;
 
-    @Value("${solr.parent.core}")
-    String solrCore;
+    @Value("${solr.router.uri.type}")
+    String solrRouterURI;
+
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrServerProtocol",solrServerProtocol);
-        ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrUrl",solrUrl);
-        ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrCore",solrCore);
-        ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrRouterURI",solrRouterURI);
-    }
+        ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"batchSize",batchSize);
+        ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"commitInterval",commitInterval);
+        ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"solrCore",solrCore);
+        ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"solrUrl",solrUrl);
+        ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"solrRouterURI",solrRouterURI);
+          }
 
     @Test
-    public void mergeIndexFrequency() throws Exception {
-
-        Mockito.when(mockBibliographicDetailsRepository.countByIsDeletedFalse()).thenReturn(500000L);
-        Mockito.when(mockBibItemIndexCallable.call()).thenReturn(1000);
-
-        bibItemIndexExecutorService.setBibliographicDetailsRepository(mockBibliographicDetailsRepository);
-        bibItemIndexExecutorService.setSolrAdmin(mockSolrAdmin);
-        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
-        solrIndexRequest.setNumberOfThreads(5);
-        solrIndexRequest.setNumberOfDocs(1);
-        solrIndexRequest.setOwningInstitutionCode("PUL");
-        solrIndexRequest.setCommitInterval(0);
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(RecapCommonConstants.INCREMENTAL_DATE_FORMAT);
-        Date from = DateUtils.addDays(new Date(), -1);
-        solrIndexRequest.setDateFrom(dateFormatter.format(from));
-        InstitutionEntity institutionEntity=new InstitutionEntity();
-        institutionEntity.setId(1);
-        institutionEntity.setInstitutionCode("PUL");
-        institutionEntity.setInstitutionName("Princeton");
-        Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
-        Mockito.when(mockBibliographicDetailsRepository.countByOwningInstitutionIdAndLastUpdatedDateAfter(Mockito.anyInt(),Mockito.any())).thenReturn(0l);
+    public void indexingForMatchingAlgorithmTest() throws URISyntaxException, IOException, InterruptedException {
+        Mockito.when(bibliographicDetailsRepository.getCountOfBibliographicEntitiesForChangedItems(Mockito.anyString(),Mockito.any(), Mockito.any())).thenReturn(10000l);
         Page bibliographicEntities = PowerMockito.mock(Page.class);
-        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
-        ReflectionTestUtils.setField(bibItemIndexExecutorService,"solrTemplate",mocksolrTemplate1);
-        Iterator<BibliographicEntity> iterator=new Iterator<BibliographicEntity>() {
-            int count;
-
-            @Override
-            public boolean hasNext() {
-                count ++;
-                if(count==1){
-                    return true;}
-                else {
-                    return false;
-                }
-            }
-
-            @SneakyThrows
-            @Override
-            public BibliographicEntity next() {
-                return getBibliographicEntity();
-            }
-        };
+        Mockito.when(bibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(Mockito.any(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
+        Iterator<BibliographicEntity> iterator = getBibliographicEntityIterator();
         Mockito.when(bibliographicEntities.getNumberOfElements()).thenReturn(1);
         Mockito.when(bibliographicEntities.iterator()).thenReturn(iterator);
-        Mockito.when(mockBibliographicDetailsRepository.findByOwningInstitutionIdAndLastUpdatedDateAfter(Mockito.any(),Mockito.anyInt(),Mockito.any())).thenReturn(bibliographicEntities);
-        Mockito.when( bibSolrCrudRepository.countByDocType(Mockito.anyString())).thenReturn(1l);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        ReflectionTestUtils.setField(matchingBibItemIndexExecutorService,"solrTemplate",mocksolrTemplate1);
         SolrInputDocument solrInputDocument=new SolrInputDocument();
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
         Mockito.when(producerTemplate.getCamelContext()).thenReturn(camelContext);
@@ -180,20 +118,8 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
         CompletableFuture<Object> future=Mockito.mock(CompletableFuture.class);
         Mockito.when(producerTemplate.asyncRequestBodyAndHeader(solrRouterURI + "://" + solrUrl + "/" + solrCore, "", SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT)).thenReturn(future);
         Mockito.when(!future.isDone()).thenReturn(true);
-        Mockito.when(future.get()).thenReturn(1);
-        bibItemIndexExecutorService.index(solrIndexRequest);
-    }
-
-    private class MockBibItemIndexExecutorService extends BibItemIndexExecutorService {
-        @Override
-        public Callable getCallable(String coreName, int startingPage, int numRecordsPerPage, Integer owningInstitutionId, Date fromDate, String partialIndexType, Map<String, Object> partialIndexMap) {
-            return mockBibItemIndexCallable;
-        }
-
-        @Override
-        protected BibCrudRepositoryMultiCoreSupport getBibCrudRepositoryMultiCoreSupport(String solrUrl, String coreName) {
-            return mockBibCrudRepositoryMultiCoreSupport;
-        }
+        Integer count = matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, new Date());
+        assertTrue(count > 0);
     }
 
     public BibliographicEntity getBibliographicEntity() throws URISyntaxException, IOException {
@@ -255,4 +181,28 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
         URL resource = getClass().getResource(xml);
         return new File(resource.toURI());
     }
+
+    private Iterator<BibliographicEntity> getBibliographicEntityIterator() {
+        Iterator<BibliographicEntity> iterator=new Iterator<BibliographicEntity>() {
+            int count;
+
+            @Override
+            public boolean hasNext() {
+                count ++;
+                if(count==1){
+                    return true;}
+                else {
+                    return false;
+                }
+            }
+
+            @SneakyThrows
+            @Override
+            public BibliographicEntity next() {
+                return getBibliographicEntity();
+            }
+        };
+        return iterator;
+    }
+
 }

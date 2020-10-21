@@ -1,18 +1,27 @@
 package org.recap.util;
 
-
+import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.marc4j.marc.Record;
-import org.recap.BaseTestCase;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
+import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
+import org.recap.model.solr.Bib;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.data.solr.core.SolrTemplate;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,19 +29,30 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static junit.framework.TestCase.assertNotNull;
 
 /**
  * Created by premkb on 1/8/16.
  */
-public class BibJSONUtilUT extends BaseTestCase{
 
-    @Autowired
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(SolrTemplate.class)
+@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
+public class BibJSONUtilUT extends BaseTestCaseUT {
+
+    @InjectMocks
+    BibJSONUtil bibJSONUtil;
+
+    @Mock
     BibliographicDetailsRepository bibliographicDetailsRepository;
 
-    @Autowired
+    @Mock
     HoldingsDetailsRepository holdingsDetailsRepository;
+
+    @Mock
+    private ProducerTemplate producerTemplate;
 
     private String holdingContent = "<collection xmlns=\"http://www.loc.gov/MARC21/slim\">\n" +
             "            <record>\n" +
@@ -149,19 +169,50 @@ public class BibJSONUtilUT extends BaseTestCase{
             "        </collection>";
     @Test
     public void generateBibAndItemsForIndex()throws Exception {
-        Random random = new Random();
+        BibliographicEntity bibliographicEntity = getBibliographicEntity();
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrInputDocument solrInputDocument=new SolrInputDocument();
+        Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
+        SolrInputDocument solrInputDocument1 = bibJSONUtil.generateBibAndItemsForIndex(bibliographicEntity, mocksolrTemplate1, bibliographicDetailsRepository, holdingsDetailsRepository);
+        assertNotNull(solrInputDocument1);
 
+    }
+
+    @Test
+    public void generateBibForIndex()throws Exception {
+        BibliographicEntity bibliographicEntity = getBibliographicEntity();
+        Bib generateBibForIndex = bibJSONUtil.generateBibForIndex(bibliographicEntity, bibliographicDetailsRepository, holdingsDetailsRepository);
+        assertNotNull(generateBibForIndex);
+        BibliographicEntity bibliographicEntity1= new BibliographicEntity();
+        bibliographicEntity1.setBibliographicId(1);
+        bibliographicEntity1.setOwningInstitutionBibId("1");
+        InstitutionEntity institutionEntity=new InstitutionEntity();
+        institutionEntity.setId(3);
+        institutionEntity.setInstitutionName("NYPL");
+        institutionEntity.setInstitutionCode("NYPL");
+        bibliographicEntity1.setInstitutionEntity(institutionEntity);
+        Bib generateBibForIndex1 = bibJSONUtil.generateBibForIndex(bibliographicEntity1, bibliographicDetailsRepository, holdingsDetailsRepository);
+        assertNull(generateBibForIndex1);
+
+    }
+
+    private BibliographicEntity getBibliographicEntity() {
         List<BibliographicEntity> bibliographicEntities = new ArrayList<>();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
         bibliographicEntity.setContent(bibContent.getBytes());
         bibliographicEntity.setOwningInstitutionId(1);
+        Random random = new Random();
         String owningInstitutionBibId = String.valueOf(random.nextInt());
         bibliographicEntity.setOwningInstitutionBibId(owningInstitutionBibId);
         bibliographicEntity.setCreatedDate(new Date());
         bibliographicEntity.setCreatedBy("tst");
         bibliographicEntity.setLastUpdatedDate(new Date());
         bibliographicEntity.setLastUpdatedBy("tst");
-
+        InstitutionEntity institutionEntity=new InstitutionEntity();
+        institutionEntity.setId(3);
+        institutionEntity.setInstitutionName("NYPL");
+        institutionEntity.setInstitutionCode("NYPL");
+        bibliographicEntity.setInstitutionEntity(institutionEntity);
         HoldingsEntity holdingsEntity = new HoldingsEntity();
         holdingsEntity.setContent(holdingContent.getBytes());
         holdingsEntity.setCreatedDate(new Date());
@@ -192,49 +243,41 @@ public class BibJSONUtilUT extends BaseTestCase{
         bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
         bibliographicEntities.add(bibliographicEntity);
         itemEntity.setBibliographicEntities(bibliographicEntities);
-
-        BibJSONUtil bibJSONUtil = new BibJSONUtil();
-        SolrInputDocument solrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(bibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository);
-        assertNotNull(solrInputDocument);
-
+        return bibliographicEntity;
     }
 
 
     @Test
     public void testLccnTrimValue() throws Exception {
-        BibJSONUtil bibJSONUtil = new BibJSONUtil();
         List<Record> records = bibJSONUtil.convertMarcXmlToRecord(bibContent);
         Record marcRecord = records.get(0);
         String lccnValue = bibJSONUtil.getLCCNValue(marcRecord);
-        assertEquals(lccnValue, "79971032");
+        assertEquals("79971032",lccnValue );
     }
 
     @Test
     public void testTitleDisplayValue() throws Exception {
-        BibJSONUtil bibJSONUtil = new BibJSONUtil();
         List<Record> records = bibJSONUtil.convertMarcXmlToRecord(bibContent);
         Record marcRecord = records.get(0);
         String titleDisplay = bibJSONUtil.getTitleDisplay(marcRecord);
-        assertEquals(titleDisplay, "al-Baḥrayn : mushkilāt al-taghyīr al-siyāsī wa-al-ijtimāʻī / Muḥammad al-Rumayḥī.");
+        assertEquals( "al-Baḥrayn : mushkilāt al-taghyīr al-siyāsī wa-al-ijtimāʻī / Muḥammad al-Rumayḥī.",titleDisplay);
     }
 
     @Test
     public void testAuthorDisplayValue() throws Exception {
-        BibJSONUtil bibJSONUtil = new BibJSONUtil();
         List<Record> records = bibJSONUtil.convertMarcXmlToRecord(bibContent);
         Record marcRecord = records.get(0);
         String authorDisplayValue = bibJSONUtil.getAuthorDisplayValue(marcRecord);
-        assertEquals(authorDisplayValue, "Rumayḥī, Muḥammad Ghānim. Rumayḥī, Muḥammad Rumayḥī ");
+        assertEquals( "Rumayḥī, Muḥammad Ghānim. Rumayḥī, Muḥammad Rumayḥī ",authorDisplayValue);
     }
 
     @Test
     public void testAuthorSearchValue() throws Exception {
-        BibJSONUtil bibJSONUtil = new BibJSONUtil();
         List<Record> records = bibJSONUtil.convertMarcXmlToRecord(bibContent);
         Record marcRecord = records.get(0);
         List<String> authorSearchValue = bibJSONUtil.getAuthorSearchValue(marcRecord);
         assertNotNull(authorSearchValue);
-        assertEquals(authorSearchValue.size(), 6);
+        assertEquals(6,authorSearchValue.size());
         assertTrue(authorSearchValue.contains("Rumayḥī, Muḥammad Ghānim."));
         assertTrue(authorSearchValue.contains("Rumayḥī, Muḥammad"));
         assertTrue(authorSearchValue.contains("Rumayḥī"));
@@ -245,22 +288,20 @@ public class BibJSONUtilUT extends BaseTestCase{
 
     @Test
     public void testTitles() throws Exception {
-        BibJSONUtil bibJSONUtil = new BibJSONUtil();
         List<Record> records = bibJSONUtil.convertMarcXmlToRecord(bibContent);
         Record marcRecord = records.get(0);
         String titles = bibJSONUtil.getTitle(marcRecord);
         assertNotNull(titles);
-        assertEquals(titles,"al-Baḥrayn : mushkilāt al-taghyīr al-siyāsī wa-al-ijtimāʻī /   Muḥammad al-Rumayḥī.   ");
+        assertEquals("al-Baḥrayn : mushkilāt al-taghyīr al-siyāsī wa-al-ijtimāʻī /   Muḥammad al-Rumayḥī.   ",titles);
     }
 
     @Test
     public void testTitleSort() throws Exception {
-        BibJSONUtil bibJSONUtil = new BibJSONUtil();
         List<Record> records = bibJSONUtil.convertMarcXmlToRecord(bibContent);
         Record marcRecord = records.get(0);
         String titleSort = bibJSONUtil.getTitleSort(marcRecord, bibJSONUtil.getTitleDisplay(marcRecord));
         assertNotNull(titleSort);
-        assertEquals(titleSort,"Baḥrayn : mushkilāt al-taghyīr al-siyāsī wa-al-ijtimāʻī / Muḥammad al-Rumayḥī.");
+        assertEquals("Baḥrayn : mushkilāt al-taghyīr al-siyāsī wa-al-ijtimāʻī / Muḥammad al-Rumayḥī.",titleSort);
     }
 
     @Test
@@ -269,4 +310,5 @@ public class BibJSONUtilUT extends BaseTestCase{
         number = StringUtils.stripStart(number, "0");
         assertEquals("23450", number);
     }
+
 }
