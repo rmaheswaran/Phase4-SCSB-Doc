@@ -23,8 +23,12 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
+import org.recap.matchingalgorithm.MatchingCounter;
+import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
+import org.recap.model.matchingReports.MatchingSummaryReport;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.CsvUtil;
 import org.recap.util.DateUtil;
@@ -43,6 +47,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by Anitha on 10/10/20.
@@ -80,13 +85,26 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
     @Mock
     CsvUtil csvUtil;
 
+    @Mock
+    InstitutionDetailsRepository institutionDetailsRepository;
+
     @Value("${ongoing.matching.report.directory}")
     String matchingReportsDirectory;
+
+    @Mock
+    MatchingCounter matchingCounter;
+
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         ReflectionTestUtils.setField(ongoingMatchingReportsService,"matchingReportsDirectory",matchingReportsDirectory);
+        ReflectionTestUtils.setField(matchingCounter,"pulOpenCount",0);
+        ReflectionTestUtils.setField(matchingCounter,"pulSharedCount",0);
+        ReflectionTestUtils.setField(matchingCounter,"culOpenCount",0);
+        ReflectionTestUtils.setField(matchingCounter,"culSharedCount",0);
+        ReflectionTestUtils.setField(matchingCounter,"nyplOpenCount",0);
+        ReflectionTestUtils.setField(matchingCounter,"nyplSharedCount",0);
     }
 
     @Test
@@ -136,7 +154,8 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         List<Integer> serialMvmBibIds= Arrays.asList(1);
-       ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
+        ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
+        assertNotNull(serialMvmBibIds);
     }
 
     @Test
@@ -170,6 +189,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         List<Integer> serialMvmBibIds= Arrays.asList(1);
         ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
+        assertNotNull(serialMvmBibIds);
     }
 
 
@@ -198,5 +218,63 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         List<Integer> serialMvmBibIds= Arrays.asList(1);
         ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
+        assertNotNull(serialMvmBibIds);
+    }
+
+    @Test
+    public void generateSummaryReport() throws Exception {
+        String[] institutions={RecapCommonConstants.PRINCETON,RecapCommonConstants.COLUMBIA,RecapCommonConstants.NYPL};
+        for (String institution:institutions) {
+        List<MatchingSummaryReport> matchingSummaryReports=new ArrayList<>();
+        matchingSummaryReports.add(getMatchingSummaryReport(institution));
+        SolrQuery solrQuery= new SolrQuery();
+        Mockito.when(solrQueryBuilder.getCountQueryForParentAndChildCriteria(Mockito.any())).thenReturn(solrQuery);
+        Mockito.when(solrQueryBuilder.getCountQueryForChildAndParentCriteria(Mockito.any())).thenReturn(solrQuery);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrTemplate",mocksolrTemplate1);
+        Mockito.when(mockOngoingMatchingReportsService.getSolrTemplate()).thenReturn(mocksolrTemplate1);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
+        SolrDocumentList solrDocumentList =new SolrDocumentList();
+        SolrDocument solrDocument = new SolrDocument();
+        solrDocument.setField(RecapCommonConstants.DOCTYPE,RecapCommonConstants.HOLDINGS);
+        solrDocument.setField(RecapCommonConstants.HOLDING_ID,345);
+        solrDocument.setField(RecapConstants.SUMMARY_HOLDINGS,"45");
+        solrDocumentList.add(solrDocument);
+        solrDocumentList.setNumFound(11);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+        Mockito.when(camelContext.getRouteController()).thenReturn(routeController);
+        ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
+        assertNotNull(matchingSummaryReports);
+        }
+    }
+
+    @Test
+    public void populateSummaryReport() throws Exception {
+        List<InstitutionEntity> institutionEntities=new ArrayList<>();
+        institutionEntities.add(getInstitutionEntity(RecapCommonConstants.NYPL,3));
+        institutionEntities.add(getInstitutionEntity(RecapCommonConstants.COLUMBIA,2));
+        institutionEntities.add(getInstitutionEntity(RecapCommonConstants.PRINCETON,1));
+        Mockito.when(institutionDetailsRepository.findByInstitutionCodeNotIn(Mockito.anyList())).thenReturn(institutionEntities);
+        List<MatchingSummaryReport> matchingSummaryReports=ongoingMatchingReportsService.populateSummaryReport();
+        assertNotNull(matchingSummaryReports);
+    }
+
+    private MatchingSummaryReport getMatchingSummaryReport(String institution) {
+        MatchingSummaryReport matchingSummaryReport=new MatchingSummaryReport();
+        matchingSummaryReport.setInstitution(institution);
+        matchingSummaryReport.setOpenItemsBeforeMatching("0");
+        matchingSummaryReport.setSharedItemsBeforeMatching("0");
+        return matchingSummaryReport;
+    }
+
+    private InstitutionEntity getInstitutionEntity(String institution, int institutionId) {
+        InstitutionEntity institutionEntity=new InstitutionEntity();
+        institutionEntity.setId(institutionId);
+        institutionEntity.setInstitutionName(institution);
+        institutionEntity.setInstitutionCode(institution);
+        return institutionEntity;
     }
 }

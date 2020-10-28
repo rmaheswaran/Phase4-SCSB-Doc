@@ -1,219 +1,104 @@
 package org.recap.util;
 
+import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.recap.BaseTestCase;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.solr.Item;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
+import org.recap.repository.jpa.CollectionGroupDetailsRepository;
+import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
-import org.recap.repository.solr.main.ItemCrudRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.recap.repository.jpa.ItemDetailsRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by rajeshbabuk on 5/1/17.
  */
-public class UpdateCgdUtilUT extends BaseTestCase {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(SolrTemplate.class)
+@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*"})
+public class UpdateCgdUtilUT extends BaseTestCaseUT {
 
-    @Autowired
-    BibliographicDetailsRepository bibliographicDetailsRepository;
-
-    @Mock
-    ItemChangeLogDetailsRepository mockedItemChangeLogDetailsRepository;
-
-    @Autowired
+    @InjectMocks
     UpdateCgdUtil updateCgdUtil;
 
     @Mock
-    UpdateCgdUtil mockedUpdateCgdUtil;
+    CollectionGroupDetailsRepository collectionGroupDetailsRepository;
 
     @Mock
-    SolrTemplate mockedSolrTemplate;
+    ItemDetailsRepository itemDetailsRepository;
 
     @Mock
-    ItemCrudRepository MockedItemCrudRepository;
+    ProducerTemplate producerTemplate;
+
+    @Mock
+    ItemChangeLogDetailsRepository itemChangeLogDetailsRepository;
+
+    @Mock
+    BibliographicDetailsRepository bibliographicDetailsRepository;
+
+    @Mock
+    HoldingsDetailsRepository holdingsDetailsRepository;
 
     @Value("${solr.parent.core}")
     String solrCore;
 
-    @Test
-    public void updateCGDForItemInDB() throws Exception {
-        BibliographicEntity bibliographicEntity = getBibEntityWithHoldingsAndItem();
-        BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
-        entityManager.refresh(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity.getHoldingsEntities());
-        assertNotNull(savedBibliographicEntity.getItemEntities());
-        assertEquals("Shared", savedBibliographicEntity.getItemEntities().get(0).getCollectionGroupEntity().getCollectionGroupCode());
-
-        String itemBarcode = savedBibliographicEntity.getItemEntities().get(0).getBarcode();
-        updateCgdUtil.updateCGDForItemInDB(itemBarcode, "Private", "guest", new Date());
-
-        List<ItemEntity> fetchedItemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
-        assertNotNull(fetchedItemEntities);
-        assertTrue(fetchedItemEntities.size() > 0);
-        for (ItemEntity fetchedItemEntity : fetchedItemEntities) {
-            entityManager.refresh(fetchedItemEntity);
-            assertNotNull(fetchedItemEntity.getItemId());
-            assertEquals(itemBarcode, fetchedItemEntity.getBarcode());
-            assertEquals("Private", fetchedItemEntity.getCollectionGroupEntity().getCollectionGroupCode());
-        }
-    }
-
-    @Test
-    public void updateCGDForItemInSolr() throws Exception {
-        BibliographicEntity bibliographicEntity = getBibEntityWithHoldingsAndItem();
-        BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
-        entityManager.refresh(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity.getBibliographicId());
-        assertNotNull(savedBibliographicEntity.getHoldingsEntities());
-        assertNotNull(savedBibliographicEntity.getItemEntities());
-        assertNotNull(savedBibliographicEntity.getItemEntities().get(0));
-        assertNotNull(savedBibliographicEntity.getItemEntities().get(0).getItemId());
-        assertEquals("Shared", savedBibliographicEntity.getItemEntities().get(0).getCollectionGroupEntity().getCollectionGroupCode());
-
-        BibJSONUtil bibJSONUtil = new BibJSONUtil();
-        SolrInputDocument solrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(savedBibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingDetailRepository);
-        mockedSolrTemplate.saveDocument(solrCore, solrInputDocument);
-        mockedSolrTemplate.commit(solrCore);
-
-        String itemBarcode = savedBibliographicEntity.getItemEntities().get(0).getBarcode();
-        List<Item> itemList = new ArrayList<>();
-        Item item = new Item();
-        item.setItemId(1);
-        item.setBarcode(itemBarcode);
-        item.setCollectionGroupDesignation("Shared");
-        itemList.add(item);
-        Mockito.when(MockedItemCrudRepository.findByBarcode(itemBarcode)).thenReturn(itemList);
-        List<Item> fetchedItemsSolr = MockedItemCrudRepository.findByBarcode(itemBarcode);
-        assertNotNull(fetchedItemsSolr);
-        assertTrue(fetchedItemsSolr.size() > 0);
-        for (Item fetchedItemSolr : fetchedItemsSolr) {
-            assertNotNull(fetchedItemSolr.getItemId());
-            assertEquals(itemBarcode, fetchedItemSolr.getBarcode());
-            assertEquals("Shared", fetchedItemSolr.getCollectionGroupDesignation());
-        }
-
-        updateCgdUtil.updateCGDForItemInDB(itemBarcode, "Open", "guest", new Date());
-        List<ItemEntity> itemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
-        mockedUpdateCgdUtil.updateCGDForItemInSolr(itemEntities);
-        mockedSolrTemplate.commit(solrCore);
-        Mockito.when(MockedItemCrudRepository.findByBarcode(itemBarcode)).thenReturn(itemList);
-        List<Item> fetchedItemsSolrAfterUpdate = MockedItemCrudRepository.findByBarcode(itemBarcode);
-        assertNotNull(fetchedItemsSolrAfterUpdate);
-        assertTrue(fetchedItemsSolrAfterUpdate.size() > 0);
-        for (Item fetchedItemSolrAfterUpdate : fetchedItemsSolrAfterUpdate) {
-            assertNotNull(fetchedItemSolrAfterUpdate.getItemId());
-            assertEquals(itemBarcode, fetchedItemSolrAfterUpdate.getBarcode());
-            assertEquals("Shared", fetchedItemSolrAfterUpdate.getCollectionGroupDesignation());
-        }
-
-    }
-
-    public void deleteByDocId(String docIdParam, String docIdValue) throws IOException, SolrServerException {
-        UpdateResponse updateResponse = solrTemplate.getSolrClient().deleteByQuery(docIdParam+":"+docIdValue);
-        solrTemplate.commit(solrCore);
-    }
 
     @Test
     public void updateCGDForItem() throws Exception {
-        Mockito.when(mockedItemChangeLogDetailsRepository.count()).thenReturn(Long.valueOf(0));
-        long beforeCountForChangeLog = mockedItemChangeLogDetailsRepository.count();
-
-        BibliographicEntity bibliographicEntity = getBibEntityWithHoldingsAndItem();
-        BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
-        entityManager.refresh(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity.getBibliographicId());
-        assertNotNull(savedBibliographicEntity.getHoldingsEntities());
-        assertNotNull(savedBibliographicEntity.getItemEntities());
-        assertNotNull(savedBibliographicEntity.getItemEntities().get(0));
-        assertNotNull(savedBibliographicEntity.getItemEntities().get(0).getItemId());
-        assertEquals("Shared", savedBibliographicEntity.getItemEntities().get(0).getCollectionGroupEntity().getCollectionGroupCode());
-
-        BibJSONUtil bibJSONUtil = new BibJSONUtil();
-        SolrInputDocument solrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(savedBibliographicEntity, solrTemplate, bibliographicDetailsRepository, holdingDetailRepository);
-        mockedSolrTemplate.saveDocument(solrCore, solrInputDocument);
-        mockedSolrTemplate.commit(solrCore);
-
-        String itemBarcode = savedBibliographicEntity.getItemEntities().get(0).getBarcode();
-        List<Item> itemList = new ArrayList<>();
-        Item item = new Item();
-        item.setItemId(1);
-        item.setBarcode(itemBarcode);
-        item.setCollectionGroupDesignation("Shared");
-        itemList.add(item);
-        Mockito.when(MockedItemCrudRepository.findByBarcode(itemBarcode)).thenReturn(itemList);
-        List<Item> fetchedItemsSolr = MockedItemCrudRepository.findByBarcode(itemBarcode);
-        assertNotNull(fetchedItemsSolr);
-        assertTrue(fetchedItemsSolr.size() > 0);
-        for (Item fetchedItemSolr : fetchedItemsSolr) {
-            assertNotNull(fetchedItemSolr.getItemId());
-            assertEquals(itemBarcode, fetchedItemSolr.getBarcode());
-            assertEquals("Shared", fetchedItemSolr.getCollectionGroupDesignation());
-        }
-
-        updateCgdUtil.updateCGDForItem(itemBarcode, "PUL", "Shared", "Private", "Notes for updating CGD", RecapCommonConstants.GUEST);
-        List<Item> itemList1 = new ArrayList<>();
-        Item item1 = new Item();
-        item.setItemId(1);
-        item.setBarcode(itemBarcode);
-        item.setCollectionGroupDesignation("Private");
-        itemList.add(item1);
-        Mockito.when(MockedItemCrudRepository.findByBarcode(itemBarcode)).thenReturn(itemList1);
-        List<ItemEntity> fetchedItemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
-        assertNotNull(fetchedItemEntities);
-        assertTrue(fetchedItemEntities.size() > 0);
-        for (ItemEntity fetchedItemEntity : fetchedItemEntities) {
-            entityManager.refresh(fetchedItemEntity);
-            assertNotNull(fetchedItemEntity.getItemId());
-            assertEquals(itemBarcode, fetchedItemEntity.getBarcode());
-            assertEquals("Private", fetchedItemEntity.getCollectionGroupEntity().getCollectionGroupCode());
-        }
-        Mockito.when(mockedItemChangeLogDetailsRepository.count()).thenReturn(Long.valueOf(1));
-        long afterCountForChangeLog = mockedItemChangeLogDetailsRepository.count();
-
-        assertEquals(afterCountForChangeLog, beforeCountForChangeLog + 1);
-
+        Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(Mockito.anyString())).thenReturn(getCollectionGroupEntity());
+        Mockito.when(itemDetailsRepository.updateCollectionGroupIdByItemBarcode(Mockito.anyInt(),Mockito.anyString(),Mockito.anyString(),Mockito.any())).thenReturn(1);
+        Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenReturn(getBibliographicEntity().getItemEntities());
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrInputDocument solrInputDocument=new SolrInputDocument();
+        Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
+        ReflectionTestUtils.setField(updateCgdUtil,"solrTemplate",mocksolrTemplate1);
+        String response=  updateCgdUtil.updateCGDForItem("123456", "PUL", "Shared", "Private", "Notes for updating CGD", RecapCommonConstants.GUEST);
+        assertEquals(RecapCommonConstants.SUCCESS,response);
     }
 
-    public BibliographicEntity getBibEntityWithHoldingsAndItem() throws Exception {
-        Random random = new Random();
+    private CollectionGroupEntity getCollectionGroupEntity() {
+        CollectionGroupEntity collectionGroupEntity=new CollectionGroupEntity();
+        collectionGroupEntity.setCollectionGroupDescription("Private");
+        collectionGroupEntity.setId(3);
+        collectionGroupEntity.setCollectionGroupCode("Private");
+        return collectionGroupEntity;
+    }
+
+    public BibliographicEntity getBibliographicEntity() throws Exception {
         File bibContentFile = getBibContentFile();
-        File holdingsContentFile = getHoldingsContentFile();
         String sourceBibContent = FileUtils.readFileToString(bibContentFile, "UTF-8");
+        File holdingsContentFile = getBibContentFile();
         String sourceHoldingsContent = FileUtils.readFileToString(holdingsContentFile, "UTF-8");
 
+        Date today = new Date();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
         bibliographicEntity.setContent(sourceBibContent.getBytes());
         bibliographicEntity.setCreatedDate(new Date());
@@ -221,38 +106,45 @@ public class UpdateCgdUtilUT extends BaseTestCase {
         bibliographicEntity.setCreatedBy("tst");
         bibliographicEntity.setLastUpdatedBy("tst");
         bibliographicEntity.setOwningInstitutionId(1);
-        bibliographicEntity.setOwningInstitutionBibId(String.valueOf(random.nextInt()));
-        bibliographicEntity.setDeleted(false);
+        bibliographicEntity.setOwningInstitutionBibId("1421");
+        bibliographicEntity.setBibliographicId(1);
+        List<BibliographicEntity> bibliographicEntitylist = new LinkedList(Arrays.asList(bibliographicEntity));
+
 
         HoldingsEntity holdingsEntity = new HoldingsEntity();
         holdingsEntity.setContent(sourceHoldingsContent.getBytes());
-        holdingsEntity.setCreatedDate(new Date());
-        holdingsEntity.setLastUpdatedDate(new Date());
+        holdingsEntity.setCreatedDate(today);
+        holdingsEntity.setLastUpdatedDate(today);
         holdingsEntity.setCreatedBy("tst");
-        holdingsEntity.setLastUpdatedBy("tst");
         holdingsEntity.setOwningInstitutionId(1);
-        holdingsEntity.setOwningInstitutionHoldingsId(String.valueOf(random.nextInt()));
-        holdingsEntity.setDeleted(false);
+        holdingsEntity.setLastUpdatedBy("tst");
+        holdingsEntity.setOwningInstitutionHoldingsId("1621");
+        holdingsEntity.setHoldingsId(1);
+        List<HoldingsEntity> holdingsEntitylist = new LinkedList(Arrays.asList(holdingsEntity));
+
 
         ItemEntity itemEntity = new ItemEntity();
         itemEntity.setLastUpdatedDate(new Date());
-        itemEntity.setOwningInstitutionItemId(String.valueOf(random.nextInt()));
+        itemEntity.setOwningInstitutionItemId("6320902");
         itemEntity.setOwningInstitutionId(1);
-        itemEntity.setBarcode(String.valueOf(random.nextInt()));
+        itemEntity.setBarcode("32101086866140");
         itemEntity.setCallNumber("x.12321");
         itemEntity.setCollectionGroupId(1);
         itemEntity.setCallNumberType("1");
-        itemEntity.setCustomerCode("123");
+        itemEntity.setCustomerCode("PA");
         itemEntity.setCreatedDate(new Date());
         itemEntity.setCreatedBy("tst");
         itemEntity.setLastUpdatedBy("tst");
         itemEntity.setItemAvailabilityStatusId(1);
-        //itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
-        itemEntity.setDeleted(false);
+        itemEntity.setItemId(1);
+        List<ItemEntity> itemEntitylist = new LinkedList(Arrays.asList(itemEntity));
 
-        holdingsEntity.setItemEntities(Arrays.asList(itemEntity));
-        bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
-        bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
+        holdingsEntity.setBibliographicEntities(bibliographicEntitylist);
+        holdingsEntity.setItemEntities(itemEntitylist);
+        bibliographicEntity.setHoldingsEntities(holdingsEntitylist);
+        bibliographicEntity.setItemEntities(itemEntitylist);
+        itemEntity.setHoldingsEntities(holdingsEntitylist);
+        itemEntity.setBibliographicEntities(bibliographicEntitylist);
 
         return bibliographicEntity;
     }

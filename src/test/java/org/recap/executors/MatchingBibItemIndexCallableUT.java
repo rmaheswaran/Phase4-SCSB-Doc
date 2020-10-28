@@ -2,11 +2,13 @@ package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.InstitutionEntity;
@@ -36,7 +38,8 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by hemalathas on 5/7/17.
  */
-public class MatchingBibItemIndexCallableUT extends BaseTestCase {
+
+public class MatchingBibItemIndexCallableUT extends BaseTestCaseUT {
 
     private int pageNum = 1;
     private int docsPerPage = 5;
@@ -45,17 +48,16 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCase {
     private BibliographicDetailsRepository mockedBibliographicDetailsRepository;
     @Mock
     private HoldingsDetailsRepository holdingsDetailsRepository;
-    @Autowired
+    @Mock
     private ProducerTemplate producerTemplate;
-    @Autowired
+    @Mock
     private SolrTemplate solrTemplate;
     private String operationType;
     private Date from;
     private Date to;
-    @PersistenceContext
-    private EntityManager entityManager;
+
     BibliographicEntity bibliographicEntity = null;
-    @Autowired
+    @Mock
     MatchingBibItemIndexExecutorService matchingBibItemIndexExecutorService;
 
 
@@ -98,8 +100,6 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCase {
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setInstitutionCode("UC");
         institutionEntity.setInstitutionName("University of Chicago");
-        InstitutionEntity entity = institutionDetailRepository.save(institutionEntity);
-        assertNotNull(entity);
 
         Random random = new Random();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
@@ -137,12 +137,7 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCase {
 
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
-        BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
-        entityManager.refresh(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity.getHoldingsEntities());
-        assertNotNull(savedBibliographicEntity.getItemEntities());
-        return savedBibliographicEntity;
+        return bibliographicEntity;
     }
 
 

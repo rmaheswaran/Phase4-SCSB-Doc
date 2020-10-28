@@ -1,25 +1,16 @@
-/*
+
 package org.recap.model.solr;
 
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.recap.BaseTestCase;
+
+import org.recap.BaseTestCaseUT;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import static org.junit.Assert.assertNotNull;
 
-import static org.junit.Assert.*;
-
-@Ignore
-public class ItemAT extends  BaseTestCase {
-
-    @Before
-    public void setUp() throws Exception {
-        assertNotNull(itemCrudRepository);
-        itemCrudRepository.deleteAll();
-    }
+public class ItemAT extends BaseTestCaseUT {
 
     @Test
     public void indexItem() throws Exception {
@@ -59,9 +50,7 @@ public class ItemAT extends  BaseTestCase {
         item.setTitleSort("test" );
         item.setItemCatalogingStatus("test" );
         item.setCgdChangeLog("test" );
-        item.setDeletedItem(true );
-        Item indexedItem = itemCrudRepository.save(item);
-        assertNotNull(indexedItem);
+        item.setDeletedItem(true);
         assertNotNull(item.getId());
         assertNotNull(item.getOwningInstitutionItemId());
         assertNotNull(item.getCallNumberDisplay());
@@ -80,17 +69,17 @@ public class ItemAT extends  BaseTestCase {
         assertNotNull(item.getCgdChangeLog());
 
 
-        assertEquals(indexedItem.getBarcode(),"1");
-        assertEquals(indexedItem.getItemId(),new Integer(301));
-        assertEquals(indexedItem.getDocType(),"Item");
-        assertEquals(indexedItem.getAvailability(),"Available");
-        assertEquals(indexedItem.getCallNumberSearch(),"F864");
-        assertEquals(indexedItem.getCustomerCode(),"PA");
-        assertEquals(indexedItem.getCollectionGroupDesignation(),"Shared");
-        assertEquals(indexedItem.getUseRestriction(),"Use Restriction");
-        assertEquals(indexedItem.getVolumePartYear(),"1970");
-        assertTrue(indexedItem.getHoldingsIdList().equals(holdingsIdList));
-        assertTrue(indexedItem.getItemBibIdList().equals(itemBibIdList));
+        assertNotNull(item.getBarcode());
+        assertNotNull(item.getItemId());
+        assertNotNull(item.getDocType());
+        assertNotNull(item.getAvailability());
+        assertNotNull(item.getCallNumberSearch());
+        assertNotNull(item.getCustomerCode());
+        assertNotNull(item.getCollectionGroupDesignation());
+        assertNotNull(item.getUseRestriction());
+        assertNotNull(item.getVolumePartYear());
+        assertNotNull(item.getHoldingsIdList());
+        assertNotNull(item.getItemBibIdList());
     }
 }
-*/
+
