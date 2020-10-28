@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
@@ -39,7 +38,7 @@ public class SolrIndexControllerUT extends BaseControllerUT{
     private static final Logger logger = LoggerFactory.getLogger(SolrIndexControllerUT.class);
 
     @InjectMocks
-    SolrIndexController solrIndexController=new SolrIndexController();
+    SolrIndexController solrIndexController;
 
     @Mock
     Model model;
@@ -130,6 +129,36 @@ public class SolrIndexControllerUT extends BaseControllerUT{
     }
 
     @Test
+    public void deleteByBibIdAndIsDeletedFlag()throws Exception{
+        List<Map<String,String>> bibIdMapToRemoveIndexList=new ArrayList<>();
+        bibIdMapToRemoveIndexList.add(getStringStringMap("1"));
+        String response =solrIndexController.deleteByBibIdAndIsDeletedFlag(bibIdMapToRemoveIndexList);
+        assertNotNull(response);
+        assertTrue(response.contains(RecapCommonConstants.SUCCESS));
+    }
+
+    @Test
+    public void deleteByBibHoldingItemId()throws Exception{
+        List<Map<String,String>> idMapToRemoveIndexList=new ArrayList<>();
+        idMapToRemoveIndexList.add(getStringStringMap("1"));
+        idMapToRemoveIndexList.add(getStringStringMap(""));
+        idMapToRemoveIndexList.add(getStringStringMap(null));
+        String response =solrIndexController.deleteByBibHoldingItemId(idMapToRemoveIndexList);
+        assertNotNull(response);
+        assertTrue(response.contains(RecapCommonConstants.SUCCESS));
+    }
+
+    private Map<String, String> getStringStringMap(String root) {
+        Map<String,String> idMapToRemoveIndex=new HashMap<>();
+        idMapToRemoveIndex.put("BibId","1");
+        idMapToRemoveIndex.put(RecapCommonConstants.IS_DELETED_BIB,"1");
+        idMapToRemoveIndex.put("HoldingId","1");
+        idMapToRemoveIndex.put("ItemId","1");
+        idMapToRemoveIndex.put("_root_",root);
+        return idMapToRemoveIndex;
+    }
+
+    @Test
     public void partialIndex()throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setNumberOfThreads(5);
@@ -160,22 +189,10 @@ public class SolrIndexControllerUT extends BaseControllerUT{
         List<Integer> bibliographicIdList = new ArrayList<>();
         bibliographicIdList.add(947);
         bibliographicIdList.add(1215);
-//        Mockito.when(solrIndexController.getSolrIndexService()).thenReturn(solrIndexService);
-        Mockito.when(solrIndexController.getSolrIndexService().indexByBibliographicId(Mockito.any())).thenReturn(null);
         String response =solrIndexController.indexByBibliographicId(bibliographicIdList);
         assertNotNull(response);
         assertTrue(response.contains(RecapCommonConstants.SUCCESS));
     }
-   /* @Test
-    public void indexByBibliographicId_Exception()throws Exception{
-        List<Integer> bibliographicIdList = new ArrayList<>();
-        bibliographicIdList.add(947);
-        bibliographicIdList.add(1215);
-        Mockito.when(solrIndexController.getSolrIndexService().indexByBibliographicId(Mockito.anyInt())).thenReturn(null);
-        String response =solrIndexController.indexByBibliographicId(bibliographicIdList);
-        assertNotNull(response);
-        assertTrue(response.contains(RecapCommonConstants.FAILURE));
-    }*/
 
     private SolrIndexRequest getSolrIndexRequest(){
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();

@@ -1,7 +1,8 @@
 package org.recap.util;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.DeAccessionSummaryRecord;
@@ -20,11 +21,14 @@ import static org.junit.Assert.assertNull;
 /**
  * Created by hemalathas on 22/2/17.
  */
-public class DeAccessionSummaryRecordGeneratorUT extends BaseTestCase{
+public class DeAccessionSummaryRecordGeneratorUT extends BaseTestCaseUT {
+
+    @InjectMocks
+    DeAccessionSummaryRecordGenerator deAccessionSummaryRecordGenerator ;
 
     @Test
     public void testDeaccessionSummaryRecord(){
-        DeAccessionSummaryRecordGenerator deAccessionSummaryRecordGenerator = new DeAccessionSummaryRecordGenerator();
+
         ReportEntity reportEntity = getReportEntity();
         DeAccessionSummaryRecord deAccessionSummaryRecord = deAccessionSummaryRecordGenerator.prepareDeAccessionSummaryReportRecord(reportEntity);
         Method getterMethod= deAccessionSummaryRecordGenerator.getGetterMethod("Barcode");
@@ -34,11 +38,11 @@ public class DeAccessionSummaryRecordGeneratorUT extends BaseTestCase{
         assertNull(getterMethodExp);
         assertNotNull(getterMethod);
         assertNotNull(deAccessionSummaryRecord);
-        assertEquals(deAccessionSummaryRecord.getBarcode(),"123");
-        assertEquals(deAccessionSummaryRecord.getCollectionGroupCode(),"Shared");
-        assertEquals(deAccessionSummaryRecord.getTitle(),"test");
-        assertEquals(deAccessionSummaryRecord.getStatus(),"Available");
-        assertEquals(deAccessionSummaryRecord.getOwningInstitution(),"PUL");
+        assertEquals("123",deAccessionSummaryRecord.getBarcode());
+        assertEquals("Shared",deAccessionSummaryRecord.getCollectionGroupCode());
+        assertEquals("test",deAccessionSummaryRecord.getTitle());
+        assertEquals("Available",deAccessionSummaryRecord.getStatus());
+        assertEquals("PUL",deAccessionSummaryRecord.getOwningInstitution());
 
     }
 
