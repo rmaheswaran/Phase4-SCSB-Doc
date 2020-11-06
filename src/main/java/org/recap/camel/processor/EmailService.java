@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.camel.EmailPayLoad;
+import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Created by angelind on 25/7/17.
@@ -29,31 +31,16 @@ public class EmailService {
     @Autowired
     private ProducerTemplate producerTemplate;
 
-    private String institutionCode;
+    @Autowired
+    private PropertyUtil propertyUtil;
 
-    @Value("${matching.reports.email.pul.to}")
-    private String matchingPulEmailTo;
-
-    @Value("${matching.reports.email.cul.to}")
-    private String matchingCulEmailTo;
-
-    @Value("${matching.reports.email.nypl.to}")
-    private String matchingNyplEmailTo;
-
-    @Value("${accession.reports.email.pul.to}")
-    private String accessionPulEmailTo;
-
-    @Value("${accession.reports.email.cul.to}")
-    private String accessionCulEmailTo;
-
-    @Value("${accession.reports.email.nypl.to}")
-    private String accessionNyplEmailTo;
+    @Autowired
+    private CommonUtil commonUtil;
 
     @Value("${recap-las.email.recap.assist.email.to}")
     private String recapSupportEmailTo;
 
-    @Autowired
-    private PropertyUtil propertyUtil;
+    private String institutionCode;
 
     /**
      * Instantiates a new Email service.
@@ -138,15 +125,18 @@ public class EmailService {
         return emailPayLoad;
     }
 
-    private void getCc(EmailPayLoad emailPayLoad) {
-        matchingPulEmailTo = propertyUtil.getPropertyByInstitutionAndKey(RecapCommonConstants.PRINCETON, "email.matching.reports.to");
-        matchingCulEmailTo = propertyUtil.getPropertyByInstitutionAndKey(RecapCommonConstants.COLUMBIA, "email.matching.reports.to");
-        matchingNyplEmailTo = propertyUtil.getPropertyByInstitutionAndKey(RecapCommonConstants.NYPL, "email.matching.reports.to");
-
+    public void getCc(EmailPayLoad emailPayLoad) {
         StringBuilder cc = new StringBuilder();
-        cc.append(StringUtils.isNotBlank(matchingPulEmailTo) ? matchingPulEmailTo + "," : "");
-        cc.append(StringUtils.isNotBlank(matchingCulEmailTo) ? matchingCulEmailTo + "," : "");
-        cc.append(StringUtils.isNotBlank(matchingNyplEmailTo) ? matchingNyplEmailTo : "");
+        List<String> institutionCodes = commonUtil.getAllInstitutionCodes();
+        int i = 0;
+        for (String institution : institutionCodes) {
+            String matchingEmailTo = propertyUtil.getPropertyByInstitutionAndKey(institution, "email.matching.reports.to");
+            if (i++ == institutionCodes.size() - 1) { // Last iteration
+                cc.append(StringUtils.isNotBlank(matchingEmailTo) ? matchingEmailTo : "");
+            } else {
+                cc.append(StringUtils.isNotBlank(matchingEmailTo) ? matchingEmailTo + "," : "");
+            }
+        }
         emailPayLoad.setCc(cc.toString());
     }
 
