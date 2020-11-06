@@ -361,4 +361,18 @@ public class CommonUtil {
         }
         return solrDocuments;
     }
+
+    public List<String> getAllInstitutionCodes() {
+        List<String> institutionCodes = new ArrayList<>();
+        try {
+            Iterable<InstitutionEntity> institutionEntities = institutionDetailsRepository.findAll();
+            for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
+                InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
+                institutionCodes.add(institutionEntity.getInstitutionCode());
+            }
+        } catch (Exception e) {
+            logger.error(RecapCommonConstants.LOG_ERROR,e);
+        }
+        return institutionCodes;
+    }
 }
