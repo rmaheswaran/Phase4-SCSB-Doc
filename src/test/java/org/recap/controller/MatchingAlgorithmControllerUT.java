@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.function.Function;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotEquals;
@@ -147,43 +148,91 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
     }
 
     @Test
+    public void matchingAlgorithmFullTestException() throws Exception {
+        Date matchingAlgoDate = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        String matchingAlgoDateString = sdf.format(matchingAlgoDate);
+        Mockito.when(matchingAlgoController.matchingAlgorithmFindMatchingAndReports()).thenReturn(RecapConstants.STATUS_DONE);
+        Mockito.when(matchingAlgoController.updateMonographCGDInDB()).thenReturn(RecapConstants.STATUS_DONE);
+        Mockito.when(matchingAlgoController.updateSerialCGDInDB()).thenReturn(RecapConstants.STATUS_DONE);
+        Mockito.when(matchingAlgoController.updateMvmCGDInDB()).thenReturn(RecapConstants.STATUS_DONE);
+        Mockito.when(matchingAlgoController.updateCGDInSolr(matchingAlgoDateString)).thenThrow(NullPointerException.class);
+        Mockito.when(matchingAlgoController.matchingAlgorithmFull(matchingAlgoDateString)).thenCallRealMethod();
+        String response = matchingAlgoController.matchingAlgorithmFull(matchingAlgoDateString);
+        assertTrue(response.contains(RecapConstants.STATUS_FAILED));
+    }
+
+    @Test
     public void matchingAlgorithmFindMatchingAndReportsTest() throws Exception {
-        Map<String, Integer> matchingAlgoMap = new HashMap<>();
-        matchingAlgoMap.put("pulMatchingCount", 1);
-        matchingAlgoMap.put("culMatchingCount", 2);
-        matchingAlgoMap.put("nyplMatchingCount", 3);
         Mockito.when(matchingAlgoController.getMatchingAlgorithmHelperService()).thenReturn(matchingAlgorithmHelperService);
         Mockito.when(matchingAlgorithmHelperService.findMatchingAndPopulateMatchPointsEntities()).thenReturn(Long.valueOf(10));
         Mockito.when(matchingAlgorithmHelperService.populateMatchingBibEntities()).thenReturn(Long.valueOf(10));
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCandISBN(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndISSN(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndLCCN(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndISSN(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndLCCN(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISSNAndLCCN(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForSingleMatch(batchSize)).thenReturn(matchingAlgoMap);
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCandISBN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndISSN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndLCCN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndISSN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndLCCN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForISSNAndLCCN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForSingleMatch(batchSize)).thenReturn(getStringIntegerMap());
         Mockito.when(matchingAlgoController.matchingAlgorithmFindMatchingAndReports()).thenCallRealMethod();
         String response = matchingAlgoController.matchingAlgorithmFindMatchingAndReports();
         assertTrue(response.contains(RecapConstants.STATUS_DONE));
     }
 
     @Test
-    public void matchingAlgorithmOnlyReports() throws Exception {
+    public void matchingAlgorithmFindMatchingAndReportsTestException() throws Exception {
+        Mockito.when(matchingAlgoController.getMatchingAlgorithmHelperService()).thenReturn(matchingAlgorithmHelperService);
+        Mockito.when(matchingAlgorithmHelperService.findMatchingAndPopulateMatchPointsEntities()).thenReturn(Long.valueOf(10));
+        Mockito.when(matchingAlgorithmHelperService.populateMatchingBibEntities()).thenReturn(Long.valueOf(10));
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCandISBN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndISSN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndLCCN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndISSN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndLCCN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForISSNAndLCCN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForSingleMatch(batchSize)).thenThrow(NullPointerException.class);
+        Mockito.when(matchingAlgoController.matchingAlgorithmFindMatchingAndReports()).thenCallRealMethod();
+        String response = matchingAlgoController.matchingAlgorithmFindMatchingAndReports();
+        assertTrue(response.contains(RecapConstants.STATUS_FAILED));
+    }
+
+
+    private Map<String, Integer> getStringIntegerMap() {
         Map<String, Integer> matchingAlgoMap = new HashMap<>();
         matchingAlgoMap.put("pulMatchingCount", 1);
         matchingAlgoMap.put("culMatchingCount", 2);
         matchingAlgoMap.put("nyplMatchingCount", 3);
+        return matchingAlgoMap;
+    }
+
+    @Test
+    public void matchingAlgorithmOnlyReports() throws Exception {
         Mockito.when(matchingAlgoController.getMatchingAlgorithmHelperService()).thenReturn(matchingAlgorithmHelperService);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCandISBN(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndISSN(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndLCCN(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndISSN(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndLCCN(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISSNAndLCCN(batchSize)).thenReturn(matchingAlgoMap);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForSingleMatch(batchSize)).thenReturn(matchingAlgoMap);
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCandISBN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndISSN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndLCCN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndISSN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndLCCN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForISSNAndLCCN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForSingleMatch(batchSize)).thenReturn(getStringIntegerMap());
         Mockito.when(matchingAlgoController.matchingAlgorithmOnlyReports()).thenCallRealMethod();
         String response = matchingAlgoController.matchingAlgorithmOnlyReports();
         assertTrue(response.contains(RecapConstants.STATUS_DONE));
+    }
+
+    @Test
+    public void matchingAlgorithmOnlyReportsException() throws Exception {
+        Mockito.when(matchingAlgoController.getMatchingAlgorithmHelperService()).thenReturn(matchingAlgorithmHelperService);
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCandISBN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndISSN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndLCCN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndISSN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndLCCN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForISSNAndLCCN(batchSize)).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForSingleMatch(batchSize)).thenThrow(NullPointerException.class);
+        Mockito.when(matchingAlgoController.matchingAlgorithmOnlyReports()).thenCallRealMethod();
+        String response = matchingAlgoController.matchingAlgorithmOnlyReports();
+        assertTrue(response.contains(RecapConstants.STATUS_FAILED));
     }
 
     @Test
@@ -196,26 +245,15 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
     }
 
     @Test
-    public void testUpdateMonographCGDInDB() throws Exception {
+    public void updateMonographCGDInDBException() throws Exception {
         Mockito.when(matchingAlgoController.getMatchingAlgorithmUpdateCGDService()).thenReturn(matchingAlgorithmUpdateCGDService);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getMatchingAlgorithmUtil()).thenReturn(matchingAlgorithmUtil);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository()).thenReturn(reportDataDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getBibliographicDetailsRepository()).thenReturn(mockedBibliographicDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getProducerTemplate()).thenReturn(producerTemplate);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository()).thenReturn(collectionGroupDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getItemChangeLogDetailsRepository()).thenReturn(itemChangeLogDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getItemDetailsRepository()).thenReturn(itemDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo()).thenReturn(activeMqQueuesInfo);
-        Mockito.when(matchingAlgorithmUtil.getReportDetailRepository()).thenReturn(reportDetailRepository);
-        Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingMonograph(RecapCommonConstants.BIB_ID)).thenReturn(Long.valueOf(10000));
-        Mockito.doCallRealMethod().when(matchingAlgorithmUpdateCGDService).updateCGDProcessForMonographs(Mockito.any());
-        Mockito.doCallRealMethod().when(matchingAlgorithmUtil).updateMonographicSetRecords(Mockito.any(),Mockito.any());
-        Mockito.doCallRealMethod().when(matchingAlgorithmUtil).updateExceptionRecords(Mockito.any(),Mockito.any());
-        Mockito.doCallRealMethod().when(matchingAlgorithmUtil).saveCGDUpdatedSummaryReport(Mockito.any());
+        Mockito.doThrow(NullPointerException.class).when(matchingAlgorithmUpdateCGDService).updateCGDProcessForMonographs(batchSize);
         Mockito.when(matchingAlgoController.updateMonographCGDInDB()).thenCallRealMethod();
         String response = matchingAlgoController.updateMonographCGDInDB();
-        assertTrue(response.contains(RecapConstants.STATUS_DONE));
+        assertTrue(response.contains(RecapConstants.STATUS_FAILED));
     }
+
+
 
     @Test
     public void updateSerialCGDInDB() throws Exception {
@@ -227,25 +265,14 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
     }
 
     @Test
-    public void testUpdateSerialCGDInDB() throws Exception {
+    public void updateSerialCGDInDBException() throws Exception {
         Mockito.when(matchingAlgoController.getMatchingAlgorithmUpdateCGDService()).thenReturn(matchingAlgorithmUpdateCGDService);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getMatchingAlgorithmUtil()).thenReturn(matchingAlgorithmUtil);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository()).thenReturn(reportDataDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getBibliographicDetailsRepository()).thenReturn(mockedBibliographicDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getProducerTemplate()).thenReturn(producerTemplate);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository()).thenReturn(collectionGroupDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getItemChangeLogDetailsRepository()).thenReturn(itemChangeLogDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getItemDetailsRepository()).thenReturn(itemDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo()).thenReturn(activeMqQueuesInfo);
-        Mockito.when(matchingAlgorithmUtil.getReportDetailRepository()).thenReturn(reportDetailRepository);
-        Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(RecapCommonConstants.BIB_ID)).thenReturn(Long.valueOf(10000));
-        Mockito.doCallRealMethod().when(matchingAlgorithmUtil).saveCGDUpdatedSummaryReport(Mockito.any());
-        Mockito.when(matchingAlgoController.getMatchingAlgorithmUpdateCGDService()).thenReturn(matchingAlgorithmUpdateCGDService);
-        Mockito.doCallRealMethod().when(matchingAlgorithmUpdateCGDService).updateCGDProcessForSerials(batchSize);
+        Mockito.doThrow(NullPointerException.class).when(matchingAlgorithmUpdateCGDService).updateCGDProcessForSerials(batchSize);
         Mockito.when(matchingAlgoController.updateSerialCGDInDB()).thenCallRealMethod();
         String response = matchingAlgoController.updateSerialCGDInDB();
-        assertTrue(response.contains(RecapConstants.STATUS_DONE));
+        assertTrue(response.contains(RecapConstants.STATUS_FAILED));
     }
+
 
     @Test
     public void updateMvmCGDInDB() throws Exception {
@@ -257,24 +284,15 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
     }
 
     @Test
-    public void testUpdateMvmCGDInDB() throws Exception {
+    public void updateMvmCGDInDBException() throws Exception {
         Mockito.when(matchingAlgoController.getMatchingAlgorithmUpdateCGDService()).thenReturn(matchingAlgorithmUpdateCGDService);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getMatchingAlgorithmUtil()).thenReturn(matchingAlgorithmUtil);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository()).thenReturn(reportDataDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getBibliographicDetailsRepository()).thenReturn(mockedBibliographicDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getProducerTemplate()).thenReturn(producerTemplate);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository()).thenReturn(collectionGroupDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getItemChangeLogDetailsRepository()).thenReturn(itemChangeLogDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getItemDetailsRepository()).thenReturn(itemDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo()).thenReturn(activeMqQueuesInfo);
-        Mockito.when(matchingAlgorithmUtil.getReportDetailRepository()).thenReturn(reportDetailRepository);
-        Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingMVMs(RecapCommonConstants.BIB_ID)).thenReturn(Long.valueOf(10000));
-        Mockito.doCallRealMethod().when(matchingAlgorithmUtil).saveCGDUpdatedSummaryReport(Mockito.any());
-        Mockito.doCallRealMethod().when(matchingAlgorithmUpdateCGDService).updateCGDProcessForMVMs(batchSize);
+        Mockito.doThrow(NullPointerException.class).when(matchingAlgorithmUpdateCGDService).updateCGDProcessForMVMs(batchSize);
         Mockito.when(matchingAlgoController.updateMvmCGDInDB()).thenCallRealMethod();
         String response = matchingAlgoController.updateMvmCGDInDB();
-        assertTrue(response.contains(RecapConstants.STATUS_DONE));
+        assertTrue(response.contains(RecapConstants.STATUS_FAILED));
     }
+
+
 
     @Test
     public void updateCGDInSolr() throws Exception {
@@ -295,18 +313,21 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
     }
 
     @Test
-    public void populateDataForDataDump() throws Exception {
-        Mockito.when(matchingAlgoController.getMatchingBibInfoDetailService()).thenReturn(matchingBibInfoDetailService);
-        Mockito.when(matchingBibInfoDetailService.getReportDataDetailsRepository()).thenReturn(reportDataDetailsRepository);
-        Mockito.when(matchingBibInfoDetailService.getReportDetailRepository()).thenReturn(reportDetailRepository);
-        Mockito.when(matchingBibInfoDetailService.getBatchSize()).thenReturn(batchSize);
-        Mockito.when(reportDetailRepository.getCountByType(Mockito.any())).thenReturn(Integer.valueOf(100));
-        Mockito.when(reportDetailRepository.getRecordNumByType(Mockito.any(),Mockito.any())).thenReturn(getRecordNumber());
-        Mockito.when(reportDataDetailsRepository.getRecordsForMatchingBibInfo(Mockito.any(),Mockito.any())).thenReturn(Arrays.asList(new ReportDataEntity()));
-        Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo()).thenCallRealMethod();
-        Mockito.when(matchingAlgoController.populateDataForDataDump()).thenCallRealMethod();
-        String response = matchingAlgoController.populateDataForDataDump();
-        assertTrue(response.contains(RecapCommonConstants.SUCCESS));
+    public void updateCGDInSolrException() throws Exception {
+        Date matchingAlgoDate = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        String matchingAlgoDateString = sdf.format(matchingAlgoDate);
+        Date updatedDate = new Date();
+        try {
+            updatedDate = sdf.parse(matchingAlgoDateString);
+        } catch (ParseException e) {
+            logger.error("Exception while parsing Date : " + e.getMessage());
+        }
+        Mockito.when(matchingAlgoController.getMatchingBibItemIndexExecutorService()).thenReturn(matchingBibItemIndexExecutorService);
+        Mockito.when(matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, updatedDate)).thenThrow(NullPointerException.class);
+        Mockito.when(matchingAlgoController.updateCGDInSolr(matchingAlgoDateString)).thenCallRealMethod();
+        String response = matchingAlgoController.updateCGDInSolr(matchingAlgoDateString);
+        assertTrue(response.contains(RecapConstants.STATUS_FAILED));
     }
 
     @Test
@@ -316,6 +337,15 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         Mockito.when(matchingAlgoController.populateDataForDataDump()).thenCallRealMethod();
         String response = matchingAlgoController.populateDataForDataDump();
         assertTrue(response.contains(RecapCommonConstants.SUCCESS));
+    }
+
+    @Test
+    public void testPopulateDataForDataDumpException() throws Exception {
+        Mockito.when(matchingAlgoController.getMatchingBibInfoDetailService()).thenReturn(matchingBibInfoDetailService);
+        Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo()).thenThrow(NullPointerException.class);
+        Mockito.when(matchingAlgoController.populateDataForDataDump()).thenCallRealMethod();
+        String response = matchingAlgoController.populateDataForDataDump();
+        assertNull(response);
     }
 
     @Test

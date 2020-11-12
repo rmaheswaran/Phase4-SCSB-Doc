@@ -4,7 +4,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.camel.EmailPayLoad;
 import org.recap.util.CommonUtil;

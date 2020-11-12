@@ -6,15 +6,20 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
+import org.recap.model.search.resolver.impl.bib.IsDeletedBibValueResolver;
 import org.recap.repository.jpa.ReportDetailRepository;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -25,24 +30,104 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by akulak on 30/5/17.
  */
-public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCase{
+public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
 
     @InjectMocks
-    @Spy
     FTPSubmitCollectionReportGenerator ftpSubmitCollectionReportGenerator;
 
     @InjectMocks
-    @Spy
     FTPSubmitCollectionSummaryReportGenerator ftpSubmitCollectionSummaryReportGenerator;
+
+    @InjectMocks
+    FTPSubmitCollectionFailureReportGenerator FTPSubmitCollectionFailureReportGenerator;
+
+    @InjectMocks
+    FTPSubmitCollectionSuccessReportGenerator FTPSubmitCollectionSuccessReportGenerator;
+
+    @InjectMocks
+    FSSubmitCollectionFailureReportGenerator FSSubmitCollectionFailureReportGenerator;
+
+    @InjectMocks
+    FSSubmitCollectionSuccessReportGenerator FSSubmitCollectionSuccessReportGenerator;
+
+    @InjectMocks
+    FSSubmitCollectionSummaryReportGenerator FSSubmitCollectionSummaryReportGenerator;
+
+
+    @InjectMocks
+    FTPSolrExceptionReportGenerator FTPSolrExceptionReportGenerator;
+
+
+    @InjectMocks
+    CSVSolrExceptionReportGenerator CSVSolrExceptionReportGenerator;
 
     @Mock
     private ReportDetailRepository reportDetailRepository;
 
     @Mock
-    private ProducerTemplate producerTemplate;
+    ProducerTemplate producerTemplate;
 
     @Mock
     CamelContext camelContext;
+
+    @InjectMocks
+    ReportGenerator reportGenerator;
+
+
+    @Test
+    public void testFTPSubmitCollectionFailureReportGenerator() throws Exception {
+        List<ReportEntity> reportEntityList =saveSubmitCollectionExceptionReport(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT);
+        Mockito.when(reportDetailRepository.findByFileLikeAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=FTPSubmitCollectionFailureReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        String generatedReportFileName = reportGenerator.generateReport(RecapConstants.FTP_SUBMIT_COLLECTION_FAILURE_REPORT_Q, RecapCommonConstants.LCCN_CRITERIA, RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT, RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
+        assertNotNull(generatedReportFileName);
+    }
+
+
+
+    @Test
+    public void testFSSubmitCollectionFailureReportGenerator() throws Exception {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        ReportEntity reportEntity=new ReportEntity();
+        reportEntityList.add(reportEntity);
+        String generatedReportFileName = FSSubmitCollectionFailureReportGenerator.generateReport(RecapConstants.FS_SUBMIT_COLLECTION_FAILURE_REPORT_Q,reportEntityList);
+        assertTrue(FSSubmitCollectionFailureReportGenerator.isTransmitted(RecapCommonConstants.FILE_SYSTEM));
+        assertTrue(FSSubmitCollectionFailureReportGenerator.isInterested(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT));
+    }
+
+
+  @Test
+    public void testFTPSolrExceptionReportGenerator() throws Exception {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        ReportEntity reportEntity=new ReportEntity();
+        reportEntityList.add(reportEntity);
+        String generatedReportFileName = FTPSolrExceptionReportGenerator.generateReport(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q,reportEntityList);
+        assertTrue(FTPSolrExceptionReportGenerator.isTransmitted(RecapCommonConstants.FTP));
+        assertTrue(FTPSolrExceptionReportGenerator.isInterested(RecapCommonConstants.SOLR_INDEX_EXCEPTION));
+    }
+
+    @Test
+    public void testCSVSolrExceptionReportGenerator() throws Exception {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        ReportEntity reportEntity=new ReportEntity();
+        reportEntityList.add(reportEntity);
+        String generatedReportFileName = CSVSolrExceptionReportGenerator.generateReport(RecapCommonConstants.CSV_SOLR_EXCEPTION_REPORT_Q,reportEntityList);
+        assertTrue(CSVSolrExceptionReportGenerator.isTransmitted(RecapCommonConstants.FILE_SYSTEM));
+        assertTrue(CSVSolrExceptionReportGenerator.isInterested(RecapCommonConstants.SOLR_INDEX_EXCEPTION));
+    }
+
+    @Test
+    public void FSSubmitCollectionSummaryReportGenerator() throws Exception {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        ReportEntity reportEntity=new ReportEntity();
+        reportEntityList.add(reportEntity);
+        String generatedReportFileName = FSSubmitCollectionSummaryReportGenerator.generateReport(RecapConstants.FS_SUBMIT_COLLECTION_SUMMARY_REPORT_Q,reportEntityList);
+        assertTrue(FSSubmitCollectionSummaryReportGenerator.isTransmitted(RecapCommonConstants.FILE_SYSTEM));
+        assertTrue(FSSubmitCollectionSummaryReportGenerator.isInterested(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY));
+    }
 
     @Test
     public void testGenerateReport() throws Exception{
@@ -52,8 +137,10 @@ public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCase{
         boolean isTransmitted = ftpSubmitCollectionReportGenerator.isTransmitted(RecapCommonConstants.FTP);
         assertTrue(isTransmitted);
         String response = ftpSubmitCollectionReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT));
+        String errorResponse = ftpSubmitCollectionReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,null);
         assertNotNull(response);
-        assertEquals("Success",response);
+        assertEquals(RecapCommonConstants.SUCCESS,response);
+        assertEquals(RecapConstants.ERROR,errorResponse);
     }
 
     @Test
@@ -91,8 +178,31 @@ public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCase{
         owningInstitutionReportDataEntity.setHeaderValue("1");
         reportDataEntities.add(owningInstitutionReportDataEntity);
 
+        ReportDataEntity message = new ReportDataEntity();
+        message.setHeaderName(RecapCommonConstants.MESSAGE);
+        message.setHeaderValue("1");
+        reportDataEntities.add(message);
+
         reportEntity.setReportDataEntities(reportDataEntities);
         reportEntityList.add(reportEntity);
         return reportEntityList;
+    }
+
+    public Date getFromDate(Date createdDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(createdDate);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        return  cal.getTime();
+    }
+
+    public Date getToDate(Date createdDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(createdDate);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        return cal.getTime();
     }
 }

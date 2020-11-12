@@ -1,19 +1,25 @@
 package org.recap.repository.solr.temp;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.mockito.Mock;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.solr.Item;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.solr.core.SolrTemplate;
 
 import static junit.framework.TestCase.assertNotNull;
 
 /**
  * Created by premkb on 1/8/16.
  */
-public class ItemCrudRepositoryMultiCoreSupportUT extends BaseTestCase{
+
+public class ItemCrudRepositoryMultiCoreSupportUT extends BaseTestCaseUT {
 
     @Value("${solr.url}")
     String solrUrl;
+
+    @Mock
+    SolrTemplate solrTemplate;
 
     @Test
     public void instantiateItemCrudRepositoryMultiCoreSupport(){

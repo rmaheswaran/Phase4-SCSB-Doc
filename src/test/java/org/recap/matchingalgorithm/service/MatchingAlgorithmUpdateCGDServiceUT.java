@@ -1,127 +1,169 @@
 package org.recap.matchingalgorithm.service;
 
-import org.apache.camel.ProducerTemplate;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
+import org.recap.RecapCommonConstants;
+import org.recap.matchingalgorithm.MatchingCounter;
+import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.ItemStatusEntity;
+import org.recap.model.jpa.ReportDataEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
 import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.MatchingAlgorithmUtil;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by hemalathas on 7/7/17.
  */
-public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCase{
+public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCaseUT {
 
-    @Mock
-    private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
-
-    @Mock
-    private InstitutionDetailsRepository institutionDetailsRepository;
-
-    @Mock
-    private Map collectionGroupMap;
-
-    @Mock
-    private Map institutionMap;
-
-    @Mock
-    private BibliographicDetailsRepository bibliographicDetailsRepository;
-
-    @Mock
-    private ProducerTemplate producerTemplate;
-
-    @Mock
-    private ReportDataDetailsRepository reportDataDetailsRepository;
-
-    @Mock
-    private ItemChangeLogDetailsRepository itemChangeLogDetailsRepository;
-
-    @Mock
-    private ActiveMqQueuesInfo activeMqQueuesInfo;
-
-    @Mock
-    private MatchingAlgorithmUtil matchingAlgorithmUtil;
-
-    @Mock
-    private ItemDetailsRepository itemDetailsRepository;
-
-    @Mock
+    @InjectMocks
     MatchingAlgorithmUpdateCGDService matchingAlgorithmUpdateCGDService;
 
-    @Test
-    public void testCollectionGroupMap(){
-        CollectionGroupEntity collectionGroupEntity = new CollectionGroupEntity();
-        collectionGroupEntity.setCollectionGroupCode("Shared");
-        collectionGroupEntity.setId(1);
-        List<CollectionGroupEntity> collectionGroupEntityList = new ArrayList<>();
-        collectionGroupEntityList.add(collectionGroupEntity);
-        Iterable<CollectionGroupEntity> collectionGroupEntityIterable = collectionGroupEntityList;
-        Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository()).thenReturn(collectionGroupDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository().findAll()).thenReturn((List<CollectionGroupEntity>) collectionGroupEntityIterable);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupMap()).thenCallRealMethod();
-        Map map = matchingAlgorithmUpdateCGDService.getCollectionGroupMap();
-        assertNotNull(map);
-        assertTrue(map.size() == 1);
-        assertEquals(map.get("Shared"),1);
+    @Mock
+    CollectionGroupDetailsRepository collectionGroupDetailsRepository;
+
+    @Mock
+    InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Mock
+    ReportDataDetailsRepository reportDataDetailsRepository;
+
+    @Mock
+    BibliographicDetailsRepository bibliographicDetailsRepository;
+
+    @Mock
+    MatchingCounter matchingCounter;
+
+    @Mock
+    MatchingAlgorithmUtil matchingAlgorithmUtil;
+
+    @Mock
+    ActiveMqQueuesInfo activeMqQueuesInfo;
+
+    @Mock
+    ItemChangeLogDetailsRepository itemChangeLogDetailsRepository;
+
+
+
+        @Test
+        public void updateCGDProcessForMVMs() throws SolrServerException, InterruptedException, IOException {
+        ReflectionTestUtils.setField(matchingCounter,"pulSharedCount",0);
+        ReflectionTestUtils.setField(matchingCounter,"culSharedCount",0);
+        ReflectionTestUtils.setField(matchingCounter,"nyplSharedCount",0);
+        Mockito.when(institutionDetailsRepository.findAll()).thenReturn(getInstitutionEntities());
+        Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(getCollectionGroupEntities());
+        Mockito.when(activeMqQueuesInfo.getActivemqQueuesInfo(Mockito.anyString())).thenReturn(1).thenReturn(0);
+            matchingAlgorithmUpdateCGDService.updateCGDProcessForMonographs(1);
+            matchingAlgorithmUpdateCGDService.updateCGDProcessForMVMs(1);
+            matchingAlgorithmUpdateCGDService.updateCGDProcessForSerials(1);
+        assertNotNull(getCollectionGroupEntities());
     }
 
-    @Test
-    public void testInstitutionEntityMap(){
+        @Test
+    public void getItemsCountForSerialsMatching(){
+        Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(Mockito.anyString())).thenReturn(1l);
+        List<ReportDataEntity> reportDataEntities=new ArrayList<>();
+        ReportDataEntity reportDataEntity=new ReportDataEntity();
+        reportDataEntity.setHeaderName(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM);
+        reportDataEntity.setHeaderValue("123");
+        reportDataEntities.add(reportDataEntity);
+        Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingSerials(Mockito.anyString(),Mockito.anyLong(),Mockito.anyLong())).thenReturn(reportDataEntities);
+        List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
+        bibliographicEntities.add(getBibliographicEntity());
+        Mockito.when(bibliographicDetailsRepository.findByBibliographicIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
+        Mockito.when(institutionDetailsRepository.findAll()).thenReturn(getInstitutionEntities());
+        Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(getCollectionGroupEntities());
+        ReflectionTestUtils.setField(matchingCounter,"culCGDUpdatedSharedCount",0);
+        matchingAlgorithmUpdateCGDService.getItemsCountForSerialsMatching(1);
+        assertNotNull(bibliographicEntities);
+    }
+
+    private List<InstitutionEntity> getInstitutionEntities() {
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setInstitutionCode("PUL");
         institutionEntity.setId(1);
         List<InstitutionEntity> institutionEntityList = new ArrayList<>();
         institutionEntityList.add(institutionEntity);
-        Iterable<InstitutionEntity> institutionEntityIterable = institutionEntityList;
-        Mockito.when(matchingAlgorithmUpdateCGDService.getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getInstitutionDetailsRepository().findAll()).thenReturn((List<InstitutionEntity>) institutionEntityIterable);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getInstitutionEntityMap()).thenCallRealMethod();
-        Map map = matchingAlgorithmUpdateCGDService.getInstitutionEntityMap();
-        assertNotNull(map);
-        assertTrue(map.size() == 1);
-        assertEquals(map.get("PUL"),1);
+        return institutionEntityList;
     }
 
-    @Test
-    public void checkGetterServices(){
-        Mockito.when(matchingAlgorithmUpdateCGDService.getBibliographicDetailsRepository()).thenCallRealMethod();
-        Mockito.when(matchingAlgorithmUpdateCGDService.getProducerTemplate()).thenCallRealMethod();
-        Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository()).thenCallRealMethod();
-        Mockito.when(matchingAlgorithmUpdateCGDService.getInstitutionDetailsRepository()).thenCallRealMethod();
-        Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository()).thenCallRealMethod();
-        Mockito.when(matchingAlgorithmUpdateCGDService.getItemChangeLogDetailsRepository()).thenCallRealMethod();
-        Mockito.when(matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo()).thenCallRealMethod();
-        Mockito.when(matchingAlgorithmUpdateCGDService.getMatchingAlgorithmUtil()).thenCallRealMethod();
-        Mockito.when(matchingAlgorithmUpdateCGDService.getItemDetailsRepository()).thenCallRealMethod();
-        assertNotEquals(bibliographicDetailsRepository,matchingAlgorithmUpdateCGDService.getBibliographicDetailsRepository());
-        assertNotEquals(producerTemplate,matchingAlgorithmUpdateCGDService.getProducerTemplate());
-        assertNotEquals(collectionGroupDetailsRepository,matchingAlgorithmUpdateCGDService.getCollectionGroupDetailsRepository());
-        assertNotEquals(institutionDetailsRepository,matchingAlgorithmUpdateCGDService.getInstitutionDetailsRepository());
-        assertNotEquals(reportDataDetailsRepository,matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository());
-        assertNotEquals(itemChangeLogDetailsRepository,matchingAlgorithmUpdateCGDService.getItemChangeLogDetailsRepository());
-        assertNotEquals(activeMqQueuesInfo,matchingAlgorithmUpdateCGDService.getActiveMqQueuesInfo());
-        assertNotEquals(matchingAlgorithmUtil,matchingAlgorithmUpdateCGDService.getMatchingAlgorithmUtil());
-        assertNotEquals(itemDetailsRepository,matchingAlgorithmUpdateCGDService.getItemDetailsRepository());
+    private List<CollectionGroupEntity> getCollectionGroupEntities() {
+        CollectionGroupEntity collectionGroupEntity = new CollectionGroupEntity();
+        collectionGroupEntity.setCollectionGroupCode("Shared");
+        collectionGroupEntity.setId(1);
+        List<CollectionGroupEntity> collectionGroupEntityList = new ArrayList<>();
+        collectionGroupEntityList.add(collectionGroupEntity);
+        return collectionGroupEntityList;
     }
 
+    private BibliographicEntity getBibliographicEntity() {
+        BibliographicEntity bibliographicEntity = new BibliographicEntity();
+        bibliographicEntity.setContent("bibContent".getBytes());
+        bibliographicEntity.setOwningInstitutionId(2);
+        Random random = new Random();
+        String owningInstitutionBibId = String.valueOf(random.nextInt());
+        bibliographicEntity.setOwningInstitutionBibId(owningInstitutionBibId);
+        bibliographicEntity.setCreatedDate(new Date());
+        bibliographicEntity.setCreatedBy("tst");
+        bibliographicEntity.setLastUpdatedDate(new Date());
+        bibliographicEntity.setLastUpdatedBy("tst");
+        bibliographicEntity.setInstitutionEntity(getInstitutionEntity());
+        bibliographicEntity.setItemEntities(Arrays.asList(getItemEntity()));
+        return bibliographicEntity;
+    }
 
+    private InstitutionEntity getInstitutionEntity() {
+        InstitutionEntity institutionEntity=new InstitutionEntity();
+        institutionEntity.setId(2);
+        institutionEntity.setInstitutionName("CUL");
+        institutionEntity.setInstitutionCode("CUL");
+        return institutionEntity;
+    }
+
+    private ItemEntity getItemEntity() {
+        ItemEntity itemEntity = new ItemEntity();
+        itemEntity.setItemId(1);
+        itemEntity.setOwningInstitutionId(2);
+        itemEntity.setCreatedDate(new Date());
+        itemEntity.setCreatedBy("etl");
+        itemEntity.setLastUpdatedDate(new Date());
+        itemEntity.setLastUpdatedBy("etl");
+        String barcode = "1234";
+        itemEntity.setBarcode(barcode);
+        itemEntity.setCallNumber("x.12321");
+        itemEntity.setCollectionGroupId(1);
+        itemEntity.setCallNumberType("1");
+        itemEntity.setCustomerCode("1");
+        itemEntity.setItemAvailabilityStatusId(1);
+        itemEntity.setDeleted(false);
+        itemEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
+        ItemStatusEntity itemStatusEntity = new ItemStatusEntity();
+        itemStatusEntity.setId(1);
+        itemStatusEntity.setStatusCode("Available");
+        itemStatusEntity.setStatusDescription("Available");
+        itemEntity.setItemStatusEntity(itemStatusEntity);
+        return itemEntity;
+    }
 
 }

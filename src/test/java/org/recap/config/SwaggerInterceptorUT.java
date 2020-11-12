@@ -30,18 +30,10 @@ public class SwaggerInterceptorUT extends BaseTestCase {
     @Test
     public void testPreHandle() throws Exception {
         httpServletRequest.setAttribute("api_key","recap");
+        swaggerInterceptor.afterCompletion(httpServletRequest,httpServletResponse,new Object(),new Exception());
+        swaggerInterceptor.postHandle(httpServletRequest,httpServletResponse,new Object(),new ModelAndView());
         boolean continueExport = swaggerInterceptor.preHandle(httpServletRequest,httpServletResponse,new Object());
         assertTrue(!continueExport);
-    }
-
-    @Test
-    public void testPostHandle() throws Exception {
-        swaggerInterceptor.postHandle(httpServletRequest,httpServletResponse,new Object(),new ModelAndView());
-    }
-
-    @Test
-    public void testAfterCompletion() throws Exception {
-        swaggerInterceptor.afterCompletion(httpServletRequest,httpServletResponse,new Object(),new Exception());
     }
 
 }

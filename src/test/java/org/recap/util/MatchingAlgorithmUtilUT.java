@@ -161,6 +161,23 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
         assertNotNull(countsMap);
     }
 
+   @Test
+    public void populateMatchingCounter() throws Exception {
+        Mockito.when(solrQueryBuilder.buildSolrQueryForCGDReports(Mockito.anyString(),Mockito.anyString())).thenReturn(new SolrQuery());
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        ReflectionTestUtils.setField(mockMatchingAlgorithmUtil, "solrTemplate", mocksolrTemplate1);
+        SolrClient solrClient = PowerMockito.mock(SolrClient.class);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        SolrDocumentList solrDocumentList = getSolrDocuments();
+        solrDocumentList.setNumFound(1);
+        Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+        mockMatchingAlgorithmUtil.populateMatchingCounter();
+        mockMatchingAlgorithmUtil.saveCGDUpdatedSummaryReport("test");
+        assertNotNull(solrDocumentList);
+    }
+
     @Test
     public void processPendingMatchingBibs() throws Exception {
         String[] recap={RecapCommonConstants.MATCH_POINT_FIELD_OCLC,RecapCommonConstants.MATCH_POINT_FIELD_ISSN,RecapCommonConstants.MATCH_POINT_FIELD_LCCN,RecapCommonConstants.MATCH_POINT_FIELD_ISBN};

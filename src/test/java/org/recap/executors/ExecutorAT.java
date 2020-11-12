@@ -5,14 +5,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
-import org.apache.solr.client.solrj.SolrResponse;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.params.CoreAdminParams;
 import org.apache.solr.common.util.NamedList;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -23,7 +21,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.admin.SolrAdmin;
@@ -33,7 +30,6 @@ import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.solr.main.BibSolrCrudRepository;
 import org.recap.repository.solr.main.ItemCrudRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -48,6 +44,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -112,7 +109,6 @@ public class ExecutorAT extends BaseTestCaseUT {
         coreAdminRequest.setAction(CoreAdminParams.CoreAdminAction.STATUS);
         SolrClient solrClient= PowerMockito.mock(SolrClient.class);
         long startNanos = System.nanoTime();
-        //T res = createResponse(client);
         SolrRequest solrRequest=new CoreAdminRequest();
         UpdateResponse res=  new UpdateResponse();
         res.setResponse(solrClient.request(solrRequest, null));
@@ -149,19 +145,13 @@ public class ExecutorAT extends BaseTestCaseUT {
         solrIndexRequest.setNumberOfDocs(docsPerThread);
         solrIndexRequest.setOwningInstitutionCode(null);
         solrIndexRequest.setCommitInterval(commitInterval);
-      // unloadCores();
-        bibSolrCrudRepository.deleteAll();
-        itemCrudRepository.deleteAll();
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
         Mockito.when(bibliographicDetailsRepository.count()).thenReturn(1l);
         SolrTemplate solrTemplate = PowerMockito.mock(SolrTemplate.class);
         UpdateResponse updateResponse=new UpdateResponse();
         updateResponse.setResponse(new NamedList<>());
         Mockito.when(solrTemplate.delete(Mockito.any(),Mockito.any())).thenReturn(updateResponse);
         bibItemIndexExecutorService.index(solrIndexRequest);
-        stopWatch.stop();
-        System.out.println("Total time taken:" + stopWatch.getTotalTimeSeconds());
+        assertNotNull(solrIndexRequest);
     }
 
     @Test
@@ -171,9 +161,8 @@ public class ExecutorAT extends BaseTestCaseUT {
         solrIndexRequest.setNumberOfDocs(docsPerThread);
         solrIndexRequest.setOwningInstitutionCode("CUL");
         solrIndexRequest.setCommitInterval(commitInterval);
-        bibSolrCrudRepository.deleteAll();
-        itemCrudRepository.deleteAll();
         indexDocuments(solrIndexRequest);
+        assertNotNull(solrIndexRequest);
     }
 
 
@@ -187,12 +176,10 @@ public class ExecutorAT extends BaseTestCaseUT {
         bibSolrCrudRepository.deleteAll();
         itemCrudRepository.deleteAll();
         indexDocuments(solrIndexRequest);
-       // Thread.sleep(2000);
         long firstCount = bibSolrCrudRepository.countByDocType("Bib");
         indexDocuments(solrIndexRequest);
-      //  Thread.sleep(2000);
         long secondCount = bibSolrCrudRepository.countByDocType("Bib");
-      //  assertEquals(firstCount, secondCount);
+        assertEquals(firstCount, secondCount);
     }
 
     private void indexDocuments(SolrIndexRequest solrIndexRequest) {
@@ -219,7 +206,6 @@ public class ExecutorAT extends BaseTestCaseUT {
         indexDocuments(solrIndexRequest);
         SolrTemplate solrTemplate = PowerMockito.mock(SolrTemplate.class);
         solrTemplate.commit(solrCore);
-       // Thread.sleep(5000);
         long solrCount = bibSolrCrudRepository.countByDocType("Bib");
         assertEquals(dbCount, solrCount);
     }
