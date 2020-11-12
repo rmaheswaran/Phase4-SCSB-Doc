@@ -111,6 +111,47 @@ public class BibUT extends BaseTestCaseUT {
         assertNotNull(bib.isDeletedBib());
         assertNotNull(bib.getBibCatalogingStatus());
 
+        Bib bib1 = new Bib();
+        bib1.setId("1");
+        bib1.setContentType("XML");
+        bib1.setBibId(101);
+        bib1.setOwningInstitutionBibId("CU0021524");
+        bib1.setDocType("Bib");
+        bib1.setTitle("Middleware for ReCAP");
+        bib1.setBarcode("1");
+        bib1.setTitle("Test Bib 1");
+        bib1.setAuthorDisplay("Hoepli, Nancy L");
+        bib1.setAuthorSearch(Arrays.asList("Hoepli, Nancy L", "Ibn Jubayr"));
+        bib1.setPublisher("McClelland & Stewart, limited");
+        bib1.setImprint("Toronto, McClelland & Stewart, limited [c1926]");
+        bib1.setIssn(issnList);
+        bib1.setIsbn(isbnList);
+        bib1.setOclcNumber(oclcNumberList);
+        bib1.setPublicationDate("1960");
+        bib1.setMaterialType("Material Type 1");
+        bib1.setNotes("Bibliographical footnotes 1");
+        bib1.setOwningInstitution("PUL");
+        bib1.setSubject("Arab countries Politics and government.");
+        bib1.setPublicationPlace("Paris");
+        bib1.setLccn("71448228");
+        bib1.setHoldingsIdList(holdingsIdList);
+        bib1.setBibItemIdList(itemIdList);
+        bib1.setTitleDisplay("test");
+        bib1.setTitleStartsWith("test");
+        bib1.setTitleSubFieldA("test");
+        bib1.setTitleSort("test");
+        bib1.setLeaderMaterialType("test");
+        bib1.setBibCreatedBy("Guest");
+        bib1.setBibCreatedDate(new Date());
+        bib1.setBibLastUpdatedBy("Guest");
+        bib1.setBibLastUpdatedDate(new Date());
+        bib1.setBibHoldingLastUpdatedDate(new Date());
+        bib1.setBibItemLastUpdatedDate(new Date());
+        bib1.setDeletedBib(false);
+        bib1.setBibCatalogingStatus("Incomplete");
+        bib1.setOwningInstHoldingsIdList(Arrays.asList(1));
+        bib.equals(bib1);
+
     }
 
 

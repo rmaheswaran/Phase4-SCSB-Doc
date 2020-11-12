@@ -11,10 +11,16 @@ import org.apache.camel.spi.UnitOfWork;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
+import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -34,18 +40,23 @@ public class EmailServiceUT extends BaseTestCaseUT {
     @Mock
     PropertyUtil propertyUtil;
 
+    @Mock
+    CommonUtil commonUtil;
+
+    @Value("${recap-las.email.recap.assist.email.to}")
+    String recapSupportEmailTo;
+
     @Test
     public void testRecalEmail() {
-        String[] institutions={RecapCommonConstants.NYPL,RecapCommonConstants.COLUMBIA,RecapCommonConstants.PRINCETON};
-        for (String institution :
-                institutions) {
-            Exchange exchange = getExchange(institution);
-            emailService.setInstitutionCode(institution);
+            ReflectionTestUtils.setField(emailService,"recapSupportEmailTo",recapSupportEmailTo);
+            List<String> institutionCodes= Arrays.asList(RecapCommonConstants.NYPL,RecapCommonConstants.COLUMBIA,RecapCommonConstants.PRINCETON);
+            Mockito.when(commonUtil.getAllInstitutionCodes()).thenReturn(institutionCodes);
+            Mockito.when(propertyUtil.getPropertyByInstitutionAndKey(Mockito.anyString(),Mockito.anyString())).thenReturn("test@htcindia.com");
+            Exchange exchange = getExchange(RecapCommonConstants.NYPL);
+            emailService.setInstitutionCode(RecapCommonConstants.NYPL);
             emailService.sendEmailForMatchingReports(exchange);
             emailService.sendEmailForAccessionReports(exchange);
-            assertEquals(institution,emailService.getInstitutionCode());
-        }
-
+            assertEquals(RecapCommonConstants.NYPL,emailService.getInstitutionCode());
     }
 
     private Exchange getExchange(String names) {

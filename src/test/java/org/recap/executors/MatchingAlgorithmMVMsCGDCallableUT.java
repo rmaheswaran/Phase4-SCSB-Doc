@@ -96,8 +96,7 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCase{
         MatchingAlgorithmMVMsCGDCallable matchingAlgorithmMVMsCGDCallable = new MatchingAlgorithmMVMsCGDCallable(reportDataDetailsRepository, mockedBibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
                 collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository);
         Object object = matchingAlgorithmMVMsCGDCallable.call();
-        assertEquals(collectionGroupId,1);
-        Thread.sleep(1000);
+        assertEquals(1,collectionGroupId);
         BibliographicEntity afterUpdate = mockedBibliographicDetailsRepository.findByBibliographicId(bibliographicEntity.getBibliographicId());
         assertNotNull(afterUpdate);
     }

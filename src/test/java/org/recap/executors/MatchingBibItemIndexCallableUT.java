@@ -69,15 +69,6 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCaseUT {
         Mockito.when(mockedBibliographicDetailsRepository.getCountOfBibliographicEntitiesForChangedItems(operationType, from, to)).thenReturn(Long.valueOf(1));
     }
 
-   /* @Test
-    public void testMatchingBibItemIndexCallable() throws Exception {
-        MatchingBibItemIndexCallable matchingBibItemIndexCallable = new MatchingBibItemIndexCallable(coreName, pageNum, docsPerPage, mockedBibliographicDetailsRepository, holdingsDetailsRepository,
-                producerTemplate, solrTemplate, operationType, from, to);
-        Object object = matchingBibItemIndexCallable.call();
-        assertNotNull(object);
-
-    }*/
-
     @Test
     public void testMatchingBibItemIndexExecutorService(){
         MatchingBibItemIndexExecutorService matchingBibItemIndexExecutorService = new MatchingBibItemIndexExecutorService();
@@ -91,7 +82,7 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCaseUT {
         MatchingBibItemIndexExecutorService matchingBibItemIndexExecutorService = new MatchingBibItemIndexExecutorService();
         matchingBibItemIndexExecutorService.setBibliographicDetailsRepository(mockedBibliographicDetailsRepository);
         int bibCountForChangedItems = matchingBibItemIndexExecutorService.getTotalDocCount(operationType, from, to);
-        assertEquals(bibCountForChangedItems,1);
+        assertEquals(1,bibCountForChangedItems);
     }
 
 

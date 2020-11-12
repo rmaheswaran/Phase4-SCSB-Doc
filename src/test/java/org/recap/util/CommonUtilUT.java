@@ -20,13 +20,17 @@ import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.HoldingsEntity;
+import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ItemStatusEntity;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.search.resolver.impl.item.ItemCreatedByValueResolver;
 import org.recap.model.solr.BibItem;
 import org.recap.model.solr.Item;
+import org.recap.repository.jpa.CollectionGroupDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemStatusDetailsRepository;
 import org.springframework.data.solr.core.SolrTemplate;
 
@@ -35,7 +39,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -53,6 +59,12 @@ public class CommonUtilUT extends BaseTestCaseUT {
 
     @Mock
     ItemStatusDetailsRepository itemStatusDetailsRepository;
+
+    @Mock
+    InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Mock
+    CollectionGroupDetailsRepository collectionGroupDetailsRepository;
 
     @Before
     public  void setup(){
@@ -73,6 +85,39 @@ public class CommonUtilUT extends BaseTestCaseUT {
         assertNotNull(commonUtil);
     }
 
+    @Test
+    public void getItemStatusMapException(){
+        Mockito.when(itemStatusDetailsRepository.findAll()).thenThrow(NullPointerException.class);
+        commonUtil.getItemStatusMap();
+        Mockito.when(collectionGroupDetailsRepository.findAll()).thenThrow(NullPointerException.class);
+        commonUtil.getCollectionGroupMap();
+        assertNotNull(commonUtil);
+    }
+
+    @Test
+    public void buildHoldingsEntity(){
+        BibliographicEntity bibliographicEntity=new BibliographicEntity();
+        StringBuilder errorMessage=new StringBuilder();
+        HoldingsEntity response=commonUtil.buildHoldingsEntity(bibliographicEntity,new Date(),errorMessage,"");
+        assertEquals("Holdings Content cannot be empty,",errorMessage.toString());
+    }
+
+    @Test
+    public void buildHoldingsEntityEmptyResponse(){
+        BibliographicEntity bibliographicEntity=new BibliographicEntity();
+        StringBuilder errorMessage=new StringBuilder();
+        HoldingsEntity emptyResponse=commonUtil.buildHoldingsEntity(bibliographicEntity,new Date(),errorMessage,"test");
+        assertEquals("",errorMessage.toString());
+    }
+
+    @Test
+    public void addHoldingsEntityToMap(){
+        HoldingsEntity holdingsEntity=new HoldingsEntity();
+        String owningid="fgrtf-1234fgrtf-1234fgrtf-1234fgrtf-1234fgrtf-1234fgrtf-1234fgrtf-1234fgrtf-1234fgrtf-1234fgrtf-1234fgrtf-1234";
+        Map<String, Object> response=commonUtil.addHoldingsEntityToMap(new HashMap<>(),holdingsEntity,"");
+        Map<String, Object> response1=commonUtil.addHoldingsEntityToMap(new HashMap<>(),holdingsEntity,owningid);
+        assertEquals(holdingsEntity,response1.get("holdingsEntity"));
+    }
 
     @Test
     public void getBibItemFromSolrFieldNames(){
@@ -93,6 +138,54 @@ public class CommonUtilUT extends BaseTestCaseUT {
         assertNotNull(holdingsValueResolvers);
         Item item= commonUtil.getItem(solrDocument);
         assertEquals("123",item.getRoot());
+
+    }
+
+    @Test
+    public void getAllInstitutionCodes(){
+        List<String> institutionCodes= Arrays.asList(RecapCommonConstants.PRINCETON);
+        Mockito.when(institutionDetailsRepository.findAll()).thenReturn(getInstitutionEntities());
+        List<String> response= commonUtil.getAllInstitutionCodes();
+        Map response1= commonUtil.getInstitutionEntityMap();
+        assertNotNull(response1);
+        assertEquals(institutionCodes,response);
+
+    }
+
+    @Test
+    public void getCollectionGroupMap(){
+        Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(getCollectionGroupEntities());
+        Map response= commonUtil.getCollectionGroupMap();
+        assertNotNull(response);
+
+    }
+
+    private List<CollectionGroupEntity> getCollectionGroupEntities() {
+        CollectionGroupEntity collectionGroupEntity = new CollectionGroupEntity();
+        collectionGroupEntity.setCollectionGroupCode("Shared");
+        collectionGroupEntity.setId(1);
+        List<CollectionGroupEntity> collectionGroupEntityList = new ArrayList<>();
+        collectionGroupEntityList.add(collectionGroupEntity);
+        return collectionGroupEntityList;
+    }
+
+    private List<InstitutionEntity> getInstitutionEntities() {
+        List<InstitutionEntity> institutionEntities = new ArrayList<>();
+        InstitutionEntity institutionEntity=new InstitutionEntity();
+        institutionEntity.setInstitutionCode("PUL");
+        institutionEntity.setInstitutionName("Princeton");
+        institutionEntity.setId(1);
+        institutionEntities.add(institutionEntity);
+        return institutionEntities;
+    }
+
+    @Test
+    public void getAllInstitutionCodesException(){
+        List<String> institutionCodes= Arrays.asList();
+        Mockito.when(institutionDetailsRepository.findAll()).thenThrow(NullPointerException.class);
+        commonUtil.getInstitutionEntityMap();
+        List<String> response= commonUtil.getAllInstitutionCodes();
+        assertEquals(institutionCodes,response);
 
     }
 

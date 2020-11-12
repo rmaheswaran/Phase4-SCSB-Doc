@@ -320,9 +320,8 @@ public class MarcUtilUT extends BaseTestCaseUT {
         int docsPerThread = 1;
         int totalDocs = 15;
 
-        System.out.println(totalDocs % (docsPerThread*numThreads));
-        System.out.println(totalDocs / (docsPerThread*numThreads));
-
+        assertNotNull(totalDocs % (docsPerThread*numThreads));
+        assertNotNull(totalDocs / (docsPerThread*numThreads));
 
     }
 
@@ -346,7 +345,7 @@ public class MarcUtilUT extends BaseTestCaseUT {
     public void readMarcXml() throws Exception {
         List<Record> records = getRecords();
         assertNotNull(records);
-        assertEquals(records.size(), 1);
+        assertEquals(1,records.size());
         Record record = records.get(0);
         assertNotNull(record);
     }
@@ -355,29 +354,29 @@ public class MarcUtilUT extends BaseTestCaseUT {
     public void getDataFieldValue() throws Exception {
         List<Record> records = getRecords();
         assertNotNull(records);
-        assertEquals(records.size(), 1);
+        assertEquals(1,records.size());
         Record record = records.get(0);
         assertNotNull(record);
         String fieldValue = marcUtil.getDataFieldValue(record, "876", 'p');
-        assertEquals(fieldValue, "32101095533293");
+        assertEquals( "32101095533293",fieldValue);
     }
 
     @Test
     public void getControlFieldValue() throws Exception {
         List<Record> records = getRecords();
         assertNotNull(records);
-        assertEquals(records.size(), 1);
+        assertEquals(1,records.size());
         Record record = records.get(0);
         assertNotNull(record);
         String controlFieldValue = marcUtil.getControlFieldValue(record, "001");
-        assertEquals(controlFieldValue, "9919400");
+        assertEquals("9919400",controlFieldValue);
     }
 
     @Test
     public void getInd1() throws Exception {
         List<Record> records = getRecords();
         assertNotNull(records);
-        assertEquals(records.size(), 1);
+        assertEquals(1,records.size());
         Record record = records.get(0);
         assertNotNull(record);
         Character ind1 = marcUtil.getInd1(record, "876", 'h');
@@ -388,7 +387,7 @@ public class MarcUtilUT extends BaseTestCaseUT {
     public void buildBibMarcRecord() throws Exception {
         List<Record> records = getRecords();
         assertNotNull(records);
-        assertEquals(records.size(), 1);
+        assertEquals(1,records.size());
         Record record = records.get(0);
         assertNotNull(record);
 
@@ -474,7 +473,7 @@ public class MarcUtilUT extends BaseTestCaseUT {
     public void writeMarcXml() throws Exception {
         List<Record> records = getRecords();
         assertNotNull(records);
-        assertEquals(records.size(), 1);
+        assertEquals(1,records.size());
         Record record = records.get(0);
         assertNotNull(record);
 
