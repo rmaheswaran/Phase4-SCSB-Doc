@@ -87,8 +87,7 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT {
         MatchingAlgorithmSerialsCGDCallable matchingAlgorithmSerialsCGDCallable = new MatchingAlgorithmSerialsCGDCallable(reportDataDetailsRepository,mockedBibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
                 collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository);
         Object object = matchingAlgorithmSerialsCGDCallable.call();
-        assertEquals(collectionGroupId,1);
-        Thread.sleep(1000);
+        assertEquals(1,collectionGroupId);
         BibliographicEntity afterUpdate = mockedBibliographicDetailsRepository.findByBibliographicId(bibliographicEntity.getBibliographicId());
         assertNotNull(afterUpdate);
     }

@@ -52,6 +52,14 @@ public class SearchItemResultRowUT {
         searchItemResultRows.add(searchItemResultRow4);
         searchItemResultRows.add(searchItemResultRow5);
 
+
+        List<SearchItemResultRow> searchNullItemResultRows = new ArrayList<>();
+        SearchItemResultRow searchItemResultRow6 = buildSearchItemResultRow(null, null, null, null, null, null, null);
+        searchItemResultRow6.equals(searchItemResultRow6);
+        searchItemResultRow6.equals(null);
+        searchItemResultRow6.hashCode();
+        searchNullItemResultRows.add(searchItemResultRow6);
+
         Collections.sort(searchItemResultRows);
         assertEquals("v. 100", searchItemResultRows.get(0).getChronologyAndEnum());
         assertEquals("v. 111-112", searchItemResultRows.get(1).getChronologyAndEnum());

@@ -5,6 +5,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
+import org.recap.RecapCommonConstants;
+import org.recap.RecapConstants;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
@@ -16,6 +18,9 @@ import org.recap.repository.jpa.ReportDetailRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -54,16 +59,53 @@ public class MatchingAlgorithmProcessorUT extends BaseTestCaseUT {
 
     @Test
     public void updateMatchingBibEntityTest() throws Exception {
-        Mockito.when(matchingBibDetailsRepository.saveAll(Mockito.anyCollection())).thenReturn(new ArrayList<>());
-        matchingAlgorithmProcessor.updateMatchingBibEntity( new HashMap());
+        Mockito.when(matchingBibDetailsRepository.updateStatusBasedOnBibs(Mockito.anyString(),Mockito.anyList())).thenReturn(1);
+        matchingAlgorithmProcessor.updateMatchingBibEntity(getMap());
+        assertNotNull(matchingAlgorithmProcessor);
+    }
+
+    private Map getMap() {
+        Map matchingBibMap=new HashMap();
+        matchingBibMap.put(RecapCommonConstants.STATUS,RecapCommonConstants.COMPLETE_STATUS);
+        matchingBibMap.put(RecapConstants.MATCHING_BIB_IDS,Arrays.asList(1));
+        return matchingBibMap;
+    }
+
+    @Test
+    public void updateMatchingBibEntityTestException() throws Exception {
+        Mockito.when(matchingBibDetailsRepository.updateStatusBasedOnBibs(Mockito.anyString(),Mockito.anyList())).thenThrow(NullPointerException.class);
+        matchingAlgorithmProcessor.updateMatchingBibEntity( getMap());
         assertNotNull(matchingAlgorithmProcessor);
     }
 
     @Test
     public void saveMatchingBibEntity() throws Exception {
-        Mockito.when(matchingBibDetailsRepository.updateStatusBasedOnBibs(Mockito.anyString(),Mockito.anyList())).thenReturn(1);
+        Mockito.when(matchingBibDetailsRepository.saveAll(Mockito.anyCollection())).thenReturn(new ArrayList<>());
         matchingAlgorithmProcessor.saveMatchingBibEntity(Arrays.asList(new MatchingBibEntity()));
         assertNotNull(matchingAlgorithmProcessor);
+    }
+
+    @Test
+    public void saveMatchingBibEntityException1() throws Exception {
+        Mockito.when(matchingBibDetailsRepository.saveAll(Mockito.anyCollection())).thenThrow(NullPointerException.class);
+        matchingAlgorithmProcessor.saveMatchingBibEntity(getMatchingBibEntities());
+        assertNotNull(matchingAlgorithmProcessor);
+    }
+
+    @Test
+    public void saveMatchingBibEntityException() throws Exception {
+        Mockito.when(matchingBibDetailsRepository.save(Mockito.any())).thenThrow(NullPointerException.class);
+        Mockito.when(matchingBibDetailsRepository.saveAll(Mockito.anyCollection())).thenThrow(NullPointerException.class);
+        matchingAlgorithmProcessor.saveMatchingBibEntity(getMatchingBibEntities());
+        assertNotNull(matchingAlgorithmProcessor);
+    }
+
+    private List<MatchingBibEntity> getMatchingBibEntities() {
+        List<MatchingBibEntity> matchingBibEntities=new ArrayList<>();
+        MatchingBibEntity matchingBibEntity=new MatchingBibEntity();
+        matchingBibEntity.setIsbn("isbn");
+        matchingBibEntities.add(matchingBibEntity);
+        return matchingBibEntities;
     }
 
     @Test

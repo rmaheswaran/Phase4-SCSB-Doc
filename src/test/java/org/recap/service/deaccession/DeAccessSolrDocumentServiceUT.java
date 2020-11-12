@@ -110,7 +110,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.updateIsDeletedBibByBibId(Arrays.asList(bibId))).thenCallRealMethod();
         String response = deAccessSolrDocumentService.updateIsDeletedBibByBibId(Arrays.asList(bibId));
         assertNotNull(response);
-        assertEquals(response,"Bib documents updated successfully.");
+        assertEquals("Bib documents updated successfully.",response);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.updateIsDeletedBibByBibId(Arrays.asList(bibId))).thenCallRealMethod();
         String response = deAccessSolrDocumentService.updateIsDeletedBibByBibId(Arrays.asList(bibId));
         assertNotNull(response);
-        assertEquals(response,"Bib documents failed to update.");
+        assertEquals("Bib documents failed to update.",response);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.updateIsDeletedHoldingsByHoldingsId(Arrays.asList(holdingsId))).thenCallRealMethod();
         String response = deAccessSolrDocumentService.updateIsDeletedHoldingsByHoldingsId(Arrays.asList(holdingsId));
         assertNotNull(response);
-        assertEquals(response, "Holdings documents updated successfully.");
+        assertEquals("Holdings documents updated successfully.",response);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.updateIsDeletedHoldingsByHoldingsId(Arrays.asList(holdingsId))).thenCallRealMethod();
         String response = deAccessSolrDocumentService.updateIsDeletedHoldingsByHoldingsId(Arrays.asList(holdingsId));
         assertNotNull(response);
-        assertEquals(response, "Holdings documents failed to update.");
+        assertEquals("Holdings documents failed to update.",response);
     }
 
     @Test
@@ -183,7 +183,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.updateIsDeletedItemByItemIds(Arrays.asList(itemId))).thenCallRealMethod();
         String response = deAccessSolrDocumentService.updateIsDeletedItemByItemIds(Arrays.asList(itemId));
         assertNotNull(response);
-        assertNotNull(response,"Item documents updated successfully.");
+        assertEquals("Item documents updated successfully.",response);
 
     }
 
@@ -203,7 +203,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.updateIsDeletedItemByItemIds(Arrays.asList(itemId))).thenCallRealMethod();
         String response = deAccessSolrDocumentService.updateIsDeletedItemByItemIds(Arrays.asList(itemId));
         assertNotNull(response);
-        assertNotNull(response,"Item documents failed to update.");
+        assertEquals("Item documents failed to update.",response);
 
     }
 

@@ -44,7 +44,7 @@ public class SharedCollectionRestControllerUT extends BaseTestCaseUT {
         itemAvailabityStatusRequest.setBarcodes(barcodeList);
         ResponseEntity responseEntity = sharedCollectionRestController.itemAvailabilityStatus(itemAvailabityStatusRequest);
         assertNotNull(responseEntity);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        assertEquals( HttpStatus.OK,responseEntity.getStatusCode());
     }
 
     @Test

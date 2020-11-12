@@ -58,16 +58,8 @@ public class MatchingAlgorithmUT extends BaseTestCase {
 
     @Test
     public void populateTempMatchingPointsEntity() throws Exception {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-
         Mockito.when(matchingAlgorithmHelperService.findMatchingAndPopulateMatchPointsEntities()).thenReturn(Long.valueOf(7));
         long count = matchingAlgorithmHelperService.findMatchingAndPopulateMatchPointsEntities();
-
-        stopWatch.stop();
-        logger.info("Total Time taken : " + stopWatch.getTotalTimeSeconds());
-
-        Thread.sleep(10000);
         Mockito.when(matchingMatchPointsDetailsRepository.count()).thenReturn(Long.valueOf(7));
         long savedCount = matchingMatchPointsDetailsRepository.count();
         assertTrue(savedCount>0);
@@ -97,6 +89,7 @@ public class MatchingAlgorithmUT extends BaseTestCase {
         System.out.println("Step 2 Normalized Title : " + normalizedTitle);
         normalizedTitle = normalizedTitle.replaceAll("\\p{M}", "");
         System.out.println("Step 3 Normalized Title : " + normalizedTitle);
+        assertNotNull(title);
     }
 
     @Test
@@ -105,6 +98,7 @@ public class MatchingAlgorithmUT extends BaseTestCase {
         System.out.println("Actual Title : " + title);
         String titleToMatch = matchingAlgorithmUtil.getTitleToMatch(title);
         System.out.println("Title To Match : " + titleToMatch);
+        assertNotNull(title);
     }
 
     @Test
@@ -125,7 +119,7 @@ public class MatchingAlgorithmUT extends BaseTestCase {
         stopWatch.start();
 
         matchingAlgorithmUpdateCGDService.updateCGDProcessForMonographs(batchSize);
-
+        assertNotNull(batchSize);
         stopWatch.stop();
         logger.info("Total Time taken to update CGD is : " + stopWatch.getTotalTimeSeconds());
     }

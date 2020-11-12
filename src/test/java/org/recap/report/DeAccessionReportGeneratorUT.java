@@ -35,7 +35,6 @@ public class DeAccessionReportGeneratorUT extends BaseTestCase{
         List<ReportEntity> reportEntities = getReportEntity();
         Date createdDate = reportEntities.get(0).getCreatedDate();
         String generatedReportFileNameInFileSyatem = reportGenerator.generateReport(RecapCommonConstants.DEACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.DEACCESSION_SUMMARY_REPORT, RecapCommonConstants.FILE_SYSTEM, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
-        Thread.sleep(1000);
         assertNotNull(generatedReportFileNameInFileSyatem);
     }
 
@@ -44,7 +43,6 @@ public class DeAccessionReportGeneratorUT extends BaseTestCase{
         List<ReportEntity> reportEntities = getReportEntity();
         Date createdDate = reportEntities.get(0).getCreatedDate();
         String generatedReportFileNameInFileSystem = reportGenerator.generateReport(RecapCommonConstants.DEACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.DEACCESSION_SUMMARY_REPORT, RecapCommonConstants.FTP, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
-        Thread.sleep(1000);
         assertNotNull(generatedReportFileNameInFileSystem);
     }
 

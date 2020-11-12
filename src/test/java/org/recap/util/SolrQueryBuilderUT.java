@@ -6,9 +6,12 @@ import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
+import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.search.SearchRecordsRequest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 import static junit.framework.TestCase.assertEquals;
@@ -70,6 +73,29 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
     public void fetchCreatedOrUpdatedBibs(){
         String fetchCreatedOrUpdatedBibs = solrQueryBuilder.fetchCreatedOrUpdatedBibs("2016-10-21T14:30Z TO NOW");
         assertNotNull(fetchCreatedOrUpdatedBibs);
+    }
+
+    @Test
+    public void getQueryForParentAndChildCriteriaForDataDump(){
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        searchRecordsRequest.setFieldName("BibLastUpdatedDate");
+        searchRecordsRequest.setFieldValue("2016-10-21T14:30Z TO NOW");
+        searchRecordsRequest.getOwningInstitutions().addAll(Arrays.asList("CUL", "PUL"));
+        searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
+        SolrQuery solrQuery = solrQueryBuilder.getQueryForParentAndChildCriteriaForDataDump(searchRecordsRequest);
+        assertNotNull(solrQuery);
+    }
+
+    @Test
+    public void solrQueryToFetchBibDetails(){
+        List<MatchingMatchPointsEntity> matchingMatchPointsEntities=new ArrayList<>();
+        MatchingMatchPointsEntity matchingMatchPointsEntity=new MatchingMatchPointsEntity();
+        matchingMatchPointsEntity.setCriteriaValue("\\");
+        matchingMatchPointsEntity.setCriteriaValueCount(1);
+        matchingMatchPointsEntities.add(matchingMatchPointsEntity);
+        List<String> matchCriteriaValues=new ArrayList<>();
+        SolrQuery solrQueryToFetchBibDetails = solrQueryBuilder.solrQueryToFetchBibDetails(matchingMatchPointsEntities,matchCriteriaValues,"");
+        assertNotNull(solrQueryToFetchBibDetails);
     }
 
     @Test

@@ -34,7 +34,6 @@ public class AccessionReportGeneratorUT extends BaseTestCase{
         List<ReportEntity> reportEntityList = saveSummaryReportEntity(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FILE_SYSTEM, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
-        Thread.sleep(1000);
         assertNotNull(generatedReportFileName);
     }
 
@@ -43,7 +42,6 @@ public class AccessionReportGeneratorUT extends BaseTestCase{
         List<ReportEntity> reportEntityList = saveSummaryReportEntity(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FTP, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
-        Thread.sleep(1000);
         assertNotNull(generatedReportFileName);
     }
 
@@ -52,7 +50,6 @@ public class AccessionReportGeneratorUT extends BaseTestCase{
         List<ReportEntity> reportEntityList = saveSummaryReportEntity(RecapConstants.ONGOING_ACCESSION_REPORT);
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapConstants.ONGOING_ACCESSION_REPORT, RecapCommonConstants.FILE_SYSTEM, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
-        Thread.sleep(1000);
         assertNotNull(generatedReportFileName);
     }
 
@@ -61,7 +58,6 @@ public class AccessionReportGeneratorUT extends BaseTestCase{
         List<ReportEntity> reportEntityList = saveSummaryReportEntity(RecapConstants.ONGOING_ACCESSION_REPORT);
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapConstants.ONGOING_ACCESSION_REPORT, RecapCommonConstants.FTP, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
-        Thread.sleep(1000);
         assertNotNull(generatedReportFileName);
     }
 
