@@ -34,7 +34,6 @@ public class SubmitCollectionRejectionReportGeneratorUT extends BaseTestCase{
         List<ReportEntity> reportEntityList = saveSubmitCollectionRejectionReport();
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.SUBMIT_COLLECTION_REPORT,"PUL", RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT,RecapCommonConstants.FILE_SYSTEM, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
-        Thread.sleep(1000);
         assertNotNull(generatedReportFileName);
     }
 
@@ -43,7 +42,6 @@ public class SubmitCollectionRejectionReportGeneratorUT extends BaseTestCase{
         List<ReportEntity> reportEntityList = saveSubmitCollectionRejectionReport();
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.SUBMIT_COLLECTION_REPORT,"PUL", RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT,RecapCommonConstants.FTP, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
-        Thread.sleep(1000);
         assertNotNull(generatedReportFileName);
     }
 

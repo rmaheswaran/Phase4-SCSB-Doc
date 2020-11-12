@@ -16,8 +16,13 @@ public class SearchRecordsRequestUT {
     @Test
     public void testSearchRecordsRequest()throws Exception{
         SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
+        searchRecordsRequest.reset();
+        searchRecordsRequest.resetPageNumber();
         setSearchRecordsRequest(searchRecordsRequest);
         assertNotNull(searchRecordsRequest);
+        SearchRecordsRequest searchRecordsRequestNull = new SearchRecordsRequest();
+        searchRecordsRequestNull.setSearchResultRows(null);
+        assertNotNull(searchRecordsRequestNull.getSearchResultRows());
         assertEquals("Title1",searchRecordsRequest.getSearchResultRows().get(0).getTitle());
         assertEquals("Available",searchRecordsRequest.getAvailability().get(0));
         assertEquals("245",searchRecordsRequest.getFieldName());

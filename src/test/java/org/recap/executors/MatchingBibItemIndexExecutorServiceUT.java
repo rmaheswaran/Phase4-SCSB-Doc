@@ -122,7 +122,21 @@ public class MatchingBibItemIndexExecutorServiceUT extends BaseTestCaseUT {
         assertTrue(count > 0);
     }
 
-    public BibliographicEntity getBibliographicEntity() throws URISyntaxException, IOException {
+    @Test
+    public void indexingForMatchingAlgorithmTestEmpty() throws InterruptedException {
+        Mockito.when(bibliographicDetailsRepository.getCountOfBibliographicEntitiesForChangedItems(Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn(0l);
+        Integer count = matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, new Date());
+        assertTrue(count == 0);
+    }
+
+    @Test
+    public void indexingForMatchingAlgorithmTestException() throws InterruptedException {
+        Mockito.when(bibliographicDetailsRepository.getCountOfBibliographicEntitiesForChangedItems(Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn(null);
+        Integer count = matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, new Date());
+        assertTrue(count == 0);
+    }
+
+        public BibliographicEntity getBibliographicEntity() throws URISyntaxException, IOException {
         File bibContentFile = getBibContentFile("BibContent.xml");
         String sourceBibContent = FileUtils.readFileToString(bibContentFile, "UTF-8");
         File holdingsContentFile = getBibContentFile("HoldingsContent.xml");

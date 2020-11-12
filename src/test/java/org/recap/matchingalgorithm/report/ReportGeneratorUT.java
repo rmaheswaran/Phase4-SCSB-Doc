@@ -1,20 +1,29 @@
 package org.recap.matchingalgorithm.report;
 
+import org.apache.camel.ProducerTemplate;
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
+import org.recap.report.FSAccessionReportGenerator;
+import org.recap.report.FTPAccessionReportGenerator;
+import org.recap.report.FTPSubmitCollectionReportGenerator;
+import org.recap.report.FTPSubmitCollectionSuccessReportGenerator;
 import org.recap.report.ReportGenerator;
+import org.recap.report.ReportGeneratorInterface;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.StopWatch;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -23,43 +32,57 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by angelind on 23/8/16.
  */
-public class ReportGeneratorUT extends BaseTestCase{
+public class ReportGeneratorUT extends BaseTestCaseUT {
 
-    @Autowired
+    @InjectMocks
+    ReportGenerator reportGenerator;
+
+    @InjectMocks
+    FSAccessionReportGenerator fsAccessionReportGenerator;
+
+    @InjectMocks
+    FTPAccessionReportGenerator ftpAccessionReportGenerator;
+
+    @Mock
     ReportDetailRepository reportDetailRepository;
+
+    @Mock
+    ProducerTemplate producerTemplate;
 
     @Value("${scsb.collection.report.directory}")
     String reportsDirectory;
 
-    @Autowired
-    ReportGenerator reportGenerator;
-
-    @Autowired
+    @Mock
     DateUtil dateUtil;
+
+
 
     @Test
     public void testMatchingReportForFileSystem() throws Exception {
-        saveAccessionSummaryReportEntity();
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FILE_SYSTEM, dateUtil.getFromDate(new Date()), dateUtil.getToDate(new Date()));
-        Thread.sleep(1000);
-        stopWatch.stop();
-        System.out.println("Total Time taken to generate matching report : " + stopWatch.getTotalTimeSeconds());
+        List<ReportEntity> reportEntityList =saveAccessionSummaryReportEntity();
+        Mockito.when(reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=fsAccessionReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
         assertNotNull(generatedReportFileName);
     }
 
     @Test
     public void testMatchingReportForFTP() throws Exception {
-        saveAccessionSummaryReportEntity();
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FTP, dateUtil.getFromDate(new Date()), dateUtil.getToDate(new Date()));
-        Thread.sleep(1000);
-        stopWatch.stop();
-        System.out.println("Total Time taken to generate matching report : " + stopWatch.getTotalTimeSeconds());
+        List<ReportEntity> reportEntityList =saveAccessionSummaryReportEntity();
+        Mockito.when(reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=ftpAccessionReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
         assertNotNull(generatedReportFileName);
     }
+
+
+
 
     @Test
     public void testReportDataEntity(){
@@ -85,6 +108,24 @@ public class ReportGeneratorUT extends BaseTestCase{
         assertNotNull(reportDataEntity.getId());
         assertNotNull(reportDataEntity.getHeaderName());
         assertNotNull(reportDataEntity.getHeaderValue());
+    }
+
+    public Date getFromDate(Date createdDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(createdDate);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        return  cal.getTime();
+    }
+
+    public Date getToDate(Date createdDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(createdDate);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        return cal.getTime();
     }
 
     private List<ReportEntity> saveAccessionSummaryReportEntity(){
@@ -128,7 +169,7 @@ public class ReportGeneratorUT extends BaseTestCase{
 
         reportEntity.setReportDataEntities(reportDataEntities);
         reportEntityList.add(reportEntity);
-        return reportDetailRepository.saveAll(reportEntityList);
+        return reportEntityList;
 
     }
 

@@ -49,7 +49,6 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
-        Thread.sleep(1000);
         assertNotNull(reponse);
     }
     @Test
@@ -62,7 +61,6 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
-        Thread.sleep(1000);
         assertNotNull(reponse);
     }
     @Test
@@ -72,7 +70,6 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
-        Thread.sleep(1000);
         assertNotNull(reponse);
     }
     @Test
@@ -82,7 +79,6 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
-        Thread.sleep(1000);
         assertNotNull(reponse);
     }
     @Test
@@ -94,7 +90,6 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
-        Thread.sleep(1000);
         assertNotNull(reponse);
     }
 
@@ -105,7 +100,6 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
-        Thread.sleep(1000);
         assertNotNull(reponse);
     }
 
@@ -116,7 +110,6 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
-        Thread.sleep(1000);
         assertNotNull(reponse);
     }
     @Test
@@ -126,7 +119,6 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
-        Thread.sleep(1000);
         assertNotNull(reponse);
     }
 
@@ -137,7 +129,6 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
-        Thread.sleep(1000);
         assertNotNull(reponse);
     }
 

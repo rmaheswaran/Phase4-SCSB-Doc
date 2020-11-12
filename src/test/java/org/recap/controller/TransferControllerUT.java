@@ -153,7 +153,7 @@ public class TransferControllerUT extends BaseTestCase{
         Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
         TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
         assertNotNull(transferResponse1);
-        assertEquals(transferResponse1.getMessage(),"Success");
+        assertEquals("Success",transferResponse1.getMessage());
     }
     @Test
     public void testTransferController_Partially_Success_holding() throws Exception {
@@ -213,7 +213,7 @@ public class TransferControllerUT extends BaseTestCase{
         Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
         TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
         assertNotNull(transferResponse1);
-        assertEquals(transferResponse1.getMessage(),"Partially Success");
+        assertEquals("Partially Success",transferResponse1.getMessage());
     }
 
     @Test
@@ -274,7 +274,7 @@ public class TransferControllerUT extends BaseTestCase{
         Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
         TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
         assertNotNull(transferResponse1);
-        assertEquals(transferResponse1.getMessage(),"Partially Success");
+        assertEquals("Partially Success",transferResponse1.getMessage());
     }
 
     @Test
@@ -335,7 +335,7 @@ public class TransferControllerUT extends BaseTestCase{
         Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
         TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
         assertNotNull(transferResponse1);
-        assertEquals(transferResponse1.getMessage(),"Failed");
+        assertEquals("Failed",transferResponse1.getMessage());
     }
 
     @Test
@@ -379,7 +379,7 @@ public class TransferControllerUT extends BaseTestCase{
         Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
         TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
         assertNotNull(transferResponse1);
-        assertEquals(transferResponse1.getMessage(),"Institution is empty");
+        assertEquals("Institution is empty",transferResponse1.getMessage());
     }
 
     @Test
@@ -398,7 +398,7 @@ public class TransferControllerUT extends BaseTestCase{
         Mockito.when(transferController.processTransfer(transferRequest)).thenCallRealMethod();
         TransferResponse transferResponse1 = transferController.processTransfer(transferRequest);
         assertNotNull(transferResponse1);
-        assertEquals(transferResponse1.getMessage(),"Unknow institution");
+        assertEquals("Unknow institution",transferResponse1.getMessage());
     }
     @Test
     public void checkGetterServices(){
