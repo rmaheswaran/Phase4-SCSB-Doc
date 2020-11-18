@@ -81,8 +81,11 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         assertNotNull(generatedReportFileName);
     }
 
-
-
+    @Test
+    public void getReportGenerators() {
+        List<ReportGeneratorInterface> getReportGenerators=reportGenerator.getReportGenerators();
+     assertNotNull(getReportGenerators);
+    }
 
     @Test
     public void testReportDataEntity(){
