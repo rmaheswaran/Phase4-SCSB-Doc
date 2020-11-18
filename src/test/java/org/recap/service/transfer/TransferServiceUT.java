@@ -1,6 +1,7 @@
 package org.recap.service.transfer;
 
 import org.apache.camel.ProducerTemplate;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -96,26 +98,132 @@ public class TransferServiceUT extends BaseTestCaseUT {
 
     @Test
     public void processItemTransfer() throws Exception{
-        InstitutionEntity institutionEntity =getInstitutionEntity();
-        TransferRequest transferRequest = getItemTransferRequest();
-        HoldingsEntity holdingsEntity = getHoldingsEntity();
-        BibliographicEntity bibliographicEntity = getbibliographicEntity();
-        Mockito.when(dummyDataService.getHoldingsWithDummyDetails(Mockito.anyInt(), Mockito.any(), Mockito.anyString(),Mockito.anyString())).thenReturn(holdingsEntity);
+        Mockito.when(dummyDataService.getHoldingsWithDummyDetails(Mockito.anyInt(), Mockito.any(), Mockito.anyString(),Mockito.anyString())).thenReturn(getHoldingsEntity());
         Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(getBibliographicEntity());
         Mockito.when(mockTransferService.getHoldingsDetailsRepository().findByOwningInstitutionHoldingsIdAndOwningInstitutionId("1621",1)).thenReturn(getBibliographicEntity().getHoldingsEntities().get(0));
-        Mockito.when(mockTransferService.getInstitutionDetailsRepository().findByInstitutionCode(Mockito.any())).thenReturn(institutionEntity);
+        Mockito.when(mockTransferService.getInstitutionDetailsRepository().findByInstitutionCode(Mockito.any())).thenReturn(getInstitutionEntity());
         Mockito.when(accessionDAO.saveBibRecord(Mockito.any())).thenReturn(getBibliographicEntity());
-        Mockito.when(accessionDAO.saveBibRecord(Mockito.any())).thenReturn(bibliographicEntity);
-        Mockito.when(mockTransferService.getInstitutionDetailsRepository().findById(Mockito.any())).thenReturn(Optional.of(institutionEntity));
-        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(transferRequest, institutionEntity);
+        Mockito.when(accessionDAO.saveBibRecord(Mockito.any())).thenReturn(getbibliographicEntity());
+        Mockito.when(mockTransferService.getInstitutionDetailsRepository().findById(Mockito.any())).thenReturn(Optional.of(getInstitutionEntity()));
+        Mockito.doThrow(IOException.class).when(solrIndexService).deleteByDocId(Mockito.anyString(),Mockito.anyString());
+        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
         assertNotNull(response);
         assertEquals(RecapConstants.TRANSFER.SUCCESSFULLY_RELINKED,response.get(0).getMessage());
     }
 
     @Test
+    public void processItemTransferSourceDeaccessioned() throws Exception{
+        BibliographicEntity bibliographicEntity=getBibliographicEntity();
+        bibliographicEntity.getItemEntities().get(0).setDeleted(true);
+        Mockito.when(dummyDataService.getHoldingsWithDummyDetails(Mockito.anyInt(), Mockito.any(), Mockito.anyString(),Mockito.anyString())).thenReturn(getHoldingsEntity());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(bibliographicEntity);
+        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_ITEM_DEACCESSIONED,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processItemTransferSourceHoldingNotUnderBib() throws Exception{
+        BibliographicEntity bibliographicEntity=getBibliographicEntity();
+        bibliographicEntity.setItemEntities(null);
+        bibliographicEntity.setHoldingsEntities(null);
+        Mockito.when(dummyDataService.getHoldingsWithDummyDetails(Mockito.anyInt(), Mockito.any(), Mockito.anyString(),Mockito.anyString())).thenReturn(getHoldingsEntity());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(bibliographicEntity);
+        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB,response.get(0).getMessage());
+    }
+
+
+    @Test
+    public void processItemTransferSourceItemNotUnderHolding() throws Exception{
+        BibliographicEntity bibliographicEntity=getBibliographicEntity();
+        bibliographicEntity.getHoldingsEntities().get(0).setItemEntities(null);
+        Mockito.when(dummyDataService.getHoldingsWithDummyDetails(Mockito.anyInt(), Mockito.any(), Mockito.anyString(),Mockito.anyString())).thenReturn(getHoldingsEntity());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(bibliographicEntity);
+        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_ITEM_NOT_UNDER_SOURCE_HOLDING,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processItemTransferSourceHoldingsIdEmpty() throws Exception{
+        Mockito.when(dummyDataService.getHoldingsWithDummyDetails(Mockito.anyInt(), Mockito.any(), Mockito.anyString(),Mockito.anyString())).thenReturn(getHoldingsEntity());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(getBibliographicEntity());
+        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequestSourceHoldingsIdEmpty(), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_OWN_INST_HOLDINGS_ID_EMPTY,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processItemTransferSourceBibIdEmpty() throws Exception{
+        Mockito.when(dummyDataService.getHoldingsWithDummyDetails(Mockito.anyInt(), Mockito.any(), Mockito.anyString(),Mockito.anyString())).thenReturn(getHoldingsEntity());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(getBibliographicEntity());
+        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequestSourceBibIdEmpty(), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_OWN_INST_BIB_ID_EMPTY,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processItemTransferDestinationBibIdEmpty() throws Exception{
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(getBibliographicEntity());
+        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.DEST_OWN_INST_BIB_ID_EMPTY,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processItemTransferBibIdNotExist() throws Exception{
+        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_BIB_NOT_EXIST,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processItemTransferIdsNotMatching() throws Exception{
+        Mockito.when(dummyDataService.getHoldingsWithDummyDetails(Mockito.anyInt(), Mockito.any(), Mockito.anyString(),Mockito.anyString())).thenReturn(getHoldingsEntity());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(getBibliographicEntity());
+        Mockito.when(mockTransferService.getHoldingsDetailsRepository().findByOwningInstitutionHoldingsIdAndOwningInstitutionId("1621",1)).thenReturn(getBibliographicEntity().getHoldingsEntities().get(0));
+        Mockito.when(mockTransferService.getInstitutionDetailsRepository().findByInstitutionCode(Mockito.any())).thenReturn(getInstitutionEntity());
+        Mockito.when(accessionDAO.saveBibRecord(Mockito.any())).thenReturn(getBibliographicEntity());
+        Mockito.when(accessionDAO.saveBibRecord(Mockito.any())).thenReturn(getbibliographicEntity());
+        Mockito.when(mockTransferService.getInstitutionDetailsRepository().findById(Mockito.any())).thenReturn(Optional.of(getInstitutionEntity()));
+        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequestIdsNotMatching(), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_DESTINATION_ITEM_IDS_NOT_MATCHING,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processItemTransferSourceEmpty() throws Exception{
+        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequestSourceEmpty(),getInstitutionEntity());
+        assertEquals(RecapConstants.TRANSFER.SOURCE_EMPTY,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processItemTransferDestinationEmpty() throws Exception{
+        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequestDestinationEmpty(),getInstitutionEntity());
+        assertEquals(RecapConstants.TRANSFER.DESTINATION_EMPTY,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processItemTransferException() throws Exception{
+        BibliographicEntity bibliographicEntity = getbibliographicEntity();
+        Mockito.when(dummyDataService.getHoldingsWithDummyDetails(Mockito.anyInt(), Mockito.any(), Mockito.anyString(),Mockito.anyString())).thenThrow(NullPointerException.class);
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(getBibliographicEntity());
+        Mockito.when(mockTransferService.getHoldingsDetailsRepository().findByOwningInstitutionHoldingsIdAndOwningInstitutionId("1621",1)).thenReturn(getBibliographicEntity().getHoldingsEntities().get(0));
+        Mockito.when(mockTransferService.getInstitutionDetailsRepository().findByInstitutionCode(Mockito.any())).thenReturn(getInstitutionEntity());
+        Mockito.when(accessionDAO.saveBibRecord(Mockito.any())).thenReturn(getBibliographicEntity());
+        Mockito.when(accessionDAO.saveBibRecord(Mockito.any())).thenReturn(bibliographicEntity);
+        Mockito.when(mockTransferService.getInstitutionDetailsRepository().findById(Mockito.any())).thenReturn(Optional.of(getInstitutionEntity()));
+        List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.RELINKED_FAILED,response.get(0).getMessage());
+    }
+
+    @Test
     public void processHoldingTransfer() throws Exception{
         InstitutionEntity institutionEntity = getInstitutionEntity();
-        TransferRequest transferRequest = getHoldingTransferRequest();
+        TransferRequest transferRequest = getHoldingTransferRequest(getSource("1421","1621"),getDestination("53642","1621"));
         BibliographicEntity bibliographicEntity = getbibliographicEntity();
         Mockito.doNothing().when(helperUtil).saveReportEntity(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyList());
         Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1,"1421")).thenReturn(getBibliographicEntity());
@@ -125,10 +233,133 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(accessionDAO.saveBibRecord(getBibliographicEntity())).thenReturn(getBibliographicEntity());
         Mockito.when(accessionDAO.saveBibRecord(Mockito.any())).thenReturn(bibliographicEntity);
         Mockito.when(mockTransferService.processHoldingTransfer(transferRequest, institutionEntity)).thenCallRealMethod();
+        Mockito.when(solrIndexService.indexByBibliographicId(Mockito.anyInt())).thenThrow(NullPointerException.class);
+        Mockito.doThrow(SolrServerException.class).when(solrIndexService).deleteByDocId(Mockito.anyString(),Mockito.anyString());
         List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(transferRequest, institutionEntity);
         assertNotNull(response);
         assertEquals(RecapConstants.TRANSFER.SUCCESSFULLY_RELINKED,response.get(0).getMessage());
     }
+
+    @Test
+    public void processHoldingTransferDestinationBibEmpty() throws Exception{
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        TransferRequest transferRequest = getHoldingTransferRequest(getSource("1421","1621"),getDestination("","1621"));
+        BibliographicEntity bibliographicEntity = getbibliographicEntity();
+        Mockito.doNothing().when(helperUtil).saveReportEntity(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyList());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1,"1421")).thenReturn(getBibliographicEntity());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.anyInt(),Mockito.anyString())).thenReturn(bibliographicEntity);
+        Mockito.when(mockTransferService.getHoldingsDetailsRepository().findByOwningInstitutionHoldingsIdAndOwningInstitutionId("1621",1)).thenReturn(getBibliographicEntity().getHoldingsEntities().get(0));
+        Mockito.when(mockTransferService.getInstitutionDetailsRepository().findByInstitutionCode(Mockito.any())).thenReturn(institutionEntity);
+        Mockito.when(accessionDAO.saveBibRecord(getBibliographicEntity())).thenReturn(getBibliographicEntity());
+        Mockito.when(accessionDAO.saveBibRecord(Mockito.any())).thenReturn(bibliographicEntity);
+        Mockito.when(mockTransferService.processHoldingTransfer(transferRequest, institutionEntity)).thenCallRealMethod();
+        Mockito.when(solrIndexService.indexByBibliographicId(Mockito.anyInt())).thenThrow(NullPointerException.class);
+        Mockito.doThrow(SolrServerException.class).when(solrIndexService).deleteByDocId(Mockito.anyString(),Mockito.anyString());
+        List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(transferRequest, institutionEntity);
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.DEST_OWN_INST_BIB_ID_EMPTY,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processHoldingTransferSourceDeaccessioned() throws Exception{
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        TransferRequest transferRequest = getHoldingTransferRequest(getSource("1421","1621"),getDestination("53642","1621"));
+        BibliographicEntity bibliographicEntity = getbibliographicEntity();
+        BibliographicEntity bibliographicEntity1 = getBibliographicEntity();
+        bibliographicEntity.getHoldingsEntities().get(0).setDeleted(true);
+        Mockito.doNothing().when(helperUtil).saveReportEntity(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyList());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1,"1421")).thenReturn(bibliographicEntity1);
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.anyInt(),Mockito.anyString())).thenReturn(bibliographicEntity);
+        List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(transferRequest, institutionEntity);
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_HOLDING_DEACCESSIONED,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processHoldingTransferDestinationDeaccessioned() throws Exception{
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        TransferRequest transferRequest = getHoldingTransferRequest(getSource("1421","1621"),getDestination("53642","1621"));
+        BibliographicEntity bibliographicEntity = getbibliographicEntity();
+        BibliographicEntity bibliographicEntity1 = getBibliographicEntity();
+        bibliographicEntity.setDeleted(true);
+        Mockito.doNothing().when(helperUtil).saveReportEntity(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyList());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1,"1421")).thenReturn(bibliographicEntity1);
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.anyInt(),Mockito.anyString())).thenReturn(bibliographicEntity);
+        List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(transferRequest, institutionEntity);
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.DEST_BIB_DEACCESSIONED,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processHoldingTransferSourceNotUnderBib() throws Exception{
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        TransferRequest transferRequest = getHoldingTransferRequest(getSource("1421","1621"),getDestination("53642","1621"));
+        BibliographicEntity bibliographicEntity = getbibliographicEntity();
+        BibliographicEntity bibliographicEntity1 = getBibliographicEntity();
+        bibliographicEntity.setHoldingsEntities(null);
+        Mockito.doNothing().when(helperUtil).saveReportEntity(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyList());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1,"1421")).thenReturn(bibliographicEntity1);
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.anyInt(),Mockito.anyString())).thenReturn(bibliographicEntity);
+        List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(transferRequest, institutionEntity);
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB,response.get(0).getMessage());
+    }
+
+
+    @Test
+    public void processHoldingTransferSourceEmpty() throws Exception{
+        List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(getHoldingTransferRequest(null,getDestination("53642","1621")), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_EMPTY,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processHoldingTransferDestinationEmpty() throws Exception{
+        List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(getHoldingTransferRequest(getSource("1421","1621"),null), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.DESTINATION_EMPTY,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processHoldingTransferIdsNotMatching() throws Exception{
+        List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(getHoldingTransferRequest(getSource("1421","1622"),getDestination("53642","1621")), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_DESTINATION_HOLDINGS_IDS_NOT_MATCHING,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processHoldingTransferSourceBibEmpty() throws Exception{
+        List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(getHoldingTransferRequest(getSource("","1621"),getDestination("53642","1621")), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_OWN_INST_BIB_ID_EMPTY,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processHoldingTransferSourceBibNonExist() throws Exception{
+        List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(getHoldingTransferRequest(getSource("1421","1621"),getDestination("53642","1621")), getInstitutionEntity());
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.SOURCE_BIB_NOT_EXIST,response.get(0).getMessage());
+    }
+
+    @Test
+    public void processHoldingTransferException() throws Exception{
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        TransferRequest transferRequest = getHoldingTransferRequest(getSource("1421","1621"),getDestination("53642","1621"));
+        BibliographicEntity bibliographicEntity = getbibliographicEntity();
+        Mockito.doNothing().when(helperUtil).saveReportEntity(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyList());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1,"1421")).thenReturn(getBibliographicEntity());
+        Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.anyInt(),Mockito.anyString())).thenReturn(bibliographicEntity);
+        Mockito.when(mockTransferService.getHoldingsDetailsRepository().findByOwningInstitutionHoldingsIdAndOwningInstitutionId("1621",1)).thenReturn(getBibliographicEntity().getHoldingsEntities().get(0));
+        Mockito.when(mockTransferService.getInstitutionDetailsRepository().findByInstitutionCode(Mockito.any())).thenReturn(institutionEntity);
+        Mockito.when(accessionDAO.saveBibRecord(getBibliographicEntity())).thenReturn(getBibliographicEntity());
+        Mockito.when(accessionDAO.saveBibRecord(Mockito.any())).thenThrow(NullPointerException.class);
+        Mockito.when(mockTransferService.processHoldingTransfer(transferRequest, institutionEntity)).thenCallRealMethod();
+        Mockito.when(solrIndexService.indexByBibliographicId(Mockito.anyInt())).thenThrow(NullPointerException.class);
+        List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(transferRequest, institutionEntity);
+        assertNotNull(response);
+        assertEquals(RecapConstants.TRANSFER.RELINKED_FAILED,response.get(0).getMessage());
+    }
+
 
     public HoldingsEntity getHoldingsEntity() throws Exception {
         HoldingsEntity holdingsEntity = new HoldingsEntity();
@@ -166,17 +397,11 @@ public class TransferServiceUT extends BaseTestCaseUT {
         return bibliographicEntity;
     }
 
-    public TransferRequest getHoldingTransferRequest() throws Exception {
+    public TransferRequest getHoldingTransferRequest(Source source,Destination destination) throws Exception {
         TransferRequest transferRequest = new TransferRequest();
         transferRequest.setInstitution("PUL");
         HoldingsTransferRequest holdingsTransferRequestArrayList = new HoldingsTransferRequest();
-        Source source = new Source();
-        source.setOwningInstitutionBibId("1421");
-        source.setOwningInstitutionHoldingsId("1621");
         holdingsTransferRequestArrayList.setSource(source);
-        Destination destination = new Destination();
-        destination.setOwningInstitutionBibId("53642");
-        destination.setOwningInstitutionHoldingsId("1621");
         holdingsTransferRequestArrayList.setDestination(destination);
         List<HoldingsTransferRequest> HoldingsTransferRequest1 = new ArrayList<>();
         HoldingsTransferRequest1.add(holdingsTransferRequestArrayList);
@@ -184,42 +409,152 @@ public class TransferServiceUT extends BaseTestCaseUT {
         return  transferRequest;
     }
 
+    private Destination getDestination(String OwningInstitutionBibId,String OwningInstitutionHoldingsId) {
+        Destination destination = new Destination();
+        destination.setOwningInstitutionBibId(OwningInstitutionBibId);
+        destination.setOwningInstitutionHoldingsId(OwningInstitutionHoldingsId);
+        return destination;
+    }
 
-
-    public TransferRequest getItemTransferRequest() throws Exception {
+    public TransferRequest getItemTransferRequestSourceEmpty() throws Exception {
         TransferRequest transferRequest = new TransferRequest();
         transferRequest.setInstitution("PUL");
         HoldingsTransferRequest holdingsTransferRequestArrayList = new HoldingsTransferRequest();
-        Source source = new Source();
-        ItemSource itemSource = new ItemSource();
-        itemSource.setOwningInstitutionItemId("6320902");
-        itemSource.setOwningInstitutionBibId("1421");
-        itemSource.setOwningInstitutionHoldingsId("1621");
-        ItemDestination itemDestination = new ItemDestination();
-        itemDestination.setOwningInstitutionHoldingsId("59753");
-        itemDestination.setOwningInstitutionBibId("53642");
-        itemDestination.setOwningInstitutionItemId("6320902");
-        source.setOwningInstitutionBibId("1421");
-        source.setOwningInstitutionHoldingsId("1621");
-        holdingsTransferRequestArrayList.setSource(source);
+        holdingsTransferRequestArrayList.setSource(null);
         Destination destination = new Destination();
         destination.setOwningInstitutionBibId("53642");
         destination.setOwningInstitutionHoldingsId("59753");
         holdingsTransferRequestArrayList.setDestination(destination);
-        ItemTransferRequest itemTransferRequestRequestArrayList = new ItemTransferRequest();
-        itemTransferRequestRequestArrayList.setSource(itemSource);
-        itemTransferRequestRequestArrayList.setDestination(itemDestination);
         List<HoldingsTransferRequest> HoldingsTransferRequest1 = new ArrayList<>();
         HoldingsTransferRequest1.add(holdingsTransferRequestArrayList);
         List<ItemTransferRequest> ItemTransferRequest1 = new ArrayList<>();
-        ItemTransferRequest1.add(itemTransferRequestRequestArrayList);
+        ItemTransferRequest1.add(getItemTransferRequests(null,getItemDestination("59753","53642","6320902")));
         transferRequest.setHoldingTransfers(HoldingsTransferRequest1);
         transferRequest.setItemTransfers(ItemTransferRequest1);
         return  transferRequest;
     }
 
+    public TransferRequest getItemTransferRequestDestinationEmpty() throws Exception {
+        TransferRequest transferRequest = new TransferRequest();
+        transferRequest.setInstitution("PUL");
+        HoldingsTransferRequest holdingsTransferRequestArrayList = new HoldingsTransferRequest();
+        holdingsTransferRequestArrayList.setSource(getSource("1421","1621"));
+        Destination destination = new Destination();
+        destination.setOwningInstitutionBibId("53642");
+        destination.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setDestination(destination);
+        List<HoldingsTransferRequest> HoldingsTransferRequest1 = new ArrayList<>();
+        HoldingsTransferRequest1.add(holdingsTransferRequestArrayList);
+        List<ItemTransferRequest> ItemTransferRequest1 = new ArrayList<>();
+        ItemTransferRequest1.add(getItemTransferRequests(getItemSource("6320902","1421","1621"),null));
+        transferRequest.setHoldingTransfers(HoldingsTransferRequest1);
+        transferRequest.setItemTransfers(ItemTransferRequest1);
+        return  transferRequest;
+    }
 
-    public BibliographicEntity getBibliographicEntity() throws Exception {
+    public TransferRequest getItemTransferRequestIdsNotMatching() throws Exception {
+        TransferRequest transferRequest = new TransferRequest();
+        transferRequest.setInstitution("PUL");
+        HoldingsTransferRequest holdingsTransferRequestArrayList = new HoldingsTransferRequest();
+        holdingsTransferRequestArrayList.setSource(getSource("1421","1621"));
+        Destination destination = new Destination();
+        destination.setOwningInstitutionBibId("53642");
+        destination.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setDestination(destination);
+        List<HoldingsTransferRequest> HoldingsTransferRequest1 = new ArrayList<>();
+        HoldingsTransferRequest1.add(holdingsTransferRequestArrayList);
+        List<ItemTransferRequest> ItemTransferRequest1 = new ArrayList<>();
+        ItemTransferRequest1.add(getItemTransferRequests(getItemSource("6320902","1421","1621"),getItemDestination("59753","53642","6320901")));
+        transferRequest.setHoldingTransfers(HoldingsTransferRequest1);
+        transferRequest.setItemTransfers(ItemTransferRequest1);
+        return transferRequest;
+    }
+
+    public TransferRequest getItemTransferRequest() throws Exception {
+        TransferRequest transferRequest = new TransferRequest();
+        transferRequest.setInstitution("PUL");
+        HoldingsTransferRequest holdingsTransferRequestArrayList = new HoldingsTransferRequest();
+        holdingsTransferRequestArrayList.setSource(getSource("1421","1621"));
+        Destination destination = new Destination();
+        destination.setOwningInstitutionBibId("53642");
+        destination.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setDestination(destination);
+        List<HoldingsTransferRequest> HoldingsTransferRequest1 = new ArrayList<>();
+        HoldingsTransferRequest1.add(holdingsTransferRequestArrayList);
+        List<ItemTransferRequest> ItemTransferRequest1 = new ArrayList<>();
+        ItemTransferRequest1.add(getItemTransferRequests(getItemSource("6320902","1421","1621"),getItemDestination("59753","53642","6320902")));
+        transferRequest.setHoldingTransfers(HoldingsTransferRequest1);
+        transferRequest.setItemTransfers(ItemTransferRequest1);
+        return  transferRequest;
+    }
+
+    public TransferRequest getItemTransferRequestSourceHoldingsIdEmpty() throws Exception {
+        TransferRequest transferRequest = new TransferRequest();
+        transferRequest.setInstitution("PUL");
+        HoldingsTransferRequest holdingsTransferRequestArrayList = new HoldingsTransferRequest();
+        holdingsTransferRequestArrayList.setSource(getSource("1421","1621"));
+        Destination destination = new Destination();
+        destination.setOwningInstitutionBibId("53642");
+        destination.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setDestination(destination);
+        List<HoldingsTransferRequest> HoldingsTransferRequest1 = new ArrayList<>();
+        HoldingsTransferRequest1.add(holdingsTransferRequestArrayList);
+        List<ItemTransferRequest> ItemTransferRequest1 = new ArrayList<>();
+        ItemTransferRequest1.add(getItemTransferRequests(getItemSource("6320902","1421",""),getItemDestination("59753","53642","6320902")));
+        transferRequest.setHoldingTransfers(HoldingsTransferRequest1);
+        transferRequest.setItemTransfers(ItemTransferRequest1);
+        return  transferRequest;
+    }
+
+    private ItemTransferRequest getItemTransferRequests(ItemSource itemSource,ItemDestination itemDestination) {
+        ItemTransferRequest itemTransferRequest = new ItemTransferRequest();
+        itemTransferRequest.setSource(itemSource);
+        itemTransferRequest.setDestination(itemDestination);
+        return itemTransferRequest;
+    }
+
+    public TransferRequest getItemTransferRequestSourceBibIdEmpty() throws Exception {
+        TransferRequest transferRequest = new TransferRequest();
+        transferRequest.setInstitution("PUL");
+        HoldingsTransferRequest holdingsTransferRequestArrayList = new HoldingsTransferRequest();
+        holdingsTransferRequestArrayList.setSource(getSource("1421","1621"));
+        Destination destination = new Destination();
+        destination.setOwningInstitutionBibId("53642");
+        destination.setOwningInstitutionHoldingsId("59753");
+        holdingsTransferRequestArrayList.setDestination(destination);
+        List<HoldingsTransferRequest> HoldingsTransferRequest1 = new ArrayList<>();
+        HoldingsTransferRequest1.add(holdingsTransferRequestArrayList);
+        List<ItemTransferRequest> ItemTransferRequest1 = new ArrayList<>();
+        ItemTransferRequest1.add(getItemTransferRequests(getItemSource("6320902","","1621"),getItemDestination("59753","53642","6320902")));
+        transferRequest.setHoldingTransfers(HoldingsTransferRequest1);
+        transferRequest.setItemTransfers(ItemTransferRequest1);
+        return  transferRequest;
+    }
+
+    private ItemDestination getItemDestination(String OwningInstitutionHoldingsId,String OwningInstitutionBibId,String OwningInstitutionItemId) {
+        ItemDestination itemDestination = new ItemDestination();
+        itemDestination.setOwningInstitutionHoldingsId(OwningInstitutionHoldingsId);
+        itemDestination.setOwningInstitutionBibId(OwningInstitutionBibId);
+        itemDestination.setOwningInstitutionItemId(OwningInstitutionItemId);
+        return itemDestination;
+    }
+
+    private ItemSource getItemSource(String OwningInstitutionItemId,String OwningInstitutionBibId,String OwningInstitutionHoldingsId) {
+        ItemSource itemSource = new ItemSource();
+        itemSource.setOwningInstitutionItemId(OwningInstitutionItemId);
+        itemSource.setOwningInstitutionBibId(OwningInstitutionBibId);
+        itemSource.setOwningInstitutionHoldingsId(OwningInstitutionHoldingsId);
+        return itemSource;
+    }
+
+    private Source getSource(String OwningInstitutionBibId,String OwningInstitutionHoldingsId) {
+        Source source = new Source();
+        source.setOwningInstitutionBibId(OwningInstitutionBibId);
+        source.setOwningInstitutionHoldingsId(OwningInstitutionHoldingsId);
+        return source;
+    }
+
+        public BibliographicEntity getBibliographicEntity() throws Exception {
         Date today = new Date();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
         bibliographicEntity.setContent("mock Content".getBytes());

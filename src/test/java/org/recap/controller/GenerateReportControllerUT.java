@@ -1,7 +1,9 @@
 package org.recap.controller;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
@@ -9,6 +11,7 @@ import org.recap.model.jpa.ReportEntity;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,13 +27,13 @@ import static org.junit.Assert.assertNotNull;
  */
 public class GenerateReportControllerUT extends BaseControllerUT{
 
-    @Autowired
-    ReportGenerator reportGenerator;
-
-    @Autowired
+    @InjectMocks
     GenerateReportController generateReportController;
 
-    @Autowired
+    @Mock
+    ReportGenerator reportGenerator;
+
+    @Mock
     ReportDetailRepository reportDetailRepository;
 
     @Mock
@@ -38,6 +41,9 @@ public class GenerateReportControllerUT extends BaseControllerUT{
 
     @Mock
     Model model;
+
+    @Mock
+    DateUtil dateUtil;
 
     @Test
     public void testAccessionSummaryReportForFileSystem() throws Exception{
@@ -48,6 +54,7 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setReportType(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -60,6 +67,7 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setReportType(RecapConstants.ONGOING_ACCESSION_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -69,6 +77,7 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setReportType(RecapCommonConstants.DEACCESSION_SUMMARY_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -78,6 +87,7 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setReportType(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -89,6 +99,7 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setReportType("Failure");
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -99,6 +110,7 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setReportType(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -109,6 +121,7 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setReportType(RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -118,6 +131,7 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setReportType(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -128,6 +142,7 @@ public class GenerateReportControllerUT extends BaseControllerUT{
         solrIndexRequest.setReportType(RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
     }
@@ -178,7 +193,7 @@ public class GenerateReportControllerUT extends BaseControllerUT{
 
         reportEntity.setReportDataEntities(reportDataEntities);
         reportEntityList.add(reportEntity);
-        return reportDetailRepository.saveAll(reportEntityList);
+        return reportEntityList;
 
     }
 }

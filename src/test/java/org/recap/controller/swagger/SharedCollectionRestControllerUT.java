@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
 import org.recap.controller.SharedCollectionRestController;
@@ -45,6 +46,19 @@ public class SharedCollectionRestControllerUT extends BaseTestCaseUT {
         ResponseEntity responseEntity = sharedCollectionRestController.itemAvailabilityStatus(itemAvailabityStatusRequest);
         assertNotNull(responseEntity);
         assertEquals( HttpStatus.OK,responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void itemAvailabilityStatusException() throws Exception {
+        ItemAvailabityStatusRequest itemAvailabityStatusRequest = new ItemAvailabityStatusRequest();
+        String barcode = null;
+        List<String>  barcodeList = new ArrayList<>();
+        barcodeList.add(barcode);
+        itemAvailabityStatusRequest.setBarcodes(barcodeList);
+        Mockito.when(itemAvailabilityService.getItemStatusByBarcodeAndIsDeletedFalseList(Mockito.anyList())).thenThrow(NullPointerException.class);
+        ResponseEntity responseEntity = sharedCollectionRestController.itemAvailabilityStatus(itemAvailabityStatusRequest);
+        assertNotNull(responseEntity);
+        assertEquals( HttpStatus.SERVICE_UNAVAILABLE,responseEntity.getStatusCode());
     }
 
     @Test
