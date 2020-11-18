@@ -7,19 +7,21 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.util.DateUtil;
 import org.recap.util.OngoingMatchingAlgorithmUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -40,7 +42,7 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseControllerUT{
     @Mock
     MatchingBibInfoDetailService matchingBibInfoDetailService;
 
-    @Autowired
+    @Mock
     DateUtil dateUtil;
 
     @Mock
@@ -99,6 +101,32 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseControllerUT{
         assertTrue(status.contains(RecapCommonConstants.SUCCESS));
         Mockito.when(ongoingMatchingAlgoJobController.getMatchingBibInfoDetailService()).thenCallRealMethod();
         assertNotEquals(matchingBibInfoDetailService, ongoingMatchingAlgoJobController.getMatchingBibInfoDetailService());
+    }
+
+    @Test
+    public void startMatchingAlgorithmJobException() throws Exception {
+        Date processDate = new Date();
+        Date fromDate = dateUtil.getFromDate(processDate);
+        Date toDate = dateUtil.getToDate(processDate);
+        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+        solrIndexRequest.setCreatedDate(processDate);
+        solrIndexRequest.setProcessType(RecapConstants.POPULATE_DATA_FOR_DATA_DUMP_JOB);
+        Mockito.when(ongoingMatchingAlgoJobController.getMatchingBibInfoDetailService()).thenReturn(matchingBibInfoDetailService);
+        Mockito.when(ongoingMatchingAlgoJobController.getDateUtil()).thenReturn(dateUtil);
+        Mockito.when(ongoingMatchingAlgoJobController.getLogger()).thenCallRealMethod();
+        Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo(fromDate, toDate)).thenThrow(NullPointerException.class);
+        Mockito.when(ongoingMatchingAlgoJobController.getBatchSize()).thenReturn(batchSize);
+        Mockito.when(ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest)).thenCallRealMethod();
+        String status = ongoingMatchingAlgoJobController.startMatchingAlgorithmJob(solrIndexRequest);
+        assertEquals("",status);
+     }
+
+    @Test
+    public void matchingJob(){
+        Model model= PowerMockito.mock(Model.class);
+        Mockito.when(ongoingMatchingAlgoJobController.matchingJob(model)).thenCallRealMethod();
+        String job=ongoingMatchingAlgoJobController.matchingJob(model);
+        assertEquals("ongoingMatchingJob",job);
     }
 
     @Test

@@ -268,6 +268,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         itemEntity.setDeleted(false);
         itemEntity.setBibliographicEntities(Arrays.asList(bibliographicEntity));
         holdingsEntity.setItemEntities(Arrays.asList(itemEntity));
+        holdingsEntity.setBibliographicEntities(Arrays.asList(bibliographicEntity));
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
 

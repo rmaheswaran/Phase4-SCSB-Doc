@@ -2,6 +2,7 @@ package org.recap.repository.solr.impl;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -32,10 +33,12 @@ import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -62,6 +65,9 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
     @Mock
     private SolrQueryBuilder solrQueryBuilder;
 
+    @Mock
+    HoldingsValueResolver holdingsValueResolver;
+
     @Test
     public void searchIsEmptyField() throws Exception{
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
@@ -81,18 +87,64 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = getSolrDocumentList();
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
-       // Mockito.when(queryResponse.getResults().getNumFound()).thenReturn(1l);
         Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenReturn(solrDocumentList);
         BibItem bibItem=new BibItem();
-        SolrDocument bibSolrDocument = getSolrDocumentList().get(0);
-        Collection<String> fieldNames = getSolrDocumentList().get(0).getFieldNames();
         Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(),Mockito.anyCollection(),Mockito.any())).thenReturn(bibItem);
         Item item=new Item();
         item.setDocType("doctype");
         Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(item);
 
         Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
-        assertEquals(true,search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+        assertTrue(search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+    }
+
+    @Test
+    public void search() throws Exception{
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        SolrQuery queryForParentAndChildCriteria=new SolrQuery();
+        Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
+        assertTrue(search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+    }
+
+    @Test
+    public void searchException() throws Exception{
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        SolrQuery queryForParentAndChildCriteria=new SolrQuery();
+        Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenThrow(SolrServerException.class);
+        Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
+        assertTrue(search.containsKey(RecapCommonConstants.SEARCH_ERROR_RESPONSE));
+    }
+
+
+    @Test
+    public void searchIncompleteItem() throws Exception{
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        searchRecordsRequest.setFieldValue("Shared");
+        searchRecordsRequest.setFieldName("");
+        searchRecordsRequest.setSortIncompleteRecords(true);
+        SolrQuery queryForParentAndChildCriteria=new SolrQuery();
+        Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        Mockito.when(solrQueryBuilder.getQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
+        assertTrue(search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
     }
 
     @Test
@@ -117,15 +169,22 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenReturn(solrDocumentList);
         BibItem bibItem=new BibItem();
-        SolrDocument bibSolrDocument = getSolrDocumentList().get(0);
-        Collection<String> fieldNames = getSolrDocumentList().get(0).getFieldNames();
         Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(),Mockito.anyCollection(),Mockito.any())).thenReturn(bibItem);
         Item item=new Item();
         item.setDocType("doctype");
         Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(item);
-
         Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
-        assertEquals(true,search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+        assertTrue(search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+    }
+
+    @Test
+    public void getPageNumberOnPageSizeChangeException() throws Exception{
+        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
+        searchRecordsRequest.setTotalBibRecordsCount("U");
+        searchRecordsRequest.setPageSize(1);
+        searchRecordsRequest.setPageNumber(1);
+        int page = bibSolrDocumentRepository.getPageNumberOnPageSizeChange(searchRecordsRequest);
+        assertEquals(1, page);
     }
 
     @Test
@@ -138,6 +197,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
             searchRecordsRequest.setFieldName(field);
             searchRecordsRequest.setPageSize(1);
             searchRecordsRequest.setPageNumber(1);
+            searchRecordsRequest.setTotalBibRecordsCount("1");
             searchRecordsRequest.setCatalogingStatus("Shared");
             SolrQuery queryForParentAndChildCriteria = new SolrQuery();
             Mockito.when(solrQueryBuilder.getQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
@@ -152,15 +212,12 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
             Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
             Mockito.when(commonUtil.getSolrDocumentsByDocType(null, mocksolrTemplate1)).thenReturn(solrDocumentList);
             BibItem bibItem = new BibItem();
-            SolrDocument bibSolrDocument = getSolrDocumentList().get(0);
-            Collection<String> fieldNames = getSolrDocumentList().get(0).getFieldNames();
             Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(), Mockito.anyCollection(), Mockito.any())).thenReturn(bibItem);
             Item item = new Item();
             item.setDocType("doctype");
             Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(item);
-
             int page = bibSolrDocumentRepository.getPageNumberOnPageSizeChange(searchRecordsRequest);
-            assertEquals(1, page);
+            assertNotNull(page);
         }
     }
 
