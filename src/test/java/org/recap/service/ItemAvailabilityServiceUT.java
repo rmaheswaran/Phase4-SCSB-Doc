@@ -74,6 +74,16 @@ public class ItemAvailabilityServiceUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void testgetbibItemAvaiablityStatusException() throws Exception {
+        BibItemAvailabityStatusRequest bibItemAvailabityStatusRequest = new BibItemAvailabityStatusRequest();
+        bibItemAvailabityStatusRequest.setBibliographicId("93540");
+        bibItemAvailabityStatusRequest.setInstitutionId("PUL");
+        Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenThrow(NullPointerException.class);
+        List<BibAvailabilityResponse> bibAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
+        assertNotNull(bibAvailabilityResponses);
+    }
+
+    @Test
     public void testgetbibItemAvaiablityStatusSCSB() throws Exception {
         BibItemAvailabityStatusRequest bibItemAvailabityStatusRequest = new BibItemAvailabityStatusRequest();
         bibItemAvailabityStatusRequest.setBibliographicId("93540");

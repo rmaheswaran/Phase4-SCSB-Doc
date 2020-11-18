@@ -1,14 +1,18 @@
 package org.recap.report;
 
+import org.apache.camel.ProducerTemplate;
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,20 +23,41 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 17/1/17.
  */
-public class AccessionReportGeneratorUT extends BaseTestCase{
-    @Autowired
+public class AccessionReportGeneratorUT extends BaseTestCaseUT {
+
+    @InjectMocks
     ReportGenerator reportGenerator;
 
-    @Autowired
+    @Mock
     ReportDetailRepository reportDetailRepository;
 
-    @Autowired
+    @Mock
     DateUtil dateUtil;
+
+    @InjectMocks
+    FSAccessionReportGenerator FSAccessionReportGenerator;
+
+    @InjectMocks
+    FTPAccessionReportGenerator FTPAccessionReportGenerator;
+
+    @InjectMocks
+    FSOngoingAccessionReportGenerator FSOngoingAccessionReportGenerator;
+
+    @InjectMocks
+    FTPOngoingAccessionReportGenerator FTPOngoingAccessionReportGenerator;
+
+    @Mock
+    ProducerTemplate producerTemplate;
 
     @Test
     public void testAccessionSummaryReportForFileSystem() throws Exception{
         List<ReportEntity> reportEntityList = saveSummaryReportEntity(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
         Date createdDate = reportEntityList.get(0).getCreatedDate();
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=FSAccessionReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(saveSummaryReportEntity(RecapCommonConstants.ACCESSION_SUMMARY_REPORT));
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FILE_SYSTEM, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
         assertNotNull(generatedReportFileName);
     }
@@ -41,6 +66,11 @@ public class AccessionReportGeneratorUT extends BaseTestCase{
     public void testAccessionSummaryReportForFTP() throws Exception{
         List<ReportEntity> reportEntityList = saveSummaryReportEntity(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
         Date createdDate = reportEntityList.get(0).getCreatedDate();
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=FTPAccessionReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(saveSummaryReportEntity(RecapCommonConstants.ACCESSION_SUMMARY_REPORT));
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FTP, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
         assertNotNull(generatedReportFileName);
     }
@@ -49,6 +79,11 @@ public class AccessionReportGeneratorUT extends BaseTestCase{
     public void testOngoingAccessionSummaryReportForFileSystem() throws Exception{
         List<ReportEntity> reportEntityList = saveSummaryReportEntity(RecapConstants.ONGOING_ACCESSION_REPORT);
         Date createdDate = reportEntityList.get(0).getCreatedDate();
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=FSOngoingAccessionReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(saveSummaryReportEntity(RecapConstants.ONGOING_ACCESSION_REPORT));
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapConstants.ONGOING_ACCESSION_REPORT, RecapCommonConstants.FILE_SYSTEM, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
         assertNotNull(generatedReportFileName);
     }
@@ -57,6 +92,11 @@ public class AccessionReportGeneratorUT extends BaseTestCase{
     public void testOngoingAccessionSummaryReportForFTP() throws Exception{
         List<ReportEntity> reportEntityList = saveSummaryReportEntity(RecapConstants.ONGOING_ACCESSION_REPORT);
         Date createdDate = reportEntityList.get(0).getCreatedDate();
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=FTPOngoingAccessionReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(saveSummaryReportEntity(RecapConstants.ONGOING_ACCESSION_REPORT));
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapConstants.ONGOING_ACCESSION_REPORT, RecapCommonConstants.FTP, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
         assertNotNull(generatedReportFileName);
     }
@@ -108,7 +148,7 @@ public class AccessionReportGeneratorUT extends BaseTestCase{
 
         reportEntity.setReportDataEntities(reportDataEntities);
         reportEntityList.add(reportEntity);
-        return reportDetailRepository.saveAll(reportEntityList);
+        return reportEntityList;
 
     }
 

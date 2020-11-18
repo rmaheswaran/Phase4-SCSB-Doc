@@ -65,6 +65,31 @@ public class DummyDataServiceUT extends BaseTestCaseUT {
         assertEquals(RecapCommonConstants.INCOMPLETE_STATUS,bibliographicEntity.getItemEntities().get(0).getCatalogingStatus());
     }
 
+    @Test
+    public void createDummyDataAsIncompleteException(){
+        Mockito.when(owningInstitutionIDSequenceRepository.saveAndFlush(Mockito.any())).thenReturn(new OwningInstitutionIDSequence());
+        List<CollectionGroupEntity> collectionGroupEntityList=new ArrayList<>();
+        collectionGroupEntityList.add(getCollectionGroupEntity());
+        Mockito.when(collectionGroupDetailsRepository.findAll()).thenThrow(NullPointerException.class);
+        List<ItemStatusEntity> itemStatusEntities=new ArrayList<>();
+        ItemStatusEntity itemStatusEntity=new ItemStatusEntity();
+        itemStatusEntity.setStatusCode("RecentlyReturned");
+        itemStatusEntity.setStatusDescription("RecentlyReturned");
+        itemStatusEntities.add(itemStatusEntity);
+        Mockito.when(itemStatusDetailsRepository.findAll()).thenThrow(NullPointerException.class);
+        Mockito.when(accessionDAO.saveBibRecord(Mockito.any())).thenReturn(getBibliographicEntity());
+        BibliographicEntity bibliographicEntity = dummyDataService.createDummyDataAsIncomplete(1,"3245678232","PA");
+        assertNotNull(bibliographicEntity);
+    }
+
+    @Test
+    public void createDummyDataAsException(){
+        Mockito.when(owningInstitutionIDSequenceRepository.saveAndFlush(Mockito.any())).thenThrow(NullPointerException.class);
+        Mockito.when(accessionDAO.saveBibRecord(Mockito.any())).thenReturn(getBibliographicEntity());
+        BibliographicEntity bibliographicEntity = dummyDataService.createDummyDataAsIncomplete(1,"3245678232","PA");
+        assertNotNull(bibliographicEntity);
+    }
+
     private BibliographicEntity getBibliographicEntity() {
         BibliographicEntity bibliographicEntity=new BibliographicEntity();
         bibliographicEntity.setCatalogingStatus(RecapCommonConstants.INCOMPLETE_STATUS);
