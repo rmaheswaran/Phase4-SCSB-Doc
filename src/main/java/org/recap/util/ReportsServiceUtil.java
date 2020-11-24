@@ -16,6 +16,7 @@ import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.IncompleteReportBibDetails;
 import org.recap.model.jpa.DeaccessionItemChangeLog;
+import org.recap.model.reports.ReportsInstitutionForm;
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.DeaccessionItemResultsRow;
@@ -70,6 +71,7 @@ public class ReportsServiceUtil {
      */
     public ReportsResponse populateAccessionDeaccessionItemCounts(ReportsRequest reportsRequest) throws Exception {
         ReportsResponse reportsResponse = new ReportsResponse();
+        reportsResponse.setReportsInstitutionFormList(new ArrayList<>());
         String solrFormattedDate = getSolrFormattedDates(reportsRequest.getAccessionDeaccessionFromDate(), reportsRequest.getAccessionDeaccessionToDate());
         populateAccessionCounts(reportsRequest, reportsResponse, solrFormattedDate);
         populateDeaccessionCounts(reportsRequest, reportsResponse, solrFormattedDate);
@@ -85,36 +87,22 @@ public class ReportsServiceUtil {
      */
     public ReportsResponse populateCgdItemCounts(ReportsRequest reportsRequest) throws Exception {
         ReportsResponse reportsResponse = new ReportsResponse();
+        reportsResponse.setReportsInstitutionFormList(new ArrayList<>());
         for (String owningInstitution : reportsRequest.getOwningInstitutions()) {
+            ReportsInstitutionForm reportsInstitutionForm = new ReportsInstitutionForm();
+            reportsInstitutionForm.setInstitution(owningInstitution);
             for (String collectionGroupDesignation : reportsRequest.getCollectionGroupDesignations()) {
                 SolrQuery query = solrQueryBuilder.buildSolrQueryForCGDReports(owningInstitution, collectionGroupDesignation);
                 long numFound = getNumFound(query);
-                if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
-                        reportsResponse.setOpenPulCgdCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
-                        reportsResponse.setSharedPulCgdCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
-                        reportsResponse.setPrivatePulCgdCount(numFound);
-                    }
-                } else if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
-                        reportsResponse.setOpenCulCgdCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
-                        reportsResponse.setSharedCulCgdCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
-                        reportsResponse.setPrivateCulCgdCount(numFound);
-                    }
-                } else if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
-                        reportsResponse.setOpenNyplCgdCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
-                        reportsResponse.setSharedNyplCgdCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
-                        reportsResponse.setPrivateNyplCgdCount(numFound);
-                    }
+                if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
+                    reportsInstitutionForm.setOpenCgdCount(numFound);
+                } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
+                    reportsInstitutionForm.setSharedCgdCount(numFound);
+                } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
+                    reportsInstitutionForm.setPrivateCgdCount(numFound);
                 }
             }
+            reportsResponse.getReportsInstitutionFormList().add(reportsInstitutionForm);
         }
         return reportsResponse;
     }
@@ -323,35 +311,21 @@ public class ReportsServiceUtil {
      */
     private void populateAccessionCounts(ReportsRequest reportsRequest, ReportsResponse reportsResponse, String solrFormattedDate) throws Exception {
         for (String owningInstitution : reportsRequest.getOwningInstitutions()) {
+            ReportsInstitutionForm reportsInstitutionForm = getReportInstitutionFormByInstitution(owningInstitution, reportsResponse.getReportsInstitutionFormList());
+            reportsInstitutionForm.setInstitution(owningInstitution);
             for (String collectionGroupDesignation : reportsRequest.getCollectionGroupDesignations()) {
                 SolrQuery query = solrQueryBuilder.buildSolrQueryForAccessionReports(solrFormattedDate, owningInstitution, false, collectionGroupDesignation);
                 long numFound = getNumFound(query);
-                if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
-                        reportsResponse.setAccessionOpenPulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
-                        reportsResponse.setAccessionSharedPulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
-                        reportsResponse.setAccessionPrivatePulCount(numFound);
-                    }
-                } else if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
-                        reportsResponse.setAccessionOpenCulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
-                        reportsResponse.setAccessionSharedCulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
-                        reportsResponse.setAccessionPrivateCulCount(numFound);
-                    }
-                } else if (owningInstitution.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
-                        reportsResponse.setAccessionOpenNyplCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
-                        reportsResponse.setAccessionSharedNyplCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
-                        reportsResponse.setAccessionPrivateNyplCount(numFound);
-                    }
+                reportsInstitutionForm.setAccessionPrivateCount(numFound);
+                if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
+                    reportsInstitutionForm.setAccessionOpenCount(numFound);
+                } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
+                    reportsInstitutionForm.setAccessionSharedCount(numFound);
+                } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
+                    reportsInstitutionForm.setAccessionPrivateCount(numFound);
                 }
             }
+            reportsResponse.getReportsInstitutionFormList().add(reportsInstitutionForm);
         }
     }
 
@@ -363,37 +337,39 @@ public class ReportsServiceUtil {
      * @throws Exception
      */
     private void populateDeaccessionCounts(ReportsRequest reportsRequest, ReportsResponse reportsResponse, String solrFormattedDate) throws Exception {
-        for (String ownInstitution : reportsRequest.getOwningInstitutions()) {
+        for (String owningInstitution : reportsRequest.getOwningInstitutions()) {
+            ReportsInstitutionForm reportsInstitutionForm = getReportInstitutionFormByInstitution(owningInstitution, reportsResponse.getReportsInstitutionFormList());
+            reportsInstitutionForm.setInstitution(owningInstitution);
             for (String collectionGroupDesignation : reportsRequest.getCollectionGroupDesignations()) {
-                SolrQuery query = solrQueryBuilder.buildSolrQueryForDeaccessionReports(solrFormattedDate, ownInstitution, true, collectionGroupDesignation);
+                SolrQuery query = solrQueryBuilder.buildSolrQueryForDeaccessionReports(solrFormattedDate, owningInstitution, true, collectionGroupDesignation);
                 long numFound = getNumFound(query);
-                if (ownInstitution.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
-                        reportsResponse.setDeaccessionOpenPulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
-                        reportsResponse.setDeaccessionSharedPulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
-                        reportsResponse.setDeaccessionPrivatePulCount(numFound);
-                    }
-                } else if (ownInstitution.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
-                        reportsResponse.setDeaccessionOpenCulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
-                        reportsResponse.setDeaccessionSharedCulCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
-                        reportsResponse.setDeaccessionPrivateCulCount(numFound);
-                    }
-                } else if (ownInstitution.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
-                    if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
-                        reportsResponse.setDeaccessionOpenNyplCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
-                        reportsResponse.setDeaccessionSharedNyplCount(numFound);
-                    } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
-                        reportsResponse.setDeaccessionPrivateNyplCount(numFound);
-                    }
+                if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
+                    reportsInstitutionForm.setDeaccessionOpenCount(numFound);
+                } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
+                    reportsInstitutionForm.setDeaccessionSharedCount(numFound);
+                } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_PRIVATE)) {
+                    reportsInstitutionForm.setDeaccessionPrivateCount(numFound);
+                }
+            }
+            reportsResponse.getReportsInstitutionFormList().add(reportsInstitutionForm);
+        }
+    }
+
+    /**
+     * This mehtod will return the form for matched owning institution or creates new form and returns it.
+     * @param owningInstitution
+     * @param reportsInstitutionFormList
+     * @return
+     */
+    private ReportsInstitutionForm getReportInstitutionFormByInstitution(String owningInstitution, List<ReportsInstitutionForm> reportsInstitutionFormList) {
+        if (!reportsInstitutionFormList.isEmpty()) {
+            for (ReportsInstitutionForm reportsOwningInstitutionForm : reportsInstitutionFormList) {
+                if (StringUtils.isNotBlank(owningInstitution) && owningInstitution.equalsIgnoreCase(reportsOwningInstitutionForm.getInstitution())) {
+                    return reportsOwningInstitutionForm;
                 }
             }
         }
+        return new ReportsInstitutionForm();
     }
 
     private String getSolrFormattedDates(String requestedFromDate, String requestedToDate) throws ParseException {
