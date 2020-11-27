@@ -17,18 +17,18 @@ import org.springframework.stereotype.Component;
  * Created by rajeshbabuk on 20/7/17.
  */
 @Component
-public class FTPSubmitCollectionSuccessReportRouteBuilder {
+public class S3SubmitCollectionSuccessReportRouteBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(FTPSubmitCollectionSuccessReportRouteBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(S3SubmitCollectionSuccessReportRouteBuilder.class);
 
     /**
      * This method instantiates a new route builder to generate submit collection success report to the FTP.
      *
-     * @param context         the context
+     * @param context                    the context
      * @param submitCollectionReportPath the submit Collection Report Path
      */
     @Autowired
-    public FTPSubmitCollectionSuccessReportRouteBuilder(CamelContext context, @Value("${ftp.submit.collection.report.dir}") String submitCollectionReportPath) {
+    public S3SubmitCollectionSuccessReportRouteBuilder(CamelContext context, @Value("${ftp.submit.collection.report.dir}") String submitCollectionReportPath) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -36,12 +36,12 @@ public class FTPSubmitCollectionSuccessReportRouteBuilder {
                     from(RecapConstants.FTP_SUBMIT_COLLECTION_SUCCESS_REPORT_Q)
                             .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_SUCCESS_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
-                            .setHeader(S3Constants.KEY,simple("reports/collection/submitCollection/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to("aws-s3://{{scsbReports}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
+                            .setHeader(S3Constants.KEY, simple("reports/collection/submitCollection/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to("aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
     }
 }

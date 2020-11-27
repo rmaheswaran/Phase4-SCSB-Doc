@@ -36,13 +36,13 @@ public class S3SolrExceptionRecordRouteBuilder {
                     from(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q)
                             .routeId(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_ROUTE_ID)
                             .marshal().bindy(BindyType.Csv, SolrExceptionReportReCAPCSVRecord.class)
-                            .setHeader(S3Constants.KEY,simple("reports/share/etl/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to("aws-s3://{{scsbReports}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})")
-                            .onCompletion().log("File has been uploaded to ftp successfully.");
+                            .setHeader(S3Constants.KEY, simple("reports/share/recap/solr-reports/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to("aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})")
+                            .onCompletion().log("File has been uploaded to S3 successfully.");
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
     }
 }

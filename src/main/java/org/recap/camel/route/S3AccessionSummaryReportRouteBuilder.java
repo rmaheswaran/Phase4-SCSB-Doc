@@ -16,21 +16,18 @@ import org.springframework.stereotype.Component;
  * Created by hemalathas on 23/11/16.
  */
 @Component
-public class FTPAccessionSummaryReportRouteBuilder {
+public class S3AccessionSummaryReportRouteBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(FTPAccessionSummaryReportRouteBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(S3AccessionSummaryReportRouteBuilder.class);
 
     /**
      * This method instantiates a new route builder to generate accession summary report file to the FTP.
      *
-     * @param context         the context
-     * @param ftpUserName     the ftp user name
-     * @param ftpRemoteServer the ftp remote server
-     * @param ftpKnownHost    the ftp known host
-     * @param ftpPrivateKey   the ftp private key
+     * @param context        the context
+     * @param etlReportsPath the etl Reports Path
      */
     @Autowired
-    public FTPAccessionSummaryReportRouteBuilder(CamelContext context, @Value("${ftp.etl.reports.dir}") String ftpRemoteServer) {
+    public S3AccessionSummaryReportRouteBuilder(CamelContext context, @Value("${ftp.etl.reports.dir}") String etlReportsPath) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -38,12 +35,12 @@ public class FTPAccessionSummaryReportRouteBuilder {
                     from(RecapCommonConstants.FTP_ACCESSION_SUMMARY_REPORT_Q)
                             .routeId(RecapCommonConstants.FTP_ACCESSION_SUMMARY_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, AccessionSummaryRecord.class)
-                            .setHeader(S3Constants.KEY,simple("reports/share/etl-/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to("aws-s3://{{scsbReports}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
+                            .setHeader(S3Constants.KEY, simple("reports/share/etl-reports/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to("aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
     }
 }

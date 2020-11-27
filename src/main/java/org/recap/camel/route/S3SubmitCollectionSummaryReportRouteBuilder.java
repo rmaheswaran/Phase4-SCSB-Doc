@@ -23,7 +23,7 @@ public class S3SubmitCollectionSummaryReportRouteBuilder {
     /**
      * This method instantiates a new route builder to generate submit collection summary report to the FTP.
      *
-     * @param context                         the context
+     * @param context the context
      */
     @Autowired
     public S3SubmitCollectionSummaryReportRouteBuilder(CamelContext context) {
@@ -34,14 +34,13 @@ public class S3SubmitCollectionSummaryReportRouteBuilder {
                     from(RecapConstants.FTP_SUBMIT_COLLECTION_SUMMARY_REPORT_Q)
                             .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_SUMMARY_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
-                            .setHeader(S3Constants.KEY,simple("reports/${in.header.fileName}"))
-                            .to("aws-s3://{{scsbReports}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
-
+                            .setHeader(S3Constants.KEY, simple("reports/${in.header.fileName}"))
+                            .to("aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
                 }
             });
 
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
     }
 
