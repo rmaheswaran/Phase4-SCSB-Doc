@@ -2,6 +2,7 @@ package org.recap.camel.route;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.model.dataformat.BindyType;
 import org.springframework.context.ApplicationContext;
 import org.recap.RecapConstants;
@@ -42,7 +43,8 @@ public class FTPOngoingAccessionReportRouteBuilder {
                     from(RecapConstants.FTP_ONGOING_ACCESSON_REPORT_Q)
                             .routeId(RecapConstants.FTP_ONGOING_ACCESSION_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, OngoingAccessionReportRecord.class)
-                            .to("sftp://" + ftpUserName + "@" + ftpRemoteServer + "?privateKeyFile=" + ftpPrivateKey + "&knownHostsFile=" + ftpKnownHost + "&fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append")
+                            .setHeader(S3Constants.KEY,simple("reports/share/recap/collection/ongoingAccession/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to("aws-s3://{{scsbReports}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
                             .onCompletion()
                             .bean(applicationContext.getBean(EmailService.class),RecapConstants.ACCESSION_REPORTS_SEND_EMAIL);
                 }

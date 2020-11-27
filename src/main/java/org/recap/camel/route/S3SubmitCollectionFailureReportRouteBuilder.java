@@ -2,6 +2,7 @@ package org.recap.camel.route;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.model.dataformat.BindyType;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
@@ -16,23 +17,18 @@ import org.springframework.stereotype.Component;
  * Created by rajeshbabuk on 20/7/17.
  */
 @Component
-public class FTPSubmitCollectionFailureReportRouteBuilder {
+public class S3SubmitCollectionFailureReportRouteBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(FTPSubmitCollectionFailureReportRouteBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(S3SubmitCollectionFailureReportRouteBuilder.class);
 
     /**
      * This method instantiates a new route builder to generate submit collection failure report to the FTP.
      *
      * @param context         the context
-     * @param ftpUserName     the ftp user name
-     * @param ftpRemoteServer the ftp remote server
-     * @param ftpKnownHost    the ftp known host
-     * @param ftpPrivateKey   the ftp private key
+     * @param submitCollectionReportPath the submit Collection Report Path
      */
     @Autowired
-    public FTPSubmitCollectionFailureReportRouteBuilder(CamelContext context,
-                                                        @Value("${ftp.server.userName}") String ftpUserName, @Value("${ftp.submit.collection.report.dir}") String ftpRemoteServer,
-                                                        @Value("${ftp.server.knownHost}") String ftpKnownHost, @Value("${ftp.server.privateKey}") String ftpPrivateKey) {
+    public S3SubmitCollectionFailureReportRouteBuilder(CamelContext context,@Value("${ftp.submit.collection.report.dir}") String submitCollectionReportPath) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -40,7 +36,8 @@ public class FTPSubmitCollectionFailureReportRouteBuilder {
                     from(RecapConstants.FTP_SUBMIT_COLLECTION_FAILURE_REPORT_Q)
                             .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_FAILURE_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
-                            .to("sftp://" + ftpUserName + "@" + ftpRemoteServer + "?privateKeyFile=" + ftpPrivateKey + "&knownHostsFile=" + ftpKnownHost + "&fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append");
+                            .setHeader(S3Constants.KEY,simple("reports/collection/submitCollection/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to("aws-s3://{{scsbReports}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
                 }
             });
         } catch (Exception e) {

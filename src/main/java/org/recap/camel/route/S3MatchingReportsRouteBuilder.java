@@ -2,6 +2,7 @@ package org.recap.camel.route;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.model.dataformat.BindyType;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
@@ -28,15 +29,11 @@ public class FTPMatchingReportsRouteBuilder {
      *
      * @param camelContext                the camel context
      * @param matchingReportsDirectory    the matching reports directory
-     * @param ftpMatchingReportsDirectory the ftp matching reports directory
-     * @param ftpUserName                 the ftp user name
-     * @param ftpPrivateKey               the ftp private key
-     * @param ftpKnownHost                the ftp known host
+     * @param s3MatchingReportsDirectory the s3 MatchingReports Directory
      * @param applicationContext          the application context
      */
     public FTPMatchingReportsRouteBuilder(CamelContext camelContext, @Value("${ongoing.matching.report.directory}") String matchingReportsDirectory,
-                                          @Value("${ftp.matchingAlgorithm.remote.server}") String ftpMatchingReportsDirectory, @Value("${ftp.server.userName}") String ftpUserName,
-                                          @Value("${ftp.server.privateKey}") String ftpPrivateKey, @Value("${ftp.server.knownHost}") String ftpKnownHost, ApplicationContext applicationContext) {
+                                          @Value("${ftp.matchingAlgorithm.remote.server}") String s3MatchingReportsDirectory, ApplicationContext applicationContext) {
         try {
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
@@ -44,7 +41,8 @@ public class FTPMatchingReportsRouteBuilder {
                     from(RecapConstants.FILE + matchingReportsDirectory + RecapConstants.DELETE_FILE_OPTION)
                             .routeId(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID)
                             .noAutoStartup()
-                            .to(RecapCommonConstants.SFTP+ ftpUserName +  RecapCommonConstants.AT + ftpMatchingReportsDirectory + RecapCommonConstants.PRIVATE_KEY_FILE + ftpPrivateKey + RecapCommonConstants.KNOWN_HOST_FILE + ftpKnownHost)
+                            .setHeader(S3Constants.KEY, simple("reports/share/recap/matching-reports/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to("aws-s3://{{scsbReports}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})")
                             .onCompletion()
                             .process(new StopRouteProcessor(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID))
                             .log("Title_Exception report generated and uploaded to ftp successfully.");
