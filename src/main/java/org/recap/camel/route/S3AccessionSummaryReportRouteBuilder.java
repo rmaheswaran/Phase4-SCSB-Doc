@@ -2,6 +2,7 @@ package org.recap.camel.route;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.model.dataformat.BindyType;
 import org.recap.RecapCommonConstants;
 import org.recap.model.csv.AccessionSummaryRecord;
@@ -29,9 +30,7 @@ public class FTPAccessionSummaryReportRouteBuilder {
      * @param ftpPrivateKey   the ftp private key
      */
     @Autowired
-    public FTPAccessionSummaryReportRouteBuilder(CamelContext context,
-                                                   @Value("${ftp.server.userName}") String ftpUserName, @Value("${ftp.etl.reports.dir}") String ftpRemoteServer,
-                                                   @Value("${ftp.server.knownHost}") String ftpKnownHost, @Value("${ftp.server.privateKey}") String ftpPrivateKey) {
+    public FTPAccessionSummaryReportRouteBuilder(CamelContext context, @Value("${ftp.etl.reports.dir}") String ftpRemoteServer) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -39,7 +38,8 @@ public class FTPAccessionSummaryReportRouteBuilder {
                     from(RecapCommonConstants.FTP_ACCESSION_SUMMARY_REPORT_Q)
                             .routeId(RecapCommonConstants.FTP_ACCESSION_SUMMARY_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, AccessionSummaryRecord.class)
-                            .to("sftp://" + ftpUserName + "@" + ftpRemoteServer + "?privateKeyFile=" + ftpPrivateKey + "&knownHostsFile=" + ftpKnownHost + "&fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append");
+                            .setHeader(S3Constants.KEY,simple("reports/share/etl-/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to("aws-s3://{{scsbReports}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
                 }
             });
         } catch (Exception e) {

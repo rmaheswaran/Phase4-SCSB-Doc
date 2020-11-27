@@ -2,6 +2,7 @@ package org.recap.camel.route;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.model.dataformat.BindyType;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
@@ -16,23 +17,18 @@ import org.springframework.stereotype.Component;
  * Created by chenchulakshmig on 13/10/16.
  */
 @Component
-public class FTPDeAccessionSummaryReportRouteBuilder {
+public class S3DeAccessionSummaryReportRouteBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(FTPDeAccessionSummaryReportRouteBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(S3DeAccessionSummaryReportRouteBuilder.class);
 
     /**
      * This method instantiates a new route builder to generate deaccession summary report file to the FTP.
      *
      * @param context         the context
-     * @param ftpUserName     the ftp user name
-     * @param ftpRemoteServer the ftp remote server
-     * @param ftpKnownHost    the ftp known host
-     * @param ftpPrivateKey   the ftp private key
+     * @param etlReportsPath    the etl Reports Path
      */
     @Autowired
-    public FTPDeAccessionSummaryReportRouteBuilder(CamelContext context,
-                                                   @Value("${ftp.server.userName}") String ftpUserName, @Value("${ftp.etl.reports.dir}") String ftpRemoteServer,
-                                                   @Value("${ftp.server.knownHost}") String ftpKnownHost, @Value("${ftp.server.privateKey}") String ftpPrivateKey) {
+    public S3DeAccessionSummaryReportRouteBuilder(CamelContext context, @Value("${ftp.etl.reports.dir}") String etlReportsPath) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -40,7 +36,8 @@ public class FTPDeAccessionSummaryReportRouteBuilder {
                     from(RecapConstants.FTP_DE_ACCESSION_SUMMARY_REPORT_Q)
                             .routeId(RecapConstants.FTP_DE_ACCESSION_SUMMARY_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, DeAccessionSummaryRecord.class)
-                            .to("sftp://" + ftpUserName + "@" + ftpRemoteServer + "?privateKeyFile=" + ftpPrivateKey + "&knownHostsFile=" + ftpKnownHost + "&fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append");
+                            .setHeader(S3Constants.KEY,simple("reports/share/etl/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to("aws-s3://{{scsbReports}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
                 }
             });
         } catch (Exception e) {
