@@ -24,7 +24,7 @@ public class S3SubmitCollectionReportRouteBuilder {
     /**
      * Instantiates a new route builder for submit collection api to generate the file which contains the response for submit collection to the FTP.
      *
-     * @param context         the context
+     * @param context                    the context
      * @param submitCollectionReportPath the submit Collection Report Path
      */
     @Autowired
@@ -36,13 +36,13 @@ public class S3SubmitCollectionReportRouteBuilder {
                     from(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q)
                             .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
-                            .setHeader(S3Constants.KEY,simple("reports/collection/submitCollection/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to("aws-s3://{{scsbReports}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})")
+                            .setHeader(S3Constants.KEY, simple("reports/collection/submitCollection/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to("aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})")
                             .onCompletion().log("Submit Collection Report file generated in the S3");
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
     }
 

@@ -24,8 +24,8 @@ public class S3DeAccessionSummaryReportRouteBuilder {
     /**
      * This method instantiates a new route builder to generate deaccession summary report file to the FTP.
      *
-     * @param context         the context
-     * @param etlReportsPath    the etl Reports Path
+     * @param context        the context
+     * @param etlReportsPath the etl Reports Path
      */
     @Autowired
     public S3DeAccessionSummaryReportRouteBuilder(CamelContext context, @Value("${ftp.etl.reports.dir}") String etlReportsPath) {
@@ -36,12 +36,12 @@ public class S3DeAccessionSummaryReportRouteBuilder {
                     from(RecapConstants.FTP_DE_ACCESSION_SUMMARY_REPORT_Q)
                             .routeId(RecapConstants.FTP_DE_ACCESSION_SUMMARY_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, DeAccessionSummaryRecord.class)
-                            .setHeader(S3Constants.KEY,simple("reports/share/etl/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to("aws-s3://{{scsbReports}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
+                            .setHeader(S3Constants.KEY, simple("reports/share/etl-reports/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to("aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
     }
 }

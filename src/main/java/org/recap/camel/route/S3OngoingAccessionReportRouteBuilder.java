@@ -18,24 +18,19 @@ import org.springframework.stereotype.Component;
  * Created by premkb on 07/02/17.
  */
 @Component
-public class FTPOngoingAccessionReportRouteBuilder {
+public class S3OngoingAccessionReportRouteBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(FTPOngoingAccessionReportRouteBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(S3OngoingAccessionReportRouteBuilder.class);
 
     /**
      * This method instantiates a new route builder to generate ongoing accession report to the FTP.
      *
-     * @param context            the context
-     * @param ftpUserName        the ftp user name
-     * @param ftpRemoteServer    the ftp remote server
-     * @param ftpKnownHost       the ftp known host
-     * @param ftpPrivateKey      the ftp private key
-     * @param applicationContext the application context
+     * @param context              the context
+     * @param ongoingAccessionPath ongoing Accession Path s3
+     * @param applicationContext   the application context
      */
     @Autowired
-    public FTPOngoingAccessionReportRouteBuilder(CamelContext context,
-                                                 @Value("${ftp.server.userName}") String ftpUserName, @Value("${ftp.ongoing.accession.collection.report.dir}") String ftpRemoteServer,
-                                                 @Value("${ftp.server.knownHost}") String ftpKnownHost, @Value("${ftp.server.privateKey}") String ftpPrivateKey, ApplicationContext applicationContext) {
+    public S3OngoingAccessionReportRouteBuilder(CamelContext context, @Value("${ftp.ongoing.accession.collection.report.dir}") String ongoingAccessionPath, ApplicationContext applicationContext) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -43,14 +38,14 @@ public class FTPOngoingAccessionReportRouteBuilder {
                     from(RecapConstants.FTP_ONGOING_ACCESSON_REPORT_Q)
                             .routeId(RecapConstants.FTP_ONGOING_ACCESSION_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, OngoingAccessionReportRecord.class)
-                            .setHeader(S3Constants.KEY,simple("reports/share/recap/collection/ongoingAccession/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to("aws-s3://{{scsbReports}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
+                            .setHeader(S3Constants.KEY, simple("reports/share/recap/collection/ongoingAccession/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to("aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})")
                             .onCompletion()
-                            .bean(applicationContext.getBean(EmailService.class),RecapConstants.ACCESSION_REPORTS_SEND_EMAIL);
+                            .bean(applicationContext.getBean(EmailService.class), RecapConstants.ACCESSION_REPORTS_SEND_EMAIL);
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(RecapConstants.ERROR, e);
         }
     }
 }
