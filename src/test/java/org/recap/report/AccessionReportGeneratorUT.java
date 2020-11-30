@@ -38,13 +38,13 @@ public class AccessionReportGeneratorUT extends BaseTestCaseUT {
     FSAccessionReportGenerator FSAccessionReportGenerator;
 
     @InjectMocks
-    FTPAccessionReportGenerator FTPAccessionReportGenerator;
+    S3AccessionReportGenerator S3AccessionReportGenerator;
 
     @InjectMocks
     FSOngoingAccessionReportGenerator FSOngoingAccessionReportGenerator;
 
     @InjectMocks
-    FTPOngoingAccessionReportGenerator FTPOngoingAccessionReportGenerator;
+    S3OngoingAccessionReportGenerator S3OngoingAccessionReportGenerator;
 
     @Mock
     ProducerTemplate producerTemplate;
@@ -67,7 +67,7 @@ public class AccessionReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList = saveSummaryReportEntity(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
-        ReportGeneratorInterface reportGeneratorInterface=FTPAccessionReportGenerator;
+        ReportGeneratorInterface reportGeneratorInterface= S3AccessionReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
         Mockito.when(reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(saveSummaryReportEntity(RecapCommonConstants.ACCESSION_SUMMARY_REPORT));
@@ -93,7 +93,7 @@ public class AccessionReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList = saveSummaryReportEntity(RecapConstants.ONGOING_ACCESSION_REPORT);
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
-        ReportGeneratorInterface reportGeneratorInterface=FTPOngoingAccessionReportGenerator;
+        ReportGeneratorInterface reportGeneratorInterface= S3OngoingAccessionReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
         Mockito.when(reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(saveSummaryReportEntity(RecapConstants.ONGOING_ACCESSION_REPORT));

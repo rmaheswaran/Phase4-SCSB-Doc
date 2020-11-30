@@ -19,7 +19,7 @@ import java.util.List;
  * Created by chenchulakshmig on 13/10/16.
  */
 @Component
-public class FTPDeAccessionReportGenerator implements ReportGeneratorInterface {
+public class S3DeAccessionReportGenerator implements ReportGeneratorInterface {
 
     @Autowired
     private ProducerTemplate producerTemplate;

@@ -22,13 +22,13 @@ public class S3SubmitCollectionReportRouteBuilder {
     private static final Logger logger = LoggerFactory.getLogger(S3SubmitCollectionReportRouteBuilder.class);
 
     /**
-     * Instantiates a new route builder for submit collection api to generate the file which contains the response for submit collection to the FTP.
+     * Instantiates a new route builder for submit collection api to generate the file which contains the response for submit collection to the S3.
      *
      * @param context                    the context
-     * @param submitCollectionReportPath the submit Collection Report Path
+     * @param submitCollectionS3ReportPath the submit Collection Report Path
      */
     @Autowired
-    public S3SubmitCollectionReportRouteBuilder(CamelContext context, @Value("${ftp.submit.collection.report.dir}") String submitCollectionReportPath) {
+    public S3SubmitCollectionReportRouteBuilder(CamelContext context, @Value("${s3.submit.collection.report.dir}") String submitCollectionS3ReportPath) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -36,8 +36,8 @@ public class S3SubmitCollectionReportRouteBuilder {
                     from(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q)
                             .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
-                            .setHeader(S3Constants.KEY, simple("reports/collection/submitCollection/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to("aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})")
+                            .setHeader(S3Constants.KEY, simple(submitCollectionS3ReportPath+"/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
                             .onCompletion().log("Submit Collection Report file generated in the S3");
                 }
             });

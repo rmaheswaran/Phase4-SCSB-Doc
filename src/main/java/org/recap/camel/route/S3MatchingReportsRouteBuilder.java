@@ -25,7 +25,7 @@ public class S3MatchingReportsRouteBuilder {
     private static final Logger logger = LoggerFactory.getLogger(S3MatchingReportsRouteBuilder.class);
 
     /**
-     * Instantiates a new Ftp matching reports route builder.
+     * Instantiates a new s3 matching reports route builder.
      *
      * @param camelContext               the camel context
      * @param matchingReportsDirectory   the matching reports directory
@@ -33,7 +33,7 @@ public class S3MatchingReportsRouteBuilder {
      * @param applicationContext         the application context
      */
     public S3MatchingReportsRouteBuilder(CamelContext camelContext, @Value("${ongoing.matching.report.directory}") String matchingReportsDirectory,
-                                         @Value("${ftp.matchingAlgorithm.remote.server}") String s3MatchingReportsDirectory, ApplicationContext applicationContext) {
+                                         @Value("${s3.matchingAlgorithm.reports.dir}") String s3MatchingReportsDirectory, ApplicationContext applicationContext) {
         try {
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
@@ -41,11 +41,11 @@ public class S3MatchingReportsRouteBuilder {
                     from(RecapConstants.FILE + matchingReportsDirectory + RecapConstants.DELETE_FILE_OPTION)
                             .routeId(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID)
                             .noAutoStartup()
-                            .setHeader(S3Constants.KEY, simple("reports/share/recap/matching-reports/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to("aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})")
+                            .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
                             .onCompletion()
                             .process(new StopRouteProcessor(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID))
-                            .log("Title_Exception report generated and uploaded to ftp successfully.");
+                            .log("Title_Exception report generated and uploaded to s3 successfully.");
                 }
             });
         } catch (Exception e) {
@@ -60,11 +60,11 @@ public class S3MatchingReportsRouteBuilder {
                             .routeId(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID)
                             .noAutoStartup()
                             .marshal().bindy(BindyType.Csv, MatchingSerialAndMVMReports.class)
-                            .setHeader(S3Constants.KEY, simple("reports/share/recap/matching-reports/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to("aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})")
+                            .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
                             .onCompletion()
                             .process(new StopRouteProcessor(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID))
-                            .log("Matching Serial_MVM reports generated and uploaded to ftp successfully.");
+                            .log("Matching Serial_MVM reports generated and uploaded to s3 successfully.");
 
                 }
             });
@@ -80,12 +80,12 @@ public class S3MatchingReportsRouteBuilder {
                             .routeId(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID)
                             .noAutoStartup()
                             .marshal().bindy(BindyType.Csv, MatchingSummaryReport.class)
-                            .setHeader(S3Constants.KEY, simple("reports/share/recap/matching-reports/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to("aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})")
+                            .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
                             .onCompletion()
                             .bean(applicationContext.getBean(EmailService.class), RecapConstants.MATCHING_REPORTS_SEND_EMAIL)
                             .process(new StopRouteProcessor(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID))
-                            .log("Matching Summary reports generated and uploaded to ftp successfully.")
+                            .log("Matching Summary reports generated and uploaded to s3 successfully.")
                             .end();
 
                 }
