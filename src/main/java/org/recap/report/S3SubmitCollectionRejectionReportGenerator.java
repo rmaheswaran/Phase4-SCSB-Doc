@@ -1,24 +1,19 @@
 package org.recap.report;
 
-import org.apache.camel.ProducerTemplate;
 import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.ReportEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Created by hemalathas on 23/11/16.
+ * Created by hemalathas on 21/12/16.
  */
 @Component
-public class FTPAccessionReportGenerator extends CommonReportGenerator implements ReportGeneratorInterface{
-
-    @Autowired
-    private ProducerTemplate producerTemplate;
+public class S3SubmitCollectionRejectionReportGenerator extends CommonReportGenerator implements ReportGeneratorInterface {
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
+        return reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT);
     }
 
     @Override
@@ -28,6 +23,6 @@ public class FTPAccessionReportGenerator extends CommonReportGenerator implement
 
     @Override
     public String generateReport(String fileName, List<ReportEntity> reportEntityList) {
-        return generateAccessionReportFile(fileName, reportEntityList, RecapCommonConstants.FTP_ACCESSION_SUMMARY_REPORT_Q);
+        return generateSubmitCollectionReportFile(fileName, reportEntityList, RecapCommonConstants.FTP_SUBMIT_COLLECTION_REJECTION_REPORT_Q);
     }
 }

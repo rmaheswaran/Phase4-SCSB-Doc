@@ -17,7 +17,7 @@ import java.util.List;
  * Created by akulak on 30/5/17.
  */
 @Component
-public class FTPSubmitCollectionReportGenerator implements ReportGeneratorInterface{
+public class S3SubmitCollectionReportGenerator implements ReportGeneratorInterface{
 
     @Autowired
     private ProducerTemplate producerTemplate;

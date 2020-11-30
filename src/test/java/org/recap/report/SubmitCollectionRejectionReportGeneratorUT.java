@@ -40,7 +40,7 @@ public class SubmitCollectionRejectionReportGeneratorUT extends BaseTestCaseUT {
     FSSubmitCollectionRejectionReportGenerator FSSubmitCollectionRejectionReportGenerator;
 
     @InjectMocks
-    FTPSubmitCollectionRejectionReportGenerator FTPSubmitCollectionRejectionReportGenerator;
+    S3SubmitCollectionRejectionReportGenerator S3SubmitCollectionRejectionReportGenerator;
 
     @Test
     public void testFSSubmitCollectionRejectionReport() throws InterruptedException {
@@ -60,7 +60,7 @@ public class SubmitCollectionRejectionReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList = saveSubmitCollectionRejectionReport();
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
-        ReportGeneratorInterface reportGeneratorInterface=FTPSubmitCollectionRejectionReportGenerator;
+        ReportGeneratorInterface reportGeneratorInterface= S3SubmitCollectionRejectionReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
         Mockito.when(reportDetailRepository.findByFileLikeAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(saveSubmitCollectionRejectionReport());

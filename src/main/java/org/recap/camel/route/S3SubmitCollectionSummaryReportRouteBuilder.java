@@ -21,7 +21,7 @@ public class S3SubmitCollectionSummaryReportRouteBuilder {
     private static final Logger logger = LoggerFactory.getLogger(S3SubmitCollectionSummaryReportRouteBuilder.class);
 
     /**
-     * This method instantiates a new route builder to generate submit collection summary report to the FTP.
+     * This method instantiates a new route builder to generate submit collection summary report to the S3.
      *
      * @param context the context
      */
@@ -35,7 +35,7 @@ public class S3SubmitCollectionSummaryReportRouteBuilder {
                             .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_SUMMARY_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
                             .setHeader(S3Constants.KEY, simple("reports/${in.header.fileName}"))
-                            .to("aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})");
+                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
                 }
             });
 

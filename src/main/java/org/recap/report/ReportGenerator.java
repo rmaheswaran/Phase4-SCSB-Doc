@@ -30,34 +30,34 @@ public class ReportGenerator {
     private CSVSolrExceptionReportGenerator csvSolrExceptionReportGenerator;
 
     @Autowired
-    private FTPSolrExceptionReportGenerator ftpSolrExceptionReportGenerator;
+    private S3SolrExceptionReportGenerator s3SolrExceptionReportGenerator;
 
     @Autowired
     private FSDeAccessionReportGenerator fsDeAccessionReportGenerator;
 
     @Autowired
-    private FTPDeAccessionReportGenerator ftpDeAccessionReportGenerator;
+    private S3DeAccessionReportGenerator s3DeAccessionReportGenerator;
 
     @Autowired
     private FSAccessionReportGenerator fsAccessionReportGenerator;
 
     @Autowired
-    private FTPAccessionReportGenerator ftpAccessionReportGenerator;
+    private S3AccessionReportGenerator s3AccessionReportGenerator;
 
     @Autowired
     private FSSubmitCollectionRejectionReportGenerator fsSubmitCollectionRejectionReportGenerator;
 
     @Autowired
-    private FTPSubmitCollectionRejectionReportGenerator ftpSubmitCollectionRejectionReportGenerator;
+    private S3SubmitCollectionRejectionReportGenerator s3SubmitCollectionRejectionReportGenerator;
 
     @Autowired
     private FSSubmitCollectionExceptionReportGenerator fsSubmitCollectionExceptionReportGenerator;
 
     @Autowired
-    private FTPSubmitCollectionExceptionReportGenerator ftpSubmitCollectionExceptionReportGenerator;
+    private S3SubmitCollectionExceptionReportGenerator s3SubmitCollectionExceptionReportGenerator;
 
     @Autowired
-    private FTPSubmitCollectionSummaryReportGenerator ftpSubmitCollectionSummaryReportGenerator;
+    private S3SubmitCollectionSummaryReportGenerator s3SubmitCollectionSummaryReportGenerator;
 
     @Autowired
     private FSSubmitCollectionSummaryReportGenerator fsSubmitCollectionSummaryReportGenerator;
@@ -66,19 +66,19 @@ public class ReportGenerator {
     private FSOngoingAccessionReportGenerator fsOngoingAccessionReportGenerator;
 
     @Autowired
-    private FTPOngoingAccessionReportGenerator ftpOngoingAccessionReportGenerator;
+    private S3OngoingAccessionReportGenerator s3OngoingAccessionReportGenerator;
 
     @Autowired
-    private FTPSubmitCollectionReportGenerator ftpSubmitCollectionReportGenerator;
+    private S3SubmitCollectionReportGenerator s3SubmitCollectionReportGenerator;
 
     @Autowired
-    private FTPSubmitCollectionSuccessReportGenerator ftpSubmitCollectionSuccessReportGenerator;
+    private S3SubmitCollectionSuccessReportGenerator s3SubmitCollectionSuccessReportGenerator;
 
     @Autowired
     private FSSubmitCollectionSuccessReportGenerator fsSubmitCollectionSuccessReportGenerator;
 
     @Autowired
-    private FTPSubmitCollectionFailureReportGenerator ftpSubmitCollectionFailureReportGenerator;
+    private S3SubmitCollectionFailureReportGenerator s3SubmitCollectionFailureReportGenerator;
 
     @Autowired
     private FSSubmitCollectionFailureReportGenerator fsSubmitCollectionFailureReportGenerator;
@@ -169,23 +169,23 @@ public class ReportGenerator {
         if(CollectionUtils.isEmpty(reportGenerators)) {
             reportGenerators = new ArrayList<>();
             reportGenerators.add(csvSolrExceptionReportGenerator);
-            reportGenerators.add(ftpSolrExceptionReportGenerator);
+            reportGenerators.add(s3SolrExceptionReportGenerator);
             reportGenerators.add(fsDeAccessionReportGenerator);
-            reportGenerators.add(ftpDeAccessionReportGenerator);
+            reportGenerators.add(s3DeAccessionReportGenerator);
             reportGenerators.add(fsAccessionReportGenerator);
-            reportGenerators.add(ftpAccessionReportGenerator);
+            reportGenerators.add(s3AccessionReportGenerator);
             reportGenerators.add(fsSubmitCollectionRejectionReportGenerator);
-            reportGenerators.add(ftpSubmitCollectionRejectionReportGenerator);
+            reportGenerators.add(s3SubmitCollectionRejectionReportGenerator);
             reportGenerators.add(fsSubmitCollectionExceptionReportGenerator);
-            reportGenerators.add(ftpSubmitCollectionExceptionReportGenerator);
-            reportGenerators.add(ftpSubmitCollectionSummaryReportGenerator);
+            reportGenerators.add(s3SubmitCollectionExceptionReportGenerator);
+            reportGenerators.add(s3SubmitCollectionSummaryReportGenerator);
             reportGenerators.add(fsSubmitCollectionSummaryReportGenerator);
             reportGenerators.add(fsOngoingAccessionReportGenerator);
-            reportGenerators.add(ftpOngoingAccessionReportGenerator);
-            reportGenerators.add(ftpSubmitCollectionReportGenerator);
-            reportGenerators.add(ftpSubmitCollectionSuccessReportGenerator);
+            reportGenerators.add(s3OngoingAccessionReportGenerator);
+            reportGenerators.add(s3SubmitCollectionReportGenerator);
+            reportGenerators.add(s3SubmitCollectionSuccessReportGenerator);
             reportGenerators.add(fsSubmitCollectionSuccessReportGenerator);
-            reportGenerators.add(ftpSubmitCollectionFailureReportGenerator);
+            reportGenerators.add(s3SubmitCollectionFailureReportGenerator);
             reportGenerators.add(fsSubmitCollectionFailureReportGenerator);
         }
         return reportGenerators;
