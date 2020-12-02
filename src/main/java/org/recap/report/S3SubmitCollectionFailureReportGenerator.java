@@ -9,17 +9,17 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Created by hemalathas on 21/12/16.
+ * Created by rajeshbabuk on 20/7/17.
  */
 @Component
-public class FTPSubmitCollectionSummaryReportGenerator extends CommonReportGenerator implements ReportGeneratorInterface {
+public class S3SubmitCollectionFailureReportGenerator extends CommonReportGenerator implements ReportGeneratorInterface {
 
     @Autowired
     private ProducerTemplate producerTemplate;
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY);
+        return reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT);
     }
 
     @Override
@@ -29,6 +29,6 @@ public class FTPSubmitCollectionSummaryReportGenerator extends CommonReportGener
 
     @Override
     public String generateReport(String fileName, List<ReportEntity> reportEntityList) {
-        return generateSubmitCollectionReportFile(fileName, reportEntityList, RecapConstants.FTP_SUBMIT_COLLECTION_SUMMARY_REPORT_Q);
+        return generateSubmitCollectionReportFile(fileName, reportEntityList, RecapConstants.FTP_SUBMIT_COLLECTION_FAILURE_REPORT_Q);
     }
 }

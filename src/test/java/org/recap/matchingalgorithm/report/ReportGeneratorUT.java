@@ -11,9 +11,7 @@ import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.report.FSAccessionReportGenerator;
-import org.recap.report.FTPAccessionReportGenerator;
-import org.recap.report.FTPSubmitCollectionReportGenerator;
-import org.recap.report.FTPSubmitCollectionSuccessReportGenerator;
+import org.recap.report.S3AccessionReportGenerator;
 import org.recap.report.ReportGenerator;
 import org.recap.report.ReportGeneratorInterface;
 import org.recap.repository.jpa.ReportDetailRepository;
@@ -41,7 +39,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
     FSAccessionReportGenerator fsAccessionReportGenerator;
 
     @InjectMocks
-    FTPAccessionReportGenerator ftpAccessionReportGenerator;
+    S3AccessionReportGenerator s3AccessionReportGenerator;
 
     @Mock
     ReportDetailRepository reportDetailRepository;
@@ -74,7 +72,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList =saveAccessionSummaryReportEntity();
         Mockito.when(reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
         List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
-        ReportGeneratorInterface reportGeneratorInterface=ftpAccessionReportGenerator;
+        ReportGeneratorInterface reportGeneratorInterface= s3AccessionReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));

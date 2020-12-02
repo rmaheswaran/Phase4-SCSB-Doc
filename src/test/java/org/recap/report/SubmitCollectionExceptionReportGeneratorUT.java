@@ -40,16 +40,16 @@ public class SubmitCollectionExceptionReportGeneratorUT extends BaseTestCaseUT {
     FSSubmitCollectionExceptionReportGenerator FSSubmitCollectionExceptionReportGenerator;
 
     @InjectMocks
-    FTPSubmitCollectionExceptionReportGenerator ftpSubmitCollectionExceptionReportGenerator;
+    S3SubmitCollectionExceptionReportGenerator s3SubmitCollectionExceptionReportGenerator;
 
     @InjectMocks
-    FTPSubmitCollectionSuccessReportGenerator FTPSubmitCollectionSuccessReportGenerator;
+    S3SubmitCollectionSuccessReportGenerator S3SubmitCollectionSuccessReportGenerator;
 
     @InjectMocks
     FSSubmitCollectionSuccessReportGenerator FSSubmitCollectionSuccessReportGenerator;
 
     @InjectMocks
-    FTPSubmitCollectionReportGenerator ftpSubmitCollectionReportGenerator;
+    S3SubmitCollectionReportGenerator s3SubmitCollectionReportGenerator;
 
     @Mock
     ProducerTemplate producerTemplate;
@@ -86,7 +86,7 @@ public class SubmitCollectionExceptionReportGeneratorUT extends BaseTestCaseUT {
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         Mockito.when(reportDetailRepository.findByFileLikeAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(saveSubmitCollectionExceptionReport());
         List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
-        ReportGeneratorInterface reportGeneratorInterface=FTPSubmitCollectionSuccessReportGenerator;
+        ReportGeneratorInterface reportGeneratorInterface= S3SubmitCollectionSuccessReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.SUBMIT_COLLECTION_REPORT,"PUL", RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT,RecapCommonConstants.FTP,getFromDate(createdDate), getToDate(createdDate));
@@ -98,7 +98,7 @@ public class SubmitCollectionExceptionReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(reportDetailRepository.findByIdIn(Mockito.anyList())).thenReturn(saveSubmitCollectionExceptionReport());
 
         List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
-        ReportGeneratorInterface reportGeneratorInterface=ftpSubmitCollectionReportGenerator;
+        ReportGeneratorInterface reportGeneratorInterface= s3SubmitCollectionReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
         String response=reportGenerator.generateReportBasedOnReportRecordNum(Arrays.asList(1), RecapConstants.SUBMIT_COLLECTION,RecapCommonConstants.FTP);
@@ -111,7 +111,7 @@ public class SubmitCollectionExceptionReportGeneratorUT extends BaseTestCaseUT {
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         Mockito.when(reportDetailRepository.findByFileLikeAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(saveSubmitCollectionExceptionReport());
         List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
-        ReportGeneratorInterface reportGeneratorInterface=ftpSubmitCollectionExceptionReportGenerator;
+        ReportGeneratorInterface reportGeneratorInterface= s3SubmitCollectionExceptionReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
         String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.SUBMIT_COLLECTION_REPORT,"PUL", RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT,RecapCommonConstants.FTP, getFromDate(createdDate), getToDate(createdDate));

@@ -22,7 +22,7 @@ import java.util.HashMap;
  * Created by premkb on 07/02/17.
  */
 @Component
-public class FTPOngoingAccessionReportGenerator implements ReportGeneratorInterface {
+public class S3OngoingAccessionReportGenerator implements ReportGeneratorInterface {
 
     @Autowired
     private ProducerTemplate producerTemplate;
