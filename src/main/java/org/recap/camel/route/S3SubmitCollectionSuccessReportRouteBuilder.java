@@ -36,7 +36,7 @@ public class S3SubmitCollectionSuccessReportRouteBuilder {
                     from(RecapConstants.FTP_SUBMIT_COLLECTION_SUCCESS_REPORT_Q)
                             .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_SUCCESS_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
-                            .setHeader(S3Constants.KEY, simple(submitCollectionS3ReportPath+"/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .setHeader(S3Constants.KEY, simple(submitCollectionS3ReportPath+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
                             .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
                 }
             });
