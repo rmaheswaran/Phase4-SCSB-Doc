@@ -28,7 +28,7 @@ public class S3AccessionSummaryReportRouteBuilder {
      * @param etlReportsPath the etl Reports Path
      */
     @Autowired
-    public S3AccessionSummaryReportRouteBuilder(CamelContext context, @Value("${s3.etl.reports.path}") String etlReportsPath) {
+    public S3AccessionSummaryReportRouteBuilder(CamelContext context, @Value("${s3.etl.reports.dir}") String etlReportsPath) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -36,7 +36,7 @@ public class S3AccessionSummaryReportRouteBuilder {
                     from(RecapCommonConstants.FTP_ACCESSION_SUMMARY_REPORT_Q)
                             .routeId(RecapCommonConstants.FTP_ACCESSION_SUMMARY_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, AccessionSummaryRecord.class)
-                            .setHeader(S3Constants.KEY, simple(etlReportsPath+"/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .setHeader(S3Constants.KEY, simple(etlReportsPath+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
                             .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
                 }
             });

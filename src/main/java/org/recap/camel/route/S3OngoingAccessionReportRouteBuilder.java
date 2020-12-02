@@ -38,7 +38,7 @@ public class S3OngoingAccessionReportRouteBuilder {
                     from(RecapConstants.FTP_ONGOING_ACCESSON_REPORT_Q)
                             .routeId(RecapConstants.FTP_ONGOING_ACCESSION_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, OngoingAccessionReportRecord.class)
-                            .setHeader(S3Constants.KEY, simple(ongoingAccessionPathS3+"/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .setHeader(S3Constants.KEY, simple(ongoingAccessionPathS3+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
                             .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
                             .onCompletion()
                             .bean(applicationContext.getBean(EmailService.class), RecapConstants.ACCESSION_REPORTS_SEND_EMAIL);
