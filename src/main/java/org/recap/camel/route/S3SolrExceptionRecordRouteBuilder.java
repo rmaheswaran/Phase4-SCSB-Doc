@@ -37,7 +37,7 @@ public class S3SolrExceptionRecordRouteBuilder {
                     from(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q)
                             .routeId(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_ROUTE_ID)
                             .marshal().bindy(BindyType.Csv, SolrExceptionReportReCAPCSVRecord.class)
-                            .setHeader(S3Constants.KEY, simple(solrReportsS3Path+"/${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                            .setHeader(S3Constants.KEY, simple(solrReportsS3Path+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
                             .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
                             .onCompletion().log("File has been uploaded to S3 successfully.");
                 }
