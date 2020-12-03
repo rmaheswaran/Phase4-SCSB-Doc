@@ -99,7 +99,7 @@ public class EmailService {
         String path = file.getParent();
         emailPayLoad.setTo(recapSupportEmailTo);
         getCc(emailPayLoad);
-        emailPayLoad.setMessage("The Reports for Matching Algorithm is available at the FTP location " + path);
+        emailPayLoad.setMessage("The Reports for Matching Algorithm is available at the s3 location " + path);
         logger.info("Matching Algorithm Reports email has been sent to : {} and cc : {} ",emailPayLoad.getTo(),emailPayLoad.getCc());
         return emailPayLoad;
     }
@@ -119,7 +119,7 @@ public class EmailService {
         String fileName = file.getName();
         emailPayLoad.setTo(recapSupportEmailTo);
         getCcBasedOnInstitution(emailPayLoad);
-        emailPayLoad.setMessage("The Report " + fileName + " is available at the FTP location " + absolutePath);
+        emailPayLoad.setMessage("The Report " + fileName + " is available at the s3 location " + absolutePath);
         logger.info("Accession Reports email has been sent to : {} and cc : {} ",emailPayLoad.getTo(),emailPayLoad.getCc());
         return emailPayLoad;
     }

@@ -7,14 +7,11 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
-import org.recap.model.search.resolver.impl.bib.IsDeletedBibValueResolver;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -30,19 +27,19 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by akulak on 30/5/17.
  */
-public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
+public class S3SubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
 
     @InjectMocks
-    FTPSubmitCollectionReportGenerator ftpSubmitCollectionReportGenerator;
+    S3SubmitCollectionReportGenerator s3SubmitCollectionReportGenerator;
 
     @InjectMocks
-    FTPSubmitCollectionSummaryReportGenerator ftpSubmitCollectionSummaryReportGenerator;
+    S3SubmitCollectionSummaryReportGenerator s3SubmitCollectionSummaryReportGenerator;
 
     @InjectMocks
-    FTPSubmitCollectionFailureReportGenerator FTPSubmitCollectionFailureReportGenerator;
+    S3SubmitCollectionFailureReportGenerator S3SubmitCollectionFailureReportGenerator;
 
     @InjectMocks
-    FTPSubmitCollectionSuccessReportGenerator FTPSubmitCollectionSuccessReportGenerator;
+    S3SubmitCollectionSuccessReportGenerator S3SubmitCollectionSuccessReportGenerator;
 
     @InjectMocks
     FSSubmitCollectionFailureReportGenerator FSSubmitCollectionFailureReportGenerator;
@@ -55,7 +52,7 @@ public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
 
 
     @InjectMocks
-    FTPSolrExceptionReportGenerator FTPSolrExceptionReportGenerator;
+    S3SolrExceptionReportGenerator S3SolrExceptionReportGenerator;
 
 
     @InjectMocks
@@ -79,7 +76,7 @@ public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList =saveSubmitCollectionExceptionReport(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT);
         Mockito.when(reportDetailRepository.findByFileLikeAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
         List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
-        ReportGeneratorInterface reportGeneratorInterface=FTPSubmitCollectionFailureReportGenerator;
+        ReportGeneratorInterface reportGeneratorInterface= S3SubmitCollectionFailureReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
         String generatedReportFileName = reportGenerator.generateReport(RecapConstants.FTP_SUBMIT_COLLECTION_FAILURE_REPORT_Q, RecapCommonConstants.LCCN_CRITERIA, RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT, RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
@@ -104,9 +101,9 @@ public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList=new ArrayList<>();
         ReportEntity reportEntity=new ReportEntity();
         reportEntityList.add(reportEntity);
-        String generatedReportFileName = FTPSolrExceptionReportGenerator.generateReport(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q,reportEntityList);
-        assertTrue(FTPSolrExceptionReportGenerator.isTransmitted(RecapCommonConstants.FTP));
-        assertTrue(FTPSolrExceptionReportGenerator.isInterested(RecapCommonConstants.SOLR_INDEX_EXCEPTION));
+        String generatedReportFileName = S3SolrExceptionReportGenerator.generateReport(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q,reportEntityList);
+        assertTrue(S3SolrExceptionReportGenerator.isTransmitted(RecapCommonConstants.FTP));
+        assertTrue(S3SolrExceptionReportGenerator.isInterested(RecapCommonConstants.SOLR_INDEX_EXCEPTION));
     }
 
     @Test
@@ -132,12 +129,12 @@ public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
     @Test
     public void testGenerateReport() throws Exception{
         camelContext.getEndpoint(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q, MockEndpoint.class);
-        boolean isInterested = ftpSubmitCollectionReportGenerator.isInterested(RecapConstants.SUBMIT_COLLECTION);
+        boolean isInterested = s3SubmitCollectionReportGenerator.isInterested(RecapConstants.SUBMIT_COLLECTION);
         assertTrue(isInterested);
-        boolean isTransmitted = ftpSubmitCollectionReportGenerator.isTransmitted(RecapCommonConstants.FTP);
+        boolean isTransmitted = s3SubmitCollectionReportGenerator.isTransmitted(RecapCommonConstants.FTP);
         assertTrue(isTransmitted);
-        String response = ftpSubmitCollectionReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT));
-        String errorResponse = ftpSubmitCollectionReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,null);
+        String response = s3SubmitCollectionReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT));
+        String errorResponse = s3SubmitCollectionReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,null);
         assertNotNull(response);
         assertEquals(RecapCommonConstants.SUCCESS,response);
         assertEquals(RecapConstants.ERROR,errorResponse);
@@ -146,11 +143,11 @@ public class FTPSubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
     @Test
     public void testSubmitCollectionSummaryReportGenerator() throws Exception{
         camelContext.getEndpoint(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q, MockEndpoint.class);
-        boolean isInterested = ftpSubmitCollectionSummaryReportGenerator.isInterested(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY);
+        boolean isInterested = s3SubmitCollectionSummaryReportGenerator.isInterested(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY);
         assertTrue(isInterested);
-        boolean isTransmitted = ftpSubmitCollectionSummaryReportGenerator.isTransmitted(RecapCommonConstants.FTP);
+        boolean isTransmitted = s3SubmitCollectionSummaryReportGenerator.isTransmitted(RecapCommonConstants.FTP);
         assertTrue(isTransmitted);
-        String response = ftpSubmitCollectionSummaryReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY));
+        String response = s3SubmitCollectionSummaryReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY));
         assertNotNull(response);
     }
 
