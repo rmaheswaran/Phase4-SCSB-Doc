@@ -75,7 +75,7 @@ public class GenerateReportRestController {
         }
         if(StringUtils.isNotBlank(generateReportFileName.toString())) {
             logger.info("Created report fileNames : {}", generateReportFileName);
-            status = "Report generated Successfully in FTP";
+            status = "Report generated Successfully in S3";
         } else {
             logger.info("No report files generated.");
             status = "There is no report to generate or Report Generation Failed";
