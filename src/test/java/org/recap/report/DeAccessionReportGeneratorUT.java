@@ -39,7 +39,7 @@ public class DeAccessionReportGeneratorUT extends BaseTestCaseUT {
     FSDeAccessionReportGenerator FSDeAccessionReportGenerator;
 
     @InjectMocks
-    FTPDeAccessionReportGenerator FTPDeAccessionReportGenerator;
+    S3DeAccessionReportGenerator S3DeAccessionReportGenerator;
 
     @Mock
     ProducerTemplate producerTemplate;
@@ -62,7 +62,7 @@ public class DeAccessionReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntities = getReportEntity();
         Date createdDate = reportEntities.get(0).getCreatedDate();
         List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
-        ReportGeneratorInterface reportGeneratorInterface=FTPDeAccessionReportGenerator;
+        ReportGeneratorInterface reportGeneratorInterface= S3DeAccessionReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
         Mockito.when(reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(getReportEntity());

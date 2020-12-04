@@ -11,9 +11,9 @@ import java.util.List;
  * Created by angelind on 30/9/16.
  */
 @Component
-public class FTPSolrExceptionReportGenerator extends CommonReportGenerator implements ReportGeneratorInterface{
+public class S3SolrExceptionReportGenerator extends CommonReportGenerator implements ReportGeneratorInterface{
 
-    private static final Logger logger = LoggerFactory.getLogger(FTPSolrExceptionReportGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(S3SolrExceptionReportGenerator.class);
 
     @Override
     public boolean isInterested(String reportType) {
