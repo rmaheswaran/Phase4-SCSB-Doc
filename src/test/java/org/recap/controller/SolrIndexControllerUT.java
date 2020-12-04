@@ -1,9 +1,11 @@
 package org.recap.controller;
 
+import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
@@ -100,6 +102,21 @@ public class SolrIndexControllerUT extends BaseControllerUT{
     }
 
     @Test
+    public void fullIndexException()throws Exception{
+        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
+        solrIndexRequest.setNumberOfThreads(5);
+        solrIndexRequest.setNumberOfDocs(1000);
+        solrIndexRequest.setDocType("");
+        solrIndexRequest.setDoClean(true);
+        solrIndexRequest.setOwningInstitutionCode("PUL");
+        Mockito.doThrow(SolrServerException.class).when(solrAdmin).unloadTempCores();
+        String response =solrIndexController.fullIndex(solrIndexRequest,bindingResult,model);
+        assertNotNull(response);
+        assertTrue(response.contains("Total number of records processed :"));
+    }
+
+
+    @Test
     public void fullIndex_Noinst()throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setNumberOfThreads(5);
@@ -129,12 +146,33 @@ public class SolrIndexControllerUT extends BaseControllerUT{
     }
 
     @Test
+    public void indexByOwningInstBibliographicIdListException()throws Exception{
+        Map<String,Object> requestParameters = new HashMap<>();
+        requestParameters.put(RecapConstants.OWN_INST_BIBID_LIST, "[123/456/789]");
+        requestParameters.put(RecapCommonConstants.OWN_INSTITUTION_ID,"1");
+        Mockito.doThrow(NullPointerException.class).when(solrIndexService).indexByOwnInstBibId(Mockito.anyList(),Mockito.anyInt());
+        String response =solrIndexController.indexByOwningInstBibliographicIdList(requestParameters);
+        assertNotNull(response);
+        assertTrue(response.contains(RecapCommonConstants.FAILURE));
+    }
+
+    @Test
     public void deleteByBibIdAndIsDeletedFlag()throws Exception{
         List<Map<String,String>> bibIdMapToRemoveIndexList=new ArrayList<>();
         bibIdMapToRemoveIndexList.add(getStringStringMap("1"));
         String response =solrIndexController.deleteByBibIdAndIsDeletedFlag(bibIdMapToRemoveIndexList);
         assertNotNull(response);
         assertTrue(response.contains(RecapCommonConstants.SUCCESS));
+    }
+
+    @Test
+    public void deleteByBibIdAndIsDeletedFlagException()throws Exception{
+        List<Map<String,String>> bibIdMapToRemoveIndexList=new ArrayList<>();
+        bibIdMapToRemoveIndexList.add(getStringStringMap("1"));
+        Mockito.doThrow(NullPointerException.class).when(solrIndexService).deleteBySolrQuery(Mockito.anyString());
+        String response =solrIndexController.deleteByBibIdAndIsDeletedFlag(bibIdMapToRemoveIndexList);
+        assertNotNull(response);
+        assertTrue(response.contains(RecapCommonConstants.FAILURE));
     }
 
     @Test
@@ -146,6 +184,17 @@ public class SolrIndexControllerUT extends BaseControllerUT{
         String response =solrIndexController.deleteByBibHoldingItemId(idMapToRemoveIndexList);
         assertNotNull(response);
         assertTrue(response.contains(RecapCommonConstants.SUCCESS));
+    }
+
+    @Test
+    public void deleteByBibHoldingItemIdException()throws Exception{
+        List<Map<String,String>> idMapToRemoveIndexList=new ArrayList<>();
+        idMapToRemoveIndexList.add(getStringStringMap("1"));
+        idMapToRemoveIndexList.add(getStringStringMap(""));
+        idMapToRemoveIndexList.add(getStringStringMap(null));
+        Mockito.doThrow(NullPointerException.class).when(solrIndexService).deleteBySolrQuery(Mockito.anyString());
+        String response =solrIndexController.deleteByBibHoldingItemId(idMapToRemoveIndexList);
+        assertNotNull(response);
     }
 
     private Map<String, String> getStringStringMap(String root) {
@@ -192,6 +241,18 @@ public class SolrIndexControllerUT extends BaseControllerUT{
         String response =solrIndexController.indexByBibliographicId(bibliographicIdList);
         assertNotNull(response);
         assertTrue(response.contains(RecapCommonConstants.SUCCESS));
+    }
+
+
+    @Test
+    public void indexByBibliographicIdException()throws Exception{
+        List<Integer> bibliographicIdList = new ArrayList<>();
+        bibliographicIdList.add(947);
+        bibliographicIdList.add(1215);
+        Mockito.when(solrIndexService.indexByBibliographicId(Mockito.anyInt())).thenThrow(NullPointerException.class);
+        String response =solrIndexController.indexByBibliographicId(bibliographicIdList);
+        assertNotNull(response);
+        assertTrue(response.contains(RecapCommonConstants.FAILURE));
     }
 
     private SolrIndexRequest getSolrIndexRequest(){
