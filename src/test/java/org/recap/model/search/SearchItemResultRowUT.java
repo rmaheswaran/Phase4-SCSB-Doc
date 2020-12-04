@@ -36,6 +36,9 @@ public class SearchItemResultRowUT {
         searchItemResultRow.setCollectionGroupDesignation("CG");
         searchItemResultRow.setCustomerCode("NA");
         searchItemResultRow.setUseRestriction("Allowed");
+        searchItemResultRow.equals(new SearchItemResultRow());
+        searchItemResultRow.compareTo(new SearchItemResultRow());
+        searchItemResultRow.hashCode();
     }
 
     @Test
