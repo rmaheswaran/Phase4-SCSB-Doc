@@ -2,8 +2,13 @@ package org.recap.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.recap.model.reports.ReportDataRequest;
 import org.recap.model.reports.ReportsRequest;
+import org.recap.model.reports.ReportsResponse;
+import org.recap.util.ReportsServiceUtil;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Arrays;
@@ -16,6 +21,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by rajeshbabuk on 13/1/17.
  */
 public class ReportsRestControllerUT extends BaseControllerUT {
+
+    @InjectMocks
+    ReportsRestController mockReportsRestController;
+
+    @Mock
+    ReportsServiceUtil reportsServiceUtil;
 
     @Test
     public void accessionDeaccessionCounts() throws Exception {
@@ -109,4 +120,35 @@ public class ReportsRestControllerUT extends BaseControllerUT {
         assertNotNull(result);
     }
 
+    @Test
+    public void deaccessionResultsException() throws Exception {
+        ReportsRequest reportsRequest=new ReportsRequest();
+        Mockito.when(reportsServiceUtil.populateDeaccessionResults(Mockito.any())).thenReturn(new ReportsResponse());
+        ReportsResponse incompleteRecords=mockReportsRestController.deaccessionResults(reportsRequest);
+        assertNotNull(incompleteRecords);
+    }
+
+    @Test
+    public void accessionDeaccessionCountsException() throws Exception {
+        ReportsRequest reportsRequest=new ReportsRequest();
+        Mockito.when(reportsServiceUtil.populateAccessionDeaccessionItemCounts(Mockito.any())).thenThrow(NullPointerException.class);
+        ReportsResponse incompleteRecords=mockReportsRestController.accessionDeaccessionCounts(reportsRequest);
+        assertNotNull(incompleteRecords);
+    }
+
+    @Test
+    public void cgdItemCountsException() throws Exception {
+        ReportsRequest reportsRequest=new ReportsRequest();
+        Mockito.when(reportsServiceUtil.populateCgdItemCounts(Mockito.any())).thenThrow(NullPointerException.class);
+        ReportsResponse incompleteRecords=mockReportsRestController.cgdItemCounts(reportsRequest);
+        assertNotNull(incompleteRecords);
+    }
+
+    @Test
+    public void testIncompleteRecordsException() throws Exception {
+        ReportsRequest reportsRequest=new ReportsRequest();
+        Mockito.when(reportsServiceUtil.populateIncompleteRecordsReport(Mockito.any())).thenThrow(NullPointerException.class);
+        ReportsResponse incompleteRecords=mockReportsRestController.incompleteRecords(reportsRequest);
+        assertNotNull(incompleteRecords);
+    }
 }

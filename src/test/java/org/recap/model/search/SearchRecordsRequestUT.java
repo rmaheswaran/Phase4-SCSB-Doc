@@ -5,8 +5,10 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 
 /**
  * Created by premkb on 2/8/16.
@@ -34,6 +36,9 @@ public class SearchRecordsRequestUT {
         assertEquals("1",searchRecordsRequest.getTotalBibRecordsCount());
         assertEquals("1",searchRecordsRequest.getTotalItemRecordsCount());
         assertEquals(Integer.valueOf(1),searchRecordsRequest.getIndex());
+        assertTrue(searchRecordsRequest.isSelectAll());
+        assertTrue(searchRecordsRequest.isSelectAllFacets());
+        assertTrue(searchRecordsRequest.isShowResults());
 
     }
 
@@ -64,5 +69,8 @@ public class SearchRecordsRequestUT {
         searchRecordsRequest.setTotalItemRecordsCount("1");
         searchRecordsRequest.setSelectAll(false);
         searchRecordsRequest.setIndex(1);
+        searchRecordsRequest.setSelectAll(true);
+        searchRecordsRequest.setShowResults(true);
+        searchRecordsRequest.setSelectAllFacets(true);
     }
 }
