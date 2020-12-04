@@ -55,7 +55,7 @@ public class GenerateReportRestControllerUT extends BaseControllerUT {
         solrIndexRequest.setProcessType("test");
         Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT);
         String reponse =generateReportRestController.generateReportsJob(solrIndexRequest);
-        assertEquals("Report generated Successfully in FTP",reponse);
+        assertEquals("Report generated Successfully in S3",reponse);
     }
 
     @Test
