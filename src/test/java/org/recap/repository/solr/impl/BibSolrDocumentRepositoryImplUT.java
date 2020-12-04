@@ -73,12 +73,13 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         searchRecordsRequest.setRequestingInstitution("NYPL");
         searchRecordsRequest.setFieldValue("Shared");
-        searchRecordsRequest.setFieldName("");
+        searchRecordsRequest.setFieldName("test");
         searchRecordsRequest.setPageSize(1);
         searchRecordsRequest.setPageNumber(1);
         searchRecordsRequest.setCatalogingStatus("Shared");
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        Mockito.when(solrQueryBuilder.getCountQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
         SolrClient solrClient=PowerMockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);

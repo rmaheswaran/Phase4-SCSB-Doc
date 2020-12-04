@@ -3,6 +3,7 @@ package org.recap.repository.solr.impl;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -42,6 +43,7 @@ import java.util.Map;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by premkb on 27/1/17.
@@ -119,7 +121,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
-        SolrDocumentList solrDocumentList = new SolrDocumentList();
+        SolrDocumentList solrDocumentList = getSolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
         solrDocument.setField("_root_","root");
         solrDocumentList.add(solrDocument);
@@ -157,8 +159,6 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         assertEquals(true,search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
     }
 
-
-
     @Test
     public void searchByBib() throws Exception{
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
@@ -182,6 +182,24 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenReturn(solrDocumentList);
         Map<String, Object> search=dataDumpSolrDocumentRepository.search(searchRecordsRequest);
         assertEquals(true,search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+    }
+
+    @Test
+    public void searchByBibException() throws Exception{
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        searchRecordsRequest.setRequestingInstitution("NYPL");
+        searchRecordsRequest.setFieldValue(RecapConstants.INCREMENTAL_DUMP_TO_NOW);
+        searchRecordsRequest.setFieldName(RecapConstants.BIBITEM_LASTUPDATED_DATE);
+        SolrQuery queryForParentAndChildCriteria=new SolrQuery();
+        Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteriaForDataDump(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        ReflectionTestUtils.setField(dataDumpSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenThrow(SolrServerException.class);
+        Map<String, Object> search=dataDumpSolrDocumentRepository.search(searchRecordsRequest);
+        assertNull(dataDumpSolrDocumentRepository.getPageNumberOnPageSizeChange(searchRecordsRequest));
+        assertEquals(true,search.containsKey(RecapCommonConstants.SEARCH_ERROR_RESPONSE));
     }
 
     private SolrDocumentList getSolrDocumentList() {
