@@ -3,14 +3,7 @@ package org.recap.util;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.RecapCommonConstants;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CollectionGroupEntity;
-import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemStatusEntity;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.jpa.ReportEntity;
+import org.recap.model.jpa.*;
 import org.recap.model.solr.Item;
 import org.springframework.util.CollectionUtils;
 
@@ -82,6 +75,11 @@ public class ItemJSONUtil extends MarcUtil{
             CollectionGroupEntity collectionGroupEntity = itemEntity.getCollectionGroupEntity();
             if (collectionGroupEntity != null) {
                 item.setCollectionGroupDesignation(collectionGroupEntity.getCollectionGroupCode());
+            }
+
+            ImsLocationEntity imsLocationEntity = itemEntity.getImsLocationEntity();
+            if (imsLocationEntity != null) {
+                item.setImsLocation(imsLocationEntity.getImsLocationCode());
             }
 
             List<Integer> holdingsIds = new ArrayList<>();
