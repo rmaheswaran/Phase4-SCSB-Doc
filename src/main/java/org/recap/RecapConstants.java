@@ -299,7 +299,7 @@ public final class RecapConstants {
 
     public static final String ETL_DATA_LOAD_NAMESPACE = "http://www.loc.gov/MARC21/slim";
     public static final String SCSB_CAMEL_S3_TO_ENDPOINT = "aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})";
-
+    public static final String  SUBMIT_COLLECTION_BASE_PATH= "reports/collection/submitCollection/";
 
     private RecapConstants(){}
 }

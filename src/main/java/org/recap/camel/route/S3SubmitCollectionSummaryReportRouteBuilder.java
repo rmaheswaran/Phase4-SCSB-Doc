@@ -34,7 +34,7 @@ public class S3SubmitCollectionSummaryReportRouteBuilder {
                     from(RecapConstants.FTP_SUBMIT_COLLECTION_SUMMARY_REPORT_Q)
                             .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_SUMMARY_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
-                            .setHeader(S3Constants.KEY, simple("reports/${in.header.fileName}"))
+                            .setHeader(S3Constants.KEY, simple(RecapConstants.SUBMIT_COLLECTION_BASE_PATH+"${in.header.fileName}"))
                             .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
                 }
             });
