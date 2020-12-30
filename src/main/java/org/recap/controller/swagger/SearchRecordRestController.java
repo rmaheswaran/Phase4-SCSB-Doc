@@ -74,6 +74,7 @@ public class SearchRecordRestController {
             searchRecordsResponse.setTotalPageCount(searchRecordsRequest.getTotalPageCount());
             searchRecordsResponse.setShowTotalCount(searchRecordsRequest.isShowTotalCount());
             searchRecordsResponse.setErrorMessage(searchRecordsRequest.getErrorMessage());
+            searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         } catch (Exception e) {
             logger.info(RecapCommonConstants.LOG_ERROR,e);
             searchRecordsResponse.setErrorMessage(e.getMessage());
