@@ -304,6 +304,10 @@ public class ReportsServiceUtil {
 
     /**
      * This method gets the accession count from solr
+     * @param reportsRequest
+     * @param reportsResponse
+     * @param solrFormattedDate
+     * @throws Exception
      */
     private void populateAccessionCounts(ReportsRequest reportsRequest, ReportsResponse reportsResponse, String solrFormattedDate) throws Exception {
         for (String owningInstitution : reportsRequest.getOwningInstitutions()) {
@@ -327,6 +331,10 @@ public class ReportsServiceUtil {
 
     /**
      * This method gets the deaccession count from the solr
+     * @param reportsRequest
+     * @param reportsResponse
+     * @param solrFormattedDate
+     * @throws Exception
      */
     private void populateDeaccessionCounts(ReportsRequest reportsRequest, ReportsResponse reportsResponse, String solrFormattedDate) throws Exception {
         for (String owningInstitution : reportsRequest.getOwningInstitutions()) {
@@ -348,6 +356,9 @@ public class ReportsServiceUtil {
 
     /**
      * This mehtod will return the form for matched owning institution or creates new form and returns it.
+     * @param owningInstitution
+     * @param reportsInstitutionFormList
+     * @return
      */
     private ReportsInstitutionForm getReportInstitutionFormByInstitution(String owningInstitution, List<ReportsInstitutionForm> reportsInstitutionFormList) {
         if (!reportsInstitutionFormList.isEmpty()) {
