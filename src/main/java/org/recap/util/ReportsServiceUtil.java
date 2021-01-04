@@ -2,8 +2,8 @@ package org.recap.util;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -34,10 +34,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.TimeZone;
 
 /**
@@ -132,8 +132,8 @@ public class ReportsServiceUtil {
         SolrQuery query = solrQueryBuilder.buildSolrQueryForDeaccesionReportInformation(date, reportsRequest.getDeaccessionOwningInstitution(), true);
         query.setRows(reportsRequest.getPageSize());
         query.setStart(reportsRequest.getPageNumber() * reportsRequest.getPageSize());
-        query.set(RecapConstants.GROUP,true);
-        query.set(RecapConstants.GROUP_FIELD,RecapCommonConstants.BARCODE);
+        query.set(RecapConstants.GROUP, true);
+        query.set(RecapConstants.GROUP_FIELD, RecapCommonConstants.BARCODE);
         query.setGetFieldStatistics(true);
         query.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
         query.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
@@ -156,26 +156,26 @@ public class ReportsServiceUtil {
 
             }
         }
-        long numFound= queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getCountDistinct();
+        long numFound = queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getCountDistinct();
         reportsResponse.setTotalRecordsCount(String.valueOf(numFound));
         int totalPagesCount = (int) Math.ceil((double) numFound / (double) reportsRequest.getPageSize());
-        if(totalPagesCount == 0){
+        if (totalPagesCount == 0) {
             reportsResponse.setTotalPageCount(1);
-        }else{
+        } else {
             reportsResponse.setTotalPageCount(totalPagesCount);
         }
         String bibIdJoin = StringUtils.join(bibIdList, ",");
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(RecapConstants.BIB_DOC_TYPE);
-        solrQuery.addFilterQuery(RecapConstants.SOLR_BIB_ID+StringEscapeUtils.escapeJava(bibIdJoin).replace(",","\" \""));
-        solrQuery.setFields(RecapCommonConstants.BIB_ID,RecapConstants.TITLE_DISPLAY);
+        solrQuery.addFilterQuery(RecapConstants.SOLR_BIB_ID + StringEscapeUtils.escapeJava(bibIdJoin).replace(",", "\" \""));
+        solrQuery.setFields(RecapCommonConstants.BIB_ID, RecapConstants.TITLE_DISPLAY);
         solrQuery.setRows(Integer.MAX_VALUE);
         QueryResponse response = solrTemplate.getSolrClient().query(solrQuery);
-        Map<Integer,String> map = new HashMap<>();
+        Map<Integer, String> map = new HashMap<>();
         SolrDocumentList list = response.getResults();
         for (Iterator<SolrDocument> iterator = list.iterator(); iterator.hasNext(); ) {
             SolrDocument solrDocument = iterator.next();
-            map.put((Integer) solrDocument.getFieldValue(RecapCommonConstants.BIB_ID),(String)solrDocument.getFieldValue(RecapConstants.TITLE_DISPLAY));
+            map.put((Integer) solrDocument.getFieldValue(RecapCommonConstants.BIB_ID), (String) solrDocument.getFieldValue(RecapConstants.TITLE_DISPLAY));
         }
         SimpleDateFormat simpleDateFormat = getSimpleDateFormatForReports();
         List<DeaccessionItemResultsRow> deaccessionItemResultsRowList = new ArrayList<>();
@@ -183,7 +183,7 @@ public class ReportsServiceUtil {
             DeaccessionItemResultsRow deaccessionItemResultsRow = new DeaccessionItemResultsRow();
             deaccessionItemResultsRow.setItemId(item.getItemId());
             String deaccessionDate = simpleDateFormat.format(item.getItemLastUpdatedDate());
-            if(map.containsKey(item.getItemBibIdList().get(0))){
+            if (map.containsKey(item.getItemBibIdList().get(0))) {
                 deaccessionItemResultsRow.setTitle(map.get(item.getItemBibIdList().get(0)));
             }
             deaccessionItemResultsRow.setDeaccessionDate(deaccessionDate);
@@ -216,24 +216,24 @@ public class ReportsServiceUtil {
         SolrQuery solrQuery;
         QueryResponse queryResponse;
         solrQuery = solrQueryBuilder.buildSolrQueryForIncompleteReports(reportsRequest.getIncompleteRequestingInstitution());
-        if (!reportsRequest.isExport()){
+        if (!reportsRequest.isExport()) {
             solrQuery.setStart(reportsRequest.getIncompletePageSize() * reportsRequest.getIncompletePageNumber());
             solrQuery.setRows(reportsRequest.getIncompletePageSize());
         }
-        solrQuery.set(RecapConstants.GROUP,true);
-        solrQuery.set(RecapConstants.GROUP_FIELD,RecapCommonConstants.BARCODE);
+        solrQuery.set(RecapConstants.GROUP, true);
+        solrQuery.set(RecapConstants.GROUP_FIELD, RecapCommonConstants.BARCODE);
         solrQuery.setGetFieldStatistics(true);
         solrQuery.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
         solrQuery.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
         solrQuery.setSort(RecapConstants.ITEM_CREATED_DATE, SolrQuery.ORDER.desc);
         queryResponse = solrTemplate.getSolrClient().query(solrQuery);
         long numFound = queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getCountDistinct();
-        if (reportsRequest.isExport()){
+        if (reportsRequest.isExport()) {
             solrQuery = solrQueryBuilder.buildSolrQueryForIncompleteReports(reportsRequest.getIncompleteRequestingInstitution());
             solrQuery.setStart(0);
             solrQuery.setRows((int) numFound);
-            solrQuery.set(RecapConstants.GROUP,true);
-            solrQuery.set(RecapConstants.GROUP_FIELD,RecapCommonConstants.BARCODE);
+            solrQuery.set(RecapConstants.GROUP, true);
+            solrQuery.set(RecapConstants.GROUP_FIELD, RecapCommonConstants.BARCODE);
             solrQuery.setGetFieldStatistics(true);
             solrQuery.setGetFieldStatistics(RecapConstants.DISTINCT_VALUES_FALSE);
             solrQuery.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
@@ -254,11 +254,11 @@ public class ReportsServiceUtil {
             }
 
         }
-        if (bibIdList.size() > 0){
+        if (bibIdList.size() > 0) {
             Map<Integer, IncompleteReportBibDetails> bibDetailsMap = new HashMap<>();
-            List<List<Integer>> partionedBibIdList = Lists.partition(bibIdList,1000);
+            List<List<Integer>> partionedBibIdList = Lists.partition(bibIdList, 1000);
             for (List<Integer> bibIds : partionedBibIdList) {
-                bibDetailsMap = getBibDetailsIncompleteReport(bibIds,bibDetailsMap);
+                bibDetailsMap = getBibDetailsIncompleteReport(bibIds, bibDetailsMap);
             }
             List<IncompleteReportResultsRow> incompleteReportResultsRows = new ArrayList<>();
             for (Item item : itemList) {
@@ -282,15 +282,15 @@ public class ReportsServiceUtil {
         return reportsResponse;
     }
 
-    private Map<Integer, IncompleteReportBibDetails> getBibDetailsIncompleteReport(List<Integer> bibIdList,Map<Integer,IncompleteReportBibDetails> bibDetailsMap) throws SolrServerException, IOException {
+    private Map<Integer, IncompleteReportBibDetails> getBibDetailsIncompleteReport(List<Integer> bibIdList, Map<Integer, IncompleteReportBibDetails> bibDetailsMap) throws SolrServerException, IOException {
         SolrQuery bibDetailsQuery = solrQueryBuilder.buildSolrQueryToGetBibDetails(bibIdList, Integer.MAX_VALUE);
         QueryResponse bibDetailsResponse = solrTemplate.getSolrClient().query(bibDetailsQuery, SolrRequest.METHOD.POST);
         SolrDocumentList bibDocumentList = bibDetailsResponse.getResults();
         for (SolrDocument bibDetail : bibDocumentList) {
             IncompleteReportBibDetails incompleteReportBibDetails = new IncompleteReportBibDetails();
-            incompleteReportBibDetails.setTitle((String)bibDetail.getFieldValue(RecapConstants.TITLE_DISPLAY));
-            incompleteReportBibDetails.setAuthorDisplay((String)bibDetail.getFieldValue(RecapConstants.AUTHOR_DISPLAY));
-            bibDetailsMap.put((Integer)bibDetail.getFieldValue(RecapCommonConstants.BIB_ID),incompleteReportBibDetails);
+            incompleteReportBibDetails.setTitle((String) bibDetail.getFieldValue(RecapConstants.TITLE_DISPLAY));
+            incompleteReportBibDetails.setAuthorDisplay((String) bibDetail.getFieldValue(RecapConstants.AUTHOR_DISPLAY));
+            bibDetailsMap.put((Integer) bibDetail.getFieldValue(RecapCommonConstants.BIB_ID), incompleteReportBibDetails);
         }
         return bibDetailsMap;
     }
@@ -304,10 +304,6 @@ public class ReportsServiceUtil {
 
     /**
      * This method gets the accession count from solr
-     * @param reportsRequest
-     * @param reportsResponse
-     * @param solrFormattedDate
-     * @throws Exception
      */
     private void populateAccessionCounts(ReportsRequest reportsRequest, ReportsResponse reportsResponse, String solrFormattedDate) throws Exception {
         for (String owningInstitution : reportsRequest.getOwningInstitutions()) {
@@ -331,10 +327,6 @@ public class ReportsServiceUtil {
 
     /**
      * This method gets the deaccession count from the solr
-     * @param reportsRequest
-     * @param reportsResponse
-     * @param solrFormattedDate
-     * @throws Exception
      */
     private void populateDeaccessionCounts(ReportsRequest reportsRequest, ReportsResponse reportsResponse, String solrFormattedDate) throws Exception {
         for (String owningInstitution : reportsRequest.getOwningInstitutions()) {
@@ -351,15 +343,11 @@ public class ReportsServiceUtil {
                     reportsInstitutionForm.setDeaccessionPrivateCount(numFound);
                 }
             }
-            reportsResponse.getReportsInstitutionFormList().add(reportsInstitutionForm);
         }
     }
 
     /**
      * This mehtod will return the form for matched owning institution or creates new form and returns it.
-     * @param owningInstitution
-     * @param reportsInstitutionFormList
-     * @return
      */
     private ReportsInstitutionForm getReportInstitutionFormByInstitution(String owningInstitution, List<ReportsInstitutionForm> reportsInstitutionFormList) {
         if (!reportsInstitutionFormList.isEmpty()) {
