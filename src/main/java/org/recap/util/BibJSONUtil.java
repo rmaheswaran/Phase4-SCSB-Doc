@@ -243,11 +243,11 @@ public class BibJSONUtil extends MarcUtil {
 
         List<ItemEntity> itemEntities = bibliographicEntity.getItemEntities();
         for (ItemEntity itemEntity : itemEntities) {
-            itemIds.add(itemEntity.getId());
+            itemIds.add(itemEntity.getItemId());
         }
         List<HoldingsEntity> holdingsEntities = bibliographicEntity.getHoldingsEntities();
         for (HoldingsEntity holdingsEntity : holdingsEntities) {
-            holdingsIds.add(holdingsEntity.getId());
+            holdingsIds.add(holdingsEntity.getHoldingsId());
         }
 
             bib.setHoldingsIdList(holdingsIds);
@@ -264,7 +264,7 @@ public class BibJSONUtil extends MarcUtil {
     private Bib generateBib(BibliographicEntity bibliographicEntity) {
         try {
             Bib bib = new Bib();
-            Integer bibliographicId = bibliographicEntity.getId();
+            Integer bibliographicId = bibliographicEntity.getBibliographicId();
             bib.setBibId(bibliographicId);
 
             bib.setDocType(RecapCommonConstants.BIB);
@@ -357,7 +357,7 @@ public class BibJSONUtil extends MarcUtil {
      * @param e
      */
     private void saveExceptionReportForBib(BibliographicEntity bibliographicEntity, Exception e) {
-        logger.error("Exception in Bib Id : {} " , bibliographicEntity != null ? bibliographicEntity.getId() : "BibliographicEntity is Null");
+        logger.error("Exception in Bib Id : {} " , bibliographicEntity != null ? bibliographicEntity.getBibliographicId() : "BibliographicEntity is Null");
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
 
         ReportEntity reportEntity = new ReportEntity();
@@ -383,10 +383,10 @@ public class BibJSONUtil extends MarcUtil {
         exceptionMsgDataEntity.setHeaderValue(StringUtils.isNotBlank(e.getMessage()) ? e.getMessage() : e.toString());
         reportDataEntities.add(exceptionMsgDataEntity);
 
-        if(bibliographicEntity != null && bibliographicEntity.getId() != null) {
+        if(bibliographicEntity != null && bibliographicEntity.getBibliographicId() != null) {
             ReportDataEntity bibIdDataEntity = new ReportDataEntity();
             bibIdDataEntity.setHeaderName(RecapCommonConstants.BIB_ID);
-            bibIdDataEntity.setHeaderValue(String.valueOf(bibliographicEntity.getId()));
+            bibIdDataEntity.setHeaderValue(String.valueOf(bibliographicEntity.getBibliographicId()));
             reportDataEntities.add(bibIdDataEntity);
         }
 

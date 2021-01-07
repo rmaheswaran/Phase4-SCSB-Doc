@@ -368,7 +368,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         Mockito.when(matchingAlgorithmUpdateCGDService.getBibliographicDetailsRepository()).thenReturn(mockedBibliographicDetailsRepository);
         Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupMap()).thenReturn(collectionGroupMap);
         Mockito.when(matchingAlgorithmUpdateCGDService.getCollectionGroupMap().get(RecapCommonConstants.SHARED_CGD)).thenReturn(1);
-        Mockito.when(matchingAlgorithmUpdateCGDService.getBibliographicDetailsRepository().findByIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
+        Mockito.when(matchingAlgorithmUpdateCGDService.getBibliographicDetailsRepository().findByBibliographicIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
         Mockito.when(matchingAlgorithmUpdateCGDService.getReportDataDetailsRepository().getCountOfRecordNumForMatchingSerials(RecapCommonConstants.BIB_ID)).thenReturn(Long.valueOf(10000));
         for(int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             long from = pageNum * Long.valueOf(batchSize);
@@ -405,7 +405,7 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
 
         Random random = new Random();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
-        bibliographicEntity.setId(1134);
+        bibliographicEntity.setBibliographicId(1134);
         bibliographicEntity.setContent("mock Content".getBytes());
         bibliographicEntity.setCreatedDate(new Date());
         bibliographicEntity.setLastUpdatedDate(new Date());

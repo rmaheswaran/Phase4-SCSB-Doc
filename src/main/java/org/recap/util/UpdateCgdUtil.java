@@ -146,7 +146,7 @@ public class UpdateCgdUtil {
                 itemChangeLogEntity.setUpdatedBy(username);
                 itemChangeLogEntity.setUpdatedDate(lastUpdatedDate);
                 itemChangeLogEntity.setOperationType(operationType);
-                itemChangeLogEntity.setRecordId(itemEntity.getId());
+                itemChangeLogEntity.setRecordId(itemEntity.getItemId());
                 itemChangeLogEntity.setNotes(notes);
                 itemChangeLogDetailsRepository.save(itemChangeLogEntity);
             }

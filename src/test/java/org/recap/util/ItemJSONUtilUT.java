@@ -58,7 +58,7 @@ public class ItemJSONUtilUT extends BaseTestCaseUT {
 
     private ItemEntity getItemEntity(BibliographicEntity bibliographicEntity) {
         ItemEntity itemEntity = new ItemEntity();
-        itemEntity.setId(1);
+        itemEntity.setItemId(1);
         itemEntity.setBarcode("CU54519993");
         itemEntity.setCustomerCode("NA");
         itemEntity.setUseRestrictions("In Library Use");

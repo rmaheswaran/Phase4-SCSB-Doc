@@ -91,7 +91,7 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCaseUT {
         Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingSerials(Mockito.anyString(),Mockito.anyLong(),Mockito.anyLong())).thenReturn(reportDataEntities);
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(getBibliographicEntity());
-        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
+        Mockito.when(bibliographicDetailsRepository.findByBibliographicIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
         Mockito.when(institutionDetailsRepository.findAll()).thenReturn(getInstitutionEntities());
         Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(getCollectionGroupEntities());
         ReflectionTestUtils.setField(matchingCounter,"culCGDUpdatedSharedCount",0);
@@ -143,7 +143,7 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCaseUT {
 
     private ItemEntity getItemEntity() {
         ItemEntity itemEntity = new ItemEntity();
-        itemEntity.setId(1);
+        itemEntity.setItemId(1);
         itemEntity.setOwningInstitutionId(2);
         itemEntity.setCreatedDate(new Date());
         itemEntity.setCreatedBy("etl");
