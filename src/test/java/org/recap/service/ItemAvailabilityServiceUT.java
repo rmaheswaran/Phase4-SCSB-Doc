@@ -104,7 +104,7 @@ public class ItemAvailabilityServiceUT extends BaseTestCaseUT {
     public BibliographicEntity saveBibSingleHoldingsSingleItem() throws Exception {
         Random random = new Random();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
-        bibliographicEntity.setBibliographicId(93540);
+        bibliographicEntity.setId(93540);
         bibliographicEntity.setContent("mock Content".getBytes());
         bibliographicEntity.setCreatedDate(new Date());
         bibliographicEntity.setLastUpdatedDate(new Date());

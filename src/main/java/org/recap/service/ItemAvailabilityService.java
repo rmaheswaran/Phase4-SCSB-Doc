@@ -92,7 +92,7 @@ public class ItemAvailabilityService {
         BibliographicEntity bibliographicEntity;
         try {
             if (bibItemAvailabityStatusRequest.getInstitutionId().equalsIgnoreCase(RecapConstants.SCSB)) {
-                bibliographicEntity = bibliographicDetailsRepository.findByBibliographicId(Integer.parseInt(bibItemAvailabityStatusRequest.getBibliographicId()));
+                bibliographicEntity = bibliographicDetailsRepository.findById(Integer.parseInt(bibItemAvailabityStatusRequest.getBibliographicId())).orElse(null);
             } else {
                 InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(bibItemAvailabityStatusRequest.getInstitutionId());
                 bibliographicEntity = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(institutionEntity.getId(), bibItemAvailabityStatusRequest.getBibliographicId());

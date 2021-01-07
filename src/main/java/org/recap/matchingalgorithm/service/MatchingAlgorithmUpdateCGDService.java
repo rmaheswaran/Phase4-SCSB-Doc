@@ -340,7 +340,7 @@ public class MatchingAlgorithmUpdateCGDService {
             bibIds.addAll(bibIdList.stream().map(Integer::parseInt).collect(Collectors.toList()));
         }
         logger.info("Bibs count in Page {} : {} " ,pageNum,bibIds.size());
-        List<BibliographicEntity> bibliographicEntities = getBibliographicDetailsRepository().findByBibliographicIdIn(bibIds);
+        List<BibliographicEntity> bibliographicEntities = getBibliographicDetailsRepository().findByIdIn(bibIds);
         for(BibliographicEntity bibliographicEntity : bibliographicEntities) {
             for(ItemEntity itemEntity : bibliographicEntity.getItemEntities()) {
                 if(itemEntity.getCollectionGroupId().equals(getCollectionGroupMap().get(RecapCommonConstants.SHARED_CGD))) {

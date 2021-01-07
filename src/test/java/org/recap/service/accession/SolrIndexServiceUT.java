@@ -93,7 +93,7 @@ public class SolrIndexServiceUT extends BaseTestCaseUT {
         SolrInputDocument solrInputDocument=new SolrInputDocument();
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
         ReflectionTestUtils.setField(solrIndexService,"solrTemplate",mocksolrTemplate1);
-        Mockito.when(bibliographicDetailsRepository.findByBibliographicId(Mockito.anyInt())).thenReturn(getBibliographicEntity());
+        Mockito.when(bibliographicDetailsRepository.findById(Mockito.anyInt()).orElse(null)).thenReturn(getBibliographicEntity());
         solrIndexService.getLogger();
         solrIndexService.indexByOwnInstBibId(owningInstBibIdList,1);
         assertNotNull(owningInstBibIdList);
@@ -124,7 +124,7 @@ public class SolrIndexServiceUT extends BaseTestCaseUT {
         bibliographicEntity.setContent(sourceBibContent.getBytes());
         bibliographicEntity.setOwningInstitutionId(1);
         Random random = new Random();
-        bibliographicEntity.setBibliographicId(1);
+        bibliographicEntity.setId(1);
         bibliographicEntity.setOwningInstitutionBibId(String.valueOf(1));
         bibliographicEntity.setCreatedDate(new Date());
         bibliographicEntity.setCreatedBy("tst");

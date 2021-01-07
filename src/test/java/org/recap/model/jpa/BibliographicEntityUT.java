@@ -18,7 +18,7 @@ public class BibliographicEntityUT {
         bibliographicEntity.setLastUpdatedBy("tst");
         bibliographicEntity.setOwningInstitutionId(1);
         bibliographicEntity.setOwningInstitutionBibId("1421");
-        bibliographicEntity.setBibliographicId(1);
+        bibliographicEntity.setId(1);
         bibliographicEntity.setDeleted(true);
         bibliographicEntity.hashCode();
         bibliographicEntity.equals(new BibliographicEntity());

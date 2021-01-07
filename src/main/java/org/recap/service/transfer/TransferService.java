@@ -128,13 +128,13 @@ public class TransferService {
 
                         Map<String, Set<Integer>> recordToDelete = new HashMap<>();
                         Map<String, Set<Integer>> recordToIndex = new HashMap<>();
-                        addRecordToMap(RecapCommonConstants.ITEM_ID, sourceItem.getItemId(), recordToDelete);
+                        addRecordToMap(RecapCommonConstants.ITEM_ID, sourceItem.getId(), recordToDelete);
 
                         List<BibliographicEntity> itemBibEntities = sourceItem.getBibliographicEntities();
                         if(CollectionUtils.isNotEmpty(itemBibEntities)) {
                             for (Iterator<BibliographicEntity> bibliographicEntityIterator = itemBibEntities.iterator(); bibliographicEntityIterator.hasNext(); ) {
                                 BibliographicEntity bibliographicEntity = bibliographicEntityIterator.next();
-                                addRecordToMap(RecapCommonConstants.BIB_ID, bibliographicEntity.getBibliographicId(), recordToIndex);
+                                addRecordToMap(RecapCommonConstants.BIB_ID, bibliographicEntity.getId(), recordToIndex);
                             }
                         }
 
@@ -336,13 +336,13 @@ public class TransferService {
                         Map<String, Set<Integer>> recordToDelete = new HashMap<>();
                         Map<String, Set<Integer>> recordToIndex = new HashMap<>();
 
-                        addRecordToMap(RecapCommonConstants.HOLDING_ID, sourceHoldings.getHoldingsId(), recordToDelete);
+                        addRecordToMap(RecapCommonConstants.HOLDING_ID, sourceHoldings.getId(), recordToDelete);
 
                         List<BibliographicEntity> bibliographicEntities = sourceHoldings.getBibliographicEntities();
                         if(CollectionUtils.isNotEmpty(bibliographicEntities)) {
                             for (Iterator<BibliographicEntity> bibliographicEntityIterator = bibliographicEntities.iterator(); bibliographicEntityIterator.hasNext(); ) {
                                 BibliographicEntity bibliographicEntity = bibliographicEntityIterator.next();
-                                addRecordToMap(RecapCommonConstants.BIB_ID, bibliographicEntity.getBibliographicId(), recordToIndex);
+                                addRecordToMap(RecapCommonConstants.BIB_ID, bibliographicEntity.getId(), recordToIndex);
                             }
                         }
 
@@ -350,13 +350,13 @@ public class TransferService {
                         if (CollectionUtils.isNotEmpty(itemEntities)) {
                             for (Iterator<ItemEntity> itemEntityIterator = itemEntities.iterator(); itemEntityIterator.hasNext(); ) {
                                 ItemEntity itemEntity = itemEntityIterator.next();
-                                addRecordToMap(RecapCommonConstants.ITEM_ID, itemEntity.getItemId(), recordToDelete);
+                                addRecordToMap(RecapCommonConstants.ITEM_ID, itemEntity.getId(), recordToDelete);
 
                                 List<BibliographicEntity> itemBibEntities = itemEntity.getBibliographicEntities();
                                 if(CollectionUtils.isNotEmpty(itemBibEntities)) {
                                     for (Iterator<BibliographicEntity> bibliographicEntityIterator = itemBibEntities.iterator(); bibliographicEntityIterator.hasNext(); ) {
                                         BibliographicEntity bibliographicEntity = bibliographicEntityIterator.next();
-                                        addRecordToMap(RecapCommonConstants.BIB_ID, bibliographicEntity.getBibliographicId(), recordToIndex);
+                                        addRecordToMap(RecapCommonConstants.BIB_ID, bibliographicEntity.getId(), recordToIndex);
                                     }
                                 }
                             }
@@ -400,12 +400,12 @@ public class TransferService {
         BibliographicEntity savevdSourceBibRecord = accessionDAO.saveBibRecord(sourceBib);
         BibliographicEntity saveBibRecord = accessionDAO.saveBibRecord(destBib);
 
-        writeChangeLog(sourceBib.getBibliographicId(), sourceHoldings.getHoldingsId(), itemEntities, destBib.getBibliographicId(), destHoldings.getHoldingsId());
+        writeChangeLog(sourceBib.getId(), sourceHoldings.getId(), itemEntities, destBib.getId(), destHoldings.getId());
 
         deleteRecordForRelink(recordToDelete);
 
-        addRecordToMap(RecapCommonConstants.BIB_ID, savevdSourceBibRecord.getBibliographicId(), recordToIndex);
-        addRecordToMap(RecapCommonConstants.BIB_ID, saveBibRecord.getBibliographicId(), recordToIndex);
+        addRecordToMap(RecapCommonConstants.BIB_ID, savevdSourceBibRecord.getId(), recordToIndex);
+        addRecordToMap(RecapCommonConstants.BIB_ID, saveBibRecord.getId(), recordToIndex);
 
         indexRecordForRelink(recordToIndex);
 

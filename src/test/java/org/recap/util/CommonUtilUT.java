@@ -251,7 +251,7 @@ public class CommonUtilUT extends BaseTestCaseUT {
     private BibliographicEntity getBibliographicEntity(){
 
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
-        bibliographicEntity.setBibliographicId(123456);
+        bibliographicEntity.setId(123456);
         bibliographicEntity.setContent("Test".getBytes());
         bibliographicEntity.setCreatedDate(new Date());
         bibliographicEntity.setLastUpdatedDate(new Date());
