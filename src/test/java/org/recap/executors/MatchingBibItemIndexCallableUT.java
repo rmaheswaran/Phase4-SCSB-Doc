@@ -94,7 +94,7 @@ public class MatchingBibItemIndexCallableUT extends BaseTestCaseUT {
 
         Random random = new Random();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
-        bibliographicEntity.setId(1134);
+        bibliographicEntity.setBibliographicId(1134);
         bibliographicEntity.setContent("mock Content".getBytes());
         bibliographicEntity.setCreatedDate(new Date());
         bibliographicEntity.setLastUpdatedDate(new Date());

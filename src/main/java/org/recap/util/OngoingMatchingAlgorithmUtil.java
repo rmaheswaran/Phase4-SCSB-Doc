@@ -252,7 +252,7 @@ public class OngoingMatchingAlgorithmUtil {
      */
     public void updateCGDForItemInSolr(List<Integer> itemIds) {
         if (CollectionUtils.isNotEmpty(itemIds)) {
-            List<ItemEntity> itemEntities = itemDetailsRepository.findByIdIn(itemIds);
+            List<ItemEntity> itemEntities = itemDetailsRepository.findByItemIdIn(itemIds);
             updateCgdUtil.updateCGDForItemInSolr(itemEntities);
         }
     }

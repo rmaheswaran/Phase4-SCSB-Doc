@@ -70,7 +70,7 @@ public class HelperUtil {
             itemChangeLogEntity.setOperationType(operationType);
             itemChangeLogEntity.setUpdatedBy(operationType);
             itemChangeLogEntity.setUpdatedDate(new Date());
-            itemChangeLogEntity.setRecordId(itemEntity.getId());
+            itemChangeLogEntity.setRecordId(itemEntity.getItemId());
             itemChangeLogEntity.setNotes(message);
             itemChangeLogEntityList.add(itemChangeLogEntity);
         }

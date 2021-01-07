@@ -34,7 +34,7 @@ public class ItemJSONUtil extends MarcUtil{
     public Item generateItemForIndex(ItemEntity itemEntity) {
         try {
             Item item = new Item();
-            Integer itemId = itemEntity.getId();
+            Integer itemId = itemEntity.getItemId();
             item.setId(itemEntity.getOwningInstitutionId()+itemEntity.getOwningInstitutionItemId());
             item.setItemId(itemId);
             item.setOwningInstitutionItemId(itemEntity.getOwningInstitutionItemId());
@@ -58,7 +58,7 @@ public class ItemJSONUtil extends MarcUtil{
             List<Integer> bibIdList = new ArrayList<>();
             List<BibliographicEntity> bibliographicEntities = itemEntity.getBibliographicEntities();
             for (BibliographicEntity bibliographicEntity : bibliographicEntities){
-                bibIdList.add(bibliographicEntity.getId());
+                bibIdList.add(bibliographicEntity.getBibliographicId());
             }
             item.setItemBibIdList(bibIdList);
 
@@ -86,7 +86,7 @@ public class ItemJSONUtil extends MarcUtil{
             List<HoldingsEntity> holdingsEntities = itemEntity.getHoldingsEntities();
             if (!CollectionUtils.isEmpty(holdingsEntities)) {
                 for (HoldingsEntity holdingsEntity : holdingsEntities) {
-                    holdingsIds.add(holdingsEntity.getId());
+                    holdingsIds.add(holdingsEntity.getHoldingsId());
                     item.setHoldingsIdList(holdingsIds);
                 }
             }
@@ -123,10 +123,10 @@ public class ItemJSONUtil extends MarcUtil{
         exceptionMsgDataEntity.setHeaderValue(StringUtils.isNotBlank(e.getMessage()) ? e.getMessage() : e.toString());
         reportDataEntities.add(exceptionMsgDataEntity);
 
-        if(itemEntity != null && itemEntity.getId() != null) {
+        if(itemEntity != null && itemEntity.getItemId() != null) {
             ReportDataEntity itemIdDataEntity = new ReportDataEntity();
             itemIdDataEntity.setHeaderName(RecapCommonConstants.ITEM_ID);
-            itemIdDataEntity.setHeaderValue(String.valueOf(itemEntity.getId()));
+            itemIdDataEntity.setHeaderValue(String.valueOf(itemEntity.getItemId()));
             reportDataEntities.add(itemIdDataEntity);
         }
 

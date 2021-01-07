@@ -156,7 +156,7 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
     private Map<Integer, BibItem> eliminateNonOrphanRecords(Map<Integer, BibItem> bibItemMap){
         Map<Integer, BibItem> updatedBibItemMap = new HashedMap();
         for(Map.Entry<Integer,BibItem> bibItemEntry:bibItemMap.entrySet()){
-            BibliographicEntity fetchedBibliographicEntity = bibliographicDetailsRepository.findById(bibItemEntry.getKey()).orElse(null);
+            BibliographicEntity fetchedBibliographicEntity = bibliographicDetailsRepository.findByBibliographicId(bibItemEntry.getKey());
             boolean isBibDeleted = false;
             for(ItemEntity fetchedItemEntity:fetchedBibliographicEntity.getItemEntities()){
                 if(fetchedItemEntity.isDeleted() || isChangedToPrivateCGD(fetchedItemEntity)){

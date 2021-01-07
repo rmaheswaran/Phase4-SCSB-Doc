@@ -60,7 +60,7 @@ public class BibItemIndexCallableUT extends BaseTestCaseUT {
     private List<BibliographicEntity> getBibliographicEntityList(){
         List<BibliographicEntity> bibliographicEntityList = new ArrayList<>();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
-        bibliographicEntity.setId(1);
+        bibliographicEntity.setBibliographicId(1);
         bibliographicEntity.setContent("marc content".getBytes());
         bibliographicEntity.setOwningInstitutionBibId("1");
         bibliographicEntity.setOwningInstitutionId(1);

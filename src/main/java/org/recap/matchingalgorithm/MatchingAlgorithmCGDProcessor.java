@@ -106,7 +106,7 @@ public class MatchingAlgorithmCGDProcessor {
         List<ItemEntity> itemEntities = new ArrayList<>(itemEntityMap.values());
         ItemEntity itemEntityToBeShared = getItemToBeSharedBasedOnInitialMatchingDate(itemEntities);
         if(itemEntityToBeShared != null) {
-            itemEntityMap.remove(itemEntityToBeShared.getId());
+            itemEntityMap.remove(itemEntityToBeShared.getItemId());
             MatchingCounter.updateCounter(itemEntityToBeShared.getOwningInstitutionId(), false);
         } else {
             itemEntities.sort(Comparator.comparing(ItemEntity::getCreatedDate, Comparator.naturalOrder()));
@@ -167,7 +167,7 @@ public class MatchingAlgorithmCGDProcessor {
         itemChangeLogEntity.setOperationType(matchingType);
         itemChangeLogEntity.setUpdatedBy(RecapCommonConstants.GUEST);
         itemChangeLogEntity.setUpdatedDate(new Date());
-        itemChangeLogEntity.setRecordId(itemEntity.getId());
+        itemChangeLogEntity.setRecordId(itemEntity.getItemId());
         itemChangeLogEntity.setNotes(oldCgd + " - " + itemEntity.getCollectionGroupId());
         return itemChangeLogEntity;
     }
@@ -183,7 +183,7 @@ public class MatchingAlgorithmCGDProcessor {
      */
     public boolean checkForMonographAndPopulateValues(Set<String> materialTypeSet, Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap, Map<Integer, ItemEntity> itemEntityMap, List<Integer> bibIdList) {
         boolean isMonograph = true;
-        List<BibliographicEntity> bibliographicEntities = bibliographicDetailsRepository.findByIdIn(bibIdList);
+        List<BibliographicEntity> bibliographicEntities = bibliographicDetailsRepository.findByBibliographicIdIn(bibIdList);
         for(BibliographicEntity bibliographicEntity : bibliographicEntities) {
             List<ItemEntity> itemEntities = bibliographicEntity.getNonDeletedAndCompleteItemEntities();
             //Check for Monograph - (Single Bib & Single Item)
@@ -244,12 +244,12 @@ public class MatchingAlgorithmCGDProcessor {
      * @param bibIdList     the bib id list
      */
     public void populateItemEntityMap(Map<Integer, ItemEntity> itemEntityMap, List<Integer> bibIdList) {
-        List<BibliographicEntity> bibliographicEntities = bibliographicDetailsRepository.findByIdIn(bibIdList);
+        List<BibliographicEntity> bibliographicEntities = bibliographicDetailsRepository.findByBibliographicIdIn(bibIdList);
         for(BibliographicEntity bibliographicEntity : bibliographicEntities) {
             List<ItemEntity> itemEntities = bibliographicEntity.getNonDeletedAndCompleteItemEntities();
             for(ItemEntity itemEntity : itemEntities) {
                 if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
-                    itemEntityMap.put(itemEntity.getId(), itemEntity);
+                    itemEntityMap.put(itemEntity.getItemId(), itemEntity);
                     MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), true);
                 }
             }
@@ -264,7 +264,7 @@ public class MatchingAlgorithmCGDProcessor {
      * @param itemEntity
      */
     private void populateValues(Set<String> materialTypeSet, Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap, Map<Integer, ItemEntity> itemEntityMap, ItemEntity itemEntity) {
-        itemEntityMap.put(itemEntity.getId(), itemEntity);
+        itemEntityMap.put(itemEntity.getItemId(), itemEntity);
         Integer owningInstitutionId = itemEntity.getOwningInstitutionId();
         Integer useRestriction = getUseRestrictionInNumbers(itemEntity.getUseRestrictions());
         populateUseRestrictionMap(useRestrictionMap, itemEntity, owningInstitutionId, useRestriction);
@@ -352,7 +352,7 @@ public class MatchingAlgorithmCGDProcessor {
     private void findAndremoveSharedItem(Map<Integer, ItemEntity> itemEntityMap, List<ItemEntity> itemEntities) {
         // Item which needs to remain in Shared status and increment the institution's counter
         ItemEntity itemEntity = itemEntities.get(0);
-        itemEntityMap.remove(itemEntity.getId());
+        itemEntityMap.remove(itemEntity.getItemId());
         MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), false);
         if(matchingType.equalsIgnoreCase(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE)) {
             itemEntity.setInitialMatchingDate(new Date());

@@ -115,7 +115,7 @@ public class SolrIndexService {
      */
     public SolrInputDocument indexByBibliographicId(@RequestBody Integer bibliographicId) {
         getBibJSONUtil().setProducerTemplate(getProducerTemplate());
-        BibliographicEntity bibliographicEntity = getBibliographicDetailsRepository().findById(bibliographicId).orElse(null);
+        BibliographicEntity bibliographicEntity = getBibliographicDetailsRepository().findByBibliographicId(bibliographicId);
         return indexBibliographicEntity(bibliographicEntity);
     }
 
@@ -149,9 +149,9 @@ public class SolrIndexService {
         List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByOwningInstitutionBibIdInAndOwningInstitutionId(owningInstBibIdList,owningInstId);
         if (bibliographicEntityList != null) {
             for(BibliographicEntity bibliographicEntity:bibliographicEntityList){
-                if(owningInstBibIdList.contains(bibliographicEntity.getOwningInstitutionBibId()) && bibliographicEntity.getId() != null){
-                    bibliographicIdList.add(bibliographicEntity.getId());
-                    logger.info("Upded Dummy record scsb bibid to index--->{}",bibliographicEntity.getId());
+                if(owningInstBibIdList.contains(bibliographicEntity.getOwningInstitutionBibId()) && bibliographicEntity.getBibliographicId() != null){
+                    bibliographicIdList.add(bibliographicEntity.getBibliographicId());
+                    logger.info("Upded Dummy record scsb bibid to index--->{}",bibliographicEntity.getBibliographicId());
                 }
             }
         }
