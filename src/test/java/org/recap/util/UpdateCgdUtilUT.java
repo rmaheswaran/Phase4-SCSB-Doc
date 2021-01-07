@@ -107,7 +107,7 @@ public class UpdateCgdUtilUT extends BaseTestCaseUT {
         bibliographicEntity.setLastUpdatedBy("tst");
         bibliographicEntity.setOwningInstitutionId(1);
         bibliographicEntity.setOwningInstitutionBibId("1421");
-        bibliographicEntity.setBibliographicId(1);
+        bibliographicEntity.setId(1);
         List<BibliographicEntity> bibliographicEntitylist = new LinkedList(Arrays.asList(bibliographicEntity));
 
 
@@ -119,7 +119,7 @@ public class UpdateCgdUtilUT extends BaseTestCaseUT {
         holdingsEntity.setOwningInstitutionId(1);
         holdingsEntity.setLastUpdatedBy("tst");
         holdingsEntity.setOwningInstitutionHoldingsId("1621");
-        holdingsEntity.setHoldingsId(1);
+        holdingsEntity.setId(1);
         List<HoldingsEntity> holdingsEntitylist = new LinkedList(Arrays.asList(holdingsEntity));
 
 
@@ -136,7 +136,7 @@ public class UpdateCgdUtilUT extends BaseTestCaseUT {
         itemEntity.setCreatedBy("tst");
         itemEntity.setLastUpdatedBy("tst");
         itemEntity.setItemAvailabilityStatusId(1);
-        itemEntity.setItemId(1);
+        itemEntity.setId(1);
         List<ItemEntity> itemEntitylist = new LinkedList(Arrays.asList(itemEntity));
 
         holdingsEntity.setBibliographicEntities(bibliographicEntitylist);

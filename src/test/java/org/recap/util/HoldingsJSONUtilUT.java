@@ -23,7 +23,7 @@ public class HoldingsJSONUtilUT extends BaseTestCaseUT {
     @Test
     public void generateHoldingsForIndex(){
         HoldingsEntity holdingsEntity = new HoldingsEntity();
-        holdingsEntity.setHoldingsId(1);
+        holdingsEntity.setId(1);
         holdingsEntity.setContent("mock holdings".getBytes());
         holdingsEntity.setCreatedDate(new Date());
         holdingsEntity.setLastUpdatedDate(new Date());

@@ -77,7 +77,7 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT {
         Mockito.when((Integer) collectionGroupMap.get(RecapCommonConstants.REPORTS_OPEN)).thenReturn(2);
         Mockito.when(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD)).thenReturn(1);
         Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingSerials(RecapCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity());
-        Mockito.when(mockedBibliographicDetailsRepository.findByBibliographicId(Mockito.any())).thenReturn(bibliographicEntity);
+        Mockito.when(mockedBibliographicDetailsRepository.findById(Mockito.any()).orElse(null)).thenReturn(bibliographicEntity);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT {
                 collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository);
         Object object = matchingAlgorithmSerialsCGDCallable.call();
         assertEquals(1,collectionGroupId);
-        BibliographicEntity afterUpdate = mockedBibliographicDetailsRepository.findByBibliographicId(bibliographicEntity.getBibliographicId());
+        BibliographicEntity afterUpdate = mockedBibliographicDetailsRepository.findById(bibliographicEntity.getId()).orElse(null);
         assertNotNull(afterUpdate);
     }
 
@@ -108,7 +108,7 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT {
 
         Random random = new Random();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
-        bibliographicEntity.setBibliographicId(1134);
+        bibliographicEntity.setId(1134);
         bibliographicEntity.setContent("mock Content".getBytes());
         bibliographicEntity.setCreatedDate(new Date());
         bibliographicEntity.setLastUpdatedDate(new Date());

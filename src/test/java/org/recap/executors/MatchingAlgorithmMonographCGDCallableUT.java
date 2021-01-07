@@ -77,7 +77,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
         Map collectionGroupMap = new HashMap();
         Map institutionMap = new HashMap();
         institutionMap.put("NYPL",3);
-        Mockito.when(bibliographicDetailsRepository.findByBibliographicIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
+        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
         MatchingAlgorithmMonographCGDCallable matchingAlgorithmMonographCGDCallable = new MatchingAlgorithmMonographCGDCallable(reportDataDetailsRepository,bibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
                 collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true);
         Object object = matchingAlgorithmMonographCGDCallable.call();
@@ -90,7 +90,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
         collectionGroupMap.put(RecapCommonConstants.SHARED_CGD,1);
         Map institutionMap = new HashMap();
         institutionMap.put("NYPL",3);
-        Mockito.when(bibliographicDetailsRepository.findByBibliographicIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
+        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
         MatchingAlgorithmMonographCGDCallable matchingAlgorithmMonographCGDCallable = new MatchingAlgorithmMonographCGDCallable(reportDataDetailsRepository,bibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
                 collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true);
         Object object = matchingAlgorithmMonographCGDCallable.call();
@@ -126,7 +126,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
 
         Random random = new Random();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
-        bibliographicEntity.setBibliographicId(1134);
+        bibliographicEntity.setId(1134);
         bibliographicEntity.setContent("mock Content".getBytes());
         bibliographicEntity.setCreatedDate(new Date());
         bibliographicEntity.setLastUpdatedDate(new Date());
