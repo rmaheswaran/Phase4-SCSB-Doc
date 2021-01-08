@@ -48,7 +48,7 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
      * @param itemBarcode the item barcode
      * @return the page
      */
-    @Query(value = "select request from RequestItemEntity request where request.itemId = (select itemId from ItemEntity item where item.barcode = :itemBarcode)")
+    @Query(value = "select request from RequestItemEntity request where request.itemId = (select id from ItemEntity item where item.barcode = :itemBarcode)")
     Page<RequestItemEntity> findByItemBarcode(Pageable pageable, @Param("itemBarcode") String itemBarcode);
 
     /**
