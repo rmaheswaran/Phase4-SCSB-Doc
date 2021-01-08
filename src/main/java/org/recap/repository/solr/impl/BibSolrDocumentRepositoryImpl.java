@@ -195,7 +195,8 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
                 && (searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.BARCODE)
                 || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.CALL_NUMBER)
                 || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapConstants.ITEM_CATALOGING_STATUS)
-                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.CUSTOMER_CODE));
+                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.CUSTOMER_CODE)
+                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapConstants.IMS_LOCATION_CODE));
     }
 
     private void setCountsByBib(SearchRecordsRequest searchRecordsRequest, SolrDocumentList bibSolrDocuments) throws IOException, SolrServerException {
