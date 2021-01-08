@@ -1,14 +1,11 @@
 package org.recap.repository.jpa;
 
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.ItemPK;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-//import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -18,7 +15,7 @@ import java.util.List;
  * Created by chenchulakshmig on 21/6/16.
  */
 //@RepositoryRestResource(collectionResourceRel = "item", path = "item")
-public interface ItemDetailsRepository extends JpaRepository<ItemEntity, ItemPK> {
+public interface ItemDetailsRepository extends BaseRepository<ItemEntity> {
 
     /**
      * Find all item entities by using isDeleted field which is false.
@@ -27,14 +24,6 @@ public interface ItemDetailsRepository extends JpaRepository<ItemEntity, ItemPK>
      * @return the page
      */
     Page<ItemEntity> findAllByIsDeletedFalse(Pageable pageable);
-
-    /**
-     * Finds item entity by using item id.
-     *
-     * @param itemId the item id
-     * @return the item entity
-     */
-    ItemEntity findByItemId(Integer itemId);
 
     /**
      * Counts the number of items by using owning institution id and isDeleted field which is false.
@@ -127,7 +116,7 @@ public interface ItemDetailsRepository extends JpaRepository<ItemEntity, ItemPK>
      */
     @Modifying(clearAutomatically = true)
     @Transactional
-    @Query("UPDATE ItemEntity item SET item.isDeleted = true, item.lastUpdatedBy = :lastUpdatedBy, item.lastUpdatedDate = :lastUpdatedDate WHERE item.itemId = :itemId")
+    @Query("UPDATE ItemEntity item SET item.isDeleted = true, item.lastUpdatedBy = :lastUpdatedBy, item.lastUpdatedDate = :lastUpdatedDate WHERE item.id = :itemId")
     int markItemAsDeleted(@Param("itemId") Integer itemId, @Param("lastUpdatedBy") String lastUpdatedBy, @Param("lastUpdatedDate") Date lastUpdatedDate);
 
     /**
@@ -165,5 +154,5 @@ public interface ItemDetailsRepository extends JpaRepository<ItemEntity, ItemPK>
      * @param itemIds the item ids
      * @return the list
      */
-    List<ItemEntity> findByItemIdIn(List<Integer> itemIds);
+    List<ItemEntity> findByIdIn(List<Integer> itemIds);
 }

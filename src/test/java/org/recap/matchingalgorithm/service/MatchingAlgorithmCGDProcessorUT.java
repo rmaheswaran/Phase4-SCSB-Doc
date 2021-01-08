@@ -223,7 +223,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         holdingsEntities.add(holdingsEntity);
         bibliographicEntity.setHoldingsEntities(holdingsEntities);
         bibliographicEntities.add(bibliographicEntity);
-        Mockito.when(bibliographicDetailsRepository.findByBibliographicIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
+        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
         Map collectionGroupMap=new HashMap();
         collectionGroupMap.put(RecapCommonConstants.SHARED_CGD,1);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
@@ -262,7 +262,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         holdingsEntities.add(holdingsEntity);
         bibliographicEntity.setHoldingsEntities(holdingsEntities);
         bibliographicEntities.add(bibliographicEntity);
-        Mockito.when(bibliographicDetailsRepository.findByBibliographicIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
+        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
         Map collectionGroupMap=new HashMap();
         collectionGroupMap.put(RecapCommonConstants.SHARED_CGD,1);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
@@ -304,7 +304,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         itemEntities1.add(itemEntity1);
         bibliographicEntity.setItemEntities(itemEntities1);
         bibliographicEntities.add(bibliographicEntity);
-        Mockito.when(bibliographicDetailsRepository.findByBibliographicIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
+        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
         Map collectionGroupMap=new HashMap();
         collectionGroupMap.put(RecapCommonConstants.SHARED_CGD,1);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
@@ -344,7 +344,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         itemEntities1.add(itemEntity1);
         bibliographicEntity.setItemEntities(itemEntities1);
         bibliographicEntities.add(bibliographicEntity);
-        Mockito.when(bibliographicDetailsRepository.findByBibliographicIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
+        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
         Map collectionGroupMap=new HashMap();
         collectionGroupMap.put(RecapCommonConstants.SHARED_CGD,1);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
@@ -372,7 +372,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         itemEntities1.add(itemEntity1);
         bibliographicEntity.setItemEntities(itemEntities1);
         bibliographicEntities.add(bibliographicEntity);
-        Mockito.when(bibliographicDetailsRepository.findByBibliographicIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
+        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
         Map collectionGroupMap=new HashMap();
         collectionGroupMap.put(RecapCommonConstants.SHARED_CGD,1);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
@@ -401,7 +401,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         itemEntities1.add(itemEntity1);
         bibliographicEntity.setItemEntities(itemEntities1);
         bibliographicEntities.add(bibliographicEntity);
-        Mockito.when(bibliographicDetailsRepository.findByBibliographicIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
+        Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
         Map collectionGroupMap=new HashMap();
         collectionGroupMap.put(RecapCommonConstants.SHARED_CGD,1);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
@@ -453,7 +453,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
 
     private ItemEntity getItemEntity(int inst) {
         ItemEntity itemEntity = new ItemEntity();
-        itemEntity.setItemId(1);
+        itemEntity.setId(1);
         itemEntity.setOwningInstitutionId(inst);
         itemEntity.setCreatedDate(new Date());
         itemEntity.setCreatedBy("etl");
