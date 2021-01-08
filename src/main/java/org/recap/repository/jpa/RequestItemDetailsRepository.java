@@ -59,7 +59,7 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
      * @param deliveryLocation the delivery location
      * @return the page
      */
-    @Query(value = "select request from RequestItemEntity request where request.itemId = (select itemId from ItemEntity item where item.barcode = :itemBarcode) and request.stopCode = :deliveryLocation")
+    @Query(value = "select request from RequestItemEntity request where request.itemId = (select id from ItemEntity item where item.barcode = :itemBarcode) and request.stopCode = :deliveryLocation")
     Page<RequestItemEntity> findByItemBarcodeAndDeliveryLocation(Pageable pageable, @Param("itemBarcode") String itemBarcode, @Param("deliveryLocation") String deliveryLocation);
 
     /**
