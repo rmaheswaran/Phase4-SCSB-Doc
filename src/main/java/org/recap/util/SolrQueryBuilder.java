@@ -41,12 +41,14 @@ public class SolrQueryBuilder {
         List<String> availability = searchRecordsRequest.getAvailability();
         List<String> collectionGroupDesignations = searchRecordsRequest.getCollectionGroupDesignations();
         List<String> useRestrictions = searchRecordsRequest.getUseRestrictions();
+        List<String> imsDepositoryCodes = searchRecordsRequest.getImsDepositoryCodes();
 
         if (CollectionUtils.isNotEmpty(availability)) {
             stringBuilder.append(buildQueryForFilterGivenChild(RecapCommonConstants.AVAILABILITY, availability));
         }
         appendToQueryByFieldType(stringBuilder, collectionGroupDesignations, RecapCommonConstants.COLLECTION_GROUP_DESIGNATION);
         appendToQueryByFieldType(stringBuilder, useRestrictions, RecapCommonConstants.USE_RESTRICTION);
+        appendToQueryByFieldType(stringBuilder, imsDepositoryCodes, RecapConstants.IMS_LOCATION);
         stringBuilder
                 .append(and)
                 .append(RecapCommonConstants.IS_DELETED_ITEM).append(":").append(searchRecordsRequest.isDeleted())
@@ -56,11 +58,11 @@ public class SolrQueryBuilder {
         return coreParentFilterQuery + "(" + stringBuilder.toString() + ")";
     }
 
-    private void appendToQueryByFieldType(StringBuilder stringBuilder, List<String> collectionGroupDesignations, String collectionGroupDesignation) {
-        if (StringUtils.isNotBlank(stringBuilder.toString()) && CollectionUtils.isNotEmpty(collectionGroupDesignations)) {
-            stringBuilder.append(and).append(buildQueryForFilterGivenChild(collectionGroupDesignation, collectionGroupDesignations));
-        } else if (CollectionUtils.isNotEmpty(collectionGroupDesignations)) {
-            stringBuilder.append(buildQueryForFilterGivenChild(collectionGroupDesignation, collectionGroupDesignations));
+    private void appendToQueryByFieldType(StringBuilder stringBuilder, List<String> values, String fieldName) {
+        if (StringUtils.isNotBlank(stringBuilder.toString()) && CollectionUtils.isNotEmpty(values)) {
+            stringBuilder.append(and).append(buildQueryForFilterGivenChild(fieldName, values));
+        } else if (CollectionUtils.isNotEmpty(values)) {
+            stringBuilder.append(buildQueryForFilterGivenChild(fieldName, values));
         }
     }
 
@@ -400,17 +402,18 @@ public class SolrQueryBuilder {
     public SolrQuery getDeletedQueryForDataDump(SearchRecordsRequest searchRecordsRequest,boolean isCGDChangedToPrivate) {
         String queryForFieldCriteria = getQueryForFieldCriteria(searchRecordsRequest);
         String queryForBibCriteria = buildQueryForBibFacetCriteria(searchRecordsRequest);
+        String queryForImsLocation = buildQueryForFilterGivenChild(RecapConstants.IMS_LOCATION,searchRecordsRequest.getImsDepositoryCodes());
         String queryStringForItemCriteria;
         SolrQuery solrQuery;
         if (isCGDChangedToPrivate) {
             queryStringForItemCriteria = getQueryStringForMatchParentReturnChildForDeletedDataDumpCGDToPrivate();
-            solrQuery = new SolrQuery(queryStringForItemCriteria + and +"("+ ("("+RecapCommonConstants.IS_DELETED_ITEM + ":" + false + and +RecapConstants.CGD_CHANGE_LOG + ":" + "\"" +RecapConstants.CGD_CHANGE_LOG_SHARED_TO_PRIVATE + "\"" +")")
+            solrQuery = new SolrQuery(queryStringForItemCriteria + and+queryForImsLocation+and+"("+ ("("+RecapCommonConstants.IS_DELETED_ITEM + ":" + false + and +RecapConstants.CGD_CHANGE_LOG + ":" + "\"" +RecapConstants.CGD_CHANGE_LOG_SHARED_TO_PRIVATE + "\"" +")")
                     + or + ("("+RecapCommonConstants.IS_DELETED_ITEM + ":" + false + and +RecapConstants.CGD_CHANGE_LOG + ":" + "\"" +RecapConstants.CGD_CHANGE_LOG_OPEN_TO_PRIVATE +"\"" +")") +")"
                     + (StringUtils.isNotBlank(queryForFieldCriteria) ? and + queryForFieldCriteria : "")
                     + (StringUtils.isNotBlank(queryForBibCriteria) ? and + queryForBibCriteria : ""));//to include items that got changed from shared to private, open to private for deleted export
         } else{
             queryStringForItemCriteria = getQueryStringForMatchParentReturnChild(searchRecordsRequest);
-            solrQuery = new SolrQuery(queryStringForItemCriteria + and + RecapCommonConstants.IS_DELETED_ITEM + ":" + searchRecordsRequest.isDeleted()
+            solrQuery = new SolrQuery(queryStringForItemCriteria + and +queryForImsLocation+and+ RecapCommonConstants.IS_DELETED_ITEM + ":" + searchRecordsRequest.isDeleted()
                     + (StringUtils.isNotBlank(queryForFieldCriteria) ? and + queryForFieldCriteria : "")
                     + (StringUtils.isNotBlank(queryForBibCriteria) ? and + queryForBibCriteria : ""));
         }
