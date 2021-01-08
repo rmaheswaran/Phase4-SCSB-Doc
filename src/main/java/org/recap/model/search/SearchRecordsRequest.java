@@ -83,6 +83,9 @@ public class SearchRecordsRequest implements Serializable {
     @ApiModelProperty(name= "requestingInstitution", value= "Requesting Institution",position = 22)
     private String requestingInstitution = "";
 
+    @ApiModelProperty(name= "imsDepositoryCodes", value= "IMS Depository Codes",position = 23)
+    private List<String> imsDepositoryCodes = null;
+
     private boolean sortIncompleteRecords = false;
 
 
@@ -588,5 +591,13 @@ public class SearchRecordsRequest implements Serializable {
      */
     public void setSortIncompleteRecords(boolean sortIncompleteRecords) {
         this.sortIncompleteRecords = sortIncompleteRecords;
+    }
+
+    public List<String> getImsDepositoryCodes() {
+        return imsDepositoryCodes;
+    }
+
+    public void setImsDepositoryCodes(List<String> imsDepositoryCodes) {
+        this.imsDepositoryCodes = imsDepositoryCodes;
     }
 }
