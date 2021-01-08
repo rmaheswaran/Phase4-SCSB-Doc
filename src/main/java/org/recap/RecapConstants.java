@@ -90,6 +90,8 @@ public final class RecapConstants {
     public static final String CRITERIA_VALUES = "CriteriaValues";
     public static final String MATCH_POINT = "MatchPoint";
 
+    public static final String IMS_LOCATION_CODE = "ImsLocation";
+
     //Error Message
     public static final String RECORD_NOT_AVAILABLE = "Database may be empty or bib table does not contain this record";
     public static final String SERVER_ERROR_MSG = "Server is down for maintenance. Please try again later.";
@@ -235,6 +237,7 @@ public final class RecapConstants {
     public static final String BULK_ACCESSION_SUMMARY = "BULK_ACCESSION_SUMMARY";
     public static final String ACCESSION_SUMMARY = "ACCESSION_SUMMARY";
     public static final String ACCESSION_JOB_FAILURE = "Exception occurred in SCSB Ongoing Accession Job";
+    public static final String IMS_LOCATION = "ImsLocation";
 
     public static class SERVICE_PATH {
         public static final String CHECKIN_ITEM = "requestItem/checkinItem";
