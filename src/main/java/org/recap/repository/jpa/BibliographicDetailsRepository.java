@@ -1,16 +1,13 @@
 package org.recap.repository.jpa;
 
 import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.BibliographicPK;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-//import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -20,7 +17,7 @@ import java.util.List;
  * Created by pvsubrah on 6/10/16.
  */
 //@RepositoryRestResource(collectionResourceRel = "bibliographic", path = "bibliographic")
-public interface BibliographicDetailsRepository extends JpaRepository<BibliographicEntity, BibliographicPK> {
+public interface BibliographicDetailsRepository extends BaseRepository<BibliographicEntity> {
 
     /**
      * Gets the count the number of bibs by using IsDeleted field which has false.
@@ -116,13 +113,6 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      */
     BibliographicEntity findByOwningInstitutionIdAndOwningInstitutionBibIdAndIsDeletedFalse(Integer owningInstitutionId, String owningInstitutionBibId);
 
-    /**
-     * Find the bibliographic entity by using bibliographic id .
-     *
-     * @param bibliographicId the bibliographic id
-     * @return the bibliographic entity
-     */
-    BibliographicEntity findByBibliographicId(@Param("bibliographicId") Integer bibliographicId);
 
     /**
      * Find the list of bibliographic entities by using a list of bibliographic ids.
@@ -130,7 +120,7 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      * @param bibliographicIds the bibliographic ids
      * @return the list
      */
-    List<BibliographicEntity> findByBibliographicIdIn(List<Integer> bibliographicIds);
+    List<BibliographicEntity> findByIdIn(List<Integer> bibliographicIds);
 
     /**
      * Find the bibliographic entity by using bibliographic id and is deleted field which has false value.
@@ -138,7 +128,7 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      * @param bibliographicId the bibliographic id
      * @return the bibliographic entity
      */
-    BibliographicEntity findByBibliographicIdAndIsDeletedFalse(@Param("bibliographicId") Integer bibliographicId);
+    BibliographicEntity findByIdAndIsDeletedFalse(@Param("bibliographicId") Integer bibliographicId);
 
     /**
      * Find the bibliographic entity by using owning institution id and owning institution bib id.
@@ -193,9 +183,10 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      * @param owningInstitutionBibId the owning institution bib id
      * @return the non deleted items count
      */
-    @Query(value = "SELECT COUNT(*) FROM ITEM_T, BIBLIOGRAPHIC_ITEM_T WHERE BIBLIOGRAPHIC_ITEM_T.ITEM_INST_ID = ITEM_T.OWNING_INST_ID " +
-            "AND BIBLIOGRAPHIC_ITEM_T.OWNING_INST_ITEM_ID = ITEM_T.OWNING_INST_ITEM_ID AND ITEM_T.IS_DELETED = 0 AND " +
-            "BIBLIOGRAPHIC_ITEM_T.OWNING_INST_BIB_ID = :owningInstitutionBibId AND BIBLIOGRAPHIC_ITEM_T.BIB_INST_ID = :owningInstitutionId", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM ITEM_T, BIBLIOGRAPHIC_ITEM_T, BIBLIOGRAPHIC_T WHERE " +
+            "BIBLIOGRAPHIC_T.BIBLIOGRAPHIC_ID = BIBLIOGRAPHIC_ITEM_T.BIBLIOGRAPHIC_ID AND ITEM_T.ITEM_ID = BIBLIOGRAPHIC_ITEM_T.ITEM_ID " +
+            "AND ITEM_T.IS_DELETED = 0 AND " +
+            "BIBLIOGRAPHIC_T.OWNING_INST_BIB_ID = :owningInstitutionBibId AND BIBLIOGRAPHIC_T.OWNING_INST_ID = :owningInstitutionId", nativeQuery = true)
     Long getNonDeletedItemsCount(@Param("owningInstitutionId") Integer owningInstitutionId, @Param("owningInstitutionBibId") String owningInstitutionBibId);
 
     /**
@@ -208,7 +199,7 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      */
     @Modifying(clearAutomatically = true)
     @Transactional
-    @Query("UPDATE BibliographicEntity bib SET bib.isDeleted = true, bib.lastUpdatedBy = :lastUpdatedBy, bib.lastUpdatedDate = :lastUpdatedDate WHERE bib.bibliographicId IN :bibliographicIds")
+    @Query("UPDATE BibliographicEntity bib SET bib.isDeleted = true, bib.lastUpdatedBy = :lastUpdatedBy, bib.lastUpdatedDate = :lastUpdatedDate WHERE bib.id IN :bibliographicIds")
     int markBibsAsDeleted(@Param("bibliographicIds") List<Integer> bibliographicIds, @Param("lastUpdatedBy") String lastUpdatedBy, @Param("lastUpdatedDate") Date lastUpdatedDate);
 
     /**
@@ -220,9 +211,9 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      * @param to            the to date
      * @return the bibliographic entities for changed items
      */
-    @Query(value = "SELECT distinct BIB FROM BibliographicEntity as BIB WHERE BIB.bibliographicId IN " +
-            "(SELECT DISTINCT BIB1.bibliographicId FROM BibliographicEntity as BIB1 INNER JOIN BIB1.itemEntities AS ITEMS " +
-            "WHERE ITEMS.itemId IN (SELECT recordId FROM ItemChangeLogEntity where operationType=?1 and updated_date between ?2 and ?3))")
+    @Query(value = "SELECT distinct BIB FROM BibliographicEntity as BIB WHERE BIB.id IN " +
+            "(SELECT DISTINCT BIB1.id FROM BibliographicEntity as BIB1 INNER JOIN BIB1.itemEntities AS ITEMS " +
+            "WHERE ITEMS.id IN (SELECT recordId FROM ItemChangeLogEntity where operationType=?1 and updated_date between ?2 and ?3))")
     Page<BibliographicEntity> getBibliographicEntitiesForChangedItems(Pageable pageable, String operationType, Date from, Date to);
 
     /**
@@ -233,9 +224,9 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      * @param to            the to date
      * @return the count of bibliographic entities for changed items
      */
-    @Query(value = "SELECT count(distinct BIB) FROM BibliographicEntity as BIB WHERE BIB.bibliographicId IN " +
-            "(SELECT DISTINCT BIB1.bibliographicId FROM BibliographicEntity as BIB1 INNER JOIN BIB1.itemEntities AS ITEMS " +
-            "WHERE ITEMS.itemId IN (SELECT recordId FROM ItemChangeLogEntity where operationType=?1 and updated_date between ?2 and ?3))")
+    @Query(value = "SELECT count(distinct BIB) FROM BibliographicEntity as BIB WHERE BIB.id IN " +
+            "(SELECT DISTINCT BIB1.id FROM BibliographicEntity as BIB1 INNER JOIN BIB1.itemEntities AS ITEMS " +
+            "WHERE ITEMS.id IN (SELECT recordId FROM ItemChangeLogEntity where operationType=?1 and updated_date between ?2 and ?3))")
     Long getCountOfBibliographicEntitiesForChangedItems(String operationType, Date from, Date to);
 
     /**
@@ -244,7 +235,7 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      * @param bibliographicIds the bibliographic ids
      * @return the count of bib based on bib ids
      */
-    @Query(value = "SELECT count(distinct BIB) FROM BibliographicEntity as BIB WHERE BIB.bibliographicId in (:bibliographicIds)")
+    @Query(value = "SELECT count(distinct BIB) FROM BibliographicEntity as BIB WHERE BIB.id in (:bibliographicIds)")
     Long getCountOfBibBasedOnBibIds(@Param("bibliographicIds") List<Integer> bibliographicIds);
 
     /**
@@ -254,7 +245,7 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      * @param bibliographicIdTo   the bibliographic id to
      * @return the count of bib based on bib id range
      */
-    @Query(value = "SELECT count(distinct BIB) FROM BibliographicEntity as BIB WHERE BIB.bibliographicId BETWEEN :bibliographicIdFrom and :bibliographicIdTo")
+    @Query(value = "SELECT count(distinct BIB) FROM BibliographicEntity as BIB WHERE BIB.id BETWEEN :bibliographicIdFrom and :bibliographicIdTo")
     Long getCountOfBibBasedOnBibIdRange(@Param("bibliographicIdFrom") Integer bibliographicIdFrom, @Param("bibliographicIdTo")Integer bibliographicIdTo);
 
     /**
@@ -274,7 +265,7 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      * @param bibliographicIds the bibliographic ids
      * @return the bibs based on bib ids
      */
-    @Query(value = "SELECT BIB FROM BibliographicEntity as BIB WHERE BIB.bibliographicId in (:bibliographicIds)")
+    @Query(value = "SELECT BIB FROM BibliographicEntity as BIB WHERE BIB.id in (:bibliographicIds)")
     Page<BibliographicEntity> getBibsBasedOnBibIds(Pageable pageable, @Param("bibliographicIds") List<Integer> bibliographicIds);
 
     /**
@@ -285,7 +276,7 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      * @param bibliographicIdTo   the bibliographic id to
      * @return the bibs based on bib id range
      */
-    @Query(value = "SELECT BIB FROM BibliographicEntity as BIB WHERE BIB.bibliographicId BETWEEN :bibliographicIdFrom and :bibliographicIdTo")
+    @Query(value = "SELECT BIB FROM BibliographicEntity as BIB WHERE BIB.id BETWEEN :bibliographicIdFrom and :bibliographicIdTo")
     Page<BibliographicEntity> getBibsBasedOnBibIdRange(Pageable pageable, @Param("bibliographicIdFrom") Integer bibliographicIdFrom, @Param("bibliographicIdTo")Integer bibliographicIdTo);
 
     /**

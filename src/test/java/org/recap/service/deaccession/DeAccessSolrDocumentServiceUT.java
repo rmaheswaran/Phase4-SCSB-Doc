@@ -105,7 +105,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.getBibliographicDetailsRepository()).thenReturn(mockBibliographicDetailsRepository);
         Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository()).thenReturn(mockHoldingsDetailsRepository);
         Mockito.when(deAccessSolrDocumentService.getSolrTemplate()).thenReturn(solrTemplate);
-        Mockito.when(deAccessSolrDocumentService.getBibliographicDetailsRepository().findByBibliographicId(bibId)).thenReturn(bibEntity);
+        Mockito.when(deAccessSolrDocumentService.getBibliographicDetailsRepository().findById(bibId).orElse(null)).thenReturn(bibEntity);
         Mockito.when(deAccessSolrDocumentService.getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository())).thenReturn(new SolrInputDocument());
         Mockito.when(deAccessSolrDocumentService.updateIsDeletedBibByBibId(Arrays.asList(bibId))).thenCallRealMethod();
         String response = deAccessSolrDocumentService.updateIsDeletedBibByBibId(Arrays.asList(bibId));
@@ -123,7 +123,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.getBibliographicDetailsRepository()).thenReturn(mockBibliographicDetailsRepository);
         Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository()).thenReturn(mockHoldingsDetailsRepository);
         Mockito.when(deAccessSolrDocumentService.getSolrTemplate()).thenReturn(solrTemplate);
-        Mockito.when(deAccessSolrDocumentService.getBibliographicDetailsRepository().findByBibliographicId(bibId)).thenThrow(new NullPointerException());
+        Mockito.when(deAccessSolrDocumentService.getBibliographicDetailsRepository().findById(bibId)).thenThrow(new NullPointerException());
         Mockito.when(deAccessSolrDocumentService.getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository())).thenReturn(new SolrInputDocument());
         Mockito.when(deAccessSolrDocumentService.updateIsDeletedBibByBibId(Arrays.asList(bibId))).thenCallRealMethod();
         String response = deAccessSolrDocumentService.updateIsDeletedBibByBibId(Arrays.asList(bibId));
@@ -141,7 +141,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.getBibliographicDetailsRepository()).thenReturn(mockBibliographicDetailsRepository);
         Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository()).thenReturn(mockHoldingsDetailsRepository);
         Mockito.when(deAccessSolrDocumentService.getSolrTemplate()).thenReturn(solrTemplate);
-        Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository().findByHoldingsId(holdingsId)).thenReturn(bibEntity.getHoldingsEntities().get(0));
+        Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository().findById(holdingsId).orElse(null)).thenReturn(bibEntity.getHoldingsEntities().get(0));
         Mockito.when(deAccessSolrDocumentService.getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository())).thenReturn(new SolrInputDocument());
         Mockito.when(deAccessSolrDocumentService.updateIsDeletedHoldingsByHoldingsId(Arrays.asList(holdingsId))).thenCallRealMethod();
         String response = deAccessSolrDocumentService.updateIsDeletedHoldingsByHoldingsId(Arrays.asList(holdingsId));
@@ -159,7 +159,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.getBibliographicDetailsRepository()).thenReturn(mockBibliographicDetailsRepository);
         Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository()).thenReturn(mockHoldingsDetailsRepository);
         Mockito.when(deAccessSolrDocumentService.getSolrTemplate()).thenReturn(solrTemplate);
-        Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository().findByHoldingsId(holdingsId)).thenThrow(new NullPointerException());
+        Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository().findById(holdingsId)).thenThrow(new NullPointerException());
         Mockito.when(deAccessSolrDocumentService.getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository())).thenReturn(new SolrInputDocument());
         Mockito.when(deAccessSolrDocumentService.updateIsDeletedHoldingsByHoldingsId(Arrays.asList(holdingsId))).thenCallRealMethod();
         String response = deAccessSolrDocumentService.updateIsDeletedHoldingsByHoldingsId(Arrays.asList(holdingsId));
@@ -178,7 +178,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository()).thenReturn(mockHoldingsDetailsRepository);
         Mockito.when(deAccessSolrDocumentService.getItemDetailsRepository()).thenReturn(mockItemDetailsRepository);
         Mockito.when(deAccessSolrDocumentService.getSolrTemplate()).thenReturn(solrTemplate);
-        Mockito.when(deAccessSolrDocumentService.getItemDetailsRepository().findByItemId(itemId)).thenReturn(bibliographicEntity.getItemEntities().get(0));
+        Mockito.when(deAccessSolrDocumentService.getItemDetailsRepository().findById(itemId)).thenReturn(java.util.Optional.ofNullable(bibliographicEntity.getItemEntities().get(0)));
         Mockito.when(deAccessSolrDocumentService.getBibJSONUtil().generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository())).thenReturn(new SolrInputDocument());
         Mockito.when(deAccessSolrDocumentService.updateIsDeletedItemByItemIds(Arrays.asList(itemId))).thenCallRealMethod();
         String response = deAccessSolrDocumentService.updateIsDeletedItemByItemIds(Arrays.asList(itemId));
@@ -198,7 +198,7 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.getHoldingDetailRepository()).thenReturn(mockHoldingsDetailsRepository);
         Mockito.when(deAccessSolrDocumentService.getItemDetailsRepository()).thenReturn(mockItemDetailsRepository);
         Mockito.when(deAccessSolrDocumentService.getSolrTemplate()).thenReturn(solrTemplate);
-        Mockito.when(deAccessSolrDocumentService.getItemDetailsRepository().findByItemId(itemId)).thenThrow(new NullPointerException());
+        Mockito.when(deAccessSolrDocumentService.getItemDetailsRepository().findById(itemId)).thenThrow(new NullPointerException());
         Mockito.when(deAccessSolrDocumentService.getBibJSONUtil().generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository())).thenReturn(new SolrInputDocument());
         Mockito.when(deAccessSolrDocumentService.updateIsDeletedItemByItemIds(Arrays.asList(itemId))).thenCallRealMethod();
         String response = deAccessSolrDocumentService.updateIsDeletedItemByItemIds(Arrays.asList(itemId));

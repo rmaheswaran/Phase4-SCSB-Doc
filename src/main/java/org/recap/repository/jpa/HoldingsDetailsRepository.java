@@ -1,15 +1,12 @@
 package org.recap.repository.jpa;
 
 import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.HoldingsPK;
 import org.recap.model.jpa.ItemEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-//import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -19,7 +16,7 @@ import java.util.List;
  * Created by hemalathas on 21/6/16.
  */
 //@RepositoryRestResource(collectionResourceRel = "holdings", path = "holdings")
-public interface HoldingsDetailsRepository extends JpaRepository<HoldingsEntity, HoldingsPK> {
+public interface HoldingsDetailsRepository extends BaseRepository<HoldingsEntity> {
 
     /**
      * Count the number of holdings by using isDeleted field which is false.
@@ -27,14 +24,6 @@ public interface HoldingsDetailsRepository extends JpaRepository<HoldingsEntity,
      * @return the long
      */
     Long countByIsDeletedFalse();
-
-    /**
-     * Finds holding entity by using holdings id.
-     *
-     * @param holdingsId the holdings id
-     * @return the holdings entity
-     */
-    HoldingsEntity findByHoldingsId(Integer holdingsId);
 
     /**
      * Find all holdings entities by using isDeleted field which is false.
@@ -79,9 +68,10 @@ public interface HoldingsDetailsRepository extends JpaRepository<HoldingsEntity,
      * @param owningInstitutionHoldingsId the owning institution holdings id
      * @return the non deleted items count
      */
-    @Query(value = "SELECT COUNT(*) FROM ITEM_T, ITEM_HOLDINGS_T WHERE ITEM_HOLDINGS_T.ITEM_INST_ID = ITEM_T.OWNING_INST_ID AND " +
-            "ITEM_HOLDINGS_T.OWNING_INST_ITEM_ID = ITEM_T.OWNING_INST_ITEM_ID AND ITEM_T.IS_DELETED = 0 AND " +
-            "ITEM_HOLDINGS_T.OWNING_INST_HOLDINGS_ID = :owningInstitutionHoldingsId AND ITEM_HOLDINGS_T.HOLDINGS_INST_ID = :owningInstitutionId", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM ITEM_T, ITEM_HOLDINGS_T, HOLDINGS_T WHERE " +
+            "HOLDINGS_T.HOLDINGS_ID = ITEM_HOLDINGS_T.HOLDINGS_ID AND ITEM_T.ITEM_ID = ITEM_HOLDINGS_T.ITEM_ID " +
+            "AND ITEM_T.IS_DELETED = 0 AND " +
+            "HOLDINGS_T.OWNING_INST_HOLDINGS_ID = :owningInstitutionHoldingsId AND HOLDINGS_T.OWNING_INST_ID = :owningInstitutionId", nativeQuery = true)
     Long getNonDeletedItemsCount(@Param("owningInstitutionId") Integer owningInstitutionId, @Param("owningInstitutionHoldingsId") String owningInstitutionHoldingsId);
 
     /**
@@ -94,6 +84,6 @@ public interface HoldingsDetailsRepository extends JpaRepository<HoldingsEntity,
      */
     @Modifying(clearAutomatically = true)
     @Transactional
-    @Query("UPDATE HoldingsEntity holdings SET holdings.isDeleted = true, holdings.lastUpdatedBy = :lastUpdatedBy, holdings.lastUpdatedDate = :lastUpdatedDate WHERE holdings.holdingsId IN :holdingIds")
+    @Query("UPDATE HoldingsEntity holdings SET holdings.isDeleted = true, holdings.lastUpdatedBy = :lastUpdatedBy, holdings.lastUpdatedDate = :lastUpdatedDate WHERE holdings.id IN :holdingIds")
     int markHoldingsAsDeleted(@Param("holdingIds") List<Integer> holdingIds, @Param("lastUpdatedBy") String lastUpdatedBy, @Param("lastUpdatedDate") Date lastUpdatedDate);
 }

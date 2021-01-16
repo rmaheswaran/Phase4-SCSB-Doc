@@ -152,7 +152,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = getSolrDocumentList();
         BibliographicEntity bibliographicEntity=getBibliographicEntity();
-        Mockito.when(bibliographicDetailsRepository.findByBibliographicId(Mockito.anyInt())).thenReturn(bibliographicEntity);
+        Mockito.when(bibliographicDetailsRepository.findById(Mockito.anyInt()).orElse(null)).thenReturn(bibliographicEntity);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenReturn(solrDocumentList);
         Map<String, Object> search=dataDumpSolrDocumentRepository.search(searchRecordsRequest);
@@ -229,7 +229,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         bibliographicEntity.setLastUpdatedBy("tst");
         bibliographicEntity.setOwningInstitutionId(1);
         bibliographicEntity.setOwningInstitutionBibId("1421");
-        bibliographicEntity.setBibliographicId(1);
+        bibliographicEntity.setId(1);
         bibliographicEntity.setDeleted(true);
         List<BibliographicEntity> bibliographicEntitylist = new LinkedList(Arrays.asList(bibliographicEntity));
 
@@ -242,7 +242,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         holdingsEntity.setOwningInstitutionId(1);
         holdingsEntity.setLastUpdatedBy("tst");
         holdingsEntity.setOwningInstitutionHoldingsId("1621");
-        holdingsEntity.setHoldingsId(1);
+        holdingsEntity.setId(1);
         List<HoldingsEntity> holdingsEntitylist = new LinkedList(Arrays.asList(holdingsEntity));
 
         ItemEntity itemEntity = new ItemEntity();
@@ -258,7 +258,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         itemEntity.setCreatedBy("tst");
         itemEntity.setLastUpdatedBy("tst");
         itemEntity.setItemAvailabilityStatusId(1);
-        itemEntity.setItemId(1);
+        itemEntity.setId(1);
         itemEntity.setCgdChangeLog(RecapConstants.CGD_CHANGE_LOG_OPEN_TO_PRIVATE);
         List<ItemEntity> itemEntitylist = new LinkedList(Arrays.asList(itemEntity));
 

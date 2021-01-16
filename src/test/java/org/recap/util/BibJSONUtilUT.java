@@ -184,7 +184,7 @@ public class BibJSONUtilUT extends BaseTestCaseUT {
         Bib generateBibForIndex = bibJSONUtil.generateBibForIndex(bibliographicEntity, bibliographicDetailsRepository, holdingsDetailsRepository);
         assertNotNull(generateBibForIndex);
         BibliographicEntity bibliographicEntity1= new BibliographicEntity();
-        bibliographicEntity1.setBibliographicId(1);
+        bibliographicEntity1.setId(1);
         bibliographicEntity1.setOwningInstitutionBibId("1");
         InstitutionEntity institutionEntity=new InstitutionEntity();
         institutionEntity.setId(3);

@@ -76,10 +76,10 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCase{
         MatchingCounter.reset();
         bibliographicEntity = saveBibSingleHoldingsSingleItem();
         collectionGroupId = bibliographicEntity.getItemEntities().get(0).getCollectionGroupId();
-        Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingMVMs(RecapCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity(bibliographicEntity.getBibliographicId()));
+        Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingMVMs(RecapCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity(bibliographicEntity.getId()));
         Mockito.when((Integer) collectionGroupMap.get(RecapCommonConstants.REPORTS_OPEN)).thenReturn(2);
         Mockito.when(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD)).thenReturn(1);
-        Mockito.when(mockedBibliographicDetailsRepository.findByBibliographicId(Mockito.any())).thenReturn(bibliographicEntity);
+        Mockito.when(mockedBibliographicDetailsRepository.findById(Mockito.any()).orElse(null)).thenReturn(bibliographicEntity);
     }
 
     public List<ReportDataEntity> getReportDataEntity(Integer bibId){
@@ -97,7 +97,7 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCase{
                 collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository);
         Object object = matchingAlgorithmMVMsCGDCallable.call();
         assertEquals(1,collectionGroupId);
-        BibliographicEntity afterUpdate = mockedBibliographicDetailsRepository.findByBibliographicId(bibliographicEntity.getBibliographicId());
+        BibliographicEntity afterUpdate = mockedBibliographicDetailsRepository.findById(bibliographicEntity.getId()).orElse(null);
         assertNotNull(afterUpdate);
     }
 
@@ -109,7 +109,7 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCase{
 
         Random random = new Random();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
-        bibliographicEntity.setBibliographicId(1134);
+        bibliographicEntity.setId(1134);
         bibliographicEntity.setContent("mock Content".getBytes());
         bibliographicEntity.setCreatedDate(new Date());
         bibliographicEntity.setLastUpdatedDate(new Date());
