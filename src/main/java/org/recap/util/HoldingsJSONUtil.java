@@ -30,7 +30,7 @@ public class HoldingsJSONUtil extends MarcUtil {
     public Holdings generateHoldingsForIndex(HoldingsEntity holdingsEntity) {
         try {
             Holdings holdings = new Holdings();
-            holdings.setHoldingsId(holdingsEntity.getHoldingsId());
+            holdings.setHoldingsId(holdingsEntity.getId());
             holdings.setOwningInstitutionHoldingsId(holdingsEntity.getOwningInstitutionHoldingsId());
             holdings.setDocType(RecapCommonConstants.HOLDINGS);
             holdings.setId(holdingsEntity.getOwningInstitutionId()+holdingsEntity.getOwningInstitutionHoldingsId());
@@ -79,10 +79,10 @@ public class HoldingsJSONUtil extends MarcUtil {
         exceptionMsgDataEntity.setHeaderValue(StringUtils.isNotBlank(e.getMessage()) ? e.getMessage() : e.toString());
         reportDataEntities.add(exceptionMsgDataEntity);
 
-        if(holdingsEntity.getHoldingsId() != null) {
+        if(holdingsEntity.getId() != null) {
             ReportDataEntity holdingsIdDataEntity = new ReportDataEntity();
             holdingsIdDataEntity.setHeaderName(RecapCommonConstants.HOLDINGS_ID);
-            holdingsIdDataEntity.setHeaderValue(String.valueOf(holdingsEntity.getHoldingsId()));
+            holdingsIdDataEntity.setHeaderValue(String.valueOf(holdingsEntity.getId()));
             reportDataEntities.add(holdingsIdDataEntity);
         }
 
