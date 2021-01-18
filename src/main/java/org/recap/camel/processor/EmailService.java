@@ -94,7 +94,7 @@ public class EmailService {
      */
     public EmailPayLoad getEmailPayLoadForMatching(Exchange exchange){
         EmailPayLoad emailPayLoad = new EmailPayLoad();
-        String fileNameWithPath = (String)exchange.getIn().getHeader("CamelFileNameProduced");
+        String fileNameWithPath = (String)exchange.getIn().getHeader("CamelAwsS3Key");
         File file = FileUtils.getFile(fileNameWithPath);
         String path = file.getParent();
         emailPayLoad.setTo(recapSupportEmailTo);
@@ -112,7 +112,7 @@ public class EmailService {
      */
     public EmailPayLoad getEmailPayLoadForAccession(Exchange exchange){
         EmailPayLoad emailPayLoad = new EmailPayLoad();
-        String fileNameWithPath = (String)exchange.getIn().getHeader("CamelFileNameProduced");
+       String fileNameWithPath = (String)exchange.getIn().getHeader("CamelAwsS3Key");
         institutionCode = (String) exchange.getIn().getHeader(RecapConstants.INSTITUTION_NAME);
         File file = FileUtils.getFile(fileNameWithPath);
         String absolutePath = file.getParent();
@@ -126,15 +126,12 @@ public class EmailService {
 
     public void getCc(EmailPayLoad emailPayLoad) {
         StringBuilder cc = new StringBuilder();
-        List<String> institutionCodes = commonUtil.getAllInstitutionCodes();
-        int i = 0;
+        List<String> institutionCodes = commonUtil.findAllInstitutionCodesExceptHTC();
+        String matchingEmailTo="";
         for (String institution : institutionCodes) {
-            String matchingEmailTo = propertyUtil.getPropertyByInstitutionAndKey(institution, "email.matching.reports.to");
-            if (i++ == institutionCodes.size() - 1) { // Last iteration
-                cc.append(StringUtils.isNotBlank(matchingEmailTo) ? matchingEmailTo : "");
-            } else {
-                cc.append(StringUtils.isNotBlank(matchingEmailTo) ? matchingEmailTo + "," : "");
-            }
+             matchingEmailTo = propertyUtil.getPropertyByInstitutionAndKey(institution, "email.matching.reports.to");
+             cc.append(StringUtils.isNotBlank(matchingEmailTo) ? matchingEmailTo + "," : "");
+
         }
         emailPayLoad.setCc(cc.toString());
     }
