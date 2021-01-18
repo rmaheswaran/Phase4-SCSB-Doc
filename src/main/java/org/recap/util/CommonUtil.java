@@ -15,6 +15,7 @@ import org.recap.model.jpa.ItemStatusEntity;
 import org.recap.model.search.resolver.BibValueResolver;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.search.resolver.ItemValueResolver;
+import org.recap.model.search.resolver.impl.Bib.TitleSubFieldAValueResolver;
 import org.recap.model.search.resolver.impl.bib.AuthorDisplayValueResolver;
 import org.recap.model.search.resolver.impl.bib.AuthorSearchValueResolver;
 import org.recap.model.search.resolver.impl.bib.BibCreatedDateValueResolver;
@@ -159,6 +160,7 @@ public class CommonUtil {
             bibValueResolvers.add(new TitleDisplayValueResolver());
             bibValueResolvers.add(new TitleSearchValueResolver());
             bibValueResolvers.add(new TitleSortValueResolver());
+            bibValueResolvers.add(new TitleSubFieldAValueResolver());
             bibValueResolvers.add(new IsDeletedBibValueResolver());
             bibValueResolvers.add(new BibCreatedDateValueResolver());
         }
@@ -375,4 +377,9 @@ public class CommonUtil {
         }
         return institutionCodes;
     }
+
+    public List<String> findAllInstitutionCodesExceptHTC(){
+       return  institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+    }
+
 }
