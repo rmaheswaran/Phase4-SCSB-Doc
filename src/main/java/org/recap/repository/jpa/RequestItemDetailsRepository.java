@@ -3,7 +3,6 @@ package org.recap.repository.jpa;
 import org.recap.model.jpa.RequestItemEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +13,7 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 26/10/16.
  */
-public interface RequestItemDetailsRepository extends BaseRepository<RequestItemEntity>, JpaSpecificationExecutor {
+public interface RequestItemDetailsRepository extends BaseRepository<RequestItemEntity> {
 
     /**
      * Finds a list of request item entities based on the given item id.
