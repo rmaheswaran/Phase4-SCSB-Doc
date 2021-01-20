@@ -64,8 +64,8 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
         searchRecordsRequest.setFieldValue("2016-10-21T14:30Z TO NOW");
         searchRecordsRequest.getOwningInstitutions().addAll(Arrays.asList("CUL", "PUL"));
         searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
+        searchRecordsRequest.setImsDepositoryCodes(Arrays.asList("RECAP"));
         SolrQuery queryForAllFieldsNoValue = solrQueryBuilder.getDeletedQueryForDataDump(searchRecordsRequest,true);
-        System.out.println(queryForAllFieldsNoValue);
         assertNotNull(queryForAllFieldsNoValue);
     }
 
@@ -112,8 +112,8 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
         searchRecordsRequest.setAvailability(null);
         searchRecordsRequest.setOwningInstitutions(null);
         searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
+        searchRecordsRequest.setImsDepositoryCodes(Arrays.asList("RECAP"));
         SolrQuery queryForAllFieldsNoValue = solrQueryBuilder.getDeletedQueryForDataDump(searchRecordsRequest,false);
-        System.out.println(queryForAllFieldsNoValue);
         assertNotNull(queryForAllFieldsNoValue);
     }
 
