@@ -37,16 +37,7 @@ public class FSSubmitCollectionSummaryReportRouteBuilder {
                     from(RecapConstants.FS_SUBMIT_COLLECTION_SUMMARY_REPORT_Q)
                             .routeId(RecapConstants.FS_SUBMIT_COLLECTION_SUMMARY_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
-                            .choice()
-                                .when(header(RecapConstants.FILE_NAME).contains(RecapCommonConstants.PRINCETON))
-                                    .to("file:" + reportsDirectory + File.separator + RecapCommonConstants.PRINCETON + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append")
-                                .when(header(RecapConstants.FILE_NAME).contains(RecapCommonConstants.COLUMBIA))
-                                    .to("file:" + reportsDirectory + File.separator + RecapCommonConstants.COLUMBIA + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append")
-                                .when(header(RecapConstants.FILE_NAME).contains(RecapCommonConstants.NYPL))
-                                    .to("file:" + reportsDirectory + File.separator + RecapCommonConstants.NYPL + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append")
-                                .otherwise()
-                                    .to("file:" + reportsDirectory + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append");
-
+                            .to("file:" + reportsDirectory + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append");
                 }
             });
         } catch (Exception e) {

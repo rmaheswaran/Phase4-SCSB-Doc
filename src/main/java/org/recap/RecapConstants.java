@@ -6,7 +6,6 @@ package org.recap;
 public final class RecapConstants {
     public static final String MONOGRAPHIC_SET = "MonographicSet";
     public static final String FALSE = "false";
-    public static final String TRUE = "true";
     public static final String CGD_CHANGE_LOG = "CGDChangeLog";
     public static final String CGD_CHANGE_LOG_SHARED_TO_PRIVATE = "SharedToPrivate";
     public static final String CGD_CHANGE_LOG_OPEN_TO_PRIVATE = "OpenToPrivate";
@@ -66,12 +65,7 @@ public final class RecapConstants {
     public static final String DATE_FORMAT_FOR_REPORT_FILE_NAME = "ddMMMyyyyHHmmss";
 
     public static final String VOLUME_PART_YEAR = "VolumePartYear";
-    public static final String INSTITUTION_ID = "InstitutionId";
-    public static final String OCLC = "Oclc";
-    public static final String ISBN = "Isbn";
-    public static final String ISSN = "Issn";
-    public static final String LCCN = "Lccn";
-    public static final String USE_RESTRICTIONS = "UseRestrictions";
+
     public static final String SUMMARY_HOLDINGS = "SummaryHoldings";
     public static final String MATERIAL_TYPE = "MaterialType";
     public static final String INITIAL_MATCHING_OPERATION_TYPE = "InitialMatchingAlgorithm";
@@ -83,8 +77,6 @@ public final class RecapConstants {
     public static final String SINGLE_MATCH = "SingleMatch";
     public static final String MULTI_MATCH = "MultiMatch";
 
-    //Transmission Types
-
     public static final String MATERIAL_TYPE_EXCEPTION = "MaterialTypeException";
     public static final String TITLE_EXCEPTION_TYPE = "TitleException";
     public static final String CRITERIA_VALUES = "CriteriaValues";
@@ -93,19 +85,8 @@ public final class RecapConstants {
     public static final String IMS_LOCATION_CODE = "ImsLocation";
 
     //Error Message
-    public static final String RECORD_NOT_AVAILABLE = "Database may be empty or bib table does not contain this record";
     public static final String SERVER_ERROR_MSG = "Server is down for maintenance. Please try again later.";
     public static final String EMPTY_FACET_ERROR_MSG = "Check facets. At least one Bib Facet and one Item Facet must be checked to get results.";
-    public static final String INVALID_BARCODE_LENGTH="Barcode length should not exceed 45 characters";
-
-    public static final String BARCODE_LIMIT_ERROR = "A maximum of only 10 items can be retrieved. Ignored barcode(s)";
-    public static final String ACCESSION_SUCCESS = "One or more records were successfully accessioned.";
-    public static final String ACCESSION_DUMMY_RECORD = "Dummy record created";
-
-    //Request
-    public static final String ITEM_BARCODE_EMPTY = "Item Barcode is Blank.";
-    public static final String CUSTOMER_CODE_EMPTY = "Customer Code is Blank.";
-    public static final String OWNING_INST_EMPTY = "Owning Institution is Blank.";
 
     public static final String UNKNOWN_INSTITUTION = "UN";
     public static final String SCSB = "SCSB";
@@ -129,9 +110,6 @@ public final class RecapConstants {
     public static final String SUBMIT_COLLECTION_SUMMARY_REPORT = "SubmitCollectionSummary";
     public static final String REJECTION = "Rejection";
     public static final String SC_EXCEPTION = "Exception";
-    public static final String ITEM_BARCODE_ALREADY_ACCESSIONED_MSG = "Unavailable barcode from partner is already accessioned";
-    public static final String REACCESSION = "re-accession";
-    public static final String ITEM_ISDELETED_TRUE_TO_FALSE = "Item isdeleted true to false";
     public static final String DUMMY_CALL_NUMBER_TYPE = "dummycallnumbertype";
     public static final String POPULATE_DATA_FOR_DATA_DUMP_JOB = "populateDataForDataDumpJob";
 
@@ -150,7 +128,6 @@ public final class RecapConstants {
     public static final String JOB_PARAM_DATA_FILE_NAME = "FileName";
     public static final String DATE_FORMAT_FOR_REPORTS = "yyyyMMdd_HHmmss";
 
-
     public static final String  BIBITEM_LASTUPDATED_DATE = "BibItemLastUpdatedDate";
     public static final String  ITEM_LASTUPDATED_DATE = "ItemLastUpdatedDate";
     public static final String  ITEM_CREATED_DATE = "ItemCreatedDate";
@@ -163,17 +140,9 @@ public final class RecapConstants {
     public static final String ONGOING_ACCESSION_REPORT = "Ongoing_Accession_Report";
     public static final String ERROR = "error->";
     public static final String EXCEPTION = "exception->";
-    public static final String ITEM_BARCODE_NOT_FOUND = "Item Barcode not found";
-    public static final String MARC_FORMAT_PARSER_ERROR = "Unable to parse input";
-    public static final String INVALID_MARC_XML_ERROR_MSG = "Unable to parse input, xml is having invalid marc tag";
-    public static final String SERVICE_UNAVAILABLE =" Service is unavailable.";
-    public static final String VERIFY_ONGOING_ACCESSION_REPORT_MSG = "Please verify ongoing accession report";
     public static final String DUMMY_BIB_CONTENT_XML = "dummybibcontent.xml";
     public static final String DUMMY_HOLDING_CONTENT_XML = "dummyholdingcontent.xml";
-    public static final String ONGOING_ACCESSION_LIMIT_EXCEED_MESSAGE = "Input limit exceeded, maximum allowed input limit is ";
     public static final String ITEM_ALREADY_ACCESSIONED = "Item already accessioned - Existing item details : ";
-    public static final String INVALID_BOUNDWITH_RECORD = "Bound-with item having invalid data";
-    public static final String FAILED = "Failed";
 
     public static final String STATUS_DONE="Status  : Done";
     public static final String TOTAL_TIME_TAKEN="Total Time Taken ";
@@ -181,29 +150,23 @@ public final class RecapConstants {
     public static final String PUL_MATCHING_COUNT="pulMatchingCount";
     public static final String CUL_MATCHING_COUNT="culMatchingCount";
     public static final String NYPL_MATCHING_COUNT="nyplMatchingCount";
-    public static final String GENERATED_REPORT_FILE_NAME="The Generated Report File Name : ";
-    public static final String TOTAL_TIME_TAKEN_TO_GENERATE_FILE_NAME="Total time taken to generate File : ";
-    public static final String ACCESSION_FAILURE_REPORT="Accession_Failure_Report";
     public static final String TOTAL_BIB_ID_PARTITION_LIST="Total Bib Id partition List : {}";
     public static final String NON_MONOGRAPH_RECORD_NUMS="NonMonographRecordNums";
     public static final String EXCEPTION_RECORD_NUMS="ExceptionRecordNums";
 
     //Logger
     public static final String SCSB_PERSISTENCE_SERVICE_IS_UNAVAILABLE = "Scsb Persistence Service is Unavailable.";
-    public static final String CGD_NA="NA";
 
     public static final String NUMBER_PATTERN="[^0-9]";
 
     public static final String FILE = "file:";
     public static final String DELETE_FILE_OPTION = "?delete=true";
     public static final String FILE_NAME = "fileName";
-    public static final String SUBMIT_COLLECTION_REPORT_SFTP_OPTIONS = "&fileName=${in.header.fileName}&fileExist=append";
     public static final String ITEM_LAST_UPDATED_DATE = "ItemLastUpdatedDate";
 
     //deaccession report
     public static final String BIB_DOC_TYPE = "DocType:Bib";
     public static final String SOLR_BIB_ID = "BibId:";
-    public static final String IS_DELETED_BIB_TRUE = "IsDeletedBib:true";
     public static final String TITLE_DISPLAY = "Title_display";
 
     public static final String EMAIL_FOR = "emailFor";
@@ -211,8 +174,6 @@ public final class RecapConstants {
     public static final String BATCHJOB = "batchJob";
     public static final String PURGE_EXCEPTION_REQUESTS = "PurgeExceptionRequests";
     public static final String PENDING = "pending";
-    public static final String ACCESSION_SAVE_SUCCESS_STATUS = "The accession request is successfully processed.";
-    public static final String ACCESSION_SAVE_FAILURE_STATUS = "Failed to process accession request.";
     public static final String MATCHING_REPORTS = "matchingReports";
     public static final String ACCESSION_REPORTS = "accessionReports";
     public static final String MATCHING_ALGORITHM_REPORTS = "MatchingAlgorithm Reports";
@@ -228,11 +189,7 @@ public final class RecapConstants {
     public static final String AUTHOR_DISPLAY = "Author_display";
 
     public static final String SUBMIT_COLLECTION = "SubmitCollectionReport";
-    public static final String OWN_INST_BIB_ID = " OwningInstBibId-";
-    public static final String OWN_INST_HOLDING_ID = " OwningInstHoldingId-";
-    public static final String OWN_INST_ITEM_ID = " OwningInstItemId-";
     public static final String OWN_INST_BIBID_LIST = "owningInstBibIdList";
-
 
     public static final String BULK_ACCESSION_SUMMARY = "BULK_ACCESSION_SUMMARY";
     public static final String ACCESSION_SUMMARY = "ACCESSION_SUMMARY";
@@ -240,12 +197,9 @@ public final class RecapConstants {
     public static final String IMS_LOCATION = "ImsLocation";
 
     public static class SERVICE_PATH {
-        public static final String CHECKIN_ITEM = "requestItem/checkinItem";
-        public static final String REFILE_ITEM_IN_ILS = "requestItem/refileItemInILS";
         public static final String REPLACE_REQUEST = "requestItem/replaceRequest";
     }
 
-    public static final String SUCCESS_INCOMPLETE_RECORD = "Success - Incomplete record";
     public static final String INCOMPLETE_RESPONSE = "incompleteResponse";
 
     public static class TRANSFER {
@@ -294,13 +248,8 @@ public final class RecapConstants {
     public static final String GROUP_FIELD = "group.field";
     public static final String INCREMENTAL_DUMP_TO_NOW = "TO NOW";
 
-    public static final String ACCESSION_JOB_INITIATE_ROUTE_ID = "scsbactivemq:queue:accessionInitiateRoute";
     public static final String MATCHING_ALGORITHM_JOB_INITIATE_ROUTE_ID = "scsbactivemq:queue:matchingAlgorithmInitiateRoute";
-    public static final String PROCESSING = "Processing";
     public static final String MATCHING_BATCH_JOB_DATE_FORMAT = "EEE MMM dd HH:mm:ss z yyyy";
-    public static final String ACCESSION__CAUGHT_EXCEPTION_METHOD = "caughtException";
-
-    public static final String ETL_DATA_LOAD_NAMESPACE = "http://www.loc.gov/MARC21/slim";
     public static final String SCSB_CAMEL_S3_TO_ENDPOINT = "aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})";
     public static final String  SUBMIT_COLLECTION_BASE_PATH= "reports/collection/submitCollection/";
 
