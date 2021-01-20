@@ -2,12 +2,10 @@ package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
@@ -22,16 +20,14 @@ import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
@@ -77,7 +73,7 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT {
         Mockito.when((Integer) collectionGroupMap.get(RecapCommonConstants.REPORTS_OPEN)).thenReturn(2);
         Mockito.when(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD)).thenReturn(1);
         Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingSerials(RecapCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity());
-        Mockito.when(mockedBibliographicDetailsRepository.findById(Mockito.any()).orElse(null)).thenReturn(bibliographicEntity);
+        Mockito.when(mockedBibliographicDetailsRepository.findById(Mockito.any())).thenReturn(Optional.ofNullable(bibliographicEntity));
     }
 
     @Test

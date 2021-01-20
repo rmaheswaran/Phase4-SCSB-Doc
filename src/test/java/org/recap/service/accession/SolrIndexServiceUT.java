@@ -42,11 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -93,7 +89,7 @@ public class SolrIndexServiceUT extends BaseTestCaseUT {
         SolrInputDocument solrInputDocument=new SolrInputDocument();
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
         ReflectionTestUtils.setField(solrIndexService,"solrTemplate",mocksolrTemplate1);
-        Mockito.when(bibliographicDetailsRepository.findById(Mockito.anyInt()).orElse(null)).thenReturn(getBibliographicEntity());
+        Mockito.when(bibliographicDetailsRepository.findById(Mockito.anyInt())).thenReturn(Optional.ofNullable(getBibliographicEntity()));
         solrIndexService.getLogger();
         solrIndexService.indexByOwnInstBibId(owningInstBibIdList,1);
         assertNotNull(owningInstBibIdList);

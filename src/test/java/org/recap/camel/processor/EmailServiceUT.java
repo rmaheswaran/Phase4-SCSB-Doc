@@ -50,7 +50,7 @@ public class EmailServiceUT extends BaseTestCaseUT {
     public void testRecalEmail() {
             ReflectionTestUtils.setField(emailService,"recapSupportEmailTo",recapSupportEmailTo);
             List<String> institutionCodes= Arrays.asList(RecapCommonConstants.NYPL,RecapCommonConstants.COLUMBIA,RecapCommonConstants.PRINCETON);
-            Mockito.when(commonUtil.getAllInstitutionCodes()).thenReturn(institutionCodes);
+            Mockito.when(commonUtil.findAllInstitutionCodesExceptHTC()).thenReturn(institutionCodes);
             Mockito.when(propertyUtil.getPropertyByInstitutionAndKey(Mockito.anyString(),Mockito.anyString())).thenReturn("test@htcindia.com");
             Exchange exchange = getExchange(RecapCommonConstants.NYPL);
             emailService.setInstitutionCode(RecapCommonConstants.NYPL);

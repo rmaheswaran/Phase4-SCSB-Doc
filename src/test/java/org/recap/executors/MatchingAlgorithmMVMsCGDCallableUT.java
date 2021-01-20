@@ -20,16 +20,14 @@ import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
@@ -79,7 +77,7 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCase{
         Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingMVMs(RecapCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity(bibliographicEntity.getId()));
         Mockito.when((Integer) collectionGroupMap.get(RecapCommonConstants.REPORTS_OPEN)).thenReturn(2);
         Mockito.when(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD)).thenReturn(1);
-        Mockito.when(mockedBibliographicDetailsRepository.findById(Mockito.any()).orElse(null)).thenReturn(bibliographicEntity);
+        Mockito.when(mockedBibliographicDetailsRepository.findById(Mockito.any())).thenReturn(Optional.ofNullable(bibliographicEntity));
     }
 
     public List<ReportDataEntity> getReportDataEntity(Integer bibId){

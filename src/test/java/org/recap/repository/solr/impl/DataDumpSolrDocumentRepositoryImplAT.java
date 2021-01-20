@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -152,7 +153,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         SolrDocumentList solrDocumentList = getSolrDocumentList();
         BibliographicEntity bibliographicEntity=getBibliographicEntity();
-        Mockito.when(bibliographicDetailsRepository.findById(Mockito.anyInt()).orElse(null)).thenReturn(bibliographicEntity);
+        Mockito.when(bibliographicDetailsRepository.findById(Mockito.anyInt())).thenReturn(Optional.ofNullable(bibliographicEntity));
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenReturn(solrDocumentList);
         Map<String, Object> search=dataDumpSolrDocumentRepository.search(searchRecordsRequest);
