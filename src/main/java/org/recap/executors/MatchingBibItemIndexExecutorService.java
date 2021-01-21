@@ -3,11 +3,13 @@ package org.recap.executors;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -25,6 +27,9 @@ public class MatchingBibItemIndexExecutorService extends MatchingIndexExecutorSe
     @Resource(name = "recapSolrTemplate")
     private SolrTemplate solrTemplate;
 
+    @Value("${nonholdingid.institution}")
+    private List<String> nonHoldingInstitutionList;
+
     /**
      * Gets the callable class for the thread to process.
      * @param coreName      the core name
@@ -35,7 +40,7 @@ public class MatchingBibItemIndexExecutorService extends MatchingIndexExecutorSe
      */
     @Override
     public Callable getCallable(String coreName, int pageNum, int docsPerPage, String operationType, Date from, Date to) {
-        return new MatchingBibItemIndexCallable(coreName, pageNum, docsPerPage, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, solrTemplate, operationType, from, to);
+        return new MatchingBibItemIndexCallable(coreName, pageNum, docsPerPage, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, solrTemplate, operationType, from, to,nonHoldingInstitutionList);
     }
 
     /**

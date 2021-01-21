@@ -21,7 +21,7 @@ public class SearchRecordsRequest implements Serializable {
     @ApiModelProperty(name ="fieldName", value= "Select a field name",position = 1)
     private String fieldName;
 
-    @ApiModelProperty(name= "owningInstitutions", value= "Publications Owning Instutions", position = 2, allowableValues="PUL, NYPL, CUL")
+    @ApiModelProperty(name= "owningInstitutions", value= "Publications Owning Institions", position = 2)
     private List<String> owningInstitutions = null;
     @ApiModelProperty(name= "collectionGroupDesignations", value= "Collection Group Designations",position = 3)
     private List<String> collectionGroupDesignations = null;
@@ -93,15 +93,20 @@ public class SearchRecordsRequest implements Serializable {
      * Instantiates a new search records request.
      */
     public SearchRecordsRequest() {
+        setDefaults();
+    }
+
+    public SearchRecordsRequest(List<String> owningInstitutions) {
+        this.getOwningInstitutions().addAll(owningInstitutions);
+        setDefaults();
+    }
+
+    private void setDefaults() {
         this.setFieldName("");
         this.setFieldValue("");
         this.setSelectAllFacets(true);
         this.setDeleted(false);
         this.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
-
-        this.getOwningInstitutions().add("NYPL");
-        this.getOwningInstitutions().add("CUL");
-        this.getOwningInstitutions().add("PUL");
 
         this.getCollectionGroupDesignations().add("Shared");
         this.getCollectionGroupDesignations().add("Private");

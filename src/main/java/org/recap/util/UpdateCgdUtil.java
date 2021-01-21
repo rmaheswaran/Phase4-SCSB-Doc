@@ -41,6 +41,9 @@ public class UpdateCgdUtil {
     @Value("${solr.parent.core}")
     private String solrCore;
 
+    @Value("${nonholdingid.institution}")
+    private List<String> nonHoldingInstitutionList;
+
     @Autowired
     private BibliographicDetailsRepository bibliographicDetailsRepository;
 
@@ -114,6 +117,7 @@ public class UpdateCgdUtil {
      */
     public void updateCGDForItemInSolr(List<ItemEntity> itemEntities) {
         BibJSONUtil bibJSONUtil = new BibJSONUtil();
+        bibJSONUtil.setNonHoldingInstitutions(nonHoldingInstitutionList);
         if (CollectionUtils.isNotEmpty(itemEntities)) {
             for (ItemEntity itemEntity : itemEntities) {
                 if (itemEntity != null && CollectionUtils.isNotEmpty(itemEntity.getBibliographicEntities())) {

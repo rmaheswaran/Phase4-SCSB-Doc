@@ -40,6 +40,7 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
     private SolrTemplate solrTemplate;
     private String partialIndexType;
     private Map<String, Object> partialIndexMap;
+    private List<String> nonHoldingInstitutionList;
 
     /**
      * This method instantiates a new bib item index callable.
@@ -58,7 +59,7 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
      * @param partialIndexMap                the partial index map
      */
     public BibItemIndexCallable(String solrURL, String coreName, int pageNum, int docsPerPage, BibliographicDetailsRepository bibliographicDetailsRepository, HoldingsDetailsRepository holdingsDetailsRepository, Integer owningInstitutionId,
-                                Date fromDate, ProducerTemplate producerTemplate, SolrTemplate solrTemplate, String partialIndexType, Map<String, Object> partialIndexMap) {
+                                Date fromDate, ProducerTemplate producerTemplate, SolrTemplate solrTemplate, String partialIndexType, Map<String, Object> partialIndexMap,List<String> nonHoldingInstitutionList) {
         this.coreName = coreName;
         this.solrURL = solrURL;
         this.pageNum = pageNum;
@@ -71,6 +72,7 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
         this.solrTemplate = solrTemplate;
         this.partialIndexType = partialIndexType;
         this.partialIndexMap = partialIndexMap;
+        this.nonHoldingInstitutionList = nonHoldingInstitutionList;
     }
 
     /**
@@ -107,7 +109,7 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
             }
         }
 
-        List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, logger);
+        List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, logger,nonHoldingInstitutionList);
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
             SolrTemplate templateForSolr = new SolrTemplate(new HttpSolrClient.Builder(solrURL + File.separator).build());
             //templateForSolr.setSolrCore(coreName);

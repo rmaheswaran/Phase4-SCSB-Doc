@@ -1,5 +1,7 @@
 package org.recap.util;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
@@ -38,6 +40,12 @@ public class BibJSONUtil extends MarcUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(BibJSONUtil.class);
 
+    @Getter
+    @Setter
+    private List<String> nonHoldingInstitutions;
+
+    @Getter
+    @Setter
     private ProducerTemplate producerTemplate;
 
     /**
@@ -123,7 +131,7 @@ public class BibJSONUtil extends MarcUtil {
                 oclcNumbers.add(modifiedOclc);
             }
         }
-        if (CollectionUtils.isEmpty(oclcNumbers) && StringUtils.isNotBlank(institutionCode) && "NYPL".equalsIgnoreCase(institutionCode)) {
+        if (CollectionUtils.isEmpty(oclcNumbers) && StringUtils.isNotBlank(institutionCode) && nonHoldingInstitutions.contains(institutionCode)) {
             String oclcTag = getControlFieldValue(record, "003");
             if (StringUtils.isNotBlank(oclcTag) && "OCoLC".equalsIgnoreCase(oclcTag)) {
                 oclcTag = getControlFieldValue(record, "001");
@@ -536,21 +544,4 @@ public class BibJSONUtil extends MarcUtil {
         return "";
     }
 
-    /**
-     * Gets producer template.
-     *
-     * @return the producer template
-     */
-    public ProducerTemplate getProducerTemplate() {
-        return producerTemplate;
-    }
-
-    /**
-     * Sets producer template.
-     *
-     * @param producerTemplate the producer template
-     */
-    public void setProducerTemplate(ProducerTemplate producerTemplate) {
-        this.producerTemplate = producerTemplate;
-    }
 }
