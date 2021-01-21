@@ -34,6 +34,7 @@ public class MatchingBibItemIndexCallable extends CommonCallable implements Call
     private String operationType;
     private Date from;
     private Date to;
+    private List<String> nonHoldingInstitutionList;
 
     /**
      * This method instantiates a new matching bib item index callable.
@@ -51,7 +52,7 @@ public class MatchingBibItemIndexCallable extends CommonCallable implements Call
      */
     public MatchingBibItemIndexCallable(String coreName, int pageNum, int docsPerPage, BibliographicDetailsRepository bibliographicDetailsRepository,
                                         HoldingsDetailsRepository holdingsDetailsRepository, ProducerTemplate producerTemplate, SolrTemplate solrTemplate, String operationType,
-                                        Date from, Date to) {
+                                        Date from, Date to,List<String> nonHoldingInstitutionList) {
         this.coreName = coreName;
         this.pageNum = pageNum;
         this.docsPerPage = docsPerPage;
@@ -62,6 +63,7 @@ public class MatchingBibItemIndexCallable extends CommonCallable implements Call
         this.operationType = operationType;
         this.from = from;
         this.to = to;
+        this.nonHoldingInstitutionList = nonHoldingInstitutionList;
     }
 
     /**
@@ -73,7 +75,7 @@ public class MatchingBibItemIndexCallable extends CommonCallable implements Call
     public Object call() throws Exception {
         Page<BibliographicEntity> bibliographicEntities;
         bibliographicEntities = bibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(PageRequest.of(pageNum, docsPerPage), operationType, from, to);
-        List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, logger);
+        List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, logger,nonHoldingInstitutionList);
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
             producerTemplate.sendBodyAndHeader(RecapCommonConstants.SOLR_QUEUE, solrInputDocumentsToIndex, RecapCommonConstants.SOLR_CORE, coreName);
         }
