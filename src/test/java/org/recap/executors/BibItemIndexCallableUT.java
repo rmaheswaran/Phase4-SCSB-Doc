@@ -1,22 +1,19 @@
 package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
-import org.apache.solr.common.SolrInputDocument;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.result.SolrResultPage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -41,7 +38,7 @@ public class BibItemIndexCallableUT extends BaseTestCaseUT {
     BibliographicDetailsRepository bibliographicDetailsRepository;
 
     @InjectMocks
-    BibItemIndexCallable mockBibItemIndexCallable = new BibItemIndexCallable("","",1,1,bibliographicDetailsRepository,holdingsDetailsRepository,1,new Date(),producerTemplate,solrTemplate, null, null);
+    BibItemIndexCallable mockBibItemIndexCallable = new BibItemIndexCallable("","",1,1,bibliographicDetailsRepository,holdingsDetailsRepository,1,new Date(),producerTemplate,solrTemplate, null, null,new ArrayList<String>(Arrays.asList("NYPL")));
 
 
 

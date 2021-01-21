@@ -52,6 +52,9 @@ public class SolrIndexService {
     @Value("${submit.collection.owninginstbibidlist.partition.size}")
     private Integer submitCollectionOwnInstBibIdListPartitionSize;
 
+    @Value("${nonholdingid.institution}")
+    private List<String> nonHoldingInstitutionList;
+
 
     /**
      * Gets logger.
@@ -122,6 +125,7 @@ public class SolrIndexService {
     public SolrInputDocument indexBibliographicEntity(BibliographicEntity bibliographicEntity) {
         BibJSONUtil bibJSONUtil = getBibJSONUtil();
         bibJSONUtil.setProducerTemplate(producerTemplate);
+        bibJSONUtil.setNonHoldingInstitutions(nonHoldingInstitutionList);
         SolrInputDocument solrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(bibliographicEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingsDetailsRepository());
         if (solrInputDocument !=null) {
             StopWatch stopWatchIndexDocument = new StopWatch();

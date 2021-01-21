@@ -33,6 +33,9 @@ public class DeAccessSolrDocumentService {
     @Value("${solr.parent.core}")
     private String solrCore;
 
+    @Value("${nonholdingid.institution}")
+    private List<String> nonHoldingInstitutionList;
+
     @Autowired
     private BibliographicDetailsRepository bibliographicDetailsRepository;
 
@@ -110,7 +113,9 @@ public class DeAccessSolrDocumentService {
     }
 
     private void updateBibSolrDocument(BibliographicEntity bibEntity) {
-        SolrInputDocument bibSolrInputDocument = getBibJSONUtil().generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
+        BibJSONUtil bibJSONUtil = getBibJSONUtil();
+        bibJSONUtil.setNonHoldingInstitutions(nonHoldingInstitutionList);
+        SolrInputDocument bibSolrInputDocument = bibJSONUtil.generateBibAndItemsForIndex(bibEntity, getSolrTemplate(), getBibliographicDetailsRepository(), getHoldingDetailRepository());
         StopWatch stopWatchIndexDocument = new StopWatch();
         stopWatchIndexDocument.start();
         getSolrTemplate().saveDocument(solrCore, bibSolrInputDocument);

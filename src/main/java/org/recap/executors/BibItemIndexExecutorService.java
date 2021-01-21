@@ -5,6 +5,7 @@ import org.recap.RecapConstants;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,9 @@ public class BibItemIndexExecutorService extends IndexExecutorService {
     @Resource(name = "recapSolrTemplate")
     private SolrTemplate solrTemplate;
 
+    @Value("${nonholdingid.institution}")
+    private List<String> nonHoldingInstitutionList;
+
     /**
      * Gets the callable class for the thread to process.
      * @param coreName
@@ -41,7 +45,7 @@ public class BibItemIndexExecutorService extends IndexExecutorService {
     @Override
     public Callable getCallable(String coreName, int pageNum, int docsPerPage, Integer owningInstitutionId, Date fromDate, String partialIndexType, Map<String, Object> partialIndexMap) {
         return new BibItemIndexCallable(solrServerProtocol + solrUrl, coreName, pageNum, docsPerPage, bibliographicDetailsRepository, holdingsDetailsRepository,
-                owningInstitutionId, fromDate, producerTemplate, solrTemplate, partialIndexType, partialIndexMap);
+                owningInstitutionId, fromDate, producerTemplate, solrTemplate, partialIndexType, partialIndexMap,nonHoldingInstitutionList);
     }
 
     /**

@@ -24,6 +24,7 @@ import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.CsvUtil;
 import org.recap.util.DateUtil;
 import org.recap.util.OngoingMatchingAlgorithmReportGenerator;
+import org.recap.util.PropertyUtil;
 import org.recap.util.SolrQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +89,9 @@ public class OngoingMatchingReportsService {
      */
     @Autowired
     ProducerTemplate producerTemplate;
+
+    @Autowired
+    PropertyUtil propertyUtil;
 
     public static Logger getLogger() {
         return logger;
@@ -314,7 +318,7 @@ public class OngoingMatchingReportsService {
      * @param matchingSummaryReports the matching summary reports
      */
     public void generateSummaryReport(List<MatchingSummaryReport> matchingSummaryReports) {
-        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
+        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest(propertyUtil.getAllInstitutions());
         Integer bibCount = 0;
         Integer itemCount = 0;
         SolrQuery bibCountQuery = getSolrQueryBuilder().getCountQueryForParentAndChildCriteria(searchRecordsRequest);
