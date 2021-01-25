@@ -7,6 +7,7 @@ import org.recap.RecapConstants;
 import org.recap.admin.SolrAdmin;
 import org.recap.executors.BibItemIndexExecutorService;
 import org.recap.model.solr.SolrIndexRequest;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.solr.main.BibSolrCrudRepository;
 import org.recap.repository.solr.main.HoldingsSolrCrudRepository;
 import org.recap.repository.solr.main.ItemCrudRepository;
@@ -64,6 +65,9 @@ public class SolrIndexController {
 
     @Value("${solr.parent.core}")
     private String solrCore;
+
+    @Autowired
+    private InstitutionDetailsRepository institutionDetailsRepository;
 
     /**
      * To initialize solr indexing ui page.
@@ -290,6 +294,12 @@ public class SolrIndexController {
         stopWatch.stop();
         logger.info("Total time to delete bib record from solr--->{} milli sec", stopWatch.getTotalTimeMillis());
         return response;
+    }
+
+    @GetMapping(value = "/solrIndexer/institutions")
+    @ResponseBody
+    public List<String> getInstitution(){
+        return  institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
     }
 
     /**

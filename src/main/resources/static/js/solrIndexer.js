@@ -61,6 +61,7 @@ jQuery(document).ready(function ($) {
     });
 
     showDateField();
+    populateInstitutionForFullIndex();
 });
 
 
@@ -269,4 +270,25 @@ function showRequest() {
         $("#RequestDateRangeView").show();
         $("#requestSubmitBtnDiv").show();
     }
+}
+
+function populateInstitutionForFullIndex() {
+       getInstitutions('institutionCode');
+}
+function populateInstitutionForReports() {
+       getInstitutions('reportInstitutionName');
+}
+function getInstitutions(selectId) {
+       $('#'+selectId).empty();
+       var request = $.ajax({
+            url: "/solrIndexer/institutions",
+            type: "GET",
+            contentType: "application/json"
+        });
+        request.done(function (response) {
+             $('#'+selectId).append('<option value="ALL">ALL</option>');
+             $.each(response , function(index, val) {
+               $('#'+selectId).append('<option value="' + val + '">' + val+ '</option>');
+             });
+        });
 }
