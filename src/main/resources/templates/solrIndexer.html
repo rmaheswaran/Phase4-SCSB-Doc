@@ -22,11 +22,11 @@
     </div>
 
     <ul class="nav nav-tabs nav-justified">
-        <li class="active"><a data-toggle="tab" href="#solrFullIndex">Solr Full Index</a></li>
+        <li class="active"><a data-toggle="tab" href="#solrFullIndex" th:onclick="populateInstitutionForFullIndex()">Solr Full Index</a></li>
         <li><a data-toggle="tab" href="#solrPartialIndex">Solr Partial Index</a></li>
         <li><a data-toggle="tab" href="#matchingAlgorithmSaveReport">Initial Matching Algorithm</a></li>
         <li><a data-toggle="tab" href="#ongoingMatchingJob">Ongoing Matching Job</a></li>
-        <li><a data-toggle="tab" href="#generateReports"> Generate Reports</a></li>
+        <li><a data-toggle="tab" href="#generateReports" th:onclick="populateInstitutionForReports()"> Generate Reports</a></li>
         <li><a data-toggle="tab" href="#RequestReSubmit"> Request Re-Submit</a></li>
     </ul>
 
@@ -105,9 +105,6 @@
                                                                     style="width: 160px;"
                                                                     th:field="*{owningInstitutionCode}">
                                                                 <option value="">ALL</option>
-                                                                <option value="PUL">PUL</option>
-                                                                <option value="CUL">CUL</option>
-                                                                <option value="NYPL">NYPL</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -526,9 +523,6 @@
                                                                     style="width: 160px;"
                                                                     th:field="*{owningInstitutionCode}">
                                                                 <option value="ALL">ALL</option>
-                                                                <option value="PUL">PUL</option>
-                                                                <option value="CUL">CUL</option>
-                                                                <option value="NYPL">NYPL</option>
                                                             </select>
                                                         </div>
                                                     </div>
