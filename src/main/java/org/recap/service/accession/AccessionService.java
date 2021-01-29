@@ -651,7 +651,7 @@ public class AccessionService {
         ReportEntity reportEntity;
         reportEntity = getReportEntity(owningInstitution!=null ? owningInstitution : RecapConstants.UNKNOWN_INSTITUTION);
         reportEntity.setReportDataEntities(reportDataEntityList);
-        getProducerTemplate().sendBody(RecapCommonConstants.REPORT_Q, reportEntity);
+        getProducerTemplate().sendBody(RecapConstants.ACCESSION_REPORT_Q, reportEntity);
     }
 
     private ReportEntity getReportEntity(String owningInstitution){
