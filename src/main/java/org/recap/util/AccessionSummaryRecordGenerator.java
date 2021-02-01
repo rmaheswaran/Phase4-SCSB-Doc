@@ -67,35 +67,6 @@ public class AccessionSummaryRecordGenerator {
         }
         accessionSummaryRecordList.add(accessionSummaryRecord);
 
-        if(itemFailureReasonCountMap.size() != 0 && bibFailureReasonCountMap.size() <= itemFailureReasonCountMap.size()){
-            int count =0;
-            while (count < bibFailureReasonCountMap.size()){
-                buildAccessionSummaryRecordList(accessionSummaryRecordList, bibFailureReasonCountMap, itemFailureReasonCountMap);
-                count+=1;
-            }
-            if(itemFailureReasonCountMap.size() != 0){
-                for(String key : itemFailureReasonCountMap.keySet()){
-                    AccessionSummaryRecord accessionSummaryRec = new AccessionSummaryRecord();
-                    accessionSummaryRec.setReasonForFailureItem(key);
-                    accessionSummaryRec.setFailedItemCount(itemFailureReasonCountMap.get(key).toString());
-                    accessionSummaryRecordList.add(accessionSummaryRec);
-                }
-            }
-        }else if(bibFailureReasonCountMap.size() != 0 && bibFailureReasonCountMap.size() > itemFailureReasonCountMap.size()){
-            int count =0;
-            while (count < itemFailureReasonCountMap.size()){
-                buildAccessionSummaryRecordList(accessionSummaryRecordList, bibFailureReasonCountMap, itemFailureReasonCountMap);
-                count+=1;
-            }
-            if(bibFailureReasonCountMap.size() != 0){
-                for(String key : bibFailureReasonCountMap.keySet()){
-                    AccessionSummaryRecord accessionSummaryRec = new AccessionSummaryRecord();
-                    accessionSummaryRec.setReasonForFailureBib(key);
-                    accessionSummaryRec.setFailedBibCount(bibFailureReasonCountMap.get(key).toString());
-                    accessionSummaryRecordList.add(accessionSummaryRec);
-                }
-            }
-        }
         return accessionSummaryRecordList;
     }
 

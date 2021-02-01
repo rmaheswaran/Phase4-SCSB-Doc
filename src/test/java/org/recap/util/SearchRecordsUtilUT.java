@@ -50,6 +50,21 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void searchRecordsCollectionEmptySearch() throws Exception {
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        searchRecordsRequest.setOwningInstitutions(Arrays.asList());
+        searchRecordsRequest.setAvailability(Arrays.asList());
+        searchRecordsRequest.setCollectionGroupDesignations(Arrays.asList());
+        searchRecordsRequest.setUseRestrictions(Arrays.asList());
+        Map<String, Object> searchResponse=new HashMap<>();
+        List<BibItem> bibItems = getBibItemList();
+        searchResponse.put(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE,bibItems);
+        Mockito.when(bibSolrDocumentRepository.search(Mockito.any(SearchRecordsRequest.class))).thenReturn(searchResponse);
+        List<SearchResultRow> searchRecords = searchRecordsUtil.searchRecords(searchRecordsRequest);
+        assertNotNull(searchRecords);
+    }
+
+    @Test
     public void searchRecordselse() throws Exception {
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         Map<String, Object> searchResponse=new HashMap<>();
@@ -128,6 +143,16 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         Map<String, Object> searchResponse=new HashMap<>();
         searchResponse.put(RecapCommonConstants.SEARCH_ERROR_RESPONSE,"testError");
+        Mockito.when(searchRecordsUtil.getDataDumpSolrDocumentRepository().search(Mockito.any())).thenReturn(searchResponse);
+        List<DataDumpSearchResult> searchRecords = searchRecordsUtil.searchRecordsForDataDump(searchRecordsRequest);
+        assertNotNull(searchRecords);
+    }
+
+    @Test
+    public void searchRecordsForDataDumpSuccess() throws Exception {
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        Map<String, Object> searchResponse=new HashMap<>();
+        searchResponse.put(RecapCommonConstants.SEARCH_ERROR_RESPONSE,null);
         Mockito.when(searchRecordsUtil.getDataDumpSolrDocumentRepository().search(Mockito.any())).thenReturn(searchResponse);
         List<DataDumpSearchResult> searchRecords = searchRecordsUtil.searchRecordsForDataDump(searchRecordsRequest);
         assertNotNull(searchRecords);

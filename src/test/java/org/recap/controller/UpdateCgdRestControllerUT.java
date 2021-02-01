@@ -1,39 +1,46 @@
 package org.recap.controller;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
-import org.springframework.test.web.servlet.MvcResult;
+import org.recap.util.UpdateCgdUtil;
 
-import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by rajeshbabuk on 3/1/17.
  */
-public class UpdateCgdRestControllerUT extends BaseControllerUT {
+public class UpdateCgdRestControllerUT extends BaseTestCaseUT {
+
+
+    @InjectMocks
+    UpdateCgdRestController UpdateCgdRestController;
+
+    @Mock
+    UpdateCgdUtil updateCgdUtil;
+
+    String itemBarcode = "1";
+    String owningInstitution = "PUL";
+    String oldCollectionGroupDesignation = "Private";
+    String newCollectionGroupDesignation = "Open";
+    String cgdChangeNotes = "Notes";
+    String username = "guest";
 
     @Test
     public void updateCgdForItem() throws Exception {
-        String itemBarcode = "1";
-        String owningInstitution = "PUL";
-        String oldCollectionGroupDesignation = "Private";
-        String newCollectionGroupDesignation = "Open";
-        String cgdChangeNotes = "Notes";
-        String username = "guest";
-        MvcResult savedResult = this.mockMvc.perform(get("/updateCgdService/updateCgd")
-                .headers(getHttpHeaders())
-                .param(RecapCommonConstants.CGD_UPDATE_ITEM_BARCODE, itemBarcode)
-                .param(RecapConstants.OWNING_INST, owningInstitution)
-                .param(RecapCommonConstants.OLD_CGD, oldCollectionGroupDesignation)
-                .param(RecapCommonConstants.NEW_CGD, newCollectionGroupDesignation)
-                .param(RecapCommonConstants.CGD_CHANGE_NOTES, cgdChangeNotes)
-                .param(RecapCommonConstants.USER_NAME, username))
-                .andExpect(status().isOk())
-                .andReturn();
+        Mockito.when(updateCgdUtil.updateCGDForItem(itemBarcode, owningInstitution, oldCollectionGroupDesignation, newCollectionGroupDesignation, cgdChangeNotes,username)).thenReturn(RecapCommonConstants.SUCCESS);
+        String statusMessage= UpdateCgdRestController.updateCgdForItem(itemBarcode,owningInstitution,oldCollectionGroupDesignation,newCollectionGroupDesignation,cgdChangeNotes,username);
+        assertEquals(RecapCommonConstants.SUCCESS,statusMessage);
+    }
 
-        String statusResponse = savedResult.getResponse().getContentAsString();
-        assertNotNull(statusResponse);
+    @Test
+    public void updateCgdForItemException() throws Exception {
+        Mockito.when(updateCgdUtil.updateCGDForItem(itemBarcode, owningInstitution, oldCollectionGroupDesignation, newCollectionGroupDesignation, cgdChangeNotes,username)).thenThrow(NullPointerException.class);
+        String statusMessage= UpdateCgdRestController.updateCgdForItem(itemBarcode,owningInstitution,oldCollectionGroupDesignation,newCollectionGroupDesignation,cgdChangeNotes,username);
+        assertNull(statusMessage);
     }
 }

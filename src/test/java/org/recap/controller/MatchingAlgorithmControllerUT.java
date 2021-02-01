@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.executors.MatchingBibItemIndexExecutorService;
@@ -56,7 +57,7 @@ import static org.junit.Assert.assertNotEquals;
 /**
  * Created by hemalathas on 1/8/16.
  */
-public class MatchingAlgorithmControllerUT extends BaseControllerUT {
+public class MatchingAlgorithmControllerUT extends BaseTestCaseUT {
 
     Logger logger = LoggerFactory.getLogger(MatchingAlgorithmControllerUT.class);
 
@@ -328,6 +329,24 @@ public class MatchingAlgorithmControllerUT extends BaseControllerUT {
         Mockito.when(matchingAlgoController.updateCGDInSolr(matchingAlgoDateString)).thenCallRealMethod();
         String response = matchingAlgoController.updateCGDInSolr(matchingAlgoDateString);
         assertTrue(response.contains(RecapConstants.STATUS_FAILED));
+    }
+
+    @Test
+    public void updateCGDInSolrParseException() throws Exception {
+        Date matchingAlgoDate = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        String matchingAlgoDateString = sdf.format(matchingAlgoDate);
+        Date updatedDate = new Date();
+        try {
+            updatedDate = sdf.parse(matchingAlgoDateString);
+        } catch (ParseException e) {
+            logger.error("Exception while parsing Date : " + e.getMessage());
+        }
+        Mockito.when(matchingAlgoController.getMatchingBibItemIndexExecutorService()).thenReturn(matchingBibItemIndexExecutorService);
+        Mockito.when(matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, updatedDate)).thenThrow(NullPointerException.class);
+        Mockito.when(matchingAlgoController.updateCGDInSolr(new Date().toString())).thenCallRealMethod();
+        String response = matchingAlgoController.updateCGDInSolr(new Date().toString());
+        assertTrue(response.contains(RecapConstants.STATUS_DONE));
     }
 
     @Test

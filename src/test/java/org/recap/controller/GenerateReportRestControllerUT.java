@@ -4,7 +4,9 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapConstants;
+import org.recap.TestUtil;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.JobParamDataEntity;
 import org.recap.model.jpa.JobParamEntity;
@@ -23,7 +25,7 @@ import static org.junit.Assert.assertEquals;
  * Created by Anitha on 10/10/20.
  */
 
-public class GenerateReportRestControllerUT extends BaseControllerUT {
+public class GenerateReportRestControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
     GenerateReportRestController generateReportRestController;
@@ -40,42 +42,43 @@ public class GenerateReportRestControllerUT extends BaseControllerUT {
 
     @Test
     public void generateReportsJob() throws Exception{
-        JobParamEntity jobParamEntity=new JobParamEntity() ;
-        List<JobParamDataEntity> jobParamDataEntities=new ArrayList<>();
-        jobParamDataEntities.add(getJobParamDataEntity(RecapConstants.TRANSMISSION_TYPE));
-        jobParamDataEntities.add(getJobParamDataEntity(RecapConstants.REPORT_TYPE));
-        jobParamDataEntities.add(getJobParamDataEntity(RecapConstants.JOB_PARAM_DATA_FILE_NAME));
-        jobParamEntity.setJobParamDataEntities(jobParamDataEntities);
-        Mockito.when(jobParamDetailRepository.findByJobName(Mockito.anyString())).thenReturn(jobParamEntity);
-        List<InstitutionEntity> institutionEntities=new ArrayList<>();
-        institutionEntities.add(getInstitutionEntity("HTC",4));
-        institutionEntities.add(getInstitutionEntity("CUL",2));
-        Mockito.when(institutionDetailsRepository.findByInstitutionCodeNotIn(Mockito.anyList())).thenReturn(institutionEntities);
+        Mockito.when(jobParamDetailRepository.findByJobName(Mockito.anyString())).thenReturn(getJobParamEntity());
+        Mockito.when(institutionDetailsRepository.findByInstitutionCodeNotIn(Mockito.anyList())).thenReturn(getInstitutionEntities());
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT);
+        String reponse =generateReportRestController.generateReportsJob(getSolrIndexRequest());
+        assertEquals("Report generated Successfully in S3",reponse);
+    }
+
+    private SolrIndexRequest getSolrIndexRequest() {
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setProcessType("test");
-        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT);
-        String reponse =generateReportRestController.generateReportsJob(solrIndexRequest);
-        assertEquals("Report generated Successfully in S3",reponse);
+        return solrIndexRequest;
+    }
+
+    private List<InstitutionEntity> getInstitutionEntities() {
+        List<InstitutionEntity> institutionEntities = new ArrayList<>();
+        institutionEntities.add(TestUtil.getInstitutionEntity(4, "HTC", "HTC"));
+        institutionEntities.add(TestUtil.getInstitutionEntity(2, "CUL", "CUL"));
+        return institutionEntities;
     }
 
     @Test
     public void generateReportsJobFail() throws Exception{
-        JobParamEntity jobParamEntity=new JobParamEntity() ;
-        List<JobParamDataEntity> jobParamDataEntities=new ArrayList<>();
+        Mockito.when(jobParamDetailRepository.findByJobName(Mockito.anyString())).thenReturn(getJobParamEntity());
+        Mockito.when(institutionDetailsRepository.findByInstitutionCodeNotIn(Mockito.anyList())).thenReturn(getInstitutionEntities());
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("");
+        String reponse =generateReportRestController.generateReportsJob(getSolrIndexRequest());
+        assertEquals("There is no report to generate or Report Generation Failed",reponse);
+    }
+
+    private JobParamEntity getJobParamEntity() {
+        JobParamEntity jobParamEntity = new JobParamEntity();
+        List<JobParamDataEntity> jobParamDataEntities = new ArrayList<>();
         jobParamDataEntities.add(getJobParamDataEntity(RecapConstants.TRANSMISSION_TYPE));
         jobParamDataEntities.add(getJobParamDataEntity(RecapConstants.REPORT_TYPE));
         jobParamDataEntities.add(getJobParamDataEntity(RecapConstants.JOB_PARAM_DATA_FILE_NAME));
         jobParamEntity.setJobParamDataEntities(jobParamDataEntities);
-        Mockito.when(jobParamDetailRepository.findByJobName(Mockito.anyString())).thenReturn(jobParamEntity);
-        List<InstitutionEntity> institutionEntities=new ArrayList<>();
-        institutionEntities.add(getInstitutionEntity("HTC",4));
-        institutionEntities.add(getInstitutionEntity("CUL",2));
-        Mockito.when(institutionDetailsRepository.findByInstitutionCodeNotIn(Mockito.anyList())).thenReturn(institutionEntities);
-        SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
-        solrIndexRequest.setProcessType("test");
-        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("");
-        String reponse =generateReportRestController.generateReportsJob(solrIndexRequest);
-        assertEquals("There is no report to generate or Report Generation Failed",reponse);
+        return jobParamEntity;
     }
 
     @Test
@@ -84,14 +87,6 @@ public class GenerateReportRestControllerUT extends BaseControllerUT {
         Mockito.when(reportGenerator.generateReportBasedOnReportRecordNum(Mockito.anyList(),Mockito.anyString(),Mockito.anyString())).thenReturn("test");
         String reponse =generateReportRestController.generateSubmitCollectionReport(reportRecordNumberList);
         assertEquals("test",reponse);
-    }
-
-    private InstitutionEntity getInstitutionEntity(String name, int id) {
-        InstitutionEntity institutionEntity=new InstitutionEntity();
-        institutionEntity.setInstitutionName("HTC");
-        institutionEntity.setInstitutionCode(String.valueOf(id));
-        institutionEntity.setId(id);
-        return institutionEntity;
     }
 
     private JobParamDataEntity getJobParamDataEntity(String name) {

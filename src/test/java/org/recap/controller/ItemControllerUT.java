@@ -1,30 +1,27 @@
 package org.recap.controller;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.repository.jpa.ItemDetailsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 3/7/17.
  */
-public class ItemControllerUT extends BaseTestCase{
+public class ItemControllerUT extends BaseTestCaseUT {
 
-    @Autowired
-    ItemDetailsRepository itemDetailsRepository;
-
-    @Mock
+    @InjectMocks
     ItemController mockedItemController;
 
     @Mock
@@ -39,14 +36,10 @@ public class ItemControllerUT extends BaseTestCase{
         itemEntity.setBarcode("3325656544854");
         itemEntity.setHoldingsEntities(Arrays.asList(new HoldingsEntity()));
         itemEntity.setBibliographicEntities(Arrays.asList(bibliographicEntity));
-        ItemController itemController = new ItemController(itemDetailsRepository);
-        Mockito.when(mockedItemController.getItemDetailsRepository()).thenReturn(mockedItemDetailsRepository);
-        Mockito.when(mockedItemController.getItemDetailsRepository().findByBarcodeIn(Mockito.any())).thenReturn(Arrays.asList(itemEntity));
-        Mockito.when(mockedItemController.findByBarcodeIn("[3325656544854,334545888458]")).thenCallRealMethod();
+        Mockito.when(mockedItemDetailsRepository.findByBarcodeIn(Mockito.any())).thenReturn(Arrays.asList(itemEntity));
         List<ItemEntity> itemEntityList = mockedItemController.findByBarcodeIn("[3325656544854,334545888458]");
         assertNotNull(itemEntityList);
-        Mockito.when(mockedItemController.getItemDetailsRepository()).thenCallRealMethod();
-        assertNotEquals(itemDetailsRepository,mockedItemController.getItemDetailsRepository());
-    }
+        assertEquals("3325656544854",itemEntityList.get(0).getBarcode());
+   }
 
 }

@@ -174,6 +174,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         SolrDocumentList solrDocumentList = new SolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
         solrDocument.setField(RecapCommonConstants.IS_DELETED_ITEM, true);
+        solrDocument.setField(RecapCommonConstants.BIB_ID, 1);
         solrDocumentList.add(solrDocument);
         Group group = new Group(RecapCommonConstants.IS_DELETED_ITEM, solrDocumentList);
         groupCommand.add(group);
@@ -183,11 +184,8 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         FieldStatsInfo fieldStatsInfo = Mockito.mock(FieldStatsInfo.class);
         getFieldStatsInfo.put(RecapCommonConstants.BARCODE, fieldStatsInfo);
         Mockito.when(queryResponse.getFieldStatsInfo()).thenReturn(getFieldStatsInfo);
-        Item item= new Item();
-        item.setItemId(1);
-        item.setItemBibIdList(Arrays.asList(1,2,3));
-        item.setItemLastUpdatedDate(new Date());
-        item.setItemCreatedDate(new Date());
+            Item item = getItem();
+            item.setItemCreatedDate(new Date());
         Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(item);
         Mockito.when(solrQueryBuilder.buildSolrQueryToGetBibDetails(Mockito.anyList(),Mockito.anyInt())).thenReturn(query);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
@@ -198,11 +196,6 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
 
     @Test
     public void populateDeaccessionResults() throws Exception {
-        ReportsRequest reportsRequest = new ReportsRequest();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        reportsRequest.setAccessionDeaccessionFromDate(simpleDateFormat.format(new Date()));
-        reportsRequest.setAccessionDeaccessionToDate(simpleDateFormat.format(new Date()));
-        reportsRequest.setDeaccessionOwningInstitution("PUL");
         ReportsResponse reportsResponse1 = new ReportsResponse();
         List<DeaccessionItemResultsRow> deaccessionItemResultsRowList = new ArrayList<>();
         deaccessionItemResultsRowList.add(new DeaccessionItemResultsRow());
@@ -217,40 +210,99 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         GroupResponse groupResponse=Mockito.mock(GroupResponse.class);
         Mockito.when(queryResponse.getGroupResponse()).thenReturn(groupResponse);
-        List<GroupCommand> values=new ArrayList<>();
-        GroupCommand groupCommand=new GroupCommand(RecapCommonConstants.IS_DELETED_ITEM,1);
-        SolrDocumentList solrDocumentList=new SolrDocumentList();
-        SolrDocument solrDocument=new SolrDocument();
-        solrDocument.setField(RecapCommonConstants.IS_DELETED_ITEM,true);
-        solrDocument.setField(RecapCommonConstants.BIB_ID,1);
-        solrDocument.setField(RecapConstants.TITLE_DISPLAY,"test");
-        solrDocumentList.add(solrDocument);
-        Group group=new Group(RecapCommonConstants.IS_DELETED_ITEM,solrDocumentList);
-        groupCommand.add(group);
-        values.add(groupCommand);
-        Mockito.when(groupResponse.getValues()).thenReturn(values);
+        Mockito.when(groupResponse.getValues()).thenReturn(getGroupCommands());
         Map<String, FieldStatsInfo> getFieldStatsInfo=new HashMap<>();
         FieldStatsInfo fieldStatsInfo=Mockito.mock(FieldStatsInfo.class);
         getFieldStatsInfo.put(RecapCommonConstants.BARCODE,fieldStatsInfo);
         Mockito.when(queryResponse.getFieldStatsInfo()).thenReturn(getFieldStatsInfo);
-        Item item= new Item();
-        item.setItemId(1);
-        item.setItemBibIdList(Arrays.asList(1,2,3));
-        item.setItemLastUpdatedDate(new Date());
-        Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(item);
-        Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
-        List<DeaccessionItemChangeLog> itemChangeLogEntityList=new ArrayList<>();
-        DeaccessionItemChangeLog deaccessionItemChangeLog=new DeaccessionItemChangeLog();
-        deaccessionItemChangeLog.setRecordId(1);
-        itemChangeLogEntityList.add(deaccessionItemChangeLog);
-        Mockito.when(deaccesionItemChangeLogDetailsRepository.findByRecordIdAndOperationTypeAndOrderByUpdatedDateDesc(Mockito.anyInt(),Mockito.anyString())).thenReturn(itemChangeLogEntityList);
-        ReportsResponse reportsResponse = reportsServiceUtil.populateDeaccessionResults(reportsRequest);
+        Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(getItem());
+        Mockito.when(queryResponse.getResults()).thenReturn(getSolrDocuments());
+        Mockito.when(deaccesionItemChangeLogDetailsRepository.findByRecordIdAndOperationTypeAndOrderByUpdatedDateDesc(Mockito.anyInt(),Mockito.anyString())).thenReturn(getDeaccessionItemChangeLogs());
+        ReportsResponse reportsResponse = reportsServiceUtil.populateDeaccessionResults(getReportsRequest());
         assertNotNull(reportsResponse);
         assertNotNull(reportsResponse.getDeaccessionItemResultsRows());
         assertTrue(reportsResponse.getDeaccessionItemResultsRows().size() > 0);
         List<DeaccessionItemResultsRow> deaccessionItemResultsRows = reportsResponse.getDeaccessionItemResultsRows();
         assertNotNull(deaccessionItemResultsRows);
         assertTrue(deaccessionItemResultsRows.size() > 0);
+    }
+
+    private List<DeaccessionItemChangeLog> getDeaccessionItemChangeLogs() {
+        List<DeaccessionItemChangeLog> itemChangeLogEntityList = new ArrayList<>();
+        DeaccessionItemChangeLog deaccessionItemChangeLog = new DeaccessionItemChangeLog();
+        deaccessionItemChangeLog.setRecordId(1);
+        itemChangeLogEntityList.add(deaccessionItemChangeLog);
+        return itemChangeLogEntityList;
+    }
+
+    private List<GroupCommand> getGroupCommands() {
+        List<GroupCommand> values = new ArrayList<>();
+        GroupCommand groupCommand = new GroupCommand(RecapCommonConstants.IS_DELETED_ITEM, 1);
+        Group group = new Group(RecapCommonConstants.IS_DELETED_ITEM, getSolrDocuments());
+        groupCommand.add(group);
+        values.add(groupCommand);
+        return values;
+    }
+
+    private SolrDocumentList getSolrDocuments() {
+        SolrDocumentList solrDocumentList = new SolrDocumentList();
+        SolrDocument solrDocument = new SolrDocument();
+        solrDocument.setField(RecapCommonConstants.IS_DELETED_ITEM, true);
+        solrDocument.setField(RecapCommonConstants.BIB_ID, 1);
+        solrDocument.setField(RecapConstants.TITLE_DISPLAY, "test");
+        solrDocumentList.add(solrDocument);
+        return solrDocumentList;
+    }
+
+    @Test
+    public void testPopulateDeaccessionResultsForPageCount() throws Exception {
+        ReportsResponse reportsResponse1 = new ReportsResponse();
+        List<DeaccessionItemResultsRow> deaccessionItemResultsRowList = new ArrayList<>();
+        deaccessionItemResultsRowList.add(new DeaccessionItemResultsRow());
+        reportsResponse1.setDeaccessionItemResultsRows(deaccessionItemResultsRowList);
+        SolrQuery query=new SolrQuery("testquery");
+        Mockito.when(solrQueryBuilder.buildSolrQueryForDeaccesionReportInformation(Mockito.any(),Mockito.anyString(),Mockito.anyBoolean())).thenReturn(query);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        ReflectionTestUtils.setField(reportsServiceUtil,"solrTemplate",mocksolrTemplate1);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        QueryResponse queryResponse=Mockito.mock(QueryResponse.class);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        GroupResponse groupResponse=Mockito.mock(GroupResponse.class);
+        Mockito.when(queryResponse.getGroupResponse()).thenReturn(groupResponse);
+        Mockito.when(groupResponse.getValues()).thenReturn(getGroupCommands());
+        Map<String, FieldStatsInfo> getFieldStatsInfo=new HashMap<>();
+        FieldStatsInfo fieldStatsInfo=Mockito.mock(FieldStatsInfo.class);
+        getFieldStatsInfo.put(RecapCommonConstants.BARCODE,fieldStatsInfo);
+        Mockito.when(queryResponse.getFieldStatsInfo()).thenReturn(getFieldStatsInfo);
+        Mockito.when(getFieldStatsInfo.get(RecapCommonConstants.BARCODE).getCountDistinct()).thenReturn(10l);
+        Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(getItem());
+        Mockito.when(queryResponse.getResults()).thenReturn(getSolrDocuments());
+        Mockito.when(deaccesionItemChangeLogDetailsRepository.findByRecordIdAndOperationTypeAndOrderByUpdatedDateDesc(Mockito.anyInt(),Mockito.anyString())).thenReturn(getDeaccessionItemChangeLogs());
+        ReportsResponse reportsResponse = reportsServiceUtil.populateDeaccessionResults(getReportsRequest());
+        assertNotNull(reportsResponse);
+        assertNotNull(reportsResponse.getDeaccessionItemResultsRows());
+        assertTrue(reportsResponse.getDeaccessionItemResultsRows().size() > 0);
+        List<DeaccessionItemResultsRow> deaccessionItemResultsRows = reportsResponse.getDeaccessionItemResultsRows();
+        assertNotNull(deaccessionItemResultsRows);
+        assertTrue(deaccessionItemResultsRows.size() > 0);
+    }
+
+    private ReportsRequest getReportsRequest() {
+        ReportsRequest reportsRequest = new ReportsRequest();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        reportsRequest.setAccessionDeaccessionFromDate(simpleDateFormat.format(new Date()));
+        reportsRequest.setAccessionDeaccessionToDate(simpleDateFormat.format(new Date()));
+        reportsRequest.setDeaccessionOwningInstitution("PUL");
+        return reportsRequest;
+    }
+
+    private Item getItem() {
+        Item item = new Item();
+        item.setItemId(1);
+        item.setItemBibIdList(Arrays.asList(1, 2, 3));
+        item.setItemLastUpdatedDate(new Date());
+        return item;
     }
 
 }

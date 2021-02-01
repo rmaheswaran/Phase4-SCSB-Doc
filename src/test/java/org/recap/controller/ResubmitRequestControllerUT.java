@@ -2,6 +2,7 @@ package org.recap.controller;
 
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.request.ReplaceRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -9,7 +10,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.junit.Assert.assertNotNull;
 
 
-public class ResubmitRequestControllerUT extends BaseControllerUT {
+public class ResubmitRequestControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
     ResubmitRequestController resubmitRequestController;

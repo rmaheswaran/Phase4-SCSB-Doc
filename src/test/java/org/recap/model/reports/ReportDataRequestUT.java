@@ -1,14 +1,14 @@
 package org.recap.model.reports;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 3/7/17.
  */
-public class ReportDataRequestUT extends BaseTestCase{
+public class ReportDataRequestUT extends BaseTestCaseUT {
 
     @Test
     public void testReportDataRequest(){

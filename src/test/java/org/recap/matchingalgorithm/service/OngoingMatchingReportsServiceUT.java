@@ -23,6 +23,7 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
+import org.recap.TestUtil;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ReportDataEntity;
@@ -32,6 +33,7 @@ import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.CsvUtil;
 import org.recap.util.DateUtil;
+import org.recap.util.PropertyUtil;
 import org.recap.util.SolrQueryBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -93,6 +95,9 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
 
     @Mock
     MatchingCounter matchingCounter;
+
+    @Mock
+    PropertyUtil propertyUtil;
 
 
     @Before
@@ -246,6 +251,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(camelContext.getRouteController()).thenReturn(routeController);
+        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HTC","HUL"));
         ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
         assertNotNull(matchingSummaryReports);
         }
@@ -254,9 +260,9 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
     @Test
     public void populateSummaryReport() throws Exception {
         List<InstitutionEntity> institutionEntities=new ArrayList<>();
-        institutionEntities.add(getInstitutionEntity(RecapCommonConstants.NYPL,3));
-        institutionEntities.add(getInstitutionEntity(RecapCommonConstants.COLUMBIA,2));
-        institutionEntities.add(getInstitutionEntity(RecapCommonConstants.PRINCETON,1));
+        institutionEntities.add(TestUtil.getInstitutionEntity(3,RecapCommonConstants.NYPL,RecapCommonConstants.NYPL));
+        institutionEntities.add(TestUtil.getInstitutionEntity(2,RecapCommonConstants.COLUMBIA,RecapCommonConstants.COLUMBIA));
+        institutionEntities.add(TestUtil.getInstitutionEntity(1,RecapCommonConstants.PRINCETON,RecapCommonConstants.PRINCETON));
         Mockito.when(institutionDetailsRepository.findByInstitutionCodeNotIn(Mockito.anyList())).thenReturn(institutionEntities);
         List<MatchingSummaryReport> matchingSummaryReports=ongoingMatchingReportsService.populateSummaryReport();
         assertNotNull(matchingSummaryReports);
@@ -268,13 +274,5 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
         matchingSummaryReport.setOpenItemsBeforeMatching("0");
         matchingSummaryReport.setSharedItemsBeforeMatching("0");
         return matchingSummaryReport;
-    }
-
-    private InstitutionEntity getInstitutionEntity(String institution, int institutionId) {
-        InstitutionEntity institutionEntity=new InstitutionEntity();
-        institutionEntity.setId(institutionId);
-        institutionEntity.setInstitutionName(institution);
-        institutionEntity.setInstitutionCode(institution);
-        return institutionEntity;
     }
 }
