@@ -43,7 +43,7 @@ public class EmailServiceUT extends BaseTestCaseUT {
     @Mock
     CommonUtil commonUtil;
 
-    @Value("${recap-las.email.recap.assist.email.to}")
+    @Value("${scsb.email.assist.to}")
     String recapSupportEmailTo;
 
     @Test
