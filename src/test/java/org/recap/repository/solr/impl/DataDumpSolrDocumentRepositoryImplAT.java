@@ -61,10 +61,10 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
     @Mock
     private SolrQueryBuilder solrQueryBuilder;
 
-    @Value("${datadump.deleted.type.onlyorphan.institution}")
+    @Value("${etl.data.dump.deleted.type.onlyorphan.institution}")
     private String deletedOnlyOrphanInstitution;
 
-    @Value("${datadump.incremental.type.nonfulltree.institution}")
+    @Value("${etl.data.dump.incremental.type.nonfulltree.institution}")
     private String incrementalNonFullTreeInstitution;
 
     @Mock

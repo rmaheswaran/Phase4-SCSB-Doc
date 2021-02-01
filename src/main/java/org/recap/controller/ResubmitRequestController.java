@@ -30,7 +30,7 @@ public class ResubmitRequestController {
 
     private static final Logger logger = LoggerFactory.getLogger(ResubmitRequestController.class);
 
-    @Value("${scsb.url}")
+    @Value("${scsb.gateway.url}")
     private String scsbUrl;
 
     /**

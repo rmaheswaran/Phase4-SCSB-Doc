@@ -16,7 +16,7 @@ public class ResubmitRequestControllerUT extends BaseTestCaseUT {
     ResubmitRequestController resubmitRequestController;
 
 
-    @Value("${scsb.url}")
+    @Value("${scsb.gateway.url}")
     private String scsbUrl;
 
 
