@@ -36,7 +36,7 @@ public class EmailService {
     @Autowired
     private CommonUtil commonUtil;
 
-    @Value("${recap-las.email.recap.assist.email.to}")
+    @Value("${scsb.email.assist.to}")
     private String recapSupportEmailTo;
 
     private String institutionCode;
