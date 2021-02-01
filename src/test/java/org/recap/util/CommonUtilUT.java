@@ -19,11 +19,11 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
+import org.recap.TestUtil;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ItemStatusEntity;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.search.resolver.impl.item.ItemCreatedByValueResolver;
@@ -161,9 +161,7 @@ public class CommonUtilUT extends BaseTestCaseUT {
     }
 
     private List<CollectionGroupEntity> getCollectionGroupEntities() {
-        CollectionGroupEntity collectionGroupEntity = new CollectionGroupEntity();
-        collectionGroupEntity.setCollectionGroupCode("Shared");
-        collectionGroupEntity.setId(1);
+        CollectionGroupEntity collectionGroupEntity = TestUtil.getCollectionGroupEntities(1,"Shared","Shared");
         List<CollectionGroupEntity> collectionGroupEntityList = new ArrayList<>();
         collectionGroupEntityList.add(collectionGroupEntity);
         return collectionGroupEntityList;
@@ -171,14 +169,10 @@ public class CommonUtilUT extends BaseTestCaseUT {
 
     private List<InstitutionEntity> getInstitutionEntities() {
         List<InstitutionEntity> institutionEntities = new ArrayList<>();
-        InstitutionEntity institutionEntity=new InstitutionEntity();
-        institutionEntity.setInstitutionCode("PUL");
-        institutionEntity.setInstitutionName("Princeton");
-        institutionEntity.setId(1);
+        InstitutionEntity institutionEntity = TestUtil.getInstitutionEntity(1,"PUL","Princeton");
         institutionEntities.add(institutionEntity);
         return institutionEntities;
     }
-
     @Test
     public void getAllInstitutionCodesException(){
         List<String> institutionCodes= Arrays.asList();
@@ -234,64 +228,5 @@ public class CommonUtilUT extends BaseTestCaseUT {
         ItemCreatedByValueResolver.setValue(new Item(),"true");
         ItemCreatedByValueResolver.isInterested("ItemCreatedBy");
         return solrDocument;
-    }
-
-
-    private HoldingsEntity getHoldingsEntity() {
-        HoldingsEntity holdingsEntity = new HoldingsEntity();
-        holdingsEntity.setCreatedDate(new Date());
-        holdingsEntity.setLastUpdatedDate(new Date());
-        holdingsEntity.setCreatedBy("tst");
-        holdingsEntity.setLastUpdatedBy("tst");
-        holdingsEntity.setOwningInstitutionId(1);
-        holdingsEntity.setOwningInstitutionHoldingsId("12345");
-        holdingsEntity.setDeleted(false);
-        return holdingsEntity;
-    }
-    private BibliographicEntity getBibliographicEntity(){
-
-        BibliographicEntity bibliographicEntity = new BibliographicEntity();
-        bibliographicEntity.setId(123456);
-        bibliographicEntity.setContent("Test".getBytes());
-        bibliographicEntity.setCreatedDate(new Date());
-        bibliographicEntity.setLastUpdatedDate(new Date());
-        bibliographicEntity.setCreatedBy("tst");
-        bibliographicEntity.setLastUpdatedBy("tst");
-        bibliographicEntity.setOwningInstitutionId(1);
-        bibliographicEntity.setOwningInstitutionBibId("1577261074");
-        bibliographicEntity.setDeleted(false);
-
-        HoldingsEntity holdingsEntity = new HoldingsEntity();
-        holdingsEntity.setCreatedDate(new Date());
-        holdingsEntity.setLastUpdatedDate(new Date());
-        holdingsEntity.setCreatedBy("tst");
-        holdingsEntity.setLastUpdatedBy("tst");
-        holdingsEntity.setOwningInstitutionId(1);
-        holdingsEntity.setOwningInstitutionHoldingsId("34567");
-        holdingsEntity.setDeleted(false);
-
-        ItemEntity itemEntity = new ItemEntity();
-        itemEntity.setLastUpdatedDate(new Date());
-        itemEntity.setOwningInstitutionItemId("843617540");
-        itemEntity.setOwningInstitutionId(1);
-        itemEntity.setBarcode("123456");
-        itemEntity.setCallNumber("x.12321");
-        itemEntity.setCollectionGroupId(1);
-        itemEntity.setCallNumberType("1");
-        itemEntity.setCustomerCode("123");
-        itemEntity.setCreatedDate(new Date());
-        itemEntity.setCreatedBy("tst");
-        itemEntity.setLastUpdatedBy("tst");
-        itemEntity.setCatalogingStatus("Complete");
-        itemEntity.setItemAvailabilityStatusId(1);
-        itemEntity.setDeleted(false);
-        itemEntity.setBibliographicEntities(Arrays.asList(bibliographicEntity));
-        itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
-
-        holdingsEntity.setItemEntities(Arrays.asList(itemEntity));
-        bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
-        bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
-
-        return bibliographicEntity;
     }
 }

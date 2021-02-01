@@ -3,6 +3,7 @@ package org.recap.controller.swagger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -13,12 +14,14 @@ import org.recap.model.search.DataDumpSearchResult;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchRecordsResponse;
 import org.recap.model.search.SearchResultRow;
+import org.recap.util.PropertyUtil;
 import org.recap.util.SearchRecordsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +41,9 @@ public class SearchRecordRestControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
     SearchRecordRestController searchRecordRestController;
+
+    @Mock
+    PropertyUtil propertyUtil;
 
     @Test
     public void searchRecordsServiceGetParam() throws Exception {
@@ -61,6 +67,8 @@ public class SearchRecordRestControllerUT extends BaseTestCaseUT {
         SearchRecordsUtil searchRecordsUtil= PowerMockito.mock(SearchRecordsUtil.class);
         ReflectionTestUtils.setField(searchRecordRestController,"searchRecordsUtil",searchRecordsUtil);
         Mockito.when(searchRecordsUtil.searchRecords(Mockito.any())).thenThrow(NullPointerException.class);
+        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HTC","HUL"));
+
         SearchRecordsResponse searchRecordsResponse =searchRecordRestController.searchRecordsServiceGetParam(searchRecordsRequest);
         assertNull(searchRecordsResponse.getErrorMessage());
     }
@@ -88,6 +96,7 @@ public class SearchRecordRestControllerUT extends BaseTestCaseUT {
         SearchRecordsUtil searchRecordsUtil= PowerMockito.mock(SearchRecordsUtil.class);
         ReflectionTestUtils.setField(searchRecordRestController,"searchRecordsUtil",searchRecordsUtil);
         Mockito.when(searchRecordsUtil.searchRecordsForDataDump(Mockito.any())).thenThrow(NullPointerException.class);
+        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HTC","HUL"));
         Map responseMap =searchRecordRestController.searchRecords(searchRecordsRequest);
         assertNotNull(responseMap);
     }
@@ -97,6 +106,7 @@ public class SearchRecordRestControllerUT extends BaseTestCaseUT {
         SearchRecordsUtil searchRecordsUtil= PowerMockito.mock(SearchRecordsUtil.class);
         ReflectionTestUtils.setField(searchRecordRestController,"searchRecordsUtil",searchRecordsUtil);
         Mockito.when(searchRecordsUtil.searchRecords(Mockito.any())).thenThrow(NegativeArraySizeException.class);
+        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HTC","HUL"));
         List<SearchResultRow> responseMap =searchRecordRestController.searchRecordsServiceGet("test","test","PUL,CUL,NYPL","Shared,Open,Private","Available,Notavailable","Monograph,Serial,Other","test",1);
         assertNotNull(responseMap);
     }

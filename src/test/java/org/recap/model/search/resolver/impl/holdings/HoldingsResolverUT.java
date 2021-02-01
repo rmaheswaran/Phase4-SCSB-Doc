@@ -1,7 +1,7 @@
 package org.recap.model.search.resolver.impl.holdings;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.model.solr.Holdings;
 
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by Anithav on 16/06/20.
  */
 
-public class HoldingsResolverUT extends BaseTestCase {
+public class HoldingsResolverUT extends BaseTestCaseUT {
     Holdings holdings=new Holdings();
     Date date=new Date();
 
