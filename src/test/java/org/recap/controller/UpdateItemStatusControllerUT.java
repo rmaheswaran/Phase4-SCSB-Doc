@@ -50,12 +50,20 @@ public class UpdateItemStatusControllerUT extends BaseTestCaseUT {
     @Test
     public void testUpdateCgdForItem() throws Exception {
         String itemBarcode = saveBibSingleHoldingsSingleItem().getItemEntities().get(0).getBarcode();
-        Mockito.when(updateItemStatusController.getItemDetailsRepository().findByBarcode(itemBarcode)).thenReturn(saveBibSingleHoldingsSingleItem().getItemEntities());
-        Mockito.when(updateItemStatusController.updateCgdForItem(itemBarcode)).thenCallRealMethod();
-        updateItemStatusController.getLogger();
+        Mockito.when(itemDetailsRepository.findByBarcode(itemBarcode)).thenReturn(saveBibSingleHoldingsSingleItem().getItemEntities());
         String status = updateItemStatusController.updateCgdForItem(itemBarcode);
         assertNotNull(status);
         assertEquals("Solr Indexing Successful",status);
+    }
+
+    @Test
+    public void testUpdateCgdForItemException() throws Exception {
+        String itemBarcode = saveBibSingleHoldingsSingleItem().getItemEntities().get(0).getBarcode();
+        Mockito.when(itemDetailsRepository.findByBarcode(itemBarcode)).thenThrow(NullPointerException.class);
+        updateItemStatusController.getLogger();
+        String status = updateItemStatusController.updateCgdForItem(itemBarcode);
+        assertNotNull(status);
+        assertEquals("Solr Indexing Failed",status);
     }
 
     public BibliographicEntity saveBibSingleHoldingsSingleItem() throws Exception {

@@ -11,11 +11,13 @@ import org.recap.model.search.SearchRecordsRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by peris on 9/30/16.
@@ -162,4 +164,31 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
         assertNotNull(solrQueryForOngoingMatching1);
     }
 
+    @Test
+    public void buildSolrQueryForCGDReports(){
+        SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForCGDReports("PUL",RecapCommonConstants.SHARED_CGD);
+        assertNotNull(solrQuery);
+        assertTrue(solrQuery.getQuery().contains(RecapCommonConstants.SHARED_CGD));
+    }
+
+    @Test
+    public void buildSolrQueryForDeaccesionReportInformation(){
+        SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForDeaccesionReportInformation(new Date().toString(),"PUL",true);
+        assertNotNull(solrQuery);
+        assertTrue(solrQuery.getQuery().contains("PUL"));
+    }
+
+    @Test
+    public void buildSolrQueryForIncompleteReports(){
+        SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForIncompleteReports("PUL");
+        assertNotNull(solrQuery);
+        assertTrue(solrQuery.getQuery().contains(RecapConstants.ITEM_STATUS_INCOMPLETE));
+    }
+
+    @Test
+    public void buildSolrQueryForAccessionReports(){
+        SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForAccessionReports(new Date().toString(),"PUL",true,RecapCommonConstants.SHARED_CGD);
+        assertNotNull(solrQuery);
+        assertTrue(solrQuery.getQuery().contains(RecapCommonConstants.SHARED_CGD));
+    }
 }

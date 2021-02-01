@@ -1,32 +1,34 @@
 package org.recap.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.reports.ReportDataRequest;
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
+import org.recap.report.ReportGenerator;
 import org.recap.util.ReportsServiceUtil;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by rajeshbabuk on 13/1/17.
  */
-public class ReportsRestControllerUT extends BaseControllerUT {
+public class ReportsRestControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
     ReportsRestController mockReportsRestController;
 
     @Mock
     ReportsServiceUtil reportsServiceUtil;
+
+    @Mock
+    ReportGenerator reportGenerator;
 
     @Test
     public void accessionDeaccessionCounts() throws Exception {
@@ -35,16 +37,9 @@ public class ReportsRestControllerUT extends BaseControllerUT {
         reportsRequest.setAccessionDeaccessionToDate("01/27/2017");
         reportsRequest.setOwningInstitutions(Arrays.asList("CUL", "PUL", "NYPL"));
         reportsRequest.setCollectionGroupDesignations(Arrays.asList("Private", "Open", "Shared"));
-        ObjectMapper objectMapper = new ObjectMapper();
-        MvcResult mvcResult = this.mockMvc.perform(post("/reportsService/accessionDeaccessionCounts")
-                .headers(getHttpHeaders())
-                .contentType(contentType)
-                .content(objectMapper.writeValueAsString(reportsRequest)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String result = mvcResult.getResponse().getContentAsString();
-        assertNotNull(result);
+        Mockito.when(reportsServiceUtil.populateAccessionDeaccessionItemCounts(Mockito.any())).thenReturn(getReportsResponse("accessionDeaccessionCounts"));
+        ReportsResponse incompleteRecords=mockReportsRestController.accessionDeaccessionCounts(reportsRequest);
+        assertEquals("accessionDeaccessionCounts",incompleteRecords.getMessage());
     }
 
     @Test
@@ -52,16 +47,10 @@ public class ReportsRestControllerUT extends BaseControllerUT {
         ReportsRequest reportsRequest = new ReportsRequest();
         reportsRequest.setOwningInstitutions(Arrays.asList("CUL", "PUL", "NYPL"));
         reportsRequest.setCollectionGroupDesignations(Arrays.asList("Private", "Open", "Shared"));
-        ObjectMapper objectMapper = new ObjectMapper();
-        MvcResult mvcResult = this.mockMvc.perform(post("/reportsService/cgdItemCounts")
-                .headers(getHttpHeaders())
-                .contentType(contentType)
-                .content(objectMapper.writeValueAsString(reportsRequest)))
-                .andExpect(status().isOk())
-                .andReturn();
+        Mockito.when(reportsServiceUtil.populateCgdItemCounts(Mockito.any())).thenReturn(getReportsResponse("cgdItemCounts"));
+        ReportsResponse incompleteRecords=mockReportsRestController.cgdItemCounts(reportsRequest);
+        assertEquals("cgdItemCounts",incompleteRecords.getMessage());
 
-        String result = mvcResult.getResponse().getContentAsString();
-        assertNotNull(result);
     }
 
     @Test
@@ -70,16 +59,9 @@ public class ReportsRestControllerUT extends BaseControllerUT {
         reportsRequest.setAccessionDeaccessionFromDate("09/27/2016");
         reportsRequest.setAccessionDeaccessionToDate("01/27/2017");
         reportsRequest.setDeaccessionOwningInstitution("PUL");
-        ObjectMapper objectMapper = new ObjectMapper();
-        MvcResult mvcResult = this.mockMvc.perform(post("/reportsService/deaccessionResults")
-                .headers(getHttpHeaders())
-                .contentType(contentType)
-                .content(objectMapper.writeValueAsString(reportsRequest)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String result = mvcResult.getResponse().getContentAsString();
-        assertNotNull(result);
+        Mockito.when(reportsServiceUtil.populateDeaccessionResults(Mockito.any())).thenReturn(getReportsResponse("deaccessionResults"));
+        ReportsResponse incompleteRecords=mockReportsRestController.deaccessionResults(reportsRequest);
+        assertEquals("deaccessionResults",incompleteRecords.getMessage());
     }
 
     @Test
@@ -89,43 +71,29 @@ public class ReportsRestControllerUT extends BaseControllerUT {
         reportsRequest.setAccessionDeaccessionToDate("01/27/2017");
         reportsRequest.setDeaccessionOwningInstitution("PUL");
         reportsRequest.setExport(true);
-        ObjectMapper objectMapper = new ObjectMapper();
-        MvcResult mvcResult = this.mockMvc.perform(post("/reportsService/incompleteRecords")
-                .headers(getHttpHeaders())
-                .contentType(contentType)
-                .content(objectMapper.writeValueAsString(reportsRequest)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String result = mvcResult.getResponse().getContentAsString();
-        assertNotNull(result);
+        Mockito.when(reportsServiceUtil.populateIncompleteRecordsReport(Mockito.any())).thenReturn(getReportsResponse("IncompleteRecords"));
+        ReportsResponse incompleteRecords=mockReportsRestController.incompleteRecords(reportsRequest);
+        assertEquals("IncompleteRecords",incompleteRecords.getMessage());
     }
 
     @Test
-    public void testGenerateCsvReports() throws Exception {
+    public void testGenerateCsvReports() {
         ReportDataRequest reportDataRequest = new ReportDataRequest();
         reportDataRequest.setFileName("Accession");
         reportDataRequest.setTransmissionType("FTP");
         reportDataRequest.setReportType("Summary");
         reportDataRequest.setInstitutionCode("PUL");
-        ObjectMapper objectMapper = new ObjectMapper();
-        MvcResult mvcResult = this.mockMvc.perform(post("/reportsService/generateCsvReport")
-                .headers(getHttpHeaders())
-                .contentType(contentType)
-                .content(objectMapper.writeValueAsString(reportDataRequest)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String result = mvcResult.getResponse().getContentAsString();
-        assertNotNull(result);
+        Mockito.when(reportGenerator.generateReport(reportDataRequest.getFileName(),reportDataRequest.getInstitutionCode(),reportDataRequest.getReportType(), reportDataRequest.getTransmissionType(),null,null)).thenReturn("PULAccessionSummaryFTP");
+        String generatedFileName=mockReportsRestController.generateCsvReports(reportDataRequest);
+        assertEquals("PULAccessionSummaryFTP",generatedFileName);
     }
 
     @Test
     public void deaccessionResultsException() throws Exception {
         ReportsRequest reportsRequest=new ReportsRequest();
-        Mockito.when(reportsServiceUtil.populateDeaccessionResults(Mockito.any())).thenReturn(new ReportsResponse());
+        Mockito.when(reportsServiceUtil.populateDeaccessionResults(Mockito.any())).thenThrow(NullPointerException.class);
         ReportsResponse incompleteRecords=mockReportsRestController.deaccessionResults(reportsRequest);
-        assertNotNull(incompleteRecords);
+        assertNull(incompleteRecords.getMessage());
     }
 
     @Test
@@ -133,7 +101,7 @@ public class ReportsRestControllerUT extends BaseControllerUT {
         ReportsRequest reportsRequest=new ReportsRequest();
         Mockito.when(reportsServiceUtil.populateAccessionDeaccessionItemCounts(Mockito.any())).thenThrow(NullPointerException.class);
         ReportsResponse incompleteRecords=mockReportsRestController.accessionDeaccessionCounts(reportsRequest);
-        assertNotNull(incompleteRecords);
+        assertNull(incompleteRecords.getMessage());
     }
 
     @Test
@@ -141,7 +109,7 @@ public class ReportsRestControllerUT extends BaseControllerUT {
         ReportsRequest reportsRequest=new ReportsRequest();
         Mockito.when(reportsServiceUtil.populateCgdItemCounts(Mockito.any())).thenThrow(NullPointerException.class);
         ReportsResponse incompleteRecords=mockReportsRestController.cgdItemCounts(reportsRequest);
-        assertNotNull(incompleteRecords);
+        assertNull(incompleteRecords.getMessage());
     }
 
     @Test
@@ -149,6 +117,12 @@ public class ReportsRestControllerUT extends BaseControllerUT {
         ReportsRequest reportsRequest=new ReportsRequest();
         Mockito.when(reportsServiceUtil.populateIncompleteRecordsReport(Mockito.any())).thenThrow(NullPointerException.class);
         ReportsResponse incompleteRecords=mockReportsRestController.incompleteRecords(reportsRequest);
-        assertNotNull(incompleteRecords);
+        assertNull(incompleteRecords.getMessage());
+    }
+
+    private ReportsResponse getReportsResponse(String message) {
+        ReportsResponse reportsResponse = new ReportsResponse();
+        reportsResponse.setMessage(message);
+        return reportsResponse;
     }
 }

@@ -129,6 +129,8 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         solrDocumentList.setNumFound(1);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenReturn(solrDocumentList);
+        BibliographicEntity bibliographicEntity=getBibliographicEntity();
+        Mockito.when(bibliographicDetailsRepository.findById(Mockito.anyInt())).thenReturn(Optional.ofNullable(bibliographicEntity));
         Map<String, Object> search=dataDumpSolrDocumentRepository.search(searchRecordsRequest);
         assertEquals(true,search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
     }
@@ -144,6 +146,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteriaForDataDump(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
         Mockito.when(solrQueryBuilder.getDeletedQueryForDataDump(searchRecordsRequest,true)).thenReturn(queryForParentAndChildCriteria);
+        Mockito.when(solrQueryBuilder.getDeletedQueryForDataDump(searchRecordsRequest,false)).thenReturn(queryForParentAndChildCriteria);
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteriaForDeletedDataDump(searchRecordsRequest)).thenReturn(queryForParentAndChildCriteria);
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
         SolrClient solrClient=PowerMockito.mock(SolrClient.class);

@@ -36,6 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by rajeshbabuk on 5/1/17.
@@ -82,6 +83,19 @@ public class UpdateCgdUtilUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(updateCgdUtil,"solrTemplate",mocksolrTemplate1);
         String response=  updateCgdUtil.updateCGDForItem("123456", "PUL", "Shared", "Private", "Notes for updating CGD", RecapCommonConstants.GUEST);
         assertEquals(RecapCommonConstants.SUCCESS,response);
+    }
+
+    @Test
+    public void updateCGDForItemException() throws Exception {
+        Mockito.when(collectionGroupDetailsRepository.findByCollectionGroupCode(Mockito.anyString())).thenReturn(getCollectionGroupEntity());
+        Mockito.when(itemDetailsRepository.updateCollectionGroupIdByItemBarcode(Mockito.anyInt(),Mockito.anyString(),Mockito.anyString(),Mockito.any())).thenReturn(1);
+        Mockito.when(itemDetailsRepository.findByBarcode(Mockito.anyString())).thenThrow(NullPointerException.class);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrInputDocument solrInputDocument=new SolrInputDocument();
+        Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
+        ReflectionTestUtils.setField(updateCgdUtil,"solrTemplate",mocksolrTemplate1);
+        String response=  updateCgdUtil.updateCGDForItem("123456", "PUL", "Shared", "Private", "Notes for updating CGD","");
+        assertTrue(response.contains(RecapCommonConstants.FAILURE));
     }
 
     private CollectionGroupEntity getCollectionGroupEntity() {

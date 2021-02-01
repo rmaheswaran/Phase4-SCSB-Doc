@@ -1,8 +1,8 @@
 package org.recap.util;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,9 +12,9 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by angelind on 18/5/17.
  */
-public class DateUtilUT extends BaseTestCase{
+public class DateUtilUT extends BaseTestCaseUT {
 
-    @Autowired
+    @InjectMocks
     DateUtil dateUtil;
 
     @Test

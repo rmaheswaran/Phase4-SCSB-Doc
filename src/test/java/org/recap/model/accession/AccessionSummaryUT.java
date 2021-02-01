@@ -1,7 +1,7 @@
 package org.recap.model.accession;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 29/6/17.
  */
-public class AccessionSummaryUT extends BaseTestCase {
+public class AccessionSummaryUT extends BaseTestCaseUT {
 
 
     @Test

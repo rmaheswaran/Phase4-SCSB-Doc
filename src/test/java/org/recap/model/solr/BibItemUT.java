@@ -1,7 +1,7 @@
 package org.recap.model.solr;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 8/6/17.
  */
-public class BibItemUT extends BaseTestCase{
+public class BibItemUT extends BaseTestCaseUT {
 
     @Test
     public void testBibItem() {

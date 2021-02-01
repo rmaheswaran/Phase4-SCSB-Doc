@@ -1,14 +1,14 @@
 package org.recap.model.matchingReports;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 4/7/17.
  */
-public class MatchingSummaryReportUT extends BaseTestCase{
+public class MatchingSummaryReportUT extends BaseTestCaseUT {
 
     @Test
     public void testMatchingSummaryReport(){

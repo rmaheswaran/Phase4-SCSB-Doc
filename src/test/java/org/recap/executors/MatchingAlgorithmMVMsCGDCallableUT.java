@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.matchingalgorithm.MatchingCounter;
@@ -36,7 +36,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 5/7/17.
  */
-public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCase{
+public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCaseUT {
 
     @Mock
     private ReportDataDetailsRepository reportDataDetailsRepository;

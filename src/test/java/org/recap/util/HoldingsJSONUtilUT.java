@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
+import org.recap.TestUtil;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.solr.Holdings;
 
@@ -31,6 +32,7 @@ public class HoldingsJSONUtilUT extends BaseTestCaseUT {
         holdingsEntity.setOwningInstitutionId(1);
         holdingsEntity.setLastUpdatedBy("tst");
         holdingsEntity.setOwningInstitutionHoldingsId(String.valueOf(1567));
+        holdingsEntity.setInstitutionEntity(TestUtil.getInstitutionEntity(1,"PUL","Princeton"));
         holdingsJSONUtil.getProducerTemplate();
         Holdings holdings=holdingsJSONUtil.generateHoldingsForIndex(holdingsEntity);
         assertNull(holdings);
