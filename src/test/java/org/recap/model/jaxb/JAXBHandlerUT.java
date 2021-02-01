@@ -2,7 +2,7 @@ package org.recap.model.jaxb;
 
 import org.junit.Test;
 import org.mockito.Mock;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 
-public class JAXBHandlerUT extends BaseTestCase {
+public class JAXBHandlerUT extends BaseTestCaseUT {
 
     JAXBHandler jaxBHandler;
     @Mock

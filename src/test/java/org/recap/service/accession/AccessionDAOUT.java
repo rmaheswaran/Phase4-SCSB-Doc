@@ -56,5 +56,6 @@ public class AccessionDAOUT extends BaseTestCaseUT {
         Mockito.when(bibliographicDetailsRepository.saveAndFlush(Mockito.any())).thenReturn(bibliographicEntity);
         Mockito.doNothing().when(entityManager).refresh(Mockito.any());
         BibliographicEntity savedBibliographicEntity = accessionDAO.saveBibRecord(bibliographicEntity);
+        assertNotNull(savedBibliographicEntity);
     }
 }

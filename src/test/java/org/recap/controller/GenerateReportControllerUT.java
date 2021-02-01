@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
@@ -12,7 +13,6 @@ import org.recap.model.solr.SolrIndexRequest;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 19/1/17.
  */
-public class GenerateReportControllerUT extends BaseControllerUT{
+public class GenerateReportControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
     GenerateReportController generateReportController;

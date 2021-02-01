@@ -1,7 +1,7 @@
 package org.recap.model.search.resolver.impl.bib;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.model.search.resolver.impl.Bib.TitleSubFieldAValueResolver;
 import org.recap.model.solr.BibItem;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Anithav on 16/06/20.
  */
-public class BibResolverUT extends BaseTestCase {
+public class BibResolverUT extends BaseTestCaseUT {
 
     @Test
     public void testIsDeletedBibValueResolver() throws Exception {

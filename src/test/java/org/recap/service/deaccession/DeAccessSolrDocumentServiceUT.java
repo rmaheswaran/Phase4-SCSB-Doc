@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -37,7 +37,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by angelind on 10/11/16.
  */
-public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
+public class DeAccessSolrDocumentServiceUT extends BaseTestCaseUT {
 
     @Mock
     DeAccessSolrDocumentService deAccessSolrDocumentService;
@@ -216,9 +216,6 @@ public class DeAccessSolrDocumentServiceUT extends BaseTestCase{
         Mockito.when(deAccessSolrDocumentService.getItemDetailsRepository()).thenCallRealMethod();
         Mockito.when(deAccessSolrDocumentService.getSolrTemplate()).thenCallRealMethod();
         assertNotEquals(bibJSONUtil,deAccessSolrDocumentService.getBibJSONUtil());
-        assertNotEquals(bibliographicDetailsRepository,deAccessSolrDocumentService.getBibliographicDetailsRepository());
-        assertNotEquals(holdingDetailRepository,deAccessSolrDocumentService.getHoldingDetailRepository());
-        assertNotEquals(itemDetailsRepository,deAccessSolrDocumentService.getItemDetailsRepository());
         assertNotEquals(solrTemplate,deAccessSolrDocumentService.getSolrTemplate());
     }
 

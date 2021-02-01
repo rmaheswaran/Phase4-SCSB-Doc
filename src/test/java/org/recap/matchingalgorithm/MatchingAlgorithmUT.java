@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.controller.MatchingAlgorithmController;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmHelperService;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmUpdateCGDService;
@@ -14,7 +14,6 @@ import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
 
 import java.text.Normalizer;
@@ -27,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by angelind on 27/10/16.
  */
-public class MatchingAlgorithmUT extends BaseTestCase {
+public class MatchingAlgorithmUT extends BaseTestCaseUT {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchingAlgorithmUT.class);
 
@@ -40,7 +39,7 @@ public class MatchingAlgorithmUT extends BaseTestCase {
     @Mock
     MatchingAlgorithmHelperService matchingAlgorithmHelperService;
 
-    @Autowired
+    @Mock
     MatchingAlgorithmUtil matchingAlgorithmUtil;
 
     @Mock
@@ -82,22 +81,16 @@ public class MatchingAlgorithmUT extends BaseTestCase {
     @Test
     public void testDiacriticTitles() {
         String title = "--A bude hůř : román o třech-dílech /-";
-        System.out.println("Actual Title : " + title);
         String normalizedTitle = Normalizer.normalize(title, Normalizer.Form.NFD);
-        System.out.println("Step 1 Normalized Title : " + normalizedTitle);
         normalizedTitle = normalizedTitle.replaceAll("[^\\p{ASCII}]", "");
-        System.out.println("Step 2 Normalized Title : " + normalizedTitle);
         normalizedTitle = normalizedTitle.replaceAll("\\p{M}", "");
-        System.out.println("Step 3 Normalized Title : " + normalizedTitle);
         assertNotNull(title);
     }
 
     @Test
     public void testGetTitleToMatch() {
         String title = "--A bude hůř : román o třech-dílech /-";
-        System.out.println("Actual Title : " + title);
         String titleToMatch = matchingAlgorithmUtil.getTitleToMatch(title);
-        System.out.println("Title To Match : " + titleToMatch);
         assertNotNull(title);
     }
 

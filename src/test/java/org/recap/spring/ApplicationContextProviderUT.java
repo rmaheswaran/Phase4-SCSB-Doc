@@ -1,8 +1,9 @@
 package org.recap.spring;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.recap.BaseTestCaseUT;
 import org.springframework.context.ApplicationContext;
 
 import static org.junit.Assert.assertNotNull;
@@ -10,12 +11,12 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 12/7/17.
  */
-public class ApplicationContextProviderUT extends BaseTestCase{
+public class ApplicationContextProviderUT extends BaseTestCaseUT {
 
-    @Autowired
+    @InjectMocks
     ApplicationContextProvider applicationContextProvider;
 
-    @Autowired
+    @Mock
     private ApplicationContext context;
 
     @Test

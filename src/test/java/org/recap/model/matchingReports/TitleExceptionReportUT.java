@@ -1,7 +1,7 @@
 package org.recap.model.matchingReports;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import java.util.Arrays;
 
@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 4/7/17.
  */
-public class TitleExceptionReportUT extends BaseTestCase{
+public class TitleExceptionReportUT extends BaseTestCaseUT {
 
     @Test
     public void testTitleExceptionReport(){

@@ -1,7 +1,7 @@
 package org.recap.model.search;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 3/7/17.
  */
-public class IncompleteReportResultsRowUT extends BaseTestCase{
+public class IncompleteReportResultsRowUT extends BaseTestCaseUT {
 
     @Test
     public void testIncompleteReportResultsRow(){
