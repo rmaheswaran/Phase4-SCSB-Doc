@@ -3,6 +3,7 @@ package org.recap.service.accession;
 import com.google.common.collect.Lists;
 import org.apache.camel.Exchange;
 import org.recap.RecapCommonConstants;
+import org.recap.RecapConstants;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.accession.AccessionResponse;
 import org.recap.model.accession.AccessionSummary;
@@ -26,6 +27,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * Created by sheiks on 26/05/17.
@@ -54,6 +56,9 @@ public class BulkAccessionService extends AccessionService{
         trimmedAccessionRequests = getAccessionHelperUtil().removeDuplicateRecord(trimmedAccessionRequests);
 
         int duplicateCount = requestedCount - trimmedAccessionRequests.size();
+        if(duplicateCount>0){
+            saveReportForDuplicateBarcodes(accessionSummary, accessionRequestList);
+        }
         accessionSummary.setRequestedRecords(requestedCount);
         accessionSummary.setDuplicateRecords(duplicateCount);
 
@@ -130,6 +135,21 @@ public class BulkAccessionService extends AccessionService{
 
         logger.info("Total time taken to accession for all barcode -> {} sec",stopWatch.getTotalTimeSeconds());
         return null;
+    }
+
+    private void saveReportForDuplicateBarcodes(AccessionSummary accessionSummary, List<AccessionRequest> accessionRequestList) {
+        accessionRequestList.stream()
+                .collect(Collectors.groupingBy(AccessionRequest::getItemBarcode))
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue().size() > 1)
+                .flatMap(e -> e.getValue().stream())
+                .collect(Collectors.toSet())
+                .forEach(accessionRequest -> {
+                    String owningInstitution = getOwningInstitution(accessionRequest.getCustomerCode());
+                    List<ReportDataEntity> reportDataEntityList = accessionHelperUtil.createReportDataEntityList(accessionRequest, RecapConstants.DUPLICATE_BARCODE_ENTRY);
+                    saveReportEntity(owningInstitution, reportDataEntityList);
+                });
     }
 
     @Override
