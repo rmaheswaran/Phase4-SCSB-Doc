@@ -27,7 +27,7 @@ public class S3SubmitCollectionSummaryReportRouteBuilder {
      * @param context the context
      */
     @Autowired
-    public S3SubmitCollectionSummaryReportRouteBuilder(CamelContext context, @Value("${add.s3.routes.on.startup}") boolean addS3RoutesOnStartup) {
+    public S3SubmitCollectionSummaryReportRouteBuilder(CamelContext context, @Value("${s3.add.s3.routes.on.startup}") boolean addS3RoutesOnStartup) {
         try {
             if (addS3RoutesOnStartup) {
                 context.addRoutes(new RouteBuilder() {
