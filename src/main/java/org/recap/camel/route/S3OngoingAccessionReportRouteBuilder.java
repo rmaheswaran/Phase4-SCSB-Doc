@@ -30,20 +30,22 @@ public class S3OngoingAccessionReportRouteBuilder {
      * @param applicationContext   the application context
      */
     @Autowired
-    public S3OngoingAccessionReportRouteBuilder(CamelContext context, @Value("${s3.ongoing.accession.collection.report.dir}") String ongoingAccessionPathS3, ApplicationContext applicationContext) {
+    public S3OngoingAccessionReportRouteBuilder(CamelContext context, @Value("${add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${s3.ongoing.accession.collection.report.dir}") String ongoingAccessionPathS3, ApplicationContext applicationContext) {
         try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from(RecapConstants.FTP_ONGOING_ACCESSON_REPORT_Q)
-                            .routeId(RecapConstants.FTP_ONGOING_ACCESSION_REPORT_ID)
-                            .marshal().bindy(BindyType.Csv, OngoingAccessionReportRecord.class)
-                            .setHeader(S3Constants.KEY, simple(ongoingAccessionPathS3+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
-                            .onCompletion()
-                            .bean(applicationContext.getBean(EmailService.class), RecapConstants.ACCESSION_REPORTS_SEND_EMAIL);
-                }
-            });
+            if (addS3RoutesOnStartup) {
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from(RecapConstants.FTP_ONGOING_ACCESSON_REPORT_Q)
+                                .routeId(RecapConstants.FTP_ONGOING_ACCESSION_REPORT_ID)
+                                .marshal().bindy(BindyType.Csv, OngoingAccessionReportRecord.class)
+                                .setHeader(S3Constants.KEY, simple(ongoingAccessionPathS3 + "${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
+                                .onCompletion()
+                                .bean(applicationContext.getBean(EmailService.class), RecapConstants.ACCESSION_REPORTS_SEND_EMAIL);
+                    }
+                });
+            }
         } catch (Exception e) {
             logger.error(RecapConstants.ERROR, e);
         }

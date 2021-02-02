@@ -10,6 +10,7 @@ import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,19 +27,20 @@ public class S3SubmitCollectionSummaryReportRouteBuilder {
      * @param context the context
      */
     @Autowired
-    public S3SubmitCollectionSummaryReportRouteBuilder(CamelContext context) {
+    public S3SubmitCollectionSummaryReportRouteBuilder(CamelContext context, @Value("${add.s3.routes.on.startup}") boolean addS3RoutesOnStartup) {
         try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from(RecapConstants.FTP_SUBMIT_COLLECTION_SUMMARY_REPORT_Q)
-                            .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_SUMMARY_REPORT_ID)
-                            .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
-                            .setHeader(S3Constants.KEY, simple(RecapConstants.SUBMIT_COLLECTION_BASE_PATH+"${in.header.fileName}"))
-                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
-                }
-            });
-
+            if (addS3RoutesOnStartup) {
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from(RecapConstants.FTP_SUBMIT_COLLECTION_SUMMARY_REPORT_Q)
+                                .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_SUMMARY_REPORT_ID)
+                                .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
+                                .setHeader(S3Constants.KEY, simple(RecapConstants.SUBMIT_COLLECTION_BASE_PATH + "${in.header.fileName}"))
+                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
+                    }
+                });
+            }
         } catch (Exception e) {
             logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
