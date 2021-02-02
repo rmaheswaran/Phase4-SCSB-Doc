@@ -28,18 +28,20 @@ public class S3DeAccessionSummaryReportRouteBuilder {
      * @param etlReportsPath the etl Reports Path
      */
     @Autowired
-    public S3DeAccessionSummaryReportRouteBuilder(CamelContext context, @Value("${s3.etl.reports.dir}") String etlReportsPath) {
+    public S3DeAccessionSummaryReportRouteBuilder(CamelContext context, @Value("${add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${s3.etl.reports.dir}") String etlReportsPath) {
         try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from(RecapConstants.FTP_DE_ACCESSION_SUMMARY_REPORT_Q)
-                            .routeId(RecapConstants.FTP_DE_ACCESSION_SUMMARY_REPORT_ID)
-                            .marshal().bindy(BindyType.Csv, DeAccessionSummaryRecord.class)
-                            .setHeader(S3Constants.KEY, simple(etlReportsPath+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
-                }
-            });
+            if (addS3RoutesOnStartup) {
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from(RecapConstants.FTP_DE_ACCESSION_SUMMARY_REPORT_Q)
+                                .routeId(RecapConstants.FTP_DE_ACCESSION_SUMMARY_REPORT_ID)
+                                .marshal().bindy(BindyType.Csv, DeAccessionSummaryRecord.class)
+                                .setHeader(S3Constants.KEY, simple(etlReportsPath + "${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT);
+                    }
+                });
+            }
         } catch (Exception e) {
             logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
