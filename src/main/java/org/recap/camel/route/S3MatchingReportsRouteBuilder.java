@@ -32,66 +32,68 @@ public class S3MatchingReportsRouteBuilder {
      * @param s3MatchingReportsDirectory the s3 MatchingReports Directory
      * @param applicationContext         the application context
      */
-    public S3MatchingReportsRouteBuilder(CamelContext camelContext, @Value("${ongoing.matching.report.directory}") String matchingReportsDirectory,
+    public S3MatchingReportsRouteBuilder(CamelContext camelContext, @Value("${s3.add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${ongoing.matching.report.directory}") String matchingReportsDirectory,
                                          @Value("${s3.matchingAlgorithm.reports.dir}") String s3MatchingReportsDirectory, ApplicationContext applicationContext) {
-        try {
-            camelContext.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from(RecapConstants.FILE + matchingReportsDirectory + RecapConstants.DELETE_FILE_OPTION)
-                            .routeId(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID)
-                            .noAutoStartup()
-                            .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
-                            .onCompletion()
-                            .process(new StopRouteProcessor(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID))
-                            .log("Title_Exception report generated and uploaded to s3 successfully.");
-                }
-            });
-        } catch (Exception e) {
-            logger.info(RecapCommonConstants.LOG_ERROR, e);
-        }
+        if (addS3RoutesOnStartup) {
+            try {
+                camelContext.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from(RecapConstants.FILE + matchingReportsDirectory + RecapConstants.DELETE_FILE_OPTION)
+                                .routeId(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID)
+                                .noAutoStartup()
+                                .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
+                                .onCompletion()
+                                .process(new StopRouteProcessor(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID))
+                                .log("Title_Exception report generated and uploaded to s3 successfully.");
+                    }
+                });
+            } catch (Exception e) {
+                logger.info(RecapCommonConstants.LOG_ERROR, e);
+            }
 
-        try {
-            camelContext.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from(RecapConstants.FTP_SERIAL_MVM_REPORT_Q)
-                            .routeId(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID)
-                            .noAutoStartup()
-                            .marshal().bindy(BindyType.Csv, MatchingSerialAndMVMReports.class)
-                            .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
-                            .onCompletion()
-                            .process(new StopRouteProcessor(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID))
-                            .log("Matching Serial_MVM reports generated and uploaded to s3 successfully.");
+            try {
+                camelContext.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from(RecapConstants.FTP_SERIAL_MVM_REPORT_Q)
+                                .routeId(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID)
+                                .noAutoStartup()
+                                .marshal().bindy(BindyType.Csv, MatchingSerialAndMVMReports.class)
+                                .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
+                                .onCompletion()
+                                .process(new StopRouteProcessor(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID))
+                                .log("Matching Serial_MVM reports generated and uploaded to s3 successfully.");
 
-                }
-            });
-        } catch (Exception e) {
-            logger.info(RecapCommonConstants.LOG_ERROR, e);
-        }
+                    }
+                });
+            } catch (Exception e) {
+                logger.info(RecapCommonConstants.LOG_ERROR, e);
+            }
 
-        try {
-            camelContext.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_Q)
-                            .routeId(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID)
-                            .noAutoStartup()
-                            .marshal().bindy(BindyType.Csv, MatchingSummaryReport.class)
-                            .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
-                            .onCompletion()
-                            .bean(applicationContext.getBean(EmailService.class), RecapConstants.MATCHING_REPORTS_SEND_EMAIL)
-                            .process(new StopRouteProcessor(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID))
-                            .log("Matching Summary reports generated and uploaded to s3 successfully.")
-                            .end();
+            try {
+                camelContext.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_Q)
+                                .routeId(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID)
+                                .noAutoStartup()
+                                .marshal().bindy(BindyType.Csv, MatchingSummaryReport.class)
+                                .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
+                                .onCompletion()
+                                .bean(applicationContext.getBean(EmailService.class), RecapConstants.MATCHING_REPORTS_SEND_EMAIL)
+                                .process(new StopRouteProcessor(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID))
+                                .log("Matching Summary reports generated and uploaded to s3 successfully.")
+                                .end();
 
-                }
-            });
-        } catch (Exception e) {
-            logger.info(RecapCommonConstants.LOG_ERROR, e);
+                    }
+                });
+            } catch (Exception e) {
+                logger.info(RecapCommonConstants.LOG_ERROR, e);
+            }
         }
     }
 }

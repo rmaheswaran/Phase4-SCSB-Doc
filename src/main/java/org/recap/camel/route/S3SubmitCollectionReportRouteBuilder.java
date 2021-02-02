@@ -28,19 +28,21 @@ public class S3SubmitCollectionReportRouteBuilder {
      * @param submitCollectionS3ReportPath the submit Collection Report Path
      */
     @Autowired
-    public S3SubmitCollectionReportRouteBuilder(CamelContext context, @Value("${s3.submit.collection.report.dir}") String submitCollectionS3ReportPath) {
+    public S3SubmitCollectionReportRouteBuilder(CamelContext context, @Value("${s3.add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${s3.submit.collection.report.dir}") String submitCollectionS3ReportPath) {
         try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q)
-                            .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_ID)
-                            .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
-                            .setHeader(S3Constants.KEY, simple(submitCollectionS3ReportPath+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
-                            .onCompletion().log("Submit Collection Report file generated in the S3");
-                }
-            });
+            if (addS3RoutesOnStartup) {
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q)
+                                .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_ID)
+                                .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
+                                .setHeader(S3Constants.KEY, simple(submitCollectionS3ReportPath + "${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
+                                .onCompletion().log("Submit Collection Report file generated in the S3");
+                    }
+                });
+            }
         } catch (Exception e) {
             logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
