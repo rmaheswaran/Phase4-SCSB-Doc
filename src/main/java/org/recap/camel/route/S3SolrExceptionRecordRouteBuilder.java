@@ -28,20 +28,21 @@ public class S3SolrExceptionRecordRouteBuilder {
      * @param solrReportsS3Path the s3 solrReportsPath
      */
     @Autowired
-    public S3SolrExceptionRecordRouteBuilder(CamelContext context, @Value("${s3.solr.reports.dir}") String solrReportsS3Path) {
-
+    public S3SolrExceptionRecordRouteBuilder(CamelContext context, @Value("${s3.add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${s3.solr.reports.dir}") String solrReportsS3Path) {
         try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q)
-                            .routeId(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_ROUTE_ID)
-                            .marshal().bindy(BindyType.Csv, SolrExceptionReportReCAPCSVRecord.class)
-                            .setHeader(S3Constants.KEY, simple(solrReportsS3Path+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                            .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
-                            .onCompletion().log("File has been uploaded to S3 successfully.");
-                }
-            });
+            if (addS3RoutesOnStartup) {
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q)
+                                .routeId(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_ROUTE_ID)
+                                .marshal().bindy(BindyType.Csv, SolrExceptionReportReCAPCSVRecord.class)
+                                .setHeader(S3Constants.KEY, simple(solrReportsS3Path + "${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
+                                .onCompletion().log("File has been uploaded to S3 successfully.");
+                    }
+                });
+            }
         } catch (Exception e) {
             logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
