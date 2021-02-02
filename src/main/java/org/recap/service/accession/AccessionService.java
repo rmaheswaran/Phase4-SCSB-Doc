@@ -636,7 +636,6 @@ public class AccessionService {
             } else {
                 message = RecapConstants.ITEM_BARCODE_ALREADY_ACCESSIONED_MSG;
             }
-            reportDataEntityList.addAll(accessionHelperUtil.createReportDataEntityList(accessionRequest, message));
         }
         return message;
     }
