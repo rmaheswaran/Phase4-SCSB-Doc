@@ -28,7 +28,7 @@ public class S3DeAccessionSummaryReportRouteBuilder {
      * @param etlReportsPath the etl Reports Path
      */
     @Autowired
-    public S3DeAccessionSummaryReportRouteBuilder(CamelContext context, @Value("${add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${s3.etl.reports.dir}") String etlReportsPath) {
+    public S3DeAccessionSummaryReportRouteBuilder(CamelContext context, @Value("${s3.add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${s3.etl.reports.dir}") String etlReportsPath) {
         try {
             if (addS3RoutesOnStartup) {
                 context.addRoutes(new RouteBuilder() {

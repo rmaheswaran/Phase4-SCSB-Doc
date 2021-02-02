@@ -32,7 +32,7 @@ public class S3MatchingReportsRouteBuilder {
      * @param s3MatchingReportsDirectory the s3 MatchingReports Directory
      * @param applicationContext         the application context
      */
-    public S3MatchingReportsRouteBuilder(CamelContext camelContext, @Value("${add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${ongoing.matching.report.directory}") String matchingReportsDirectory,
+    public S3MatchingReportsRouteBuilder(CamelContext camelContext, @Value("${s3.add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${ongoing.matching.report.directory}") String matchingReportsDirectory,
                                          @Value("${s3.matchingAlgorithm.reports.dir}") String s3MatchingReportsDirectory, ApplicationContext applicationContext) {
         if (addS3RoutesOnStartup) {
             try {

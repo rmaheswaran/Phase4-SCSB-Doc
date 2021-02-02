@@ -30,7 +30,7 @@ public class S3OngoingAccessionReportRouteBuilder {
      * @param applicationContext   the application context
      */
     @Autowired
-    public S3OngoingAccessionReportRouteBuilder(CamelContext context, @Value("${add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${s3.ongoing.accession.collection.report.dir}") String ongoingAccessionPathS3, ApplicationContext applicationContext) {
+    public S3OngoingAccessionReportRouteBuilder(CamelContext context, @Value("${s3.add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${s3.ongoing.accession.collection.report.dir}") String ongoingAccessionPathS3, ApplicationContext applicationContext) {
         try {
             if (addS3RoutesOnStartup) {
                 context.addRoutes(new RouteBuilder() {
