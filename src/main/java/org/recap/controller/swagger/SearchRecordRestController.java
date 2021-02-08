@@ -66,9 +66,7 @@ public class SearchRecordRestController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful Search")})
     @ResponseBody
     public SearchRecordsResponse searchRecordsServiceGetParam(@ApiParam(value = "Paramerters for Searching Records" , required = true, name="requestJson") @RequestBody SearchRecordsRequest searchRecordsRequest) {
-        if(CollectionUtils.isEmpty(searchRecordsRequest.getOwningInstitutions())){
-            searchRecordsRequest.setOwningInstitutions(propertyUtil.getAllInstitutions());
-        }
+
         SearchRecordsResponse searchRecordsResponse = new SearchRecordsResponse();
         if(RecapCommonConstants.CUSTOMER_CODE.equalsIgnoreCase(searchRecordsRequest.getFieldName())){
             searchRecordsRequest.setFieldValue(searchRecordsRequest.getFieldValue().toUpperCase());
