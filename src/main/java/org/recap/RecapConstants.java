@@ -235,6 +235,9 @@ public final class RecapConstants {
     public static final String BULK_ACCESSION_SUMMARY = "BULK_ACCESSION_SUMMARY";
     public static final String ACCESSION_SUMMARY = "ACCESSION_SUMMARY";
     public static final String ACCESSION_JOB_FAILURE = "Exception occurred in SCSB Ongoing Accession Job";
+    public static final String ACCESSION_REPORT_Q = "scsbactivemq:queue:accesionReportQ";
+    public static final String ACCESSION_REPORT_ROUTE_ID = "accessionReportQRoute";
+    public static final String DUPLICATE_BARCODE_ENTRY = "Duplicate entry in the same accession request";
 
     public static class SERVICE_PATH {
         public static final String CHECKIN_ITEM = "requestItem/checkinItem";
