@@ -234,9 +234,9 @@ public final class SearchRecordsUtil {
     private boolean isEmptySearch(SearchRecordsRequest searchRecordsRequest) {
         boolean emptySearch = false;
         if (searchRecordsRequest.getMaterialTypes().isEmpty() && searchRecordsRequest.getAvailability().isEmpty() &&
-                searchRecordsRequest.getCollectionGroupDesignations().isEmpty() && searchRecordsRequest.getOwningInstitutions().isEmpty() && searchRecordsRequest.getUseRestrictions().isEmpty()) {
+                searchRecordsRequest.getCollectionGroupDesignations().isEmpty() && (searchRecordsRequest.getOwningInstitutions().size() == 0)  ? true : false && searchRecordsRequest.getUseRestrictions().isEmpty()) {
             emptySearch = true;
-        } else if(!((CollectionUtils.isNotEmpty(searchRecordsRequest.getMaterialTypes()) || CollectionUtils.isNotEmpty(searchRecordsRequest.getOwningInstitutions())) &&
+        } else if(!((CollectionUtils.isNotEmpty(searchRecordsRequest.getMaterialTypes()) || (searchRecordsRequest.getOwningInstitutions().size() == 0)  ? false : true) &&
                 (CollectionUtils.isNotEmpty(searchRecordsRequest.getAvailability()) || CollectionUtils.isNotEmpty(searchRecordsRequest.getCollectionGroupDesignations())
                         || CollectionUtils.isNotEmpty(searchRecordsRequest.getUseRestrictions())))) {
             emptySearch = true;
