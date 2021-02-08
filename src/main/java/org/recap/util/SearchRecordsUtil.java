@@ -34,6 +34,9 @@ public final class SearchRecordsUtil {
     @Autowired
     private DataDumpSolrDocumentRepository dataDumpSolrDocumentRepository;
 
+    @Autowired
+    PropertyUtil propertyUtil;
+
     /**
      * Gets DataDumpSolrDocumentRepository object.
      *
@@ -53,6 +56,9 @@ public final class SearchRecordsUtil {
     public List<SearchResultRow> searchRecords(SearchRecordsRequest searchRecordsRequest) throws Exception{
 
         if (!isEmptySearch(searchRecordsRequest)) {
+            if(CollectionUtils.isEmpty(searchRecordsRequest.getOwningInstitutions())){
+                searchRecordsRequest.setOwningInstitutions(propertyUtil.getAllInstitutions());
+            }
             return searchAndBuildResults(searchRecordsRequest);
         }
         searchRecordsRequest.setErrorMessage(RecapConstants.EMPTY_FACET_ERROR_MSG);
@@ -234,9 +240,9 @@ public final class SearchRecordsUtil {
     private boolean isEmptySearch(SearchRecordsRequest searchRecordsRequest) {
         boolean emptySearch = false;
         if (searchRecordsRequest.getMaterialTypes().isEmpty() && searchRecordsRequest.getAvailability().isEmpty() &&
-                searchRecordsRequest.getCollectionGroupDesignations().isEmpty() && (searchRecordsRequest.getOwningInstitutions().size() == 0)  ? true : false && searchRecordsRequest.getUseRestrictions().isEmpty()) {
+                searchRecordsRequest.getCollectionGroupDesignations().isEmpty() && ((searchRecordsRequest.getOwningInstitutions().size() == 0) ? true : false) && searchRecordsRequest.getUseRestrictions().isEmpty()) {
             emptySearch = true;
-        } else if(!((CollectionUtils.isNotEmpty(searchRecordsRequest.getMaterialTypes()) || (searchRecordsRequest.getOwningInstitutions().size() == 0)  ? false : true) &&
+        } else if(!((CollectionUtils.isNotEmpty(searchRecordsRequest.getMaterialTypes()) || ((searchRecordsRequest.getOwningInstitutions().size() == 0)  ? false : true)) &&
                 (CollectionUtils.isNotEmpty(searchRecordsRequest.getAvailability()) || CollectionUtils.isNotEmpty(searchRecordsRequest.getCollectionGroupDesignations())
                         || CollectionUtils.isNotEmpty(searchRecordsRequest.getUseRestrictions())))) {
             emptySearch = true;
