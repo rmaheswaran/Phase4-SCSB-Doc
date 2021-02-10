@@ -12,7 +12,6 @@ import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.util.DateUtil;
 import org.recap.util.OngoingMatchingAlgorithmUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Date;
@@ -37,13 +36,10 @@ public class OngoingMatchingAlgorithmJobRestControllerUT extends BaseTestCaseUT 
     @Mock
     DateUtil dateUtil;
 
-    @Value("${matching.algorithm.bibinfo.batchsize}")
-    private String batchSize;
-
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(ongoingMatchingAlgorithmJobRestController,"batchSize",batchSize);
+        ReflectionTestUtils.setField(ongoingMatchingAlgorithmJobRestController,"batchSize","1000");
         Mockito.when(dateUtil.getFromDate(Mockito.any())).thenCallRealMethod();
         Mockito.when(dateUtil.getToDate(Mockito.any())).thenCallRealMethod();
     }
