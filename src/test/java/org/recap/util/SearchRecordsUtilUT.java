@@ -37,6 +37,9 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
     @Mock
     DataDumpSolrDocumentRepository dataDumpSolrDocumentRepository;
 
+    @Mock
+    PropertyUtil propertyUtil;
+
 
     @Test
     public void searchRecords() throws Exception {
@@ -45,6 +48,8 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         List<BibItem> bibItems = getBibItemList();
         searchResponse.put(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE,bibItems);
         Mockito.when(bibSolrDocumentRepository.search(Mockito.any(SearchRecordsRequest.class))).thenReturn(searchResponse);
+        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HTC","HUL"));
+
         List<SearchResultRow> searchRecords = searchRecordsUtil.searchRecords(searchRecordsRequest);
         assertNotNull(searchRecords);
     }
@@ -134,6 +139,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         Map<String, Object> searchResponse=new HashMap<>();
         searchResponse.put(RecapCommonConstants.SEARCH_ERROR_RESPONSE,"testError");
         Mockito.when(bibSolrDocumentRepository.search(Mockito.any())).thenReturn(searchResponse);
+        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HTC","HUL"));
         List<SearchResultRow> searchRecords = searchRecordsUtil.searchRecords(searchRecordsRequest);
         assertNotNull(searchRecords);
     }
