@@ -46,8 +46,7 @@ public class MatchingBibInfoDetailServiceUT extends BaseTestCaseUT {
     @Mock
     private ReportDataDetailsRepository reportDataDetailsRepository;
 
-    @Value("${matching.algorithm.bibinfo.batchsize}")
-    private Integer batchSize;
+    private Integer batchSize=1000;
 
 
     @Test

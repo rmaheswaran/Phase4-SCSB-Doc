@@ -49,8 +49,7 @@ public class OngoingMatchingAlgorithmJobControllerUT extends BaseTestCaseUT {
     @Mock
     QueryResponse queryResponse;
 
-    @Value("${matching.algorithm.bibinfo.batchsize}")
-    private String batchSize;
+    private String batchSize="1000";
 
     @Test
     public void startOngoingMatchingAlgorithmJob() throws Exception {

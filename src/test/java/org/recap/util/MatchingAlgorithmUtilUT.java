@@ -65,9 +65,6 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
     @Mock
     ProducerTemplate producerTemplate;
 
-    @Value("${matching.report.header.value.length}")
-    Integer matchingHeaderValueLength;
-
     @Mock
     ReportDataDetailsRepository reportDataDetailsRepository;
 
@@ -77,7 +74,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(mockMatchingAlgorithmUtil,"matchingHeaderValueLength",matchingHeaderValueLength);
+        ReflectionTestUtils.setField(mockMatchingAlgorithmUtil,"matchingHeaderValueLength",8000);
     }
 
     @Test
