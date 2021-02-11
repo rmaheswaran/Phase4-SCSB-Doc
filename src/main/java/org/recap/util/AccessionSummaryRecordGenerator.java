@@ -81,13 +81,6 @@ public class AccessionSummaryRecordGenerator {
         }
     }
 
-    private void buildAccessionSummaryRecordList(List<AccessionSummaryRecord> accessionSummaryRecordList, Map<String, Integer> bibFailureReasonCountMap, Map<String, Integer> itemFailureReasonCountMap) {
-        AccessionSummaryRecord accessionSummaryRec = new AccessionSummaryRecord();
-        removeFromBibFailureReasonCountMap(bibFailureReasonCountMap, accessionSummaryRec);
-        removeFromItemFailureReasonCountMap(itemFailureReasonCountMap, accessionSummaryRec);
-        accessionSummaryRecordList.add(accessionSummaryRec);
-    }
-
     private void removeFromBibFailureReasonCountMap(Map<String, Integer> bibFailureReasonCountMap, AccessionSummaryRecord accessionSummaryRecord) {
         Map.Entry<String, Integer> bibEntry = bibFailureReasonCountMap.entrySet().iterator().next();
         accessionSummaryRecord.setReasonForFailureBib(bibEntry.getKey());

@@ -23,7 +23,6 @@ import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -55,9 +54,6 @@ public class SolrIndexServiceUT extends BaseTestCaseUT {
     @InjectMocks
     SolrIndexService solrIndexService;
 
-    @Value("${submit.collection.owninginstbibidlist.partition.size}")
-    Integer submitCollectionOwnInstBibIdListPartitionSize;
-
     @Mock
     BibliographicDetailsRepository bibliographicDetailsRepository;
 
@@ -67,7 +63,7 @@ public class SolrIndexServiceUT extends BaseTestCaseUT {
     @Before
     public  void setup(){
         MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(solrIndexService,"submitCollectionOwnInstBibIdListPartitionSize",submitCollectionOwnInstBibIdListPartitionSize);
+        ReflectionTestUtils.setField(solrIndexService,"submitCollectionOwnInstBibIdListPartitionSize",1000);
     }
 
     @Test
