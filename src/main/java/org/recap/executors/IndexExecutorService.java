@@ -151,13 +151,14 @@ public abstract class IndexExecutorService {
                 stopWatch.start();
 
                 int coreNum = 0;
+                String tempCoreName = null;
                 List<Callable<Integer>> callables = new ArrayList<>();
                 for (int pageNum = 0; pageNum < loopCount; pageNum++) {
                     if (!isIncremental) {
-                        coreName = coreNames.get(coreNum);
+                        tempCoreName = coreNames.get(coreNum);
                         coreNum = coreNum < numThreads - 1 ? coreNum + 1 : 0;
                     }
-                    Callable callable = getCallable(coreName, pageNum, docsPerThread, owningInstitutionId, from, null, null);
+                    Callable callable = getCallable(tempCoreName, pageNum, docsPerThread, owningInstitutionId, from, null, null);
                     callables.add(callable);
                 }
 
