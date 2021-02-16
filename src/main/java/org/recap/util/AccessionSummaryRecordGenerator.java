@@ -72,12 +72,7 @@ public class AccessionSummaryRecordGenerator {
 
     private void addToDocFailureReasonCountMap(Integer bibFailureCount, Map<String, Integer> failureReasonCountMap, ReportDataEntity reportDataEntity, String failureBibReason) {
         if (reportDataEntity.getHeaderName().equalsIgnoreCase(failureBibReason) && !StringUtils.isEmpty(reportDataEntity.getHeaderValue())) {
-            Integer bibCount = failureReasonCountMap.get(reportDataEntity.getHeaderValue());
-            if (bibCount != null) {
-                failureReasonCountMap.put(reportDataEntity.getHeaderValue(), bibCount + bibFailureCount);
-            } else {
-                failureReasonCountMap.put(reportDataEntity.getHeaderValue(), bibFailureCount);
-            }
+            failureReasonCountMap.merge(reportDataEntity.getHeaderValue(), bibFailureCount, Integer::sum);
         }
     }
 
