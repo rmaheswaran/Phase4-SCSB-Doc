@@ -39,11 +39,12 @@ public class CommonReportGenerator {
             submitCollectionReportRecordList.addAll(submitCollectionReportRecords);
         }
         DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
-        generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";
+        String fileNameSplit[] = fileName.split("/",3);
+        generatedFileName = RecapConstants.SUBMIT_COLLECTION_BASE_PATH+ fileNameSplit[2] + "-" + df.format(new Date()) + ".csv";
         if (StringUtils.containsIgnoreCase(reportQueue, RecapConstants.SUBMIT_COLLECTION_SUMMARY_Q_SUFFIX)) {
             fileName = generatedFileName;
         }
-        producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileName);
+        producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileNameSplit[2]);
         return generatedFileName;
 
     }
