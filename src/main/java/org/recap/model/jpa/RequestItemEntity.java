@@ -1,5 +1,6 @@
 package org.recap.model.jpa;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +20,7 @@ import javax.persistence.Table;
 @AttributeOverride(name = "id", column = @Column(name = "REQUEST_ID"))
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class RequestItemEntity extends RequestItemAbstractEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)

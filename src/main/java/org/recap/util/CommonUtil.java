@@ -15,7 +15,7 @@ import org.recap.model.jpa.ItemStatusEntity;
 import org.recap.model.search.resolver.BibValueResolver;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.search.resolver.ItemValueResolver;
-import org.recap.model.search.resolver.impl.Bib.TitleSubFieldAValueResolver;
+import org.recap.model.search.resolver.impl.bib.TitleSubFieldAValueResolver;
 import org.recap.model.search.resolver.impl.bib.AuthorDisplayValueResolver;
 import org.recap.model.search.resolver.impl.bib.AuthorSearchValueResolver;
 import org.recap.model.search.resolver.impl.bib.BibCreatedDateValueResolver;

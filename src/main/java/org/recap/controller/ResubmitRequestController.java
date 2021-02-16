@@ -46,8 +46,8 @@ public class ResubmitRequestController {
         try {
             logger.info(replaceRequest.toString());
             RestTemplate restTemplate = new RestTemplate();
-            HttpEntity request = new HttpEntity<>(replaceRequest, getHttpHeadersAuth());
-            Map resultMap = restTemplate.postForObject(scsbUrl + RecapConstants.SERVICE_PATH.REPLACE_REQUEST, request, Map.class);
+            HttpEntity<ReplaceRequest> request = new HttpEntity<>(replaceRequest, getHttpHeadersAuth());
+            Map resultMap = restTemplate.postForObject(scsbUrl + RecapConstants.ServicePath.REPLACE_REQUEST, request, Map.class);
             if (resultMap.containsKey(RecapCommonConstants.TOTAL_REQUESTS_FOUND)) {
                 responseMessage = RecapCommonConstants.TOTAL_REQUESTS_FOUND + ":" + resultMap.get(RecapCommonConstants.TOTAL_REQUESTS_FOUND);
                 resultMap.remove(RecapCommonConstants.TOTAL_REQUESTS_FOUND);

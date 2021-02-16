@@ -744,7 +744,7 @@ public class MatchingAlgorithmUtil {
                                                  List<String> materialTypeList, List<String> owningInstitutionList, List<String> owningInstBibIdList) {
         for (Iterator<String> stringIterator = unMatchingTitleHeaderSet.iterator(); stringIterator.hasNext(); ) {
             String titleHeader = stringIterator.next();
-            int i = Integer.valueOf(titleHeader.replace(RecapCommonConstants.TITLE, ""));
+            int i = Integer.parseInt(titleHeader.replace(RecapCommonConstants.TITLE, ""));
             if(bibIds != null) {
                 bibIdList.add(String.valueOf(bibIds.get(i-1)));
             }

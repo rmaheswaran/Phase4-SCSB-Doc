@@ -2,7 +2,7 @@ package org.recap.util;
 
 import com.csvreader.CsvWriter;
 import org.recap.RecapCommonConstants;
-import org.recap.model.matchingReports.TitleExceptionReport;
+import org.recap.model.matchingreports.TitleExceptionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
