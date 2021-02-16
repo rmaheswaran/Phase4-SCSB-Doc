@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  */
 @Data
 @ApiModel(value="SearchResultRow", description="Model for Displaying Search Result")
-public class SearchResultRow {
+public class SearchResultRow implements Serializable {
     @ApiModelProperty(name= "bibId", value= "Bibliographic Id",position = 0)
     private Integer bibId;
     @ApiModelProperty(name= "title", value= "Book Title",position = 1)

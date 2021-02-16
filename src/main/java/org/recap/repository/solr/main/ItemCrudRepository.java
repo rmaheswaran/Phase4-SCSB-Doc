@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * Created by angelind on 15/6/16.
  */
-//@RepositoryRestResource(collectionResourceRel = "itemSolr", path = "itemSolr")
 public interface ItemCrudRepository extends SolrCrudRepository<Item, String> {
 
     /**

@@ -17,13 +17,9 @@ import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by angelind on 30/1/17.
@@ -110,30 +106,28 @@ public abstract class MatchingIndexExecutorService {
                 int futureCount = 0;
                 List<List<Callable<Integer>>> partitions = Lists.partition(new ArrayList<>(callables), callableCountByCommitInterval);
                 for (List<Callable<Integer>> partitionCallables : partitions) {
-
                     List<Future<Integer>> futures = executorService.invokeAll(partitionCallables);
-                    futures
-                            .stream()
-                            .map(future -> {
-                                try {
-                                    return future.get();
-                                } catch (Exception e) {
-                                    throw new IllegalStateException(e);
-                                }
-                            });
-                    logger.info("No of Futures Added : {}",futures.size());
+                    logger.info("No of Futures Added : {}", futures.size());
+                    List<Future<Integer>> collectedFutures = futures.stream().map(future -> {
+                        try {
+                            future.get();
+                            return future;
+                        } catch (Exception e) {
+                            throw new IllegalStateException(e);
+                        }
+                    }).collect(Collectors.toList());
+                    logger.info("No of Futures Collected : {}", collectedFutures.size());
 
                     int numOfBibsProcessed = 0;
-                    for (Iterator<Future<Integer>> iterator = futures.iterator(); iterator.hasNext(); ) {
-                        Future future = iterator.next();
+                    for (Future<Integer> future : collectedFutures) {
                         try {
-                            Integer entitiesCount = (Integer) future.get();
+                            Integer entitiesCount = future.get();
                             numOfBibsProcessed += entitiesCount;
                             totalBibsProcessed += entitiesCount;
-                            logger.info("Num of bibs fetched by thread : {}",entitiesCount);
+                            logger.info("Num of bibs fetched by thread : {}", entitiesCount);
                             futureCount++;
                         } catch (ExecutionException e) {
-                            logger.error(RecapCommonConstants.LOG_ERROR,e);
+                            logger.error(RecapCommonConstants.LOG_ERROR, e);
                         }
                     }
 
