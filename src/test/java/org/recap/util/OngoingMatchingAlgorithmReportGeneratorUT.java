@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.matchingReports.TitleExceptionReport;
+import org.recap.model.matchingreports.TitleExceptionReport;
 
 import java.util.ArrayList;
 import java.util.List;

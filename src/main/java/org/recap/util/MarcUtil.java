@@ -247,10 +247,10 @@ public class MarcUtil {
     private boolean doIndicatorsMatchForDataFieldType(String indicator1, String indicator2, DataFieldType dataField) {
         boolean result = true;
         if (StringUtils.isNotBlank(indicator1)) {
-            result = dataField.getInd1().equals(indicator1.charAt(0));
+            result = dataField.getInd1().equals(String.valueOf(indicator1.charAt(0)));
         }
         if (StringUtils.isNotBlank(indicator2)) {
-            result &= dataField.getInd2().equals(indicator2.charAt(0));
+            result &= dataField.getInd2().equals(String.valueOf(indicator2.charAt(0)));
         }
         return result;
     }
@@ -390,8 +390,7 @@ public class MarcUtil {
     public DataField getDataField(Record record, String field) {
         VariableField variableField = record.getVariableField(field);
         if (variableField != null) {
-            DataField dataField = (DataField) variableField;
-            return dataField;
+            return (DataField) variableField;
         }
         return null;
     }
@@ -436,7 +435,7 @@ public class MarcUtil {
     /**
      * This method builds bib marc record for the given record.
      *
-     * @param record the record
+     * @param bibRecord the bib record
      * @return the bib marc record
      */
     public BibMarcRecord buildBibMarcRecord(Record bibRecord) {
@@ -509,47 +508,6 @@ public class MarcUtil {
     }
 
     /**
-     * This method builds bib marc record for the given bib record.
-     *
-     * @param bibRecord the bib record
-     * @return the bib marc record
-     */
-    public BibMarcRecord buildBibMarcRecord(BibRecord bibRecord) {
-        BibMarcRecord bibMarcRecord = new BibMarcRecord();
-        List<HoldingsMarcRecord> holdingsMarcRecordList = new ArrayList<>();
-        ContentType bibContent = bibRecord.getBib().getContent();
-        CollectionType bibContentCollection = bibContent.getCollection();
-        String bibXmlContent = bibContentCollection.serialize(bibContentCollection);
-        Record bibContentRecord = getRecordFromContent(bibXmlContent.getBytes());
-        bibMarcRecord.setBibRecord(bibContentRecord);
-        for(Holding holding : bibRecord.getHoldings().get(0).getHolding()){
-            HoldingsMarcRecord holdingsMarcRecord = new HoldingsMarcRecord();
-            List<ItemMarcRecord> itemMarcRecords = new ArrayList<>();
-            ContentType holdingContent = holding.getContent();
-            CollectionType holdingContentCollection = holdingContent.getCollection();
-            String holdingXmlContent = holdingContentCollection.serialize(holdingContentCollection);
-            Record holdingContentRecord = getRecordFromContent(holdingXmlContent.getBytes());
-            holdingsMarcRecord.setHoldingsRecord(holdingContentRecord);
-            for(Items item : holding.getItems()){
-                List<RecordType> recordTypes = item.getContent().getCollection().getRecord();
-                for (RecordType recordType:recordTypes) {
-                    ItemMarcRecord itemMarcRecord = new ItemMarcRecord();
-                    ContentType itemContent = item.getContent();
-                    CollectionType itemContentCollection = itemContent.getCollection();
-                    String itemXmlContent = itemContentCollection.serialize(itemContentCollection);
-                    Record itemContentRecord = getRecordFromContent(itemXmlContent.getBytes());
-                    itemMarcRecord.setItemRecord(itemContentRecord);
-                    itemMarcRecords.add(itemMarcRecord);
-                }
-            }
-            holdingsMarcRecord.setItemMarcRecordList(itemMarcRecords);
-            holdingsMarcRecordList.add(holdingsMarcRecord);
-        }
-        bibMarcRecord.setHoldingsMarcRecords(holdingsMarcRecordList);
-        return bibMarcRecord;
-    }
-
-    /**
      * This method converst marc record to marc xml content.
      *
      * @param record the record
@@ -561,18 +519,7 @@ public class MarcUtil {
         marcWriter.write(record);
         marcWriter.close();
         String content = new String(byteArrayOutputStream.toByteArray());
-        content = content.replaceAll("marcxml:", "");
+        content = content.replace("marcxml:", "");
         return content;
-    }
-
-    private Record getRecordFromContent(byte[] content) {
-        MarcReader reader;
-        Record record = null;
-        InputStream inputStream = new ByteArrayInputStream(content);
-        reader = new MarcXmlReader(inputStream);
-        while (reader.hasNext()) {
-            record = reader.next();
-        }
-        return record;
     }
 }

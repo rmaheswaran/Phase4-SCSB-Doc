@@ -69,19 +69,21 @@ public class SubmitCollectionReportGenerator {
         return newReportObject;
     }
 
-    private String getReportType(String type){
+    private String getReportType(String type) {
         switch (type) {
             case RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT:
                 return RecapCommonConstants.SUCCESS;
             case RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT:
                 return RecapCommonConstants.FAIL;
             case RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT:
-                return RecapConstants.SC_EXCEPTION;
+                return RecapConstants.EXCEPTION_TEXT;
             case RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT:
                 return RecapConstants.REJECTION;
+            default:
+                return null;
         }
-        return null;
     }
+
     /**
      * This method is used to get the setter method for the given one of the instance variable name in SubmitCollectionReportRecord class.
      *

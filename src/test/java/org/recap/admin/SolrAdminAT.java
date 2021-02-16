@@ -74,7 +74,6 @@ public class SolrAdminAT extends BaseTestCaseUT {
         SolrClient solrClient= PowerMockito.mock(SolrClient.class);
         ReflectionTestUtils.setField(solrAdmin,"solrAdminClient",solrAdminClient);
         ReflectionTestUtils.setField(solrAdmin,"solrClient",solrClient);
-        ReflectionTestUtils.setField(solrAdmin,"coreAdminCreateRequest",coreAdminCreateRequest);
         ReflectionTestUtils.setField(solrAdmin,"coreAdminRequest",coreAdminRequest);
         CoreAdminResponse coreAdminResponse = solrAdmin.createSolrCores(tempCores);
         assertNull(coreAdminResponse);

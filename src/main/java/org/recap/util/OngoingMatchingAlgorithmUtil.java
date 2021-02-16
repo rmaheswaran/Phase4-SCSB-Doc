@@ -15,7 +15,7 @@ import org.recap.matchingalgorithm.service.OngoingMatchingReportsService;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.matchingReports.MatchingSummaryReport;
+import org.recap.model.matchingreports.MatchingSummaryReport;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.solr.BibItem;
@@ -467,7 +467,7 @@ public class OngoingMatchingAlgorithmUtil {
                     if(matchType.equalsIgnoreCase(RecapConstants.SINGLE_MATCH)) {
                         ReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
                         if(reportEntityForTitleException != null) {
-                            logger.info("updateCGDBasedOnMaterialTypes, Match type is Single Match, TileException Found");
+                            logger.info(RecapConstants.MATCHING_ALGORITHM_UPDATE_CGD_MESSAGE);
                             reportEntityList.add(reportEntityForTitleException);
                         }
 
@@ -482,7 +482,7 @@ public class OngoingMatchingAlgorithmUtil {
                         if(matchType.equalsIgnoreCase(RecapConstants.SINGLE_MATCH)) {
                             ReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
                             if(reportEntityForTitleException != null) {
-                                logger.info("updateCGDBasedOnMaterialTypes, Match type is Single Match, TileException Found");
+                                logger.info(RecapConstants.MATCHING_ALGORITHM_UPDATE_CGD_MESSAGE);
                                 reportEntityList.add(reportEntityForTitleException);
                             }
                         }
@@ -502,7 +502,7 @@ public class OngoingMatchingAlgorithmUtil {
                 if(matchType.equalsIgnoreCase(RecapConstants.SINGLE_MATCH)) {
                     ReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);
                     if(reportEntityForTitleException != null) {
-                        logger.info("updateCGDBasedOnMaterialTypes, Match type is Single Match, TileException Found");
+                        logger.info(RecapConstants.MATCHING_ALGORITHM_UPDATE_CGD_MESSAGE);
                         reportEntityList.add(reportEntityForTitleException);
                     }
                 }
