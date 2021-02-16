@@ -255,8 +255,8 @@ public final class RecapConstants {
     public static final String SCSB_CAMEL_S3_TO_ENDPOINT = "aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})";
     public static final String  SUBMIT_COLLECTION_BASE_PATH= "reports/collection/submitCollection/";
 
-    public static final String TOTAL_RECORDS = "Total Records";
-    public static final String TOTAL_PAGES = "Total Pages";
+    public static final String TOTAL_RECORDS = "Total Records : ";
+    public static final String TOTAL_PAGES = "Total Pages : ";
     public static final String UPDATE_ITEMS_Q = "updateItemsQ";
     public static final String SUBJECT = "subject";
     public static final String SMTPS_PREFIX = "smtps://";
