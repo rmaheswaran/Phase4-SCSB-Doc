@@ -27,20 +27,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutionException;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -646,16 +635,16 @@ public class MatchingAlgorithmHelperService {
 
     private List<Future<Integer>> getFutures(ExecutorService executorService, List<Callable<Integer>> callables) throws InterruptedException {
         List<Future<Integer>> futures = executorService.invokeAll(callables);
-        futures
-                .stream()
-                .map(future -> {
-                    try {
-                        return future.get();
-                    } catch (Exception e) {
-                        throw new IllegalStateException(e);
-                    }
-                });
-        return futures;
+        List<Future<Integer>> collectedFutures = futures.stream().map(future -> {
+            try {
+                future.get();
+                return future;
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }).collect(Collectors.toList());
+        logger.info("No of Futures Collected : {}", collectedFutures.size());
+        return collectedFutures;
     }
 
     private ExecutorService getExecutorService(Integer numThreads) {

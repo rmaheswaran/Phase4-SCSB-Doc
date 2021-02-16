@@ -1,4 +1,4 @@
-package org.recap.model.matchingReports;
+package org.recap.model.matchingreports;
 
 import lombok.Data;
 

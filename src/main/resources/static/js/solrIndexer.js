@@ -286,7 +286,7 @@ function getInstitutions(selectId) {
             contentType: "application/json"
         });
         request.done(function (response) {
-             $('#'+selectId).append('<option value="ALL">ALL</option>');
+             $('#'+selectId).append('<option value="">ALL</option>');
              $.each(response , function(index, val) {
                $('#'+selectId).append('<option value="' + val + '">' + val+ '</option>');
              });

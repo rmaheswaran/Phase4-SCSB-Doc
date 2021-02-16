@@ -112,7 +112,6 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
         List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, logger,nonHoldingInstitutionList);
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
             SolrTemplate templateForSolr = new SolrTemplate(new HttpSolrClient.Builder(solrURL + File.separator).build());
-            //templateForSolr.setSolrCore(coreName);
             templateForSolr.saveDocuments(coreName, solrInputDocumentsToIndex);
             templateForSolr.commit(coreName);
         }

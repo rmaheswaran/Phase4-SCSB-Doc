@@ -1,5 +1,6 @@
 package org.recap.model.jpa;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +20,7 @@ import java.util.Date;
 @AttributeOverride(name = "id", column = @Column(name = "HISTORY_ID"))
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class ItemBarcodeHistoryEntity extends AbstractEntity<Integer> {
     @Column(name = "OWNING_INST")
     private String owningingInstitution;

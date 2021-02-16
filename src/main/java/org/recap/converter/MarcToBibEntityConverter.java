@@ -106,7 +106,7 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
                     if (CollectionUtils.isNotEmpty(itemMarcRecordList)) {
                         for (ItemMarcRecord itemMarcRecord : itemMarcRecordList) {
                             Record itemRecord = itemMarcRecord.getItemRecord();
-                            Map<String, Object> itemMap = processAndValidateItemEntity(bibliographicEntity, owningInstitutionId,accessionRequest.getCustomerCode(), holdingsCallNumber, holdingsCallNumberType, itemRecord, institutionName, bibRecord, currentDate,errorMessage);
+                            Map<String, Object> itemMap = processAndValidateItemEntity(bibliographicEntity, owningInstitutionId,accessionRequest.getCustomerCode(), holdingsCallNumber, holdingsCallNumberType, itemRecord, currentDate,errorMessage);
                             if(itemMap.containsKey(RecapCommonConstants.FAILED_ITEM_COUNT)){
                                 failedItemCount = failedItemCount + (int) itemMap.get(RecapCommonConstants.FAILED_ITEM_COUNT);
                             }
@@ -272,14 +272,11 @@ public class MarcToBibEntityConverter implements XmlToBibEntityConverterInterfac
      * @param holdingsCallNumber
      * @param holdingsCallNumberType
      * @param itemRecord
-     * @param institutionName
-     * @param bibRecord
      * @param currentDate
      * @param errorMessage
      * @return
      */
-    private Map<String, Object> processAndValidateItemEntity(BibliographicEntity bibliographicEntity, Integer owningInstitutionId,String customerCode, String holdingsCallNumber, Character holdingsCallNumberType, Record itemRecord, String institutionName, Record bibRecord,
-                                                             Date currentDate,StringBuilder errorMessage) {
+    private Map<String, Object> processAndValidateItemEntity(BibliographicEntity bibliographicEntity, Integer owningInstitutionId,String customerCode, String holdingsCallNumber, Character holdingsCallNumberType, Record itemRecord, Date currentDate,StringBuilder errorMessage) {
         Map<String, Object> map = new HashMap<>();
         ItemEntity itemEntity = new ItemEntity();
         int failedItemCount = 0;

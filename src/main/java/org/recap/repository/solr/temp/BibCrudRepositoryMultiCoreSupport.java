@@ -21,13 +21,4 @@ public class BibCrudRepositoryMultiCoreSupport extends SimpleSolrRepository<Bib,
     public BibCrudRepositoryMultiCoreSupport(SolrOperations solrOperations, Class<Bib> entityClass) {
         super(solrOperations, entityClass);
     }
-
-    /*public BibCrudRepositoryMultiCoreSupport(String coreName, String solrUrl) {
-
-        SolrTemplate solrTemplate = new SolrTemplate( new HttpSolrClient.Builder(solrUrl+ File.separator+coreName).build());
-        solrTemplate.setSolrConverter(new MappingSolrConverter(new SimpleSolrMappingContext()) {
-        });
-        solrTemplate.setSolrCore(coreName);
-        setSolrOperations(solrTemplate);
-    }*/
 }

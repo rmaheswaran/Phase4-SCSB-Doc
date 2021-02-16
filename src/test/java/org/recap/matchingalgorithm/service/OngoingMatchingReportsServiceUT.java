@@ -28,7 +28,7 @@ import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
-import org.recap.model.matchingReports.MatchingSummaryReport;
+import org.recap.model.matchingreports.MatchingSummaryReport;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.CsvUtil;

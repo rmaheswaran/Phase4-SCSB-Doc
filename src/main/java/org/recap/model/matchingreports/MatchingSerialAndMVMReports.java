@@ -1,4 +1,4 @@
-package org.recap.model.matchingReports;
+package org.recap.model.matchingreports;
 
 import lombok.Data;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
@@ -29,7 +29,7 @@ public class MatchingSerialAndMVMReports implements Serializable{
     private String useRestriction;
 
     @DataField(pos = 6, columnName = "BibId")
-    private String BibId;
+    private String bibId;
 
     @DataField(pos = 7, columnName = "OwningInstitutionBibId")
     private String owningInstitutionBibId;
