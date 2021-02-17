@@ -251,7 +251,10 @@ public final class RecapConstants {
     public static final String MATCHING_ALGORITHM_JOB_INITIATE_ROUTE_ID = "scsbactivemq:queue:matchingAlgorithmInitiateRoute";
     public static final String MATCHING_BATCH_JOB_DATE_FORMAT = "EEE MMM dd HH:mm:ss z yyyy";
     public static final String SCSB_CAMEL_S3_TO_ENDPOINT = "aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})";
-    public static final String  SUBMIT_COLLECTION_BASE_PATH= "reports/collection/submitCollection/";
+    public static final String  SUBMIT_COLLECTION_REPORTS_BASE_PATH= "reports/collection/submitCollection/";
+    public static final String  SUBMIT_COLLECTION_MANUAL_REPORTS_BASE_PATH= "reports/collection/submitCollection/supportTeamGeneratedReports/";
+    public static final String PROTECTED = "protection";
+    public static final String NOT_PROTECTED = "no_protection";
 
     private RecapConstants(){}
 }
