@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class CommonReportGenerator {
 
@@ -32,21 +33,30 @@ public class CommonReportGenerator {
 
     public String generateSubmitCollectionReportFile(String fileName, List<ReportEntity> reportEntityList, String reportQueue) {
         String generatedFileName;
+        String fileNameSplit[] = null;
         List<SubmitCollectionReportRecord> submitCollectionReportRecordList = new ArrayList<>();
         SubmitCollectionReportGenerator submitCollectionReportGenerator = new SubmitCollectionReportGenerator();
-        for(ReportEntity reportEntity : reportEntityList) {
+        for (ReportEntity reportEntity : reportEntityList) {
             List<SubmitCollectionReportRecord> submitCollectionReportRecords = submitCollectionReportGenerator.prepareSubmitCollectionRejectionRecord(reportEntity);
             submitCollectionReportRecordList.addAll(submitCollectionReportRecords);
         }
         DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
-        String fileNameSplit[] = fileName.split("/",3);
-        generatedFileName = RecapConstants.SUBMIT_COLLECTION_BASE_PATH+ fileNameSplit[2] + "-" + df.format(new Date()) + ".csv";
+        Predicate<String> checkForProtectionOrNotProtectionKeyword = p-> p.contains(RecapConstants.PROTECTED) || p.contains(RecapConstants.NOT_PROTECTED);
+        if (checkForProtectionOrNotProtectionKeyword.test(fileName)) {
+            fileNameSplit = fileName.split("/", 3);
+            generatedFileName = RecapConstants.SUBMIT_COLLECTION_REPORTS_BASE_PATH + fileNameSplit[2] + "-" + df.format(new Date()) + ".csv";
+        } else {
+            generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";
+        }
         if (StringUtils.containsIgnoreCase(reportQueue, RecapConstants.SUBMIT_COLLECTION_SUMMARY_Q_SUFFIX)) {
             fileName = generatedFileName;
         }
-        producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileNameSplit[2]);
+        if (checkForProtectionOrNotProtectionKeyword.test(fileName)) {
+            producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileNameSplit[2]+ "-" + df.format(new Date()) + ".csv");
+        } else {
+            producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileName);
+        }
         return generatedFileName;
-
     }
 
     public String generateAccessionReportFile(String fileName, List<ReportEntity> reportEntityList, String reportQueue) {
@@ -62,9 +72,9 @@ public class CommonReportGenerator {
 
     public String generateReportForSolrExceptionCsvRecords(String fileName, String queueName, List<ReportEntity> reportEntityList) {
         List<SolrExceptionReportReCAPCSVRecord> solrExceptionReportReCAPCSVRecords = getSolrExceptionReportReCAPCSVRecords(reportEntityList);
-        logger.info("Total Num of CSVRecords Prepared : {}  ",solrExceptionReportReCAPCSVRecords.size());
+        logger.info("Total Num of CSVRecords Prepared : {}  ", solrExceptionReportReCAPCSVRecords.size());
 
-        if(!CollectionUtils.isEmpty(solrExceptionReportReCAPCSVRecords)) {
+        if (!CollectionUtils.isEmpty(solrExceptionReportReCAPCSVRecords)) {
             producerTemplate.sendBodyAndHeader(queueName, solrExceptionReportReCAPCSVRecords, RecapCommonConstants.REPORT_FILE_NAME, fileName);
             DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
             return fileName + "-" + df.format(new Date()) + ".csv";
@@ -79,13 +89,13 @@ public class CommonReportGenerator {
         List<SolrExceptionReportReCAPCSVRecord> solrExceptionReportReCAPCSVRecords = new ArrayList<>();
 
         ReCAPCSVSolrExceptionRecordGenerator reCAPCSVSolrExceptionRecordGenerator = new ReCAPCSVSolrExceptionRecordGenerator();
-        for(ReportEntity reportEntity : reportEntityList) {
+        for (ReportEntity reportEntity : reportEntityList) {
             SolrExceptionReportReCAPCSVRecord solrExceptionReportReCAPCSVRecord = reCAPCSVSolrExceptionRecordGenerator.prepareSolrExceptionReportReCAPCSVRecord(reportEntity, new SolrExceptionReportReCAPCSVRecord());
             solrExceptionReportReCAPCSVRecords.add(solrExceptionReportReCAPCSVRecord);
         }
 
         stopWatch.stop();
-        logger.info("Total time taken to prepare CSVRecords : {} ",stopWatch.getTotalTimeSeconds());
+        logger.info("Total time taken to prepare CSVRecords : {} ", stopWatch.getTotalTimeSeconds());
         return solrExceptionReportReCAPCSVRecords;
     }
 }
