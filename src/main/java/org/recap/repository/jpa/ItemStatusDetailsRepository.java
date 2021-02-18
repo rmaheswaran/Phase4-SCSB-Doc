@@ -1,12 +1,10 @@
 package org.recap.repository.jpa;
 
 import org.recap.model.jpa.ItemStatusEntity;
-//import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 /**
  * Created by hemalathas on 22/6/16.
  */
-//@RepositoryRestResource(collectionResourceRel = "itemStatus", path = "itemStatus")
 public interface ItemStatusDetailsRepository extends BaseRepository<ItemStatusEntity> {
 
     /**

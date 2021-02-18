@@ -11,7 +11,7 @@ import org.recap.RecapConstants;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.search.resolver.BibValueResolver;
-import org.recap.model.search.resolver.impl.Bib.TitleSubFieldAValueResolver;
+import org.recap.model.search.resolver.impl.bib.TitleSubFieldAValueResolver;
 import org.recap.model.search.resolver.impl.bib.RootValueResolver;
 import org.recap.model.search.resolver.impl.bib.BibIdValueResolver;
 import org.recap.model.search.resolver.impl.bib.IdValueResolver;
@@ -183,7 +183,7 @@ public class SaveMatchingBibsCallable implements Callable {
      *
      * @param bibIdList the bib id list
      */
-    public static void setBibIdList(Set<Integer> bibIdList) {
+    public static synchronized void setBibIdList(Set<Integer> bibIdList) {
         SaveMatchingBibsCallable.bibIdList = bibIdList;
     }
 

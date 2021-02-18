@@ -27,17 +27,9 @@ import org.springframework.util.StopWatch;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutionException;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by pvsubrah on 6/13/16.
@@ -159,13 +151,14 @@ public abstract class IndexExecutorService {
                 stopWatch.start();
 
                 int coreNum = 0;
+                String tempCoreName = null;
                 List<Callable<Integer>> callables = new ArrayList<>();
                 for (int pageNum = 0; pageNum < loopCount; pageNum++) {
                     if (!isIncremental) {
-                        coreName = coreNames.get(coreNum);
+                        tempCoreName = coreNames.get(coreNum);
                         coreNum = coreNum < numThreads - 1 ? coreNum + 1 : 0;
                     }
-                    Callable callable = getCallable(coreName, pageNum, docsPerThread, owningInstitutionId, from, null, null);
+                    Callable callable = getCallable(tempCoreName, pageNum, docsPerThread, owningInstitutionId, from, null, null);
                     callables.add(callable);
                 }
 
@@ -173,29 +166,28 @@ public abstract class IndexExecutorService {
                 List<List<Callable<Integer>>> partitions = Lists.partition(new ArrayList<>(callables), callableCountByCommitInterval);
                 for (List<Callable<Integer>> partitionCallables : partitions) {
                     List<Future<Integer>> futures = executorService.invokeAll(partitionCallables);
-                    futures
-                            .stream()
-                            .map(future -> {
-                                try {
-                                    return future.get();
-                                } catch (Exception e) {
-                                    throw new IllegalStateException(e);
-                                }
-                            });
                     logger.info("No of Futures Added : {}",futures.size());
+                    List<Future<Integer>> collectedFutures = futures.stream().map(future -> {
+                        try {
+                            future.get();
+                            return future;
+                        } catch (Exception e) {
+                            throw new IllegalStateException(e);
+                        }
+                    }).collect(Collectors.toList());
+                    logger.info("No of Futures Collected : {}",collectedFutures.size());
 
                     int numOfBibsProcessed = 0;
-                    for (Iterator<Future<Integer>> iterator = futures.iterator(); iterator.hasNext(); ) {
-                        Future future = iterator.next();
+                    for (Future<Integer> future : collectedFutures) {
                         try {
-                            Integer entitiesCount = (Integer) future.get();
+                            Integer entitiesCount = future.get();
                             numOfBibsProcessed += entitiesCount;
                             totalBibsProcessed += entitiesCount;
-                            logger.info("Num of bibs fetched by thread : {}",entitiesCount);
+                            logger.info("Num of bibs fetched by thread : {}", entitiesCount);
                             futureCount++;
                         } catch (InterruptedException | ExecutionException e) {
                             Thread.currentThread().interrupt();
-                            logger.error(RecapCommonConstants.LOG_ERROR,e);
+                            logger.error(RecapCommonConstants.LOG_ERROR, e);
                         }
                     }
                     if (!isIncremental) {
@@ -280,29 +272,28 @@ public abstract class IndexExecutorService {
                 List<List<Callable<Integer>>> partitions = Lists.partition(new ArrayList<>(callables), callableCountByCommitInterval);
                 for (List<Callable<Integer>> partitionCallables : partitions) {
                     List<Future<Integer>> futures = executorService.invokeAll(partitionCallables);
-                    futures
-                            .stream()
-                            .map(future -> {
-                                try {
-                                    return future.get();
-                                } catch (Exception e) {
-                                    throw new IllegalStateException(e);
-                                }
-                            });
                     logger.info("No of Futures Added : {}",futures.size());
+                    List<Future<Integer>> collectedFutures = futures.stream().map(future -> {
+                        try {
+                            future.get();
+                            return future;
+                        } catch (Exception e) {
+                            throw new IllegalStateException(e);
+                        }
+                    }).collect(Collectors.toList());
+                    logger.info("No of Futures Collected : {}",collectedFutures.size());
 
                     int numOfBibsProcessed = 0;
-                    for (Iterator<Future<Integer>> iterator = futures.iterator(); iterator.hasNext(); ) {
-                        Future future = iterator.next();
+                    for (Future<Integer> future : collectedFutures) {
                         try {
-                            Integer entitiesCount = (Integer) future.get();
+                            Integer entitiesCount = future.get();
                             numOfBibsProcessed += entitiesCount;
                             totalBibsProcessed += entitiesCount;
                             futureCount++;
-                            logger.info("Num of bibs fetched by thread : {}",entitiesCount);
+                            logger.info("Num of bibs fetched by thread : {}", entitiesCount);
                         } catch (InterruptedException | ExecutionException e) {
                             Thread.currentThread().interrupt();
-                            logger.error(RecapCommonConstants.LOG_ERROR,e);
+                            logger.error(RecapCommonConstants.LOG_ERROR, e);
                         }
                     }
                     logger.info("Num of Bibs Processed and indexed to core {} on commit interval : {} ",coreName,numOfBibsProcessed);

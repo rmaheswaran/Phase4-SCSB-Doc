@@ -8,8 +8,8 @@ import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.camel.processor.EmailService;
 import org.recap.camel.processor.StopRouteProcessor;
-import org.recap.model.matchingReports.MatchingSerialAndMVMReports;
-import org.recap.model.matchingReports.MatchingSummaryReport;
+import org.recap.model.matchingreports.MatchingSerialAndMVMReports;
+import org.recap.model.matchingreports.MatchingSummaryReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +42,7 @@ public class S3MatchingReportsRouteBuilder {
                         from(RecapConstants.FILE + matchingReportsDirectory + RecapConstants.DELETE_FILE_OPTION)
                                 .routeId(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID)
                                 .noAutoStartup()
-                                .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                                .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+RecapConstants.MATCHING_REPORT_FILE_NAME_CAMEL_HEADER))
                                 .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
                                 .onCompletion()
                                 .process(new StopRouteProcessor(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID))
@@ -61,7 +61,7 @@ public class S3MatchingReportsRouteBuilder {
                                 .routeId(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID)
                                 .noAutoStartup()
                                 .marshal().bindy(BindyType.Csv, MatchingSerialAndMVMReports.class)
-                                .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                                .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+RecapConstants.MATCHING_REPORT_FILE_NAME_CAMEL_HEADER))
                                 .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
                                 .onCompletion()
                                 .process(new StopRouteProcessor(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID))
@@ -81,7 +81,7 @@ public class S3MatchingReportsRouteBuilder {
                                 .routeId(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID)
                                 .noAutoStartup()
                                 .marshal().bindy(BindyType.Csv, MatchingSummaryReport.class)
-                                .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
+                                .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+RecapConstants.MATCHING_REPORT_FILE_NAME_CAMEL_HEADER))
                                 .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
                                 .onCompletion()
                                 .bean(applicationContext.getBean(EmailService.class), RecapConstants.MATCHING_REPORTS_SEND_EMAIL)

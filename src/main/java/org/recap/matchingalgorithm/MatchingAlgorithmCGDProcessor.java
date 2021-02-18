@@ -190,7 +190,7 @@ public class MatchingAlgorithmCGDProcessor {
             if(itemEntities != null && itemEntities.size() == 1) {
                 ItemEntity itemEntity = itemEntities.get(0);
                 if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
-                    populateValues(materialTypeSet, useRestrictionMap, itemEntityMap, itemEntity);
+                    populateValues(useRestrictionMap, itemEntityMap, itemEntity);
                 }
                 materialTypeSet.add(RecapCommonConstants.MONOGRAPH);
             } else {
@@ -203,7 +203,7 @@ public class MatchingAlgorithmCGDProcessor {
                                 isMultipleCopy = true;
                             }
                             if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
-                                populateValues(materialTypeSet, useRestrictionMap, itemEntityMap, itemEntity);
+                                populateValues(useRestrictionMap, itemEntityMap, itemEntity);
                             }
                         }
                     }
@@ -218,14 +218,14 @@ public class MatchingAlgorithmCGDProcessor {
                     if(bibliographicEntity.getHoldingsEntities().size() > 1) {
                         for(ItemEntity itemEntity : itemEntities) {
                             if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
-                                populateValues(materialTypeSet, useRestrictionMap, itemEntityMap, itemEntity);
+                                populateValues(useRestrictionMap, itemEntityMap, itemEntity);
                             }
                         }
                         materialTypeSet.add(RecapCommonConstants.MONOGRAPH);
                     } else {
                         for(ItemEntity itemEntity : itemEntities) {
                             if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
-                                populateValues(materialTypeSet, useRestrictionMap, itemEntityMap, itemEntity);
+                                populateValues(useRestrictionMap, itemEntityMap, itemEntity);
                             }
                         }
                         isMonograph = false;
@@ -258,12 +258,11 @@ public class MatchingAlgorithmCGDProcessor {
 
     /**
      * This method is used to populate values for the monograph based on the given materialTypeSet, useRestrictionMap, itemEntityMap and itemEntity.
-     * @param materialTypeSet
      * @param useRestrictionMap
      * @param itemEntityMap
      * @param itemEntity
      */
-    private void populateValues(Set<String> materialTypeSet, Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap, Map<Integer, ItemEntity> itemEntityMap, ItemEntity itemEntity) {
+    private void populateValues(Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap, Map<Integer, ItemEntity> itemEntityMap, ItemEntity itemEntity) {
         itemEntityMap.put(itemEntity.getId(), itemEntity);
         Integer owningInstitutionId = itemEntity.getOwningInstitutionId();
         Integer useRestriction = getUseRestrictionInNumbers(itemEntity.getUseRestrictions());

@@ -259,7 +259,7 @@ public class SolrQueryBuilder {
             } else {
                 //Check for item fields.
                 if(fieldName.equalsIgnoreCase(RecapCommonConstants.CALL_NUMBER)){
-                    fieldValue = fieldValue.replaceAll(" ", "");
+                    fieldValue = fieldValue.replace(" ", "");
                 }
                 if (fieldName.equalsIgnoreCase(RecapCommonConstants.BARCODE)) {
                     String[] fieldValues = fieldValue.split(",");
@@ -312,7 +312,7 @@ public class SolrQueryBuilder {
                 }
             } else {
                 if(fieldName.equalsIgnoreCase(RecapCommonConstants.CALL_NUMBER)) {
-                    fieldValue = fieldValue.replaceAll(" ", "");
+                    fieldValue = fieldValue.replace(" ", "");
                 }
                 stringBuilder.append(parentQuery).append(fieldName).append(":").append(fieldValue);
             }

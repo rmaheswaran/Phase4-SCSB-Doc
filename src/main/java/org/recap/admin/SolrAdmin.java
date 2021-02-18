@@ -43,11 +43,6 @@ public class SolrAdmin {
 
     private CoreAdminRequest coreAdminRequest;
 
-    private CoreAdminRequest.Create coreAdminCreateRequest;
-
-    private CoreAdminRequest.Unload coreAdminUnloadRequest;
-
-
     /**
      * This method creates solr cores in solr.
      *
@@ -55,21 +50,21 @@ public class SolrAdmin {
      * @return the core admin response
      */
     public CoreAdminResponse createSolrCores(List<String> coreNames) {
-        CoreAdminRequest.Create coreAdminRequest = getCoreAdminCreateRequest();
+        CoreAdminRequest.Create coreAdminRequestCreate = getCoreAdminCreateRequest();
         CoreAdminResponse coreAdminResponse = null;
 
         for (Iterator<String> iterator = coreNames.iterator(); iterator.hasNext(); ) {
             String coreName = iterator.next();
             String dataDir = solrHome + coreName + File.separator + "data";
 
-            coreAdminRequest.setCoreName(coreName);
-            coreAdminRequest.setConfigSet("recap_config");
-            coreAdminRequest.setInstanceDir(solrHome + File.separator + coreName);
-            coreAdminRequest.setDataDir(dataDir);
+            coreAdminRequestCreate.setCoreName(coreName);
+            coreAdminRequestCreate.setConfigSet("recap_config");
+            coreAdminRequestCreate.setInstanceDir(solrHome + File.separator + coreName);
+            coreAdminRequestCreate.setDataDir(dataDir);
 
             try {
                 if (!isCoreExist(coreName)) {
-                    coreAdminResponse = coreAdminRequest.process(solrAdminClient);
+                    coreAdminResponse = coreAdminRequestCreate.process(solrAdminClient);
                     if (coreAdminResponse.getStatus() == 0) {
                         logger.info("Created Solr core with name: {}",coreName);
                     } else {
@@ -92,8 +87,8 @@ public class SolrAdmin {
      * @param coreNames the core names
      */
     public void mergeCores(List<String> coreNames) {
-        List<String> tempCores = new ArrayList();
-        List<String> tempCoreNames = new ArrayList();
+        List<String> tempCores = new ArrayList<>();
+        List<String> tempCoreNames = new ArrayList<>();
 
         for (Iterator<String> iterator = coreNames.iterator(); iterator.hasNext(); ) {
             String coreName = iterator.next();
@@ -104,7 +99,7 @@ public class SolrAdmin {
         String[] indexDirs = tempCores.toArray(new String[tempCores.size()]);
         String[] tempCoreNamesObjectArray = tempCoreNames.toArray(new String[tempCores.size()]);
         try {
-            getCoreAdminRequest().mergeIndexes(solrParentCore, indexDirs, tempCoreNamesObjectArray, solrAdminClient);
+            CoreAdminRequest.mergeIndexes(solrParentCore, indexDirs, tempCoreNamesObjectArray, solrAdminClient);
             solrClient.commit(solrParentCore);
         } catch (SolrServerException | IOException e) {
             logger.error(RecapCommonConstants.LOG_ERROR,e);
@@ -117,12 +112,11 @@ public class SolrAdmin {
      * @param coreNames the core names
      */
     public void unLoadCores(List<String> coreNames){
-        for (Iterator<String> iterator = coreNames.iterator(); iterator.hasNext(); ) {
-            String coreName = iterator.next();
+        for (String coreName : coreNames) {
             try {
-                getCoreAdminRequest().unloadCore(coreName, true, true, solrAdminClient);
+                CoreAdminRequest.unloadCore(coreName, true, true, solrAdminClient);
             } catch (SolrServerException | IOException e) {
-                logger.error(RecapCommonConstants.LOG_ERROR,e);
+                logger.error(RecapCommonConstants.LOG_ERROR, e);
             }
 
         }
@@ -136,10 +130,10 @@ public class SolrAdmin {
      * @throws SolrServerException the solr server exception
      */
     public void unloadTempCores() throws IOException, SolrServerException {
-        CoreAdminRequest coreAdminRequest = getCoreAdminRequest();
+        CoreAdminRequest coreAdminRequestToUnload = getCoreAdminRequest();
 
-        coreAdminRequest.setAction(CoreAdminParams.CoreAdminAction.STATUS);
-        CoreAdminResponse cores = coreAdminRequest.process(solrAdminClient);
+        coreAdminRequestToUnload.setAction(CoreAdminParams.CoreAdminAction.STATUS);
+        CoreAdminResponse cores = coreAdminRequestToUnload.process(solrAdminClient);
 
         List<String> coreList = new ArrayList<>();
         for (int i = 0; i < cores.getCoreStatus().size(); i++) {
@@ -158,8 +152,7 @@ public class SolrAdmin {
      * @return the core admin create request
      */
     public CoreAdminRequest.Create getCoreAdminCreateRequest() {
-        coreAdminCreateRequest = new CoreAdminRequest.Create();
-        return coreAdminCreateRequest;
+        return new CoreAdminRequest.Create();
     }
 
     /**
@@ -168,8 +161,7 @@ public class SolrAdmin {
      * @return the core admin unload request
      */
     public CoreAdminRequest.Unload getCoreAdminUnloadRequest() {
-        coreAdminUnloadRequest = new CoreAdminRequest.Unload(true);
-        return coreAdminUnloadRequest;
+        return new CoreAdminRequest.Unload(true);
     }
 
     /**
@@ -193,9 +185,9 @@ public class SolrAdmin {
      * @throws SolrServerException the solr server exception
      */
     public boolean isCoreExist(String coreName) throws IOException, SolrServerException {
-        CoreAdminRequest coreAdminRequest = getCoreAdminRequest();
-        coreAdminRequest.setAction(CoreAdminParams.CoreAdminAction.STATUS);
-        CoreAdminResponse cores = coreAdminRequest.process(solrAdminClient);
+        CoreAdminRequest coreAdminRequestCheckCore = getCoreAdminRequest();
+        coreAdminRequestCheckCore.setAction(CoreAdminParams.CoreAdminAction.STATUS);
+        CoreAdminResponse cores = coreAdminRequestCheckCore.process(solrAdminClient);
         for (int i = 0; i < cores.getCoreStatus().size(); i++) {
             String name = cores.getCoreStatus().getName(i);
             if (name.equals(coreName)) {
@@ -211,10 +203,10 @@ public class SolrAdmin {
      * @return the cores status
      */
     public Integer getCoresStatus() {
-        CoreAdminRequest coreAdminRequest = getCoreAdminCreateRequest();
-        coreAdminRequest.setAction(CoreAdminParams.CoreAdminAction.STATUS);
+        CoreAdminRequest coreAdminRequestCoreStatus = getCoreAdminCreateRequest();
+        coreAdminRequestCoreStatus.setAction(CoreAdminParams.CoreAdminAction.STATUS);
         try {
-            CoreAdminResponse coresStatusResponse = coreAdminRequest.process(solrAdminClient);
+            CoreAdminResponse coresStatusResponse = coreAdminRequestCoreStatus.process(solrAdminClient);
             return coresStatusResponse.getStatus();
         } catch (SolrServerException | IOException e) {
             logger.error(RecapCommonConstants.LOG_ERROR,e);
