@@ -28,7 +28,7 @@ public class S3SubmitCollectionRejectionReportRouteBuilder {
      * @param submitCollectionS3ReportPath the submit Collection Report Path
      */
     @Autowired
-    public S3SubmitCollectionRejectionReportRouteBuilder(CamelContext context, @Value("${s3.add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${s3.submit.collection.report.dir}") String submitCollectionS3ReportPath) {
+    public S3SubmitCollectionRejectionReportRouteBuilder(CamelContext context, @Value("${s3.add.s3.routes.on.startup}") boolean addS3RoutesOnStartup, @Value("${s3.submit.collection.support.team.report.dir}") String submitCollectionS3ReportPath) {
         try {
             if (addS3RoutesOnStartup) {
                 context.addRoutes(new RouteBuilder() {
