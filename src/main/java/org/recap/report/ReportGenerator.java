@@ -149,8 +149,10 @@ public class ReportGenerator {
                 || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT))){
             fileName = getFileNameLike(fileName);
             reportEntityList = reportDetailRepository.findByFileLikeAndTypeAndDateRange(fileName,reportType,from,to);
-        } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY)){
+        } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY) && from == null && to== null){
             reportEntityList = reportDetailRepository.findByFileName(fileName);
+        } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY) && from != null && to!= null){
+            reportEntityList = reportDetailRepository.findByFileNameLikeAndInstitutionAndDateRange(fileName, institutionName,from, to);
         } else if(institutionName.equalsIgnoreCase(RecapCommonConstants.LCCN_CRITERIA)) {
             reportEntityList = reportDetailRepository.findByFileLikeAndTypeAndDateRange(fileName, reportType, from, to);
         } else {
