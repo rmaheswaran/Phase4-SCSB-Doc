@@ -423,20 +423,6 @@ public class MarcUtilUT extends BaseTestCaseUT {
         assertTrue(marcUtil.isSubFieldExists(itemRecord, "876"));
     }
 
-    @Test
-    public void buildBibRecord() throws Exception {
-        BibRecords bibRecords = getBibRecords();
-        BibMarcRecord bibMarcRecord = marcUtil.buildBibMarcRecord(bibRecords.getBibRecordList().get(0));
-        assertNotNull(bibMarcRecord);
-        RecordType marcRecord = getRecordType();
-        String DataFieldValueForRecordType = marcUtil.getDataFieldValueForRecordType(marcRecord,"test","","","code");
-        assertNotNull(DataFieldValueForRecordType);
-        Boolean isSubFieldExists = marcUtil.isSubFieldExists(marcRecord,"test");
-        assertNotNull(isSubFieldExists);
-        String getInd1ForRecordType=marcUtil.getInd1ForRecordType(marcRecord,"test","code");
-        assertNotNull(getInd1ForRecordType);
-    }
-
     private BibRecords getBibRecords() throws JAXBException, XMLStreamException {
         JAXBContext context = JAXBContext.newInstance(BibRecords.class);
         XMLInputFactory xif = XMLInputFactory.newFactory();

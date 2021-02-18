@@ -40,13 +40,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Created by angelind on 26/10/16.
@@ -154,16 +148,18 @@ public class DataDumpSolrDocumentRepositoryImpl implements CustomDocumentReposit
     }
 
     private Map<Integer, BibItem> eliminateNonOrphanRecords(Map<Integer, BibItem> bibItemMap){
-        Map<Integer, BibItem> updatedBibItemMap = new HashedMap();
+        Map<Integer, BibItem> updatedBibItemMap = new HashMap<>();
         for(Map.Entry<Integer,BibItem> bibItemEntry:bibItemMap.entrySet()){
-            BibliographicEntity fetchedBibliographicEntity = bibliographicDetailsRepository.findById(bibItemEntry.getKey()).orElse(null);
+            Optional<BibliographicEntity> fetchedBibliographicEntity = bibliographicDetailsRepository.findById(bibItemEntry.getKey());
             boolean isBibDeleted = false;
-            for(ItemEntity fetchedItemEntity:fetchedBibliographicEntity.getItemEntities()){
-                if(fetchedItemEntity.isDeleted() || isChangedToPrivateCGD(fetchedItemEntity)){
-                    isBibDeleted = true;
-                } else {
-                    isBibDeleted = false;
-                    break;
+            if (fetchedBibliographicEntity.isPresent()) {
+                for(ItemEntity fetchedItemEntity:fetchedBibliographicEntity.get().getItemEntities()){
+                    if(fetchedItemEntity.isDeleted() || isChangedToPrivateCGD(fetchedItemEntity)){
+                        isBibDeleted = true;
+                    } else {
+                        isBibDeleted = false;
+                        break;
+                    }
                 }
             }
             if (isBibDeleted){

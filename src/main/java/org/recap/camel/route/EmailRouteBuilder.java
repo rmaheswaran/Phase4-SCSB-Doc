@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by rajeshbabuk on 19/1/17.
@@ -62,44 +63,44 @@ public class EmailRouteBuilder {
                             .end()
                                 .choice()
                                     .when(header(RecapConstants.EMAIL_FOR).isEqualTo(RecapConstants.UPDATECGD))
-                                        .setHeader("subject", simple(updateCgdSubject))
+                                        .setHeader(RecapConstants.SUBJECT, simple(updateCgdSubject))
                                         .setBody(simple(emailBodyForCgdUpdate))
                                         .setHeader("from", simple(from))
                                         .setHeader("to", simple(upadteCgdTo))
                                         .setHeader("cc",simple(updateCGDCC))
                                         .log("Email for update cgd")
-                                        .to("smtps://" + smtpServer + "?username=" + username + "&password=" + emailPassword)
+                                        .to(RecapConstants.SMTPS_PREFIX + smtpServer + RecapConstants.SMTPS_USERNAME + username + RecapConstants.SMTPS_PASSWORD + emailPassword)
                                     .when(header(RecapConstants.EMAIL_FOR).isEqualTo(RecapConstants.BATCHJOB))
-                                        .setHeader("subject", simple(batchJobSubject + " - " + "${header.emailPayLoad.jobName}" + " - " + "${header.emailPayLoad.status}"))
+                                        .setHeader(RecapConstants.SUBJECT, simple(batchJobSubject + " - " + "${header.emailPayLoad.jobName}" + " - " + "${header.emailPayLoad.status}"))
                                         .setBody(simple(emailBodyForBatchJob))
                                         .setHeader("from", simple(from))
                                         .setHeader("to", simple(batchJobTo))
                                         .log("Email for batch job")
-                                        .to("smtps://" + smtpServer + "?username=" + username + "&password=" + emailPassword)
+                                        .to(RecapConstants.SMTPS_PREFIX + smtpServer + RecapConstants.SMTPS_USERNAME + username + RecapConstants.SMTPS_PASSWORD + emailPassword)
                                     .when(header(RecapConstants.EMAIL_FOR).isEqualTo(RecapConstants.MATCHING_REPORTS))
-                                        .setHeader("subject", simple(RecapConstants.MATCHING_ALGORITHM_REPORTS))
-                                        .setBody(simple("${header.emailPayLoad.message}"))
+                                        .setHeader(RecapConstants.SUBJECT, simple(RecapConstants.MATCHING_ALGORITHM_REPORTS))
+                                        .setBody(simple(RecapConstants.EMAIL_HEADER_MESSAGE))
                                         .setHeader("from", simple(from))
-                                        .setHeader("to", simple("${header.emailPayLoad.to}"))
-                                        .setHeader("cc", simple("${header.emailPayLoad.cc}"))
+                                        .setHeader("to", simple(RecapConstants.EMAIL_HEADER_TO))
+                                        .setHeader("cc", simple(RecapConstants.EMAIL_HEADER_CC))
                                         .log("Email For Matching algorithm reports")
-                                        .to("smtps://" + smtpServer + "?username=" + username + "&password=" + emailPassword)
+                                        .to(RecapConstants.SMTPS_PREFIX + smtpServer + RecapConstants.SMTPS_USERNAME + username + RecapConstants.SMTPS_PASSWORD + emailPassword)
                                     .when(header(RecapConstants.EMAIL_FOR).isEqualTo(RecapConstants.ACCESSION_REPORTS))
-                                        .setHeader("subject", simple(RecapConstants.ACCESSION_BATCH_COMPLETE))
-                                        .setBody(simple("${header.emailPayLoad.message}"))
+                                        .setHeader(RecapConstants.SUBJECT, simple(RecapConstants.ACCESSION_BATCH_COMPLETE))
+                                        .setBody(simple(RecapConstants.EMAIL_HEADER_MESSAGE))
                                         .setHeader("from", simple(from))
-                                        .setHeader("to", simple("${header.emailPayLoad.to}"))
-                                        .setHeader("cc", simple("${header.emailPayLoad.cc}"))
+                                        .setHeader("to", simple(RecapConstants.EMAIL_HEADER_TO))
+                                        .setHeader("cc", simple(RecapConstants.EMAIL_HEADER_CC))
                                         .log("Email For Accession reports")
-                                        .to("smtps://" + smtpServer + "?username=" + username + "&password=" + emailPassword)
+                                        .to(RecapConstants.SMTPS_PREFIX + smtpServer + RecapConstants.SMTPS_USERNAME + username + RecapConstants.SMTPS_PASSWORD + emailPassword)
                                     .when(header(RecapConstants.EMAIL_FOR).isEqualTo(RecapConstants.ACCESSION_JOB_FAILURE))
-                                        .setHeader("subject", simple(RecapConstants.ACCESSION_JOB_FAILURE))
-                                        .setBody(simple("${header.emailPayLoad.message}"))
+                                        .setHeader(RecapConstants.SUBJECT, simple(RecapConstants.ACCESSION_JOB_FAILURE))
+                                        .setBody(simple(RecapConstants.EMAIL_HEADER_MESSAGE))
                                         .setHeader("from", simple(from))
-                                        .setHeader("to", simple("${header.emailPayLoad.to}"))
-                                        .setHeader("cc", simple("${header.emailPayLoad.cc}"))
+                                        .setHeader("to", simple(RecapConstants.EMAIL_HEADER_TO))
+                                        .setHeader("cc", simple(RecapConstants.EMAIL_HEADER_CC))
                                         .log("Email For Accession Job Failure")
-                                        .to("smtps://" + smtpServer + "?username=" + username + "&password=" + emailPassword);
+                                        .to(RecapConstants.SMTPS_PREFIX + smtpServer + RecapConstants.SMTPS_USERNAME + username + RecapConstants.SMTPS_PASSWORD + emailPassword);
                 }
 
                 private void loadEmailBodyForCgdUpdateTemplate() {
@@ -133,7 +134,7 @@ public class EmailRouteBuilder {
                     File file = new File(passwordDirectory);
                     if (file.exists()) {
                         try {
-                            emailPassword = FileUtils.readFileToString(file, "UTF-8").trim();
+                            emailPassword = FileUtils.readFileToString(file, StandardCharsets.UTF_8).trim();
                         } catch (IOException e) {
                             logger.error(RecapCommonConstants.LOG_ERROR,e);
                         }

@@ -20,10 +20,10 @@ public class OwningInstitutionIDSequence {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
-    private Integer ID;
+    private Integer id;
 
-    public Integer getID() {
-        return ID;
+    public Integer getId() {
+        return id;
     }
 
 }

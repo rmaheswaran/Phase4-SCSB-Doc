@@ -1,7 +1,6 @@
 package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
-import org.apache.commons.lang3.StringUtils;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.csv.AccessionSummaryRecord;
@@ -41,6 +40,7 @@ public class CommonReportGenerator {
             submitCollectionReportRecordList.addAll(submitCollectionReportRecords);
         }
         DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
+
         Predicate<String> checkForProtectionOrNotProtectionKeyword = p-> p.contains(RecapConstants.PROTECTED) || p.contains(RecapConstants.NOT_PROTECTED);
         if (checkForProtectionOrNotProtectionKeyword.test(fileName)) {
             fileNameSplit = fileName.split("/", 3);
@@ -56,6 +56,7 @@ public class CommonReportGenerator {
         } else {
             producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileName);
         }
+
         return generatedFileName;
     }
 

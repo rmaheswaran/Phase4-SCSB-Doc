@@ -108,7 +108,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.doThrow(IOException.class).when(solrIndexService).deleteByDocId(Mockito.anyString(),Mockito.anyString());
         List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SUCCESSFULLY_RELINKED,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SUCCESSFULLY_RELINKED,response.get(0).getMessage());
     }
 
     @Test
@@ -119,7 +119,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(bibliographicEntity);
         List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_ITEM_DEACCESSIONED,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_ITEM_DEACCESSIONED,response.get(0).getMessage());
     }
 
     @Test
@@ -131,7 +131,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(bibliographicEntity);
         List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB,response.get(0).getMessage());
     }
 
 
@@ -143,7 +143,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(bibliographicEntity);
         List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_ITEM_NOT_UNDER_SOURCE_HOLDING,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_ITEM_NOT_UNDER_SOURCE_HOLDING,response.get(0).getMessage());
     }
 
     @Test
@@ -152,7 +152,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(getBibliographicEntity());
         List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequestSourceHoldingsIdEmpty(), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_OWN_INST_HOLDINGS_ID_EMPTY,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_OWN_INST_HOLDINGS_ID_EMPTY,response.get(0).getMessage());
     }
 
     @Test
@@ -161,7 +161,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(getBibliographicEntity());
         List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequestSourceBibIdEmpty(), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_OWN_INST_BIB_ID_EMPTY,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_OWN_INST_BIB_ID_EMPTY,response.get(0).getMessage());
     }
 
     @Test
@@ -169,14 +169,14 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(1, "1421")).thenReturn(getBibliographicEntity());
         List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.DEST_OWN_INST_BIB_ID_EMPTY,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.DEST_OWN_INST_BIB_ID_EMPTY,response.get(0).getMessage());
     }
 
     @Test
     public void processItemTransferBibIdNotExist() throws Exception{
         List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_BIB_NOT_EXIST,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_BIB_NOT_EXIST,response.get(0).getMessage());
     }
 
     @Test
@@ -190,19 +190,19 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(mockTransferService.getInstitutionDetailsRepository().findById(Mockito.any())).thenReturn(Optional.of(getInstitutionEntity()));
         List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequestIdsNotMatching(), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_DESTINATION_ITEM_IDS_NOT_MATCHING,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_DESTINATION_ITEM_IDS_NOT_MATCHING,response.get(0).getMessage());
     }
 
     @Test
     public void processItemTransferSourceEmpty() throws Exception{
         List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequestSourceEmpty(),getInstitutionEntity());
-        assertEquals(RecapConstants.TRANSFER.SOURCE_EMPTY,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_EMPTY,response.get(0).getMessage());
     }
 
     @Test
     public void processItemTransferDestinationEmpty() throws Exception{
         List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequestDestinationEmpty(),getInstitutionEntity());
-        assertEquals(RecapConstants.TRANSFER.DESTINATION_EMPTY,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.DESTINATION_EMPTY,response.get(0).getMessage());
     }
 
     @Test
@@ -217,7 +217,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(mockTransferService.getInstitutionDetailsRepository().findById(Mockito.any())).thenReturn(Optional.of(getInstitutionEntity()));
         List<ItemTransferResponse> response= mockTransferService.processItemTransfer(getItemTransferRequest(), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.RELINKED_FAILED,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.RELINKED_FAILED,response.get(0).getMessage());
     }
 
     @Test
@@ -237,7 +237,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.doThrow(SolrServerException.class).when(solrIndexService).deleteByDocId(Mockito.anyString(),Mockito.anyString());
         List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(transferRequest, institutionEntity);
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SUCCESSFULLY_RELINKED,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SUCCESSFULLY_RELINKED,response.get(0).getMessage());
     }
 
     @Test
@@ -257,7 +257,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.doThrow(SolrServerException.class).when(solrIndexService).deleteByDocId(Mockito.anyString(),Mockito.anyString());
         List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(transferRequest, institutionEntity);
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.DEST_OWN_INST_BIB_ID_EMPTY,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.DEST_OWN_INST_BIB_ID_EMPTY,response.get(0).getMessage());
     }
 
     @Test
@@ -272,7 +272,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.anyInt(),Mockito.anyString())).thenReturn(bibliographicEntity);
         List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(transferRequest, institutionEntity);
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_HOLDING_DEACCESSIONED,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_HOLDING_DEACCESSIONED,response.get(0).getMessage());
     }
 
     @Test
@@ -287,7 +287,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.anyInt(),Mockito.anyString())).thenReturn(bibliographicEntity);
         List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(transferRequest, institutionEntity);
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.DEST_BIB_DEACCESSIONED,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.DEST_BIB_DEACCESSIONED,response.get(0).getMessage());
     }
 
     @Test
@@ -302,7 +302,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(mockTransferService.getBibliographicDetailsRepository().findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.anyInt(),Mockito.anyString())).thenReturn(bibliographicEntity);
         List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(transferRequest, institutionEntity);
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB,response.get(0).getMessage());
     }
 
 
@@ -310,35 +310,35 @@ public class TransferServiceUT extends BaseTestCaseUT {
     public void processHoldingTransferSourceEmpty() throws Exception{
         List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(getHoldingTransferRequest(null,getDestination("53642","1621")), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_EMPTY,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_EMPTY,response.get(0).getMessage());
     }
 
     @Test
     public void processHoldingTransferDestinationEmpty() throws Exception{
         List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(getHoldingTransferRequest(getSource("1421","1621"),null), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.DESTINATION_EMPTY,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.DESTINATION_EMPTY,response.get(0).getMessage());
     }
 
     @Test
     public void processHoldingTransferIdsNotMatching() throws Exception{
         List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(getHoldingTransferRequest(getSource("1421","1622"),getDestination("53642","1621")), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_DESTINATION_HOLDINGS_IDS_NOT_MATCHING,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_DESTINATION_HOLDINGS_IDS_NOT_MATCHING,response.get(0).getMessage());
     }
 
     @Test
     public void processHoldingTransferSourceBibEmpty() throws Exception{
         List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(getHoldingTransferRequest(getSource("","1621"),getDestination("53642","1621")), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_OWN_INST_BIB_ID_EMPTY,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_OWN_INST_BIB_ID_EMPTY,response.get(0).getMessage());
     }
 
     @Test
     public void processHoldingTransferSourceBibNonExist() throws Exception{
         List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(getHoldingTransferRequest(getSource("1421","1621"),getDestination("53642","1621")), getInstitutionEntity());
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.SOURCE_BIB_NOT_EXIST,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.SOURCE_BIB_NOT_EXIST,response.get(0).getMessage());
     }
 
     @Test
@@ -357,7 +357,7 @@ public class TransferServiceUT extends BaseTestCaseUT {
         Mockito.when(solrIndexService.indexByBibliographicId(Mockito.anyInt())).thenThrow(NullPointerException.class);
         List<HoldingTransferResponse> response= mockTransferService.processHoldingTransfer(transferRequest, institutionEntity);
         assertNotNull(response);
-        assertEquals(RecapConstants.TRANSFER.RELINKED_FAILED,response.get(0).getMessage());
+        assertEquals(RecapConstants.Transfer.RELINKED_FAILED,response.get(0).getMessage());
     }
 
 
