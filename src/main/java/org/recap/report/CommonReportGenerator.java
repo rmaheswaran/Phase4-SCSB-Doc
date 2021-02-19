@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class CommonReportGenerator {
@@ -33,7 +34,7 @@ public class CommonReportGenerator {
 
     public String generateSubmitCollectionReportFile(String fileName, List<ReportEntity> reportEntityList, String reportQueue) {
         String generatedFileName;
-        String fileNameSplit[] = null;
+        String[] fileNameSplit = null;
         List<SubmitCollectionReportRecord> submitCollectionReportRecordList = new ArrayList<>();
         SubmitCollectionReportGenerator submitCollectionReportGenerator = new SubmitCollectionReportGenerator();
         for (ReportEntity reportEntity : reportEntityList) {
@@ -52,7 +53,7 @@ public class CommonReportGenerator {
         if (StringUtils.containsIgnoreCase(reportQueue, RecapConstants.SUBMIT_COLLECTION_SUMMARY_Q_SUFFIX)) {
             fileName = generatedFileName;
         }
-        if (checkForProtectionOrNotProtectionKeyword.test(fileName)) {
+        if (checkForProtectionOrNotProtectionKeyword.test(fileName)  && Objects.requireNonNull(fileNameSplit)[2] != null) {
             producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileNameSplit[2]+ "-" + df.format(new Date()) + ".csv");
         } else {
             producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileName);
