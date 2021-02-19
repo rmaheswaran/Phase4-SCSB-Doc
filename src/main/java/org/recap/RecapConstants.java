@@ -109,7 +109,7 @@ public final class RecapConstants {
 
     public static final String SUBMIT_COLLECTION_SUMMARY_REPORT = "SubmitCollectionSummary";
     public static final String REJECTION = "Rejection";
-    public static final String SC_EXCEPTION = "Exception";
+    public static final String EXCEPTION_TEXT = "Exception";
     public static final String DUMMY_CALL_NUMBER_TYPE = "dummycallnumbertype";
     public static final String POPULATE_DATA_FOR_DATA_DUMP_JOB = "populateDataForDataDumpJob";
 
@@ -196,15 +196,17 @@ public final class RecapConstants {
     public static final String ACCESSION_JOB_FAILURE = "Exception occurred in SCSB Ongoing Accession Job";
     public static final String IMS_LOCATION = "ImsLocation";
 
-    public static class SERVICE_PATH {
+    public static class ServicePath {
+        private ServicePath() {}
         public static final String REPLACE_REQUEST = "requestItem/replaceRequest";
     }
 
     public static final String INCOMPLETE_RESPONSE = "incompleteResponse";
 
-    public static class TRANSFER {
-        public static final String TRANSFER = "transfer";
-        public static final String INSTITUION_EMPTY = "Institution is empty";
+    public static class Transfer {
+        private Transfer() {}
+        public static final String TRANSFER_REQUEST = "transfer";
+        public static final String INSTITUTION_EMPTY = "Institution is empty";
         public static final String UNKNOWN_INSTITUTION = "Unknow institution";
         public static final String SOURCE_DESTINATION_ITEM_IDS_NOT_MATCHING = "Source and Destination item ids are not matching";
         public static final String SOURCE_DESTINATION_HOLDINGS_IDS_NOT_MATCHING = "Source and Destination holdings ids are not matching";
@@ -234,7 +236,7 @@ public final class RecapConstants {
         public static final String RESPONSE = "Response";
         public static final String INSTITUTION = "Institution";
         public static final String TRANSFER_TYPE = "TransferType";
-        public static class TRANSFER_TYPES {
+        public static class TransferTypes {
             public static final String HOLDINGS_TRANSFER = "Holdings Transfer";
             public static final String ITEM_TRANSFER = "Item Transfer";
         }
@@ -251,7 +253,23 @@ public final class RecapConstants {
     public static final String MATCHING_ALGORITHM_JOB_INITIATE_ROUTE_ID = "scsbactivemq:queue:matchingAlgorithmInitiateRoute";
     public static final String MATCHING_BATCH_JOB_DATE_FORMAT = "EEE MMM dd HH:mm:ss z yyyy";
     public static final String SCSB_CAMEL_S3_TO_ENDPOINT = "aws-s3://{{scsbBucketName}}?autocloseBody=false&region={{awsRegion}}&accessKey=RAW({{awsAccessKey}})&secretKey=RAW({{awsAccessSecretKey}})";
-    public static final String  SUBMIT_COLLECTION_BASE_PATH= "reports/collection/submitCollection/";
+    public static final String  SUBMIT_COLLECTION_REPORTS_BASE_PATH= "reports/collection/submitCollection/";
+    public static final String  SUBMIT_COLLECTION_MANUAL_REPORTS_BASE_PATH= "reports/collection/submitCollection/supportTeamGeneratedReports/";
+    public static final String PROTECTED = "protection";
+    public static final String NOT_PROTECTED = "no_protection";
+
+    public static final String TOTAL_RECORDS = "Total Records : ";
+    public static final String TOTAL_PAGES = "Total Pages : ";
+    public static final String UPDATE_ITEMS_Q = "updateItemsQ";
+    public static final String SUBJECT = "subject";
+    public static final String SMTPS_PREFIX = "smtps://";
+    public static final String SMTPS_USERNAME = "?username=";
+    public static final String SMTPS_PASSWORD = "&password=";
+    public static final String EMAIL_HEADER_MESSAGE = "${header.emailPayLoad.message}";
+    public static final String EMAIL_HEADER_TO = "${header.emailPayLoad.to}";
+    public static final String EMAIL_HEADER_CC = "${header.emailPayLoad.cc}";
+    public static final String MATCHING_REPORT_FILE_NAME_CAMEL_HEADER = "${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv";
+    public static final String MATCHING_ALGORITHM_UPDATE_CGD_MESSAGE = "updateCGDBasedOnMaterialTypes, Match type is Single Match, TileException Found";
 
     private RecapConstants(){}
 }

@@ -3,7 +3,6 @@ package org.recap.model.search.resolver.impl.bib;
 import org.junit.Test;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
-import org.recap.model.search.resolver.impl.Bib.TitleSubFieldAValueResolver;
 import org.recap.model.solr.BibItem;
 
 import java.util.ArrayList;

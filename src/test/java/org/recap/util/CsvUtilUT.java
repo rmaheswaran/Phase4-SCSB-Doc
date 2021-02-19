@@ -3,7 +3,7 @@ package org.recap.util;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
-import org.recap.model.matchingReports.TitleExceptionReport;
+import org.recap.model.matchingreports.TitleExceptionReport;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -5,22 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
-import org.recap.controller.TransferController;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ReportDataEntity;
-import org.recap.model.transfer.Source;
-import org.recap.model.transfer.Destination;
-import org.recap.model.transfer.ItemSource;
-import org.recap.model.transfer.HoldingsTransferRequest;
-import org.recap.model.transfer.HoldingTransferResponse;
-import org.recap.model.transfer.ItemTransferRequest;
-import org.recap.model.transfer.ItemTransferResponse;
-
-import org.recap.model.transfer.ItemDestination;
-import org.recap.model.transfer.TransferRequest;
+import org.recap.model.jpa.*;
+import org.recap.model.transfer.*;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -38,17 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -58,7 +34,7 @@ import java.util.Set;
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TransferService {
 
-    private static final Logger logger = LoggerFactory.getLogger(TransferController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TransferService.class);
 
 
     @Autowired
@@ -140,10 +116,10 @@ public class TransferService {
 
                         saveAndIndexBib(sourceBib, sourceHoldings, destBib, destHoldings, Arrays.asList(sourceItem), recordToDelete, recordToIndex);
 
-                        transferValidationResponse.setMessage(RecapConstants.TRANSFER.SUCCESSFULLY_RELINKED);
+                        transferValidationResponse.setMessage(RecapConstants.Transfer.SUCCESSFULLY_RELINKED);
                     } catch (Exception e) {
                         logger.error(RecapCommonConstants.LOG_ERROR,e);
-                        transferValidationResponse.setMessage(RecapConstants.TRANSFER.RELINKED_FAILED);
+                        transferValidationResponse.setMessage(RecapConstants.Transfer.RELINKED_FAILED);
                     }
                 }
                 ItemTransferResponse itemTransferResponse = new ItemTransferResponse(transferValidationResponse.getMessage(), itemTransferRequest, transferValidationResponse.isValid());
@@ -151,7 +127,7 @@ public class TransferService {
 
                 String requestString = getHelperUtil().getJsonString(itemTransferRequest);
                 String responseString = transferValidationResponse.getMessage();
-                saveReportForTransfer(requestString, responseString, institutionEntity.getInstitutionCode(), RecapConstants.TRANSFER.TRANSFER_TYPES.ITEM_TRANSFER);
+                saveReportForTransfer(requestString, responseString, institutionEntity.getInstitutionCode(), RecapConstants.Transfer.TransferTypes.ITEM_TRANSFER);
             }
         }
         return itemTransferResponses;
@@ -169,15 +145,15 @@ public class TransferService {
                         validDestinationBibAndHoldingsAndItem(destination, institutionId, transferValidationResponse);
                     }
                 } else {
-                    transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_DESTINATION_ITEM_IDS_NOT_MATCHING);
+                    transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_DESTINATION_ITEM_IDS_NOT_MATCHING);
                 }
 
             } else {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DESTINATION_EMPTY);
+                transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DESTINATION_EMPTY);
             }
 
         } else {
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_EMPTY);
+            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_EMPTY);
         }
         return transferValidationResponse;
     }
@@ -211,15 +187,15 @@ public class TransferService {
                             validateHoldingsEntity(owningInstitutionId, transferValidationResponse, owningInstitutionHoldingsId, destinationBibEntity, false);
                         }
                     } else {
-                        transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_OWN_INST_ITEM_ID_EMPTY);
+                        transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_OWN_INST_ITEM_ID_EMPTY);
                     }
                 } else {
-                    transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_OWN_INST_HOLDINGS_ID_EMPTY);
+                    transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_OWN_INST_HOLDINGS_ID_EMPTY);
                 }
 
             }
         }else {
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_OWN_INST_BIB_ID_EMPTY);
+            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_OWN_INST_BIB_ID_EMPTY);
         }
     }
 
@@ -233,11 +209,11 @@ public class TransferService {
             holdingsEntity = getHoldingsDetailsRepository().
                     findByOwningInstitutionHoldingsIdAndOwningInstitutionId(owningInstitutionHoldingsId, owningInstitutionId);
             if(null != holdingsEntity) {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_HOLDINGS_ATTACHED_WITH_DIFF_BIB);
+                transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_HOLDINGS_ATTACHED_WITH_DIFF_BIB);
             }
         }
         else if (holdingsEntity.isDeleted()){
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_HOLDING_DEACCESSIONED);
+            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_HOLDING_DEACCESSIONED);
         }
         else {
             transferValidationResponse.setDestHoldings(holdingsEntity);
@@ -257,28 +233,29 @@ public class TransferService {
                         transferValidationResponse.setSourceBib(sourceBibEntity);
                         HoldingsEntity holdingsEntity = matchHoldingIdWithHoldings(owningInstitutionHoldingsId, sourceBibEntity);
                         if (holdingsEntity == null) {
-                            transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB);
+                            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB);
                         } else {
                             transferValidationResponse.setSourceHoldings(holdingsEntity);
                             ItemEntity itemEntity = matchItemIdWithItem(owningInstitutionItemId, holdingsEntity,transferValidationResponse);
-                            if(null == itemEntity) {
-                                if(StringUtils.isEmpty(transferValidationResponse.getMessage()) && StringUtils.isBlank(transferValidationResponse.getMessage()))
-                                transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_ITEM_NOT_UNDER_SOURCE_HOLDING);
+                            if (null == itemEntity) {
+                                if (StringUtils.isBlank(transferValidationResponse.getMessage())) {
+                                    transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_ITEM_NOT_UNDER_SOURCE_HOLDING);
+                                }
                             } else {
                                 transferValidationResponse.setSourceItem(itemEntity);
                             }
                         }
                     } else {
-                        transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_BIB_NOT_EXIST);
+                        transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_BIB_NOT_EXIST);
                     }
                 } else {
-                    transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_OWN_INST_ITEM_ID_EMPTY);
+                    transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_OWN_INST_ITEM_ID_EMPTY);
                 }
             } else {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_OWN_INST_HOLDINGS_ID_EMPTY);
+                transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_OWN_INST_HOLDINGS_ID_EMPTY);
             }
         } else {
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_OWN_INST_BIB_ID_EMPTY);
+            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_OWN_INST_BIB_ID_EMPTY);
         }
     }
 
@@ -292,7 +269,7 @@ public class TransferService {
                         return itemEntity;
                     }
                     else {
-                        transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_ITEM_DEACCESSIONED);
+                        transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_ITEM_DEACCESSIONED);
                         return null;
                     }
                 }
@@ -321,13 +298,13 @@ public class TransferService {
                         BibliographicEntity destBib = getDestinationBib(transferValidationResponse, currentDate, institutionId);
 
                         // todo : unlink from source
-                        unlinkRecords(sourceBib, sourceHoldings, sourceItem);
+                        unlinkRecords(sourceBib, sourceHoldings);
 
                         // todo : link to destination
                         linkRecords(destBib, sourceHoldings, currentDate);
 
                         sourceBib.setLastUpdatedDate(currentDate);
-                        sourceBib.setLastUpdatedBy(RecapConstants.TRANSFER.TRANSFER);
+                        sourceBib.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
 
                         // todo : process for orphan records
                         processOrphanRecords(sourceBib);
@@ -365,10 +342,10 @@ public class TransferService {
 
                         saveAndIndexBib(sourceBib, sourceHoldings, destBib, sourceHoldings, itemEntities, recordToDelete, recordToIndex);
 
-                        transferValidationResponse.setMessage(RecapConstants.TRANSFER.SUCCESSFULLY_RELINKED);
+                        transferValidationResponse.setMessage(RecapConstants.Transfer.SUCCESSFULLY_RELINKED);
                     } catch (Exception e) {
                         logger.error(RecapCommonConstants.LOG_ERROR,e);
-                        transferValidationResponse.setMessage(RecapConstants.TRANSFER.RELINKED_FAILED);
+                        transferValidationResponse.setMessage(RecapConstants.Transfer.RELINKED_FAILED);
                     }
 
                 }
@@ -377,7 +354,7 @@ public class TransferService {
 
                 String requestString = getHelperUtil().getJsonString(holdingsTransferRequest);
                 String responseString = transferValidationResponse.getMessage();
-                saveReportForTransfer(requestString, responseString, institutionEntity.getInstitutionCode(), RecapConstants.TRANSFER.TRANSFER_TYPES.HOLDINGS_TRANSFER);
+                saveReportForTransfer(requestString, responseString, institutionEntity.getInstitutionCode(), RecapConstants.Transfer.TransferTypes.HOLDINGS_TRANSFER);
             }
         }
 
@@ -386,7 +363,7 @@ public class TransferService {
 
     private void addRecordToMap(String key, Integer value, Map<String, Set<Integer>> recordToDelete) {
         if (null != value) {
-            Set<Integer> ids = recordToDelete.get(key);
+            Set<Integer> ids = recordToDelete.computeIfAbsent(key, k -> null);
             if(null == ids) {
                 ids = new HashSet<>();
             }
@@ -422,9 +399,7 @@ public class TransferService {
                         try {
                             logger.info("deleting {} from solr for relink, {} - {}, ",docId,docId,id);
                             solrIndexService.deleteByDocId(docId, String.valueOf(id));
-                        } catch (IOException e) {
-                            logger.error(RecapCommonConstants.LOG_ERROR,e);
-                        } catch (SolrServerException e) {
+                        } catch (IOException | SolrServerException e) {
                             logger.error(RecapCommonConstants.LOG_ERROR,e);
                         }
                     }
@@ -458,11 +433,10 @@ public class TransferService {
             sourceBib.setDeleted(true);
         } else {
             boolean allDeleted = true;
-            for (Iterator<HoldingsEntity> iterator = holdingsEntities.iterator(); iterator.hasNext(); ) {
-                HoldingsEntity holdingsEntity =  iterator.next();
+            for (HoldingsEntity holdingsEntity : holdingsEntities) {
                 boolean allItemDeleted = allItemDeleted(holdingsEntity);
                 holdingsEntity.setDeleted(allItemDeleted);
-                allDeleted = allDeleted & holdingsEntity.isDeleted();
+                allDeleted = allDeleted && holdingsEntity.isDeleted();
             }
             sourceBib.setDeleted(allDeleted);
         }
@@ -472,21 +446,19 @@ public class TransferService {
         List<ItemEntity> itemEntities = holdingsEntity.getItemEntities();
         boolean allItemDeleted = true;
         if(CollectionUtils.isNotEmpty(itemEntities)){
-            for (Iterator<ItemEntity> iterator = itemEntities.iterator(); iterator.hasNext(); ) {
-                ItemEntity itemEntity = iterator.next();
-                allItemDeleted = allItemDeleted & itemEntity.isDeleted();
+            for (ItemEntity itemEntity : itemEntities) {
+                allItemDeleted = allItemDeleted && itemEntity.isDeleted();
             }
         }
         return allItemDeleted;
     }
 
-    private void unlinkRecords(BibliographicEntity sourceBib, HoldingsEntity sourceHoldings, ItemEntity sourceItem) {
+    private void unlinkRecords(BibliographicEntity sourceBib, HoldingsEntity sourceHoldings) {
         sourceHoldings.getBibliographicEntities().remove(sourceBib);
         sourceBib.getHoldingsEntities().remove(sourceHoldings);
         List<ItemEntity> itemEntities = sourceHoldings.getItemEntities();
         if(CollectionUtils.isNotEmpty(itemEntities)) {
-            for (Iterator<ItemEntity> iterator = itemEntities.iterator(); iterator.hasNext(); ) {
-                ItemEntity itemEntity = iterator.next();
+            for (ItemEntity itemEntity : itemEntities) {
                 itemEntity.getBibliographicEntities().remove(sourceBib);
             }
         }
@@ -500,15 +472,15 @@ public class TransferService {
         sourceHoldings.getItemEntities().remove(sourceItem);
 
         sourceBib.setLastUpdatedDate(updatedDate);
-        sourceBib.setLastUpdatedBy(RecapConstants.TRANSFER.TRANSFER);
+        sourceBib.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
         sourceHoldings.setLastUpdatedDate(updatedDate);
-        sourceHoldings.setLastUpdatedBy(RecapConstants.TRANSFER.TRANSFER);
+        sourceHoldings.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
     }
 
     private void linkRecords(BibliographicEntity destBib, HoldingsEntity sourceHoldings, Date updatedDate) {
         sourceHoldings.getBibliographicEntities().add(destBib);
         sourceHoldings.setLastUpdatedDate(updatedDate);
-        sourceHoldings.setLastUpdatedBy(RecapConstants.TRANSFER.TRANSFER);
+        sourceHoldings.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
 
         List<ItemEntity> itemEntities = sourceHoldings.getItemEntities();
         if(CollectionUtils.isNotEmpty(itemEntities)) {
@@ -516,14 +488,14 @@ public class TransferService {
                 ItemEntity itemEntity = iterator.next();
                 itemEntity.getBibliographicEntities().add(destBib);
                 itemEntity.setLastUpdatedDate(updatedDate);
-                itemEntity.setLastUpdatedBy(RecapConstants.TRANSFER.TRANSFER);
+                itemEntity.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
             }
         }
         destBib.getItemEntities().addAll(itemEntities);
         destBib.getHoldingsEntities().add(sourceHoldings);
 
         destBib.setLastUpdatedDate(updatedDate);
-        destBib.setLastUpdatedBy(RecapConstants.TRANSFER.TRANSFER);
+        destBib.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
     }
 
     private void linkRecordsForItemTransfer(BibliographicEntity destBib, HoldingsEntity destHoldings, ItemEntity sourceItem, Date updatedDate) {
@@ -542,11 +514,11 @@ public class TransferService {
         }
 
         destBib.setLastUpdatedDate(updatedDate);
-        destHoldings.setLastUpdatedBy(RecapConstants.TRANSFER.TRANSFER);
+        destHoldings.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
         sourceItem.setLastUpdatedDate(updatedDate);
-        sourceItem.setLastUpdatedBy(RecapConstants.TRANSFER.TRANSFER);
+        sourceItem.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
         destBib.setLastUpdatedDate(updatedDate);
-        destBib.setLastUpdatedBy(RecapConstants.TRANSFER.TRANSFER);
+        destBib.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
     }
 
     private TransferValidationResponse validateHoldingTransferRequest(HoldingsTransferRequest holdingsTransferRequest, Integer institutionId) {
@@ -564,15 +536,15 @@ public class TransferService {
                         return transferValidationResponse;
                     }
                 } else {
-                    transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_DESTINATION_HOLDINGS_IDS_NOT_MATCHING);
+                    transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_DESTINATION_HOLDINGS_IDS_NOT_MATCHING);
                 }
 
             } else {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DESTINATION_EMPTY);
+                transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DESTINATION_EMPTY);
             }
 
         } else {
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_EMPTY);
+            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_EMPTY);
         }
         return transferValidationResponse;
     }
@@ -580,7 +552,7 @@ public class TransferService {
     private HoldingsEntity getDestinationHoldings(TransferValidationResponse holdingTransferValidationResponse, Date currentDate,Integer institutionId) {
         HoldingsEntity destHoldings = holdingTransferValidationResponse.getDestHoldings();
         if(null == destHoldings) {
-            destHoldings = dummyDataService.getHoldingsWithDummyDetails(institutionId, currentDate, RecapConstants.TRANSFER.TRANSFER, holdingTransferValidationResponse.getDestHoldingsId());
+            destHoldings = dummyDataService.getHoldingsWithDummyDetails(institutionId, currentDate, RecapConstants.Transfer.TRANSFER_REQUEST, holdingTransferValidationResponse.getDestHoldingsId());
             destHoldings.setBibliographicEntities(new ArrayList<>());
             destHoldings.setItemEntities(new ArrayList<>());
         }
@@ -591,7 +563,7 @@ public class TransferService {
         BibliographicEntity destBib = transferValidationResponse.getDestBib();
         if(null == destBib) {
             destBib = new BibliographicEntity();
-            dummyDataService.updateBibWithDummyDetails(institutionId, destBib, currentDate, RecapConstants.TRANSFER.TRANSFER, transferValidationResponse.getDestinationBibId());
+            dummyDataService.updateBibWithDummyDetails(institutionId, destBib, currentDate, RecapConstants.Transfer.TRANSFER_REQUEST, transferValidationResponse.getDestinationBibId());
             destBib.setItemEntities(new ArrayList<>());
             destBib.setHoldingsEntities(new ArrayList<>());
         }
@@ -611,17 +583,17 @@ public class TransferService {
                         transferValidationResponse.setDestBib(destinationBibEntity);
                     }
                     else {
-                        transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_BIB_DEACCESSIONED);
+                        transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_BIB_DEACCESSIONED);
                     }
                 } else {
                     transferValidationResponse.setDestinationBibId(owningInstitutionBibId);
                 }
             } else {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_OWN_INST_HOLDINGS_ID_EMPTY);
+                transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_OWN_INST_HOLDINGS_ID_EMPTY);
             }
 
         } else {
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.DEST_OWN_INST_BIB_ID_EMPTY);
+            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_OWN_INST_BIB_ID_EMPTY);
         }
         return transferValidationResponse;
     }
@@ -636,22 +608,22 @@ public class TransferService {
                     transferValidationResponse.setSourceBib(sourceBibEntity);
                     HoldingsEntity holdingsEntity = matchHoldingIdWithHoldings(owningInstitutionHoldingsId, sourceBibEntity);
                     if (holdingsEntity == null) {
-                        transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB);
+                        transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB);
                     }
                     else if(holdingsEntity.isDeleted()){
-                        transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_HOLDING_DEACCESSIONED);
+                        transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_HOLDING_DEACCESSIONED);
                     }
                     else {
                         transferValidationResponse.setSourceHoldings(holdingsEntity);
                     }
                 } else {
-                    transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_BIB_NOT_EXIST);
+                    transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_BIB_NOT_EXIST);
                 }
             } else {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_OWN_INST_HOLDINGS_ID_EMPTY);
+                transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_OWN_INST_HOLDINGS_ID_EMPTY);
             }
         } else {
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.TRANSFER.SOURCE_OWN_INST_BIB_ID_EMPTY);
+            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_OWN_INST_BIB_ID_EMPTY);
         }
     }
 
@@ -680,10 +652,10 @@ public class TransferService {
      */
     public List<ReportDataEntity> createReportDataEntityList(String institution, String requestString, String responseString, String transferType){
         List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
-        addToReportDataEntityList(transferType, reportDataEntityList, RecapConstants.TRANSFER.TRANSFER_TYPE);
-        addToReportDataEntityList(institution, reportDataEntityList, RecapConstants.TRANSFER.INSTITUTION);
-        addToReportDataEntityList(requestString, reportDataEntityList, RecapConstants.TRANSFER.REQUEST);
-        addToReportDataEntityList(responseString, reportDataEntityList, RecapConstants.TRANSFER.RESPONSE);
+        addToReportDataEntityList(transferType, reportDataEntityList, RecapConstants.Transfer.TRANSFER_TYPE);
+        addToReportDataEntityList(institution, reportDataEntityList, RecapConstants.Transfer.INSTITUTION);
+        addToReportDataEntityList(requestString, reportDataEntityList, RecapConstants.Transfer.REQUEST);
+        addToReportDataEntityList(responseString, reportDataEntityList, RecapConstants.Transfer.RESPONSE);
         return reportDataEntityList;
     }
 
@@ -701,11 +673,8 @@ public class TransferService {
     }
 
     public void writeChangeLog(Integer sourceBibId, Integer sourceHoldingsId, List<ItemEntity> itemEntities, Integer destinationBibId, Integer destinationHoldingsId) {
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("Item transfered from source (bibId : ")
-                .append(sourceBibId). append(" , holdingsId : "). append(sourceHoldingsId).append(") to destination (bibId : ")
-                .append(destinationBibId). append(" , holdingsId : "). append(destinationHoldingsId).append(")");
-        helperUtil.saveItemChangeLogEntity(RecapConstants.TRANSFER.TRANSFER, stringBuffer.toString(), itemEntities);
+        String message = "Item transferred from source (bibId : " + sourceBibId + " , holdingsId : " + sourceHoldingsId + ") to destination (bibId : " + destinationBibId + " , holdingsId : " + destinationHoldingsId + ")";
+        helperUtil.saveItemChangeLogEntity(RecapConstants.Transfer.TRANSFER_REQUEST, message, itemEntities);
     }
 
     class TransferValidationResponse {

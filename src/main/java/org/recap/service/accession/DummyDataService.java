@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Created by premkb on 27/4/17.
@@ -70,7 +69,6 @@ public class DummyDataService {
      * @return the bibliographic entity
      */
     public BibliographicEntity createDummyDataAsIncomplete(Integer owningInstitutionId, String itemBarcode, String customerCode) {
-        Random random = new Random();
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
         Date currentDate = new Date();
         try {
@@ -183,7 +181,7 @@ public class DummyDataService {
     private String getDummyOwningInstId(){
         OwningInstitutionIDSequence owningInstitutionIDSequence = new OwningInstitutionIDSequence();
         OwningInstitutionIDSequence savedOwningInstitutionIDSequence = owningInstitutionIDSequenceRepository.saveAndFlush(owningInstitutionIDSequence);
-        logger.info("seq id---->{}",savedOwningInstitutionIDSequence.getID());
-        return "d"+savedOwningInstitutionIDSequence.getID();
+        logger.info("seq id---->{}",savedOwningInstitutionIDSequence.getId());
+        return "d"+savedOwningInstitutionIDSequence.getId();
     }
 }

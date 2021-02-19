@@ -31,7 +31,7 @@ public class DeaccessionSolrController {
      * @return the response entity
      */
     @PostMapping(value="/deaccessionInSolr")
-    public ResponseEntity deaccessionInSolr(@RequestBody DeAccessionSolrRequest deAccessionSolrRequest) {
+    public ResponseEntity<String> deaccessionInSolr(@RequestBody DeAccessionSolrRequest deAccessionSolrRequest) {
         List<Integer> bibIds = deAccessionSolrRequest.getBibIds();
         List<Integer> holdingsIds = deAccessionSolrRequest.getHoldingsIds();
         List<Integer> itemIds = deAccessionSolrRequest.getItemIds();
@@ -45,6 +45,6 @@ public class DeaccessionSolrController {
         if (CollectionUtils.isNotEmpty(itemIds)) {
             deAccessSolrDocumentService.updateIsDeletedItemByItemIds(itemIds);
         }
-        return new ResponseEntity(RecapCommonConstants.SUCCESS, HttpStatus.OK);
+        return new ResponseEntity<>(RecapCommonConstants.SUCCESS, HttpStatus.OK);
     }
 }

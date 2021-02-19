@@ -10,6 +10,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by angelind on 16/6/16.
@@ -42,10 +43,10 @@ public class ItemJSONUtil extends MarcUtil{
             item.setDocType(RecapCommonConstants.ITEM);
             item.setCustomerCode(itemEntity.getCustomerCode());
             String useRestriction = StringUtils.isNotBlank(itemEntity.getUseRestrictions()) ? itemEntity.getUseRestrictions() : RecapCommonConstants.NO_RESTRICTIONS;
-            item.setUseRestriction(useRestriction.replaceAll(" ", ""));
+            item.setUseRestriction(useRestriction.replace(" ", ""));
             item.setUseRestrictionDisplay(useRestriction);
             item.setVolumePartYear(itemEntity.getVolumePartYear());
-            item.setCallNumberSearch(itemEntity.getCallNumber().replaceAll(" ", ""));
+            item.setCallNumberSearch(itemEntity.getCallNumber().replace(" ", ""));
             item.setCallNumberDisplay(itemEntity.getCallNumber());
             item.setItemCreatedBy(itemEntity.getCreatedBy());
             item.setItemCreatedDate(itemEntity.getCreatedDate());
@@ -69,7 +70,7 @@ public class ItemJSONUtil extends MarcUtil{
             ItemStatusEntity itemStatusEntity = itemEntity.getItemStatusEntity();
             if (itemStatusEntity != null) {
                 String statusCode = itemStatusEntity.getStatusCode();
-                item.setAvailability(statusCode.replaceAll(" ", ""));
+                item.setAvailability(statusCode.replace(" ", ""));
                 item.setAvailabilityDisplay(statusCode);
             }
             CollectionGroupEntity collectionGroupEntity = itemEntity.getCollectionGroupEntity();

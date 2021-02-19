@@ -1,7 +1,6 @@
 package org.recap.service;
 
 import org.recap.RecapConstants;
-import org.recap.controller.SharedCollectionRestController;
 import org.recap.model.BibAvailabilityResponse;
 import org.recap.model.BibItemAvailabityStatusRequest;
 import org.recap.model.ItemAvailabilityResponse;
@@ -29,7 +28,7 @@ import java.util.Map;
 @Service
 public class ItemAvailabilityService {
 
-    private static final Logger logger = LoggerFactory.getLogger(SharedCollectionRestController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ItemAvailabilityService.class);
 
     @Autowired
     private ItemDetailsRepository itemDetailsRepository;
