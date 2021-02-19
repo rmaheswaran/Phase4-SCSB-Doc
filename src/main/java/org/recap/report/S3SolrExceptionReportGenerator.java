@@ -13,8 +13,6 @@ import java.util.List;
 @Component
 public class S3SolrExceptionReportGenerator extends CommonReportGenerator implements ReportGeneratorInterface{
 
-    private static final Logger logger = LoggerFactory.getLogger(S3SolrExceptionReportGenerator.class);
-
     @Override
     public boolean isInterested(String reportType) {
         return reportType.equalsIgnoreCase(RecapCommonConstants.SOLR_INDEX_EXCEPTION);

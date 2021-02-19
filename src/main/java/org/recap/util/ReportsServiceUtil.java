@@ -254,7 +254,7 @@ public class ReportsServiceUtil {
             }
 
         }
-        if (bibIdList.size() > 0) {
+        if (!bibIdList.isEmpty()) {
             Map<Integer, IncompleteReportBibDetails> bibDetailsMap = new HashMap<>();
             List<List<Integer>> partionedBibIdList = Lists.partition(bibIdList, 1000);
             for (List<Integer> bibIds : partionedBibIdList) {
@@ -295,7 +295,7 @@ public class ReportsServiceUtil {
         return bibDetailsMap;
     }
 
-    private String getFormattedDates(Date gotDate) throws ParseException {
+    private String getFormattedDates(Date gotDate) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
         return simpleDateFormat.format(gotDate);
 

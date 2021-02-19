@@ -14,10 +14,10 @@ public class ActiveMqQueuesInfoUT extends BaseTestCaseUT {
     ActiveMqQueuesInfo activeMqQueuesInfo;
 
     @Value("${activemq.jolokia.api.url}")
-    private String ACTIVE_MQ_API_URL;
+    private String activeMqApiUrl;
 
     @Value("${activemq.jolokia.api.queue.size.attribute}")
-    private String SEARCH_ATTRIBUTE;
+    private String searchAttribute;
 
     @Value("${activemq.web.console.url}")
     private String serviceUrl;
@@ -29,8 +29,8 @@ public class ActiveMqQueuesInfoUT extends BaseTestCaseUT {
     public void getActivemqQueuesInfo(){
         ReflectionTestUtils.setField(activeMqQueuesInfo,"serviceUrl",serviceUrl);
         ReflectionTestUtils.setField(activeMqQueuesInfo,"activemqCredentials",activemqCredentials);
-        ReflectionTestUtils.setField(activeMqQueuesInfo,"ACTIVE_MQ_API_URL",ACTIVE_MQ_API_URL);
-        ReflectionTestUtils.setField(activeMqQueuesInfo,"SEARCH_ATTRIBUTE",SEARCH_ATTRIBUTE);
+        ReflectionTestUtils.setField(activeMqQueuesInfo,"activeMqApiUrl",activeMqApiUrl);
+        ReflectionTestUtils.setField(activeMqQueuesInfo,"searchAttribute",searchAttribute);
         int queueSizeCount= activeMqQueuesInfo.getActivemqQueuesInfo("test");
         assertEquals(0,queueSizeCount);
     }

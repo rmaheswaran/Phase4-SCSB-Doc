@@ -47,7 +47,7 @@ public class S3OngoingAccessionReportGenerator implements ReportGeneratorInterfa
         }
         if(CollectionUtils.isNotEmpty(ongoingAccessionReportRecordList)) {
             Map<String, Object>  accessionMap = new HashMap<>();
-            accessionMap.put(RecapConstants.FILE_NAME, fileName);
+            accessionMap.put(RecapConstants.FILE_NAME, reportEntityList.get(0).getInstitutionName()+ "/"+ fileName);
             accessionMap.put(RecapConstants.INSTITUTION_NAME, reportEntityList.get(0).getInstitutionName());
             producerTemplate.sendBodyAndHeaders(RecapConstants.FTP_ONGOING_ACCESSON_REPORT_Q, ongoingAccessionReportRecordList, accessionMap);
 

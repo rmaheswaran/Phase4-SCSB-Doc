@@ -15,9 +15,9 @@ import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
-import org.recap.model.matchingReports.MatchingSerialAndMVMReports;
-import org.recap.model.matchingReports.MatchingSummaryReport;
-import org.recap.model.matchingReports.TitleExceptionReport;
+import org.recap.model.matchingreports.MatchingSerialAndMVMReports;
+import org.recap.model.matchingreports.MatchingSummaryReport;
+import org.recap.model.matchingreports.TitleExceptionReport;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ReportDetailRepository;
@@ -161,7 +161,7 @@ public class OngoingMatchingReportsService {
                 file = getCsvUtil().createTitleExceptionReportFile(fileNameWithExtension, maxTitleCount, titleExceptionReports);
                 getCamelContext().getRouteController().startRoute(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID);
             } catch (Exception e) {
-                getLogger().error("Exception : {0}" , e);
+                getLogger().error(RecapConstants.EXCEPTION_TEXT + " : {0}", e);
             }
         }
         return file != null ? file.getName() : null;
@@ -218,7 +218,7 @@ public class OngoingMatchingReportsService {
                         matchingSerialAndMvmReports.addAll(getMatchingSerialAndMvmReports(solrDocument));
                     }
                 } catch (Exception e) {
-                    getLogger().error("Exception : " + e);
+                    getLogger().error(RecapConstants.EXCEPTION_TEXT + " : {0}", e);
                 }
             }
         }
@@ -227,7 +227,7 @@ public class OngoingMatchingReportsService {
                 getCamelContext().getRouteController().startRoute(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID);
                 getProducerTemplate().sendBodyAndHeader(RecapConstants.FTP_SERIAL_MVM_REPORT_Q, matchingSerialAndMvmReports, RecapConstants.FILE_NAME, RecapConstants.MATCHING_SERIAL_MVM_REPORT);
             } catch (Exception e) {
-                getLogger().error("Exception : {0}", e);
+                getLogger().error(RecapConstants.EXCEPTION_TEXT + " : {0}", e);
             }
         }
     }
@@ -279,7 +279,7 @@ public class OngoingMatchingReportsService {
                 }
             }
         }catch (Exception e) {
-            getLogger().error("Exception : {0}", e);
+            getLogger().error(RecapConstants.EXCEPTION_TEXT + " : {0}", e);
         }
         return matchingSerialAndMVMReportsList;
     }
@@ -331,7 +331,7 @@ public class OngoingMatchingReportsService {
             bibCount = Math.toIntExact(queryResponseForBib.getResults().getNumFound());
             itemCount = Math.toIntExact(queryResponseForItem.getResults().getNumFound());
         } catch (Exception e) {
-            getLogger().error("Exception : {0}", e);
+            getLogger().error(RecapConstants.EXCEPTION_TEXT + " : {0}", e);
         }
         try {
             for(MatchingSummaryReport matchingSummaryReport : matchingSummaryReports) {
@@ -359,7 +359,7 @@ public class OngoingMatchingReportsService {
             getCamelContext().getRouteController().startRoute(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID);
             getProducerTemplate().sendBodyAndHeader(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_Q, matchingSummaryReports, RecapConstants.FILE_NAME, RecapConstants.MATCHING_SUMMARY_REPORT);
         } catch (Exception e) {
-            getLogger().error("Exception : {0}", e);
+            getLogger().error(RecapConstants.EXCEPTION_TEXT + " : {0}", e);
         }
     }
 }

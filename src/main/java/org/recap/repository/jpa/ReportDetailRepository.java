@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-//import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.Date;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.List;
 /**
  * Created by SheikS on 8/8/2016.
  */
-//@RepositoryRestResource(collectionResourceRel = "report", path = "report")
 public interface ReportDetailRepository extends BaseRepository<ReportEntity> {
 
     /**
@@ -236,6 +234,19 @@ public interface ReportDetailRepository extends BaseRepository<ReportEntity> {
      * @param to              the to
      * @return the list
      */
-    @Query(value = "select * from report_t where FILE_NAME like ?1 and INSTITUTION_NAME=?2 and TYPE=?3 and CREATED_DATE >= ?4 and CREATED_DATE <= ?5", nativeQuery = true)
+    @Query(value = "select * from report_t where FILE_NAME like %?1% and INSTITUTION_NAME=?2 and TYPE=?3 and CREATED_DATE >= ?4 and CREATED_DATE <= ?5", nativeQuery = true)
     List<ReportEntity> findByFileLikeAndInstitutionAndTypeAndDateRange(String fileName, String institutionName, String type, Date from, Date to);
+
+    /**
+     * Finds a list of report entities based on the given filename ,institution and date range.
+     *
+     * @param fileName        the file name
+     * @param institutionName the institution name
+     * @param from            the from
+     * @param to              the to
+     * @return the list
+     */
+    @Query(value = "select * from report_t where FILE_NAME like %?1% and INSTITUTION_NAME=?2 and CREATED_DATE >= ?3 and CREATED_DATE <= ?4", nativeQuery = true)
+    List<ReportEntity> findByFileNameLikeAndInstitutionAndDateRange(String fileName, String institutionName, Date from, Date to);
+
 }

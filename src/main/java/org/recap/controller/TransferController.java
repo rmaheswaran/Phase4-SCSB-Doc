@@ -1,6 +1,5 @@
 package org.recap.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.RecapConstants;
@@ -45,8 +44,6 @@ public class TransferController {
         return helperUtil;
     }
 
-    private ObjectMapper objectMapper;
-
     /**
      * This method is transfer the item or holdings from one bib to another bib.
      *
@@ -64,11 +61,11 @@ public class TransferController {
 
         InstitutionEntity institutionEntity = null;
         if(StringUtils.isBlank(institution)) {
-            return getTransferResponse(transferRequest, transferResponse, RecapConstants.TRANSFER.INSTITUION_EMPTY);
+            return getTransferResponse(transferRequest, transferResponse, RecapConstants.Transfer.INSTITUTION_EMPTY);
         } else {
             institutionEntity = getTransferService().getInstitutionDetailsRepository().findByInstitutionCode(institution);
             if(null == institutionEntity) {
-                return getTransferResponse(transferRequest, transferResponse, RecapConstants.TRANSFER.UNKNOWN_INSTITUTION);
+                return getTransferResponse(transferRequest, transferResponse, RecapConstants.Transfer.UNKNOWN_INSTITUTION);
             }
         }
 
@@ -102,13 +99,13 @@ public class TransferController {
 
 
         if(successCount > 0 && failureCount > 0) {
-            transferResponse.setMessage(RecapConstants.TRANSFER.PARTIALLY_SUCCESS);
+            transferResponse.setMessage(RecapConstants.Transfer.PARTIALLY_SUCCESS);
             return transferResponse;
         } else if(successCount > 0) {
-            transferResponse.setMessage(RecapConstants.TRANSFER.COMPLETED);
+            transferResponse.setMessage(RecapConstants.Transfer.COMPLETED);
             return transferResponse;
         } else if(failureCount > 0) {
-            transferResponse.setMessage(RecapConstants.TRANSFER.FAILED);
+            transferResponse.setMessage(RecapConstants.Transfer.FAILED);
             return transferResponse;
         }
 
@@ -122,7 +119,7 @@ public class TransferController {
         institution = RecapConstants.UNKNOWN_INSTITUTION;
         String requestString = getHelperUtil().getJsonString(transferRequest);
         String responseString = transferResponse.getMessage();
-        getTransferService().saveReportForTransfer(requestString, responseString, institution, RecapConstants.TRANSFER.ROOT);
+        getTransferService().saveReportForTransfer(requestString, responseString, institution, RecapConstants.Transfer.ROOT);
         return transferResponse;
     }
 }

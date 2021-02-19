@@ -92,7 +92,7 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
                     if (holdings.getHolding()!=null) {
                         holdingList = holdings.getHolding();
                     } else {
-                        logger.error("holding is empty---"+bibRecord.getBib().getOwningInstitutionBibId());
+                        logger.error("holding is empty---{}",bibRecord.getBib().getOwningInstitutionBibId());
                     }
                     for(Holding holding:holdingList){
                         if (holding.getContent() != null) {
@@ -234,7 +234,7 @@ public class SCSBToBibEntityConverter implements XmlToBibEntityConverterInterfac
         LeaderFieldType leader = bibContentCollection.getRecord().get(0).getLeader();
         if(leader == null){
             errorMessage.append(" Leader field is missing").append(",");
-        } else if (!(leader != null && StringUtils.isNotBlank(leader.getValue()) && leader.getValue().length() == 24)) {
+        } else if (!(StringUtils.isNotBlank(leader.getValue()) && leader.getValue().length() == 24)) {
             errorMessage.append(" Leader field value should be 24 characters ").append(",");
         }
 
