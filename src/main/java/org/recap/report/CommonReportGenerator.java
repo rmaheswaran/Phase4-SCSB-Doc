@@ -45,16 +45,16 @@ public class CommonReportGenerator {
 
         Predicate<String> checkForProtectionOrNotProtectionKeyword = p-> p.contains(RecapConstants.PROTECTED) || p.contains(RecapConstants.NOT_PROTECTED);
         if (checkForProtectionOrNotProtectionKeyword.test(fileName)) {
-            fileNameSplit = fileName.split("/", 3);
-            generatedFileName = RecapConstants.SUBMIT_COLLECTION_REPORTS_BASE_PATH + fileNameSplit[2] + "-" + df.format(new Date()) + ".csv";
+            fileNameSplit = fileName.split("/", 5);
+            generatedFileName = RecapConstants.SUBMIT_COLLECTION_REPORTS_BASE_PATH + fileNameSplit[2] + RecapCommonConstants.PATH_SEPARATOR +fileNameSplit[3] + RecapCommonConstants.PATH_SEPARATOR+ RecapCommonConstants.SUBMIT_COLLECTION_REPORT + "-" + fileNameSplit[4] + "-" + df.format(new Date()) + ".csv";
         } else {
             generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";
         }
         if (StringUtils.containsIgnoreCase(reportQueue, RecapConstants.SUBMIT_COLLECTION_SUMMARY_Q_SUFFIX)) {
             fileName = generatedFileName;
         }
-        if (checkForProtectionOrNotProtectionKeyword.test(fileName)  && Objects.requireNonNull(fileNameSplit)[2] != null) {
-            producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileNameSplit[2]+ "-" + df.format(new Date()) + ".csv");
+        if (checkForProtectionOrNotProtectionKeyword.test(fileName)  && Objects.requireNonNull(fileNameSplit)[2] != null && Objects.requireNonNull(fileNameSplit)[3] != null && Objects.requireNonNull(fileNameSplit)[4] != null) {
+            producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileNameSplit[2] + RecapCommonConstants.PATH_SEPARATOR + fileNameSplit[3] + RecapCommonConstants.PATH_SEPARATOR + RecapCommonConstants.SUBMIT_COLLECTION_REPORT + "-" + fileNameSplit[4] + "-" + df.format(new Date()) + ".csv");
         } else {
             producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileName);
         }
