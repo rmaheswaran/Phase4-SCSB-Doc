@@ -76,7 +76,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(dataDumpSolrDocumentRepository, "deletedOnlyOrphanInstitution", deletedOnlyOrphanInstitution);
+        ReflectionTestUtils.setField(dataDumpSolrDocumentRepository, "deletedOnlyOrphanInstitution", "PUL,CUL");
         ReflectionTestUtils.setField(dataDumpSolrDocumentRepository, "incrementalNonFullTreeInstitution", incrementalNonFullTreeInstitution);
     }
 
