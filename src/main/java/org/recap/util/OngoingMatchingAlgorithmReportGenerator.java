@@ -12,6 +12,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Created by angelind on 16/6/17.
@@ -29,10 +30,17 @@ public class OngoingMatchingAlgorithmReportGenerator {
     public TitleExceptionReport prepareTitleExceptionReportRecord(List<ReportDataEntity> reportDataEntities) {
 
         TitleExceptionReport titleExceptionReport = new TitleExceptionReport();
+        String headerName = null;
+        Predicate<String> checkForMatchPoints = p -> RecapCommonConstants.MATCH_POINT_FIELD_OCLC.contains(p) || p.equals(RecapCommonConstants.MATCH_POINT_FIELD_ISBN) ||
+                p.equals(RecapCommonConstants.MATCH_POINT_FIELD_ISSN) || p.equals(RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
 
         for (Iterator<ReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
             ReportDataEntity report =  iterator.next();
-            String headerName = report.getHeaderName();
+            if(checkForMatchPoints.test(report.getHeaderName())){
+                headerName = report.getHeaderName().toLowerCase();
+            }else{
+                headerName = report.getHeaderName();
+            }
             String headerValue = report.getHeaderValue();
             Method setterMethod = getSetterMethod(headerName);
             if(null != setterMethod){
