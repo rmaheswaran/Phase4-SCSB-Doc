@@ -11,9 +11,14 @@ import org.recap.RecapConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.report.FSAccessionReportGenerator;
-import org.recap.report.S3AccessionReportGenerator;
+import org.recap.report.FSSubmitCollectionFailureReportGenerator;
+import org.recap.report.FSSubmitCollectionSuccessReportGenerator;
+import org.recap.report.FSSubmitCollectionSummaryReportGenerator;
 import org.recap.report.ReportGenerator;
 import org.recap.report.ReportGeneratorInterface;
+import org.recap.report.S3AccessionReportGenerator;
+import org.recap.report.S3SubmitCollectionExceptionReportGenerator;
+import org.recap.report.S3SubmitCollectionRejectionReportGenerator;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.DateUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +30,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -53,10 +59,186 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
     @Mock
     DateUtil dateUtil;
 
+    @Mock
+    ReportEntity reportEntity;
 
+    @Mock
+    S3SubmitCollectionExceptionReportGenerator s3SubmitCollectionExceptionReportGenerator;
+
+    @Mock
+    S3SubmitCollectionRejectionReportGenerator S3SubmitCollectionRejectionReportGenerator;
+
+    @Mock
+    FSSubmitCollectionSuccessReportGenerator FSSubmitCollectionSuccessReportGenerator;
+
+    @Mock
+    FSSubmitCollectionFailureReportGenerator FSSubmitCollectionFailureReportGenerator;
+
+    @Mock
+    FSSubmitCollectionSummaryReportGenerator FSSubmitCollectionSummaryReportGenerator;
 
     @Test
-    public void testMatchingReportForFileSystem() throws Exception {
+    public void testSubmitCollectionExceptionReportLCCN() {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        reportEntityList.add(reportEntity);
+        Mockito.when(reportDetailRepository.findByFileLikeAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=s3SubmitCollectionExceptionReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(s3SubmitCollectionExceptionReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
+        Mockito.when(s3SubmitCollectionExceptionReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
+        Mockito.when(s3SubmitCollectionExceptionReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionExceptionReport.csv");
+        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.LCCN_CRITERIA,RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT,RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
+        assertEquals("SubmitCollectionExceptionReport.csv",generatedReportFileName);
+    }
+
+    @Test
+    public void testSubmitCollectionExceptionReport() {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        reportEntityList.add(reportEntity);
+        Mockito.when(reportDetailRepository.findByFileLikeAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=s3SubmitCollectionExceptionReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(s3SubmitCollectionExceptionReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
+        Mockito.when(s3SubmitCollectionExceptionReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
+        Mockito.when(s3SubmitCollectionExceptionReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionExceptionReport.csv");
+        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.PRINCETON,RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT,RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
+        assertEquals("SubmitCollectionExceptionReport.csv",generatedReportFileName);
+    }
+
+    @Test
+    public void testSubmitCollectionRejectionReportLCCN() {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        reportEntityList.add(reportEntity);
+        Mockito.when(reportDetailRepository.findByFileLikeAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=S3SubmitCollectionRejectionReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(S3SubmitCollectionRejectionReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
+        Mockito.when(S3SubmitCollectionRejectionReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
+        Mockito.when(S3SubmitCollectionRejectionReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionRejectionReport.csv");
+        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.LCCN_CRITERIA,RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT,RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
+        assertEquals("SubmitCollectionRejectionReport.csv",generatedReportFileName);
+    }
+
+    @Test
+    public void testSubmitCollectionRejectionReport() {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        reportEntityList.add(reportEntity);
+        Mockito.when(reportDetailRepository.findByFileLikeAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=S3SubmitCollectionRejectionReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(S3SubmitCollectionRejectionReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
+        Mockito.when(S3SubmitCollectionRejectionReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
+        Mockito.when(S3SubmitCollectionRejectionReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionRejectionReport.csv");
+        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.PRINCETON,RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT,RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
+        assertEquals("SubmitCollectionRejectionReport.csv",generatedReportFileName);
+    }
+
+    @Test
+    public void testSubmitCollectionSuccessReportLCCN() {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        reportEntityList.add(reportEntity);
+        Mockito.when(reportDetailRepository.findByFileLikeAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=FSSubmitCollectionSuccessReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(FSSubmitCollectionSuccessReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
+        Mockito.when(FSSubmitCollectionSuccessReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
+        Mockito.when(FSSubmitCollectionSuccessReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionSuccessReport.csv");
+        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.LCCN_CRITERIA,RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT,RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        assertEquals("SubmitCollectionSuccessReport.csv",generatedReportFileName);
+    }
+
+    @Test
+    public void testSubmitCollectionSuccessReport() {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        reportEntityList.add(reportEntity);
+        Mockito.when(reportDetailRepository.findByFileLikeAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=FSSubmitCollectionSuccessReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(FSSubmitCollectionSuccessReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
+        Mockito.when(FSSubmitCollectionSuccessReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
+        Mockito.when(FSSubmitCollectionSuccessReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionSuccessReport.csv");
+        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.PRINCETON,RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT,RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        assertEquals("SubmitCollectionSuccessReport.csv",generatedReportFileName);
+    }
+
+    @Test
+    public void testSubmitCollectionFailureReportLCCN() {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        reportEntityList.add(reportEntity);
+        Mockito.when(reportDetailRepository.findByFileLikeAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=FSSubmitCollectionFailureReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(FSSubmitCollectionFailureReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
+        Mockito.when(FSSubmitCollectionFailureReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
+        Mockito.when(FSSubmitCollectionFailureReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionFailureReport.csv");
+        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.LCCN_CRITERIA,RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT,RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        assertEquals("SubmitCollectionFailureReport.csv",generatedReportFileName);
+    }
+
+    @Test
+    public void testSubmitCollectionFailureReport() {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        reportEntityList.add(reportEntity);
+        Mockito.when(reportDetailRepository.findByFileLikeAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=FSSubmitCollectionFailureReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(FSSubmitCollectionFailureReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
+        Mockito.when(FSSubmitCollectionFailureReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
+        Mockito.when(FSSubmitCollectionFailureReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionFailureReport.csv");
+        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.PRINCETON,RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT,RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        assertEquals("SubmitCollectionFailureReport.csv",generatedReportFileName);
+    }
+
+    @Test
+    public void testSubmitCollectionSummary() {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        reportEntityList.add(reportEntity);
+        Mockito.when(reportDetailRepository.findByFileName(Mockito.anyString())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=FSSubmitCollectionSummaryReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(FSSubmitCollectionSummaryReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
+        Mockito.when(FSSubmitCollectionSummaryReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
+        Mockito.when(FSSubmitCollectionSummaryReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionSummary.csv");
+        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.LCCN_CRITERIA,RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT,RecapCommonConstants.FILE_SYSTEM,null,null);
+        assertEquals("SubmitCollectionSummary.csv",generatedReportFileName);
+    }
+
+    @Test
+    public void testSubmitCollectionSummaryDateRange() {
+        List<ReportEntity> reportEntityList=new ArrayList<>();
+        reportEntityList.add(reportEntity);
+        Mockito.when(reportDetailRepository.findByFileNameLikeAndInstitutionAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=FSSubmitCollectionSummaryReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        Mockito.when(FSSubmitCollectionSummaryReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
+        Mockito.when(FSSubmitCollectionSummaryReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
+        Mockito.when(FSSubmitCollectionSummaryReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionSummary.csv");
+        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.PRINCETON,RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT,RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        assertEquals("SubmitCollectionSummary.csv",generatedReportFileName);
+    }
+
+    @Test
+    public void testMatchingReportForFileSystem() {
         List<ReportEntity> reportEntityList =saveAccessionSummaryReportEntity();
         Mockito.when(reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
         List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
@@ -68,7 +250,19 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void testMatchingReportForFTP() throws Exception {
+    public void testMatchingReportForFileSystemLCCN() {
+        List<ReportEntity> reportEntityList =saveAccessionSummaryReportEntity();
+        Mockito.when(reportDetailRepository.findByFileLikeAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
+        ReportGeneratorInterface reportGeneratorInterface=fsAccessionReportGenerator;
+        reportGenerators.add(reportGeneratorInterface);
+        ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
+        String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.LCCN_CRITERIA, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        assertNotNull(generatedReportFileName);
+    }
+
+    @Test
+    public void testMatchingReportForFTP() {
         List<ReportEntity> reportEntityList =saveAccessionSummaryReportEntity();
         Mockito.when(reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
         List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
@@ -82,7 +276,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
     @Test
     public void getReportGenerators() {
         List<ReportGeneratorInterface> getReportGenerators=reportGenerator.getReportGenerators();
-     assertNotNull(getReportGenerators);
+        assertNotNull(getReportGenerators);
     }
 
     @Test

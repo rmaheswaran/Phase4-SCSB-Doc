@@ -1,11 +1,11 @@
 package org.recap.model.solr;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -70,9 +70,13 @@ public class BibUT extends BaseTestCaseUT {
         bib.setDeletedBib(false);
         bib.setBibCatalogingStatus("Incomplete");
         bib.setOwningInstHoldingsIdList(Arrays.asList(1));
+        Bib bib1=new Bib();
+        bib1.hashCode();
         bib.hashCode();
         bib.equals(bib);
+        bib1.equals(bib);
         bib.equals(false);
+        bib.equals(bib1);
         assertNotNull(bib.getId());
         assertNotNull(bib.getBibId());
         assertNotNull(bib.getDocType());
@@ -110,50 +114,72 @@ public class BibUT extends BaseTestCaseUT {
         assertNotNull(bib.getBibItemLastUpdatedDate());
         assertNotNull(bib.isDeletedBib());
         assertNotNull(bib.getBibCatalogingStatus());
-
-        Bib bib1 = new Bib();
-        bib1.setId("1");
-        bib1.setContentType("XML");
-        bib1.setBibId(101);
-        bib1.setOwningInstitutionBibId("CU0021524");
-        bib1.setDocType("Bib");
-        bib1.setTitle("Middleware for ReCAP");
-        bib1.setBarcode("1");
-        bib1.setTitle("Test Bib 1");
-        bib1.setAuthorDisplay("Hoepli, Nancy L");
-        bib1.setAuthorSearch(Arrays.asList("Hoepli, Nancy L", "Ibn Jubayr"));
-        bib1.setPublisher("McClelland & Stewart, limited");
-        bib1.setImprint("Toronto, McClelland & Stewart, limited [c1926]");
-        bib1.setIssn(issnList);
-        bib1.setIsbn(isbnList);
-        bib1.setOclcNumber(oclcNumberList);
-        bib1.setPublicationDate("1960");
-        bib1.setMaterialType("Material Type 1");
-        bib1.setNotes("Bibliographical footnotes 1");
-        bib1.setOwningInstitution("PUL");
-        bib1.setSubject("Arab countries Politics and government.");
-        bib1.setPublicationPlace("Paris");
-        bib1.setLccn("71448228");
-        bib1.setHoldingsIdList(holdingsIdList);
-        bib1.setBibItemIdList(itemIdList);
-        bib1.setTitleDisplay("test");
-        bib1.setTitleStartsWith("test");
-        bib1.setTitleSubFieldA("test");
-        bib1.setTitleSort("test");
-        bib1.setLeaderMaterialType("test");
-        bib1.setBibCreatedBy("Guest");
-        bib1.setBibCreatedDate(new Date());
-        bib1.setBibLastUpdatedBy("Guest");
-        bib1.setBibLastUpdatedDate(new Date());
-        bib1.setBibHoldingLastUpdatedDate(new Date());
-        bib1.setBibItemLastUpdatedDate(new Date());
-        bib1.setDeletedBib(false);
-        bib1.setBibCatalogingStatus("Incomplete");
-        bib1.setOwningInstHoldingsIdList(Arrays.asList(1));
-        bib.equals(bib1);
-
     }
 
+    @Test
+    public void testBib1(){
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(2,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"HTML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","test","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","789","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","test","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","test","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","test","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","test",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",10,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"test","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","test","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","test","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","test","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","test","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","test","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","test","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","test","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","test","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","test","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","test","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","test","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","test","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","test",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",7,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,8,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"test","leaderMaterialType","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","test","bibCatalogingStatus"));
+        getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","bibCatalogingStatus").equals(getBib(1,"XML","docType","123456","title","titleDispaly","titleSort","titleStartsWith",9,"Hoepli, Nancy L","authorSearch","owningInstitution","publisher","publicationPlace","publicationDate","subject","isbn","issn","oclcNumber","materialType","notes","iccn","imprint",4,5,"owningInstitutionBibId","leaderMaterialType","test"));
+    }
 
+    private Bib getBib(int bibId,String contentType,String docType,String barcode,String title,String titleDispaly,String titleSort,String titleStartsWith,int titleSubFieldA,String authorDisplay,String authorSearch,String owningInstitution,String publisher,String publicationPlace,String publicationDate,String subject,String isbn,
+                       String issn,String oclcNumber,String materialType,String notes,String lccn,String imprint,int holdingsIdList,int bibItemIdList,String owningInstitutionBibId,String leaderMaterialType,String bibCatalogingStatus) {
+        Bib bib = new Bib();
+        bib.setBibId(bibId);
+        bib.setContentType(contentType);
+        bib.setDocType(docType);
+        bib.setBarcode(barcode);
+        bib.setTitle(title);
+        bib.setTitleDisplay(titleDispaly);
+        bib.setTitleSort(titleSort);
+        bib.setTitleStartsWith(titleStartsWith);
+        bib.setOwningInstHoldingsIdList(Arrays.asList(titleSubFieldA));
+        bib.setAuthorDisplay(authorDisplay);
+        bib.setAuthorSearch(Collections.singletonList(authorSearch));
+        bib.setOwningInstitution(owningInstitution);
+        bib.setPublisher(publisher);
+        bib.setPublicationPlace(publicationPlace);
+        bib.setPublicationDate(publicationDate);
+        bib.setSubject(subject);
+        bib.setIsbn(Collections.singletonList(isbn));
+        bib.setIssn(Collections.singletonList(issn));
+        bib.setOclcNumber(Collections.singletonList(oclcNumber));
+        bib.setMaterialType(materialType);
+        bib.setNotes(notes);
+        bib.setLccn(lccn);
+        bib.setImprint(imprint);
+        bib.setHoldingsIdList(Arrays.asList(holdingsIdList));
+        bib.setBibItemIdList(Arrays.asList(bibItemIdList));
+        bib.setOwningInstitutionBibId(owningInstitutionBibId);
+        bib.setLeaderMaterialType(leaderMaterialType);
+        bib.setBibCatalogingStatus(bibCatalogingStatus);
+        return bib;
+    }
 
 }
