@@ -1,11 +1,15 @@
 package org.recap.util;
 
+import info.freelibrary.marc4j.impl.ControlFieldImpl;
 import org.apache.camel.ProducerTemplate;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.marc4j.marc.DataField;
+import org.marc4j.marc.Leader;
 import org.marc4j.marc.Record;
+import org.marc4j.marc.Subfield;
+import org.marc4j.marc.VariableField;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -14,6 +18,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
+import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.InstitutionEntity;
@@ -22,6 +27,8 @@ import org.recap.model.solr.Bib;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,6 +60,24 @@ public class BibJSONUtilUT extends BaseTestCaseUT {
 
     @Mock
     private ProducerTemplate producerTemplate;
+
+    @Mock
+    Record record;
+
+    @Mock
+    ControlFieldImpl controlField;
+
+    @Mock
+    DataField dataField;
+
+    @Mock
+    Subfield subfield;
+
+    @Mock
+    Leader leader;
+
+    @Mock
+    BibliographicEntity bibliographicEntity;
 
     private String holdingContent = "<collection xmlns=\"http://www.loc.gov/MARC21/slim\">\n" +
             "            <record>\n" +
@@ -305,10 +330,63 @@ public class BibJSONUtilUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void testStripStart() throws Exception {
-        String number = "0023450";
-        number = StringUtils.stripStart(number, "0");
-        assertEquals("23450", number);
+    public void getLeaderMaterialType() {
+        String leaderMaterialType = bibJSONUtil.getLeaderMaterialType(leader);
+        assertEquals(RecapCommonConstants.OTHER,leaderMaterialType);
+    }
+
+    @Test
+    public void getBitHoldingLastUpdatedDate() {
+        Date bitHoldingLastUpdatedDate = bibJSONUtil.getBitHoldingLastUpdatedDate(bibliographicEntity);
+        assertNull(bitHoldingLastUpdatedDate);
+    }
+
+    @Test
+    public void getBitItemLastUpdatedDate() {
+        Date bitHoldingLastUpdatedDate = bibJSONUtil.getBitItemLastUpdatedDate(bibliographicEntity);
+        assertNull(bitHoldingLastUpdatedDate);
+    }
+
+    @Test
+    public void getPublisherValue() {
+        String publisherValue= bibJSONUtil.getPublisherValue(record);
+        assertNull(publisherValue);
+    }
+
+    @Test
+    public void getPublicationDateValue() {
+        String publisherValue= bibJSONUtil.getPublicationDateValue(record);
+        assertNull(publisherValue);
+    }
+
+    @Test
+    public void testgetISBNNumber() {
+        List<VariableField> dataFields=new ArrayList<>();
+        dataFields.add(dataField);
+        Mockito.when(record.getVariableFields("020")).thenReturn(dataFields);
+        List<Subfield> subFields=new ArrayList<>();
+        subFields.add(subfield);
+        Mockito.when(subfield.getData()).thenReturn("234");
+        Mockito.when(dataField.getSubfields("a")).thenReturn(subFields);
+        List<String> ISBNNumber = bibJSONUtil.getISBNNumber(record);
+        assertTrue(ISBNNumber.contains("234"));
+    }
+
+
+    @Test
+    public void mockPrivateMethods() {
+        List<String> nonHoldingInstitutions=new ArrayList<>();
+        nonHoldingInstitutions.add("NYPL");
+        ReflectionTestUtils.setField(bibJSONUtil,"nonHoldingInstitutions",nonHoldingInstitutions);
+        List<VariableField> variableFields=new ArrayList<>();
+        variableFields.add(dataField);
+        List<VariableField> variableFieldsC=new ArrayList<>();
+        variableFieldsC.add(controlField);
+        Mockito.when(controlField.getData()).thenReturn("OCoLC");
+        Mockito.when(record.getVariableFields("035")).thenReturn(variableFields);
+        Mockito.when(record.getVariableFields("003")).thenReturn(variableFieldsC);
+        Mockito.when(record.getVariableFields("001")).thenReturn(variableFieldsC);
+        ReflectionTestUtils.invokeMethod(bibJSONUtil,"getOCLCNumbers",record,"NYPL");
     }
 
 }

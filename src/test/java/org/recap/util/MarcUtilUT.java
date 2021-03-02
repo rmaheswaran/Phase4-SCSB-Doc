@@ -2,8 +2,13 @@ package org.recap.util;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
+import org.marc4j.marc.Subfield;
+import org.marc4j.marc.VariableField;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jaxb.marc.BibRecords;
 import org.recap.model.jaxb.marc.DataFieldType;
@@ -30,6 +35,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -40,6 +46,24 @@ public class MarcUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
     MarcUtil marcUtil;
+
+    @Mock
+    Record record;
+
+    @Mock
+    RecordType marcRecord;
+
+    @Mock
+    DataFieldType dataField;
+
+    @Mock
+    SubfieldatafieldType subfieldatafieldType;
+
+    @Mock
+    DataField variableField;
+
+    @Mock
+    Subfield subfield;
 
     private String marcXML = "<collection xmlns=\"http://www.loc.gov/MARC21/slim\">\n" +
             "          <record>\n" +
@@ -267,6 +291,17 @@ public class MarcUtilUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void getMultiFieldValues1() {
+        List<VariableField> dataFields=new ArrayList<>();
+        dataFields.add(variableField);
+        Mockito.when(variableField.getIndicator1()).thenReturn('p');
+        Mockito.when(variableField.getIndicator2()).thenReturn('q');
+        Mockito.when(record.getVariableFields("035")).thenReturn(dataFields);
+        List<String> oThirtyFives = marcUtil.getMultiDataFieldValues(record, "035", "p", "q", "a");
+        assertNotNull(oThirtyFives);
+    }
+
+    @Test
     public void getDataFieldValues() throws  Exception {
 
         List<Record> records =
@@ -312,17 +347,89 @@ public class MarcUtilUT extends BaseTestCaseUT {
 
     }
 
-
+    @Test
+    public void isSubFieldExistsRecord() {
+        Mockito.when(record.getVariableField("")).thenReturn(variableField);
+        List<Subfield> subfields=new ArrayList<>();
+        subfields.add(subfield);
+        Mockito.when(variableField.getSubfields()).thenReturn(subfields);
+        boolean isSubFieldExist=marcUtil.isSubFieldExists(record,"");
+        assertFalse(isSubFieldExist);
+    }
 
     @Test
-    public void math() throws Exception {
-        int numThreads = 5;
-        int docsPerThread = 1;
-        int totalDocs = 15;
+    public void isSubFieldExists() {
+        List<DataFieldType> dataFields=new ArrayList<>();
+        dataFields.add(dataField);
+        Mockito.when(dataField.getTag()).thenReturn("");
+        List<SubfieldatafieldType> subFields=new ArrayList<>();
+        subFields.add(subfieldatafieldType);
+        Mockito.when(subfieldatafieldType.getCode()).thenReturn("code");
+        Mockito.when(subfieldatafieldType.getValue()).thenReturn("value");
+        Mockito.when(dataField.getSubfield()).thenReturn(subFields);
+        Mockito.when(marcRecord.getDatafield()).thenReturn(dataFields);
+        boolean isSubFieldExist=marcUtil.isSubFieldExists(marcRecord,"");
+        assertTrue(isSubFieldExist);
+    }
 
-        assertNotNull(totalDocs % (docsPerThread*numThreads));
-        assertNotNull(totalDocs / (docsPerThread*numThreads));
+    @Test
+    public void isSubFieldExistsNoSubFields() {
+        List<DataFieldType> dataFields=new ArrayList<>();
+        dataFields.add(dataField);
+        Mockito.when(dataField.getTag()).thenReturn("");
+        List<SubfieldatafieldType> subFields=new ArrayList<>();
+        Mockito.when(dataField.getSubfield()).thenReturn(subFields);
+        Mockito.when(marcRecord.getDatafield()).thenReturn(dataFields);
+        boolean isSubFieldExist=marcUtil.isSubFieldExists(marcRecord,"");
+        assertFalse(isSubFieldExist);
+    }
 
+    @Test
+    public void isSubFieldExistsNoDataField() {
+        List<DataFieldType> dataFields=new ArrayList<>();
+        Mockito.when(marcRecord.getDatafield()).thenReturn(dataFields);
+        boolean isSubFieldExist=marcUtil.isSubFieldExists(marcRecord,"");
+        assertFalse(isSubFieldExist);
+    }
+
+    @Test
+    public void getInd1ForRecordTypeDataFieldNull() {
+        List<DataFieldType> dataFields=new ArrayList<>();
+        dataFields.add(dataField);
+        Mockito.when(dataField.getTag()).thenReturn("tag");
+        Mockito.when(marcRecord.getDatafield()).thenReturn(dataFields);
+        String isSubFieldExist=marcUtil.getInd1ForRecordType(marcRecord,"","");
+        assertNull(isSubFieldExist);
+    }
+
+    @Test
+    public void getInd1ForRecordTypeSubDataFieldNull() {
+        List<DataFieldType> dataFields=new ArrayList<>();
+        dataFields.add(dataField);
+        Mockito.when(dataField.getTag()).thenReturn("");
+        List<SubfieldatafieldType> subFields=new ArrayList<>();
+        subFields.add(subfieldatafieldType);
+        Mockito.when(dataField.getSubfield()).thenReturn(subFields);
+        Mockito.when(subfieldatafieldType.getCode()).thenReturn("code");
+        Mockito.when(dataField.getInd1()).thenReturn("Ind1");
+        Mockito.when(marcRecord.getDatafield()).thenReturn(dataFields);
+        String isSubFieldExist=marcUtil.getInd1ForRecordType(marcRecord,"","");
+        assertNull(isSubFieldExist);
+    }
+
+    @Test
+    public void getInd1ForRecordType() {
+        List<DataFieldType> dataFields=new ArrayList<>();
+        dataFields.add(dataField);
+        Mockito.when(dataField.getTag()).thenReturn("");
+        List<SubfieldatafieldType> subFields=new ArrayList<>();
+        subFields.add(subfieldatafieldType);
+        Mockito.when(dataField.getSubfield()).thenReturn(subFields);
+        Mockito.when(subfieldatafieldType.getCode()).thenReturn("");
+        Mockito.when(dataField.getInd1()).thenReturn("Ind1");
+        Mockito.when(marcRecord.getDatafield()).thenReturn(dataFields);
+        String isSubFieldExist=marcUtil.getInd1ForRecordType(marcRecord,"","");
+        assertEquals("Ind1",isSubFieldExist);
     }
 
     @Test
@@ -331,6 +438,12 @@ public class MarcUtilUT extends BaseTestCaseUT {
         assertNotNull(records.get(0));
         Integer secondIndicatorForDataField = marcUtil.getSecondIndicatorForDataField(records.get(0), "245");
         assertEquals(secondIndicatorForDataField, Integer.valueOf(3));
+    }
+
+    @Test
+    public void getSecondIndicatorForDataFieldReturnZero() {
+        Integer secondIndicatorForDataField = marcUtil.getSecondIndicatorForDataField(record, "245");
+        assertEquals(Integer.valueOf(0),secondIndicatorForDataField);
     }
 
     private List<Record> getRecords() throws Exception{
@@ -362,6 +475,24 @@ public class MarcUtilUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void getDataFieldValueNull() throws Exception {
+        String fieldValue = marcUtil.getDataFieldValue(record, "876", 'p');
+        assertNull( fieldValue);
+    }
+
+    @Test
+    public void getDataFieldValueForRecordType() {
+        List<DataFieldType> dataFields=new ArrayList<>();
+        dataFields.add(dataField);
+        Mockito.when(dataField.getTag()).thenReturn("876");
+        Mockito.when(dataField.getInd1()).thenReturn("p");
+        Mockito.when(dataField.getInd2()).thenReturn("q");
+        Mockito.when(marcRecord.getDatafield()).thenReturn(dataFields);
+        String fieldValue = marcUtil.getDataFieldValueForRecordType(marcRecord, "876", "p","q","877");
+        assertNotNull(fieldValue);
+    }
+
+    @Test
     public void getControlFieldValue() throws Exception {
         List<Record> records = getRecords();
         assertNotNull(records);
@@ -370,6 +501,21 @@ public class MarcUtilUT extends BaseTestCaseUT {
         assertNotNull(record);
         String controlFieldValue = marcUtil.getControlFieldValue(record, "001");
         assertEquals("9919400",controlFieldValue);
+    }
+
+    @Test
+    public void getControlFieldValueNull() {
+        String controlFieldValue = marcUtil.getControlFieldValue(record, "001");
+        assertNull(controlFieldValue);
+    }
+
+    @Test
+    public void getControlFieldValueVariableNull() {
+        List<VariableField> variableFields=new ArrayList<>();
+        variableFields.add(null);
+        Mockito.when(record.getVariableFields("001")).thenReturn(variableFields);
+        String controlFieldValue = marcUtil.getControlFieldValue(record, "001");
+        assertNull(controlFieldValue);
     }
 
     @Test
@@ -382,6 +528,37 @@ public class MarcUtilUT extends BaseTestCaseUT {
         Character ind1 = marcUtil.getInd1(record, "876", 'h');
         assertTrue(ind1 == '0');
     }
+
+    @Test
+    public void getInd1DataFieldNull() throws Exception {
+        Character ind1 = marcUtil.getInd1(record, "876", 'h');
+        assertNull(ind1);
+    }
+
+    @Test
+    public void isSubFieldExistsForMarcDataFieldEmpty() {
+        List<DataFieldType> dataFields=new ArrayList<>();
+        dataFields.add(dataField);
+        Mockito.when(marcRecord.getDatafield()).thenReturn(dataFields);
+        Mockito.when(dataField.getTag()).thenReturn("853");
+        boolean isSubFieldExists=marcUtil.isSubFieldExists(marcRecord, "852");
+        assertFalse(isSubFieldExists);
+    }
+
+    @Test
+    public void isSubFieldExistsForMarcSubDataFieldEmpty() {
+        List<DataFieldType> dataFields=new ArrayList<>();
+        dataFields.add(dataField);
+        Mockito.when(marcRecord.getDatafield()).thenReturn(dataFields);
+        Mockito.when(dataField.getTag()).thenReturn("852");
+        List<SubfieldatafieldType> subFields=new ArrayList<>();
+        subFields.add(subfieldatafieldType);
+        Mockito.when(subfieldatafieldType.getCode()).thenReturn("");
+        Mockito.when(dataField.getSubfield()).thenReturn(subFields);
+        boolean isSubFieldExists=marcUtil.isSubFieldExists(marcRecord, "852");
+        assertFalse(isSubFieldExists);
+    }
+
 
     @Test
     public void buildBibMarcRecord() throws Exception {
