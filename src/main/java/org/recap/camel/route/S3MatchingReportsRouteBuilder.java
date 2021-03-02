@@ -42,7 +42,7 @@ public class S3MatchingReportsRouteBuilder {
                         from(RecapConstants.FILE + matchingReportsDirectory + RecapConstants.DELETE_FILE_OPTION)
                                 .routeId(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID)
                                 .noAutoStartup()
-                                .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+RecapConstants.MATCHING_REPORT_FILE_NAME_CAMEL_HEADER))
+                                .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+ "${in.header.CamelFileName}"))
                                 .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
                                 .onCompletion()
                                 .process(new StopRouteProcessor(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID))
