@@ -316,7 +316,6 @@ public class ReportsServiceUtil {
             for (String collectionGroupDesignation : reportsRequest.getCollectionGroupDesignations()) {
                 SolrQuery query = solrQueryBuilder.buildSolrQueryForAccessionReports(solrFormattedDate, owningInstitution, false, collectionGroupDesignation);
                 long numFound = getNumFound(query);
-                reportsInstitutionForm.setAccessionPrivateCount(numFound);
                 if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_OPEN)) {
                     reportsInstitutionForm.setAccessionOpenCount(numFound);
                 } else if (collectionGroupDesignation.equalsIgnoreCase(RecapCommonConstants.REPORTS_SHARED)) {
