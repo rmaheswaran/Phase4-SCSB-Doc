@@ -374,8 +374,8 @@ public class ReportsServiceUtil {
         SimpleDateFormat simpleDateFormat = getSimpleDateFormatForReports();
         Date fromDate = simpleDateFormat.parse(requestedFromDate);
         Date toDate = simpleDateFormat.parse(requestedToDate);
-        Date fromDateTime = dateUtil.getFromDate(fromDate);
-        Date toDateTime = dateUtil.getToDate(toDate);
+        Date fromDateTime = dateUtil.getFromDateAccession(fromDate);
+        Date toDateTime = dateUtil.getToDateAccession(toDate);
         String formattedFromDate = getFormattedDateString(fromDateTime);
         String formattedToDate = getFormattedDateString(toDateTime);
         return formattedFromDate + " TO " + formattedToDate;
