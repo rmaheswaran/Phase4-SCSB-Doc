@@ -33,4 +33,20 @@ public class DateUtilUT extends BaseTestCaseUT {
         assertTrue(dateString.contains("11:59 PM"));
     }
 
+    @Test
+    public void getToDateAccession() throws Exception {
+        Date toDate = dateUtil.getToDateAccession(new Date());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+        String dateString = simpleDateFormat.format(toDate);
+        assertTrue(dateString.contains("11:59 PM"));
+    }
+
+    @Test
+    public void getFromDateAccession() throws Exception {
+        Date fromDate = dateUtil.getFromDateAccession(new Date());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+        String dateString = simpleDateFormat.format(fromDate);
+        assertTrue(dateString.contains("12:00 AM"));
+    }
+
 }
