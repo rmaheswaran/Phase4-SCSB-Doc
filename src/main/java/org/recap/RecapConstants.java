@@ -63,6 +63,7 @@ public final class RecapConstants {
 
     public static final String DATE_FORMAT_FOR_FILE_NAME = "yyyyMMdd_HHmmss";
     public static final String DATE_FORMAT_FOR_REPORT_FILE_NAME = "ddMMMyyyyHHmmss";
+    public static final String EST_TIMEZONE = "America/New_York";
 
     public static final String VOLUME_PART_YEAR = "VolumePartYear";
 
