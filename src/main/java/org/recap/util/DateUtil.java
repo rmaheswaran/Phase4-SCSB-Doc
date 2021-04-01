@@ -1,9 +1,11 @@
 package org.recap.util;
 
+import org.recap.RecapConstants;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by angelind on 17/5/17.
@@ -27,6 +29,20 @@ public class DateUtil {
     }
 
     /**
+     *
+     * @param createdDate
+     * @return EST time formate date
+     */
+    public Date getFromDateAccession(Date createdDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(createdDate);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.setTimeZone(TimeZone.getTimeZone(RecapConstants.EST_TIMEZONE));
+        return  cal.getTime();
+    }
+    /**
      * Gets to date from the parameter and formats by setting end time of the day.
      *
      * @param createdDate the created date
@@ -38,6 +54,21 @@ public class DateUtil {
         cal.set(Calendar.HOUR_OF_DAY, 23);
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
+        return cal.getTime();
+    }
+
+    /**
+     *
+     * @param createdDate
+     * @return EST time formate date
+     */
+    public Date getToDateAccession(Date createdDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(createdDate);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.setTimeZone(TimeZone.getTimeZone(RecapConstants.EST_TIMEZONE));
         return cal.getTime();
     }
 }
