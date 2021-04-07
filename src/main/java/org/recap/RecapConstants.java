@@ -196,6 +196,13 @@ public final class RecapConstants {
     public static final String ACCESSION_SUMMARY = "ACCESSION_SUMMARY";
     public static final String ACCESSION_JOB_FAILURE = "Exception occurred in SCSB Ongoing Accession Job";
     public static final String IMS_LOCATION = "ImsLocation";
+    public static final String MATCHING_COUNTER_SHARED = "BeforeSharedCount";
+    public static final String MATCHING_COUNTER_OPEN = "BeforeOpenCount";
+    public static final String MATCHING_COUNTER_UPDATED_SHARED = "AfterSharedCount";
+    public static final String MATCHING_COUNTER_UPDATED_OPEN = "AfterOpenCount";
+    public static final String SHARED = "Shared";
+    public static final String OPEN = "Open";
+    public static final String LOGGER_MSG = " : {0}";
 
     public static class ServicePath {
         private ServicePath() {}

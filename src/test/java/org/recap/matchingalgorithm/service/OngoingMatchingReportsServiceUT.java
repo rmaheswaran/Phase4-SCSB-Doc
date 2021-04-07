@@ -264,7 +264,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
         institutionEntities.add(TestUtil.getInstitutionEntity(2,RecapCommonConstants.COLUMBIA,RecapCommonConstants.COLUMBIA));
         institutionEntities.add(TestUtil.getInstitutionEntity(1,RecapCommonConstants.PRINCETON,RecapCommonConstants.PRINCETON));
         Mockito.when(institutionDetailsRepository.findByInstitutionCodeNotIn(Mockito.anyList())).thenReturn(institutionEntities);
-        List<MatchingSummaryReport> matchingSummaryReports=ongoingMatchingReportsService.populateSummaryReport();
+        List<MatchingSummaryReport> matchingSummaryReports=ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
         assertNotNull(matchingSummaryReports);
     }
 

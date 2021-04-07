@@ -107,7 +107,12 @@ public class MatchingAlgorithmCGDProcessor {
         ItemEntity itemEntityToBeShared = getItemToBeSharedBasedOnInitialMatchingDate(itemEntities);
         if(itemEntityToBeShared != null) {
             itemEntityMap.remove(itemEntityToBeShared.getId());
-            MatchingCounter.updateCounter(itemEntityToBeShared.getOwningInstitutionId(), false);
+            if(matchingType.equalsIgnoreCase(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE)){
+                MatchingCounter.updateCounter(itemEntityToBeShared.getOwningInstitutionId(), false);
+            }
+            else{
+                OngoingMatchingCounter.updateCGDCounter(itemEntityToBeShared.getInstitutionEntity().getInstitutionCode(),false);
+            }
         } else {
             itemEntities.sort(Comparator.comparing(ItemEntity::getCreatedDate, Comparator.naturalOrder()));
             findAndremoveSharedItem(itemEntityMap, itemEntities);
@@ -139,15 +144,21 @@ public class MatchingAlgorithmCGDProcessor {
         for (Iterator<ItemEntity> iterator = itemEntityMap.values().iterator(); iterator.hasNext(); ) {
             // Items which needs to be changed to open status
             ItemEntity itemEntity = iterator.next();
-            MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), true);
+            if(matchingType.equalsIgnoreCase(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE)){
+                MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), true);
+            }
+            else{
+                OngoingMatchingCounter.updateCGDCounter(itemEntity.getInstitutionEntity().getInstitutionCode(),true);
+            }
             Integer oldCgd = itemEntity.getCollectionGroupId();
             itemEntity.setLastUpdatedDate(new Date());
-            itemEntity.setLastUpdatedBy(RecapCommonConstants.GUEST);
             itemEntity.setCollectionGroupId(collectionGroupId);
             if(matchingType.equalsIgnoreCase(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM)) {
                 itemEntity.setCollectionGroupEntity(collectionGroupEntity);
+                itemEntity.setLastUpdatedBy(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM);
             } else {
                 itemEntity.setInitialMatchingDate(null);
+                itemEntity.setLastUpdatedBy(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE);
             }
             itemEntitiesToUpdate.add(itemEntity);
             itemChangeLogEntities.add(getItemChangeLogEntity(oldCgd, itemEntity));
@@ -250,7 +261,6 @@ public class MatchingAlgorithmCGDProcessor {
             for(ItemEntity itemEntity : itemEntities) {
                 if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
                     itemEntityMap.put(itemEntity.getId(), itemEntity);
-                    MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), true);
                 }
             }
         }
@@ -352,10 +362,13 @@ public class MatchingAlgorithmCGDProcessor {
         // Item which needs to remain in Shared status and increment the institution's counter
         ItemEntity itemEntity = itemEntities.get(0);
         itemEntityMap.remove(itemEntity.getId());
-        MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), false);
         if(matchingType.equalsIgnoreCase(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE)) {
+            MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), false);
             itemEntity.setInitialMatchingDate(new Date());
             producerTemplate.sendBody("scsbactivemq:queue:updateItemsQ", itemEntity);
+        }
+        else{
+            OngoingMatchingCounter.updateCGDCounter(itemEntity.getInstitutionEntity().getInstitutionCode(),false);
         }
     }
 

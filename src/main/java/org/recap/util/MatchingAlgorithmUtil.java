@@ -13,10 +13,12 @@ import org.apache.solr.common.SolrDocumentList;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.matchingalgorithm.MatchingCounter;
+import org.recap.matchingalgorithm.OngoingMatchingCounter;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
@@ -42,6 +44,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.recap.RecapConstants.MATCHING_COUNTER_OPEN;
+import static org.recap.RecapConstants.MATCHING_COUNTER_SHARED;
 
 /**
  * Created by angelind on 4/11/16.
@@ -81,6 +86,9 @@ public class MatchingAlgorithmUtil {
 
     @Value("${matching.report.header.value.length}")
     private Integer matchingHeaderValueLength;
+
+    @Autowired
+    private InstitutionDetailsRepository institutionDetailsRepository;
 
     /**
      * Gets report detail repository.
@@ -932,4 +940,24 @@ public class MatchingAlgorithmUtil {
         logger.info("NYPL Initial Counter Value: {}" , MatchingCounter.getNyplSharedCount());
     }
 
+    /**
+     * This method populates matching counter for Ongoing Matching Algorithm to process the CGD update in the matching algorithm.
+     *
+     * @throws IOException         the io exception
+     * @throws SolrServerException the solr server exception
+     */
+    public void populateOngoingMatchingCounter() throws IOException, SolrServerException {
+        List<String> institutions = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+        OngoingMatchingCounter ongoingMatchingCounter=new OngoingMatchingCounter(institutions);
+        OngoingMatchingCounter.reset();
+        for (String institution : institutions) {
+            synchronized (OngoingMatchingCounter.class) {
+                Map<String, Integer> specificInstitutionCounterMap = OngoingMatchingCounter.getSpecificInstitutionCounterMap(institution);
+                specificInstitutionCounterMap.put(MATCHING_COUNTER_SHARED, getCGDCountBasedOnInst(institution, RecapConstants.SHARED));
+                specificInstitutionCounterMap.put(MATCHING_COUNTER_OPEN, getCGDCountBasedOnInst(institution, RecapConstants.OPEN));
+                logger.info("{} Initial Counter Value: {}",institution,specificInstitutionCounterMap.get(MATCHING_COUNTER_SHARED));
+                OngoingMatchingCounter.setSpecificInstitutionCounterMap(institution, specificInstitutionCounterMap);
+            }
+        }
+    }
 }

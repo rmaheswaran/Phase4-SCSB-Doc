@@ -11,8 +11,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
-import org.recap.matchingalgorithm.MatchingCounter;
-import org.recap.model.jpa.InstitutionEntity;
+import org.recap.matchingalgorithm.OngoingMatchingCounter;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.model.matchingreports.MatchingSerialAndMVMReports;
@@ -39,12 +38,14 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static org.recap.RecapConstants.MATCHING_COUNTER_OPEN;
+import static org.recap.RecapConstants.MATCHING_COUNTER_SHARED;
 
 /**
  * Created by angelind on 21/6/17.
@@ -161,7 +162,7 @@ public class OngoingMatchingReportsService {
                 file = getCsvUtil().createTitleExceptionReportFile(fileNameWithExtension, maxTitleCount, titleExceptionReports);
                 getCamelContext().getRouteController().startRoute(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID);
             } catch (Exception e) {
-                getLogger().error(RecapConstants.EXCEPTION_TEXT + " : {0}", e);
+                getLogger().error(RecapConstants.EXCEPTION_TEXT + RecapConstants.LOGGER_MSG, e);
             }
         }
         return file != null ? file.getName() : null;
@@ -218,7 +219,7 @@ public class OngoingMatchingReportsService {
                         matchingSerialAndMvmReports.addAll(getMatchingSerialAndMvmReports(solrDocument));
                     }
                 } catch (Exception e) {
-                    getLogger().error(RecapConstants.EXCEPTION_TEXT + " : {0}", e);
+                    getLogger().error(RecapConstants.EXCEPTION_TEXT + RecapConstants.LOGGER_MSG, e);
                 }
             }
         }
@@ -227,7 +228,7 @@ public class OngoingMatchingReportsService {
                 getCamelContext().getRouteController().startRoute(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID);
                 getProducerTemplate().sendBodyAndHeader(RecapConstants.FTP_SERIAL_MVM_REPORT_Q, matchingSerialAndMvmReports, RecapConstants.FILE_NAME, RecapConstants.MATCHING_SERIAL_MVM_REPORT);
             } catch (Exception e) {
-                getLogger().error(RecapConstants.EXCEPTION_TEXT + " : {0}", e);
+                getLogger().error(RecapConstants.EXCEPTION_TEXT + RecapConstants.LOGGER_MSG, e);
             }
         }
     }
@@ -279,7 +280,7 @@ public class OngoingMatchingReportsService {
                 }
             }
         }catch (Exception e) {
-            getLogger().error(RecapConstants.EXCEPTION_TEXT + " : {0}", e);
+            getLogger().error(RecapConstants.EXCEPTION_TEXT + RecapConstants.LOGGER_MSG, e);
         }
         return matchingSerialAndMVMReportsList;
     }
@@ -289,24 +290,14 @@ public class OngoingMatchingReportsService {
      *
      * @return the list
      */
-    public List<MatchingSummaryReport> populateSummaryReport() {
+    public List<MatchingSummaryReport> populateSummaryReportBeforeMatching() {
         List<MatchingSummaryReport> matchingSummaryReports = new ArrayList<>();
-        Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().findByInstitutionCodeNotIn(Collections.singletonList("HTC"));
-        for (Iterator<InstitutionEntity> iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
-            InstitutionEntity institutionEntity = iterator.next();
-            String institutionCode = institutionEntity.getInstitutionCode();
+        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+        for (String institutionCode : allInstitutionCodeExceptHTC) {
             MatchingSummaryReport matchingSummaryReport = new MatchingSummaryReport();
             matchingSummaryReport.setInstitution(institutionCode);
-            if(institutionCode.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
-                matchingSummaryReport.setOpenItemsBeforeMatching(String.valueOf(MatchingCounter.getPulOpenCount()));
-                matchingSummaryReport.setSharedItemsBeforeMatching(String.valueOf(MatchingCounter.getPulSharedCount()));
-            } else if(institutionCode.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
-                matchingSummaryReport.setSharedItemsBeforeMatching(String.valueOf(MatchingCounter.getCulSharedCount()));
-                matchingSummaryReport.setOpenItemsBeforeMatching(String.valueOf(MatchingCounter.getCulOpenCount()));
-            } else if(institutionCode.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
-                matchingSummaryReport.setOpenItemsBeforeMatching(String.valueOf(MatchingCounter.getNyplOpenCount()));
-                matchingSummaryReport.setSharedItemsBeforeMatching(String.valueOf(MatchingCounter.getNyplSharedCount()));
-            }
+            matchingSummaryReport.setOpenItemsBeforeMatching(String.valueOf(OngoingMatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_OPEN)));
+            matchingSummaryReport.setSharedItemsBeforeMatching(String.valueOf(OngoingMatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED)));
             matchingSummaryReports.add(matchingSummaryReport);
         }
         return matchingSummaryReports;
@@ -331,7 +322,7 @@ public class OngoingMatchingReportsService {
             bibCount = Math.toIntExact(queryResponseForBib.getResults().getNumFound());
             itemCount = Math.toIntExact(queryResponseForItem.getResults().getNumFound());
         } catch (Exception e) {
-            getLogger().error(RecapConstants.EXCEPTION_TEXT + " : {0}", e);
+            getLogger().error(RecapConstants.EXCEPTION_TEXT + RecapConstants.LOGGER_MSG, e);
         }
         try {
             for(MatchingSummaryReport matchingSummaryReport : matchingSummaryReports) {
@@ -339,15 +330,12 @@ public class OngoingMatchingReportsService {
                 matchingSummaryReport.setTotalItems(String.valueOf(itemCount));
                 String openItemsAfterMatching = "";
                 String sharedItemsAfterMatching = "";
-                if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
-                    openItemsAfterMatching = String.valueOf(MatchingCounter.getPulOpenCount());
-                    sharedItemsAfterMatching = String.valueOf(MatchingCounter.getPulSharedCount());
-                } else if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
-                    openItemsAfterMatching = String.valueOf(MatchingCounter.getCulOpenCount());
-                    sharedItemsAfterMatching = String.valueOf(MatchingCounter.getCulSharedCount());
-                } else if(matchingSummaryReport.getInstitution().equalsIgnoreCase(RecapCommonConstants.NYPL)) {
-                    openItemsAfterMatching = String.valueOf(MatchingCounter.getNyplOpenCount());
-                    sharedItemsAfterMatching = String.valueOf(MatchingCounter.getNyplSharedCount());
+                List<String> institutions = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+                for (String institution : institutions) {
+                    if (matchingSummaryReport.getInstitution().equalsIgnoreCase(institution)) {
+                        openItemsAfterMatching = String.valueOf(OngoingMatchingCounter.getSpecificInstitutionCounterMap(institution).get(MATCHING_COUNTER_OPEN));
+                        sharedItemsAfterMatching = String.valueOf(OngoingMatchingCounter.getSpecificInstitutionCounterMap(institution).get(MATCHING_COUNTER_SHARED));
+                    }
                 }
                 String openItemsDiff = String.valueOf(Integer.valueOf(openItemsAfterMatching) - Integer.valueOf(matchingSummaryReport.getOpenItemsBeforeMatching()));
                 String sharedItemsDiff = String.valueOf(Integer.valueOf(sharedItemsAfterMatching) - Integer.valueOf(matchingSummaryReport.getSharedItemsBeforeMatching()));
@@ -359,7 +347,7 @@ public class OngoingMatchingReportsService {
             getCamelContext().getRouteController().startRoute(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID);
             getProducerTemplate().sendBodyAndHeader(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_Q, matchingSummaryReports, RecapConstants.FILE_NAME, RecapConstants.MATCHING_SUMMARY_REPORT);
         } catch (Exception e) {
-            getLogger().error(RecapConstants.EXCEPTION_TEXT + " : {0}", e);
+            getLogger().error(RecapConstants.EXCEPTION_TEXT + RecapConstants.LOGGER_MSG, e);
         }
     }
 }
