@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -43,8 +44,10 @@ public class MatchingAlgorithmProcessor {
      *
      * @param matchingMatchPointsEntities the matching match points entities
      */
+    @Transactional
     public void saveMatchingMatchPointEntity(List<MatchingMatchPointsEntity> matchingMatchPointsEntities){
         matchingMatchPointsDetailsRepository.saveAll(matchingMatchPointsEntities);
+        matchingMatchPointsDetailsRepository.flush();
     }
 
     /**
@@ -52,14 +55,17 @@ public class MatchingAlgorithmProcessor {
      *
      * @param matchingBibEntities the matching bib entities
      */
+    @Transactional
     public void saveMatchingBibEntity(List<MatchingBibEntity> matchingBibEntities){
         try {
             matchingBibDetailsRepository.saveAll(matchingBibEntities);
+            matchingBibDetailsRepository.flush();
         } catch (Exception ex) {
             logger.info("Exception : {0}",ex);
             for(MatchingBibEntity matchingBibEntity : matchingBibEntities) {
                 try {
                     matchingBibDetailsRepository.save(matchingBibEntity);
+                    matchingBibDetailsRepository.flush();
                 } catch (Exception e) {
                     logger.info("Exception for single Entity : " , e);
                     logger.info("ISBN : {}" , matchingBibEntity.getIsbn());
@@ -73,8 +79,10 @@ public class MatchingAlgorithmProcessor {
      *
      * @param reportEntityList the report entity list
      */
+    @Transactional
     public void saveMatchingReportEntity(List<ReportEntity> reportEntityList) {
         reportDetailRepository.saveAll(reportEntityList);
+        reportDetailRepository.flush();
     }
 
     /**
@@ -82,8 +90,10 @@ public class MatchingAlgorithmProcessor {
      *
      * @param itemEntities the item entities
      */
+    @Transactional
     public void updateItemEntity(List<ItemEntity> itemEntities) {
         itemDetailsRepository.saveAll(itemEntities);
+        itemDetailsRepository.flush();
     }
 
     /**
@@ -91,11 +101,13 @@ public class MatchingAlgorithmProcessor {
      *
      * @param matchingBibMap the matching bib map
      */
+    @Transactional
     public void updateMatchingBibEntity(Map matchingBibMap) {
         String status = (String) matchingBibMap.get(RecapCommonConstants.STATUS);
         List<Integer> matchingBibIds = (List<Integer>) matchingBibMap.get(RecapConstants.MATCHING_BIB_IDS);
         try {
             matchingBibDetailsRepository.updateStatusBasedOnBibs(status, matchingBibIds);
+            matchingBibDetailsRepository.flush();
         } catch (Exception e) {
             logger.info("Exception while updating matching Bib entity status : " , e);
         }

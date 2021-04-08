@@ -107,8 +107,8 @@ public class OngoingMatchingAlgorithmUtil {
      */
     public String fetchUpdatedRecordsAndStartProcess(Date date, Integer rows) throws IOException, SolrServerException {
         String status;
-        matchingAlgorithmUtil.populateMatchingCounter();
-        List<MatchingSummaryReport> matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReport();
+        matchingAlgorithmUtil.populateOngoingMatchingCounter();
+        List<MatchingSummaryReport> matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
         List<Integer> serialMvmBibIds = new ArrayList<>();
         String formattedDate = getFormattedDateString(date);
         Integer start = 0;
@@ -238,9 +238,9 @@ public class OngoingMatchingAlgorithmUtil {
         return matchPointString;
     }
 
-    private void addToBibItemMap(SolrDocument solrDocument, Map<Integer, BibItem> bibItemMap, Set<String> matchPointString, String oclcNumber) {
+    private void addToBibItemMap(SolrDocument solrDocument, Map<Integer, BibItem> bibItemMap, Set<String> matchPointString, String matchPointField) {
         Map<Integer, BibItem> tempMap;
-        tempMap = findMatchingBibs(solrDocument, matchPointString, oclcNumber);
+        tempMap = findMatchingBibs(solrDocument, matchPointString, matchPointField);
         if (tempMap != null && tempMap.size() > 0)
             bibItemMap.putAll(tempMap);
     }
