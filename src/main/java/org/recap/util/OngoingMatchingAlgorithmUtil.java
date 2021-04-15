@@ -13,17 +13,17 @@ import org.recap.RecapConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.matchingalgorithm.service.OngoingMatchingReportsService;
 import org.recap.model.jpa.CollectionGroupEntity;
-import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.matchingreports.MatchingSummaryReport;
-import org.recap.model.jpa.ReportEntity;
+import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
+import org.recap.model.jpa.ReportEntity;
+import org.recap.model.matchingreports.MatchingSummaryReport;
 import org.recap.model.solr.BibItem;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
+import org.recap.repository.jpa.ItemDetailsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,15 +36,15 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -107,7 +107,7 @@ public class OngoingMatchingAlgorithmUtil {
      */
     public String fetchUpdatedRecordsAndStartProcess(Date date, Integer rows) throws IOException, SolrServerException {
         String status;
-        matchingAlgorithmUtil.populateOngoingMatchingCounter();
+        matchingAlgorithmUtil.populateMatchingCounter();
         List<MatchingSummaryReport> matchingSummaryReports = ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
         List<Integer> serialMvmBibIds = new ArrayList<>();
         String formattedDate = getFormattedDateString(date);
@@ -455,7 +455,7 @@ public class OngoingMatchingAlgorithmUtil {
         List<String> materialTypeList = (List<String>) parameterMap.get(RecapConstants.MATERIAL_TYPE);
         List<Integer> bibIdList = (List<Integer>) parameterMap.get(RecapCommonConstants.BIB_ID);
         MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate,
-                getCollectionGroupMap(), getInstitutionEntityMap(), itemChangeLogDetailsRepository, RecapConstants.ONGOING_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository);
+                getCollectionGroupMap(), getInstitutionEntityMap(), itemChangeLogDetailsRepository, RecapConstants.ONGOING_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository, institutionDetailsRepository);
         if(materialTypes.size() == 1) {
             reportEntity.setType(matchType);
             Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap = new HashMap<>();

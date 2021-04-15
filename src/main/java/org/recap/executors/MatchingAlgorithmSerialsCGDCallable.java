@@ -8,6 +8,7 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
@@ -33,10 +34,11 @@ public class MatchingAlgorithmSerialsCGDCallable implements Callable {
     private ItemChangeLogDetailsRepository itemChangeLogDetailsRepository;
     private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
     private ItemDetailsRepository itemDetailsRepository;
+    private InstitutionDetailsRepository institutionDetailsRepository;
 
     public MatchingAlgorithmSerialsCGDCallable(ReportDataDetailsRepository reportDataDetailsRepository, BibliographicDetailsRepository bibliographicDetailsRepository, int pageNum, Integer batchSize,
                                                ProducerTemplate producerTemplate, Map collectionGroupMap, Map institutionMap, ItemChangeLogDetailsRepository itemChangeLogDetailsRepository,
-                                               CollectionGroupDetailsRepository collectionGroupDetailsRepository, ItemDetailsRepository itemDetailsRepository) {
+                                               CollectionGroupDetailsRepository collectionGroupDetailsRepository, ItemDetailsRepository itemDetailsRepository,InstitutionDetailsRepository institutionDetailsRepository) {
         this.reportDataDetailsRepository = reportDataDetailsRepository;
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
         this.pageNum = pageNum;
@@ -47,6 +49,7 @@ public class MatchingAlgorithmSerialsCGDCallable implements Callable {
         this.itemChangeLogDetailsRepository = itemChangeLogDetailsRepository;
         this.collectionGroupDetailsRepository = collectionGroupDetailsRepository;
         this.itemDetailsRepository = itemDetailsRepository;
+        this.institutionDetailsRepository = institutionDetailsRepository;
     }
 
     @Override
@@ -59,11 +62,13 @@ public class MatchingAlgorithmSerialsCGDCallable implements Callable {
             String[] bibIds = bibId.split(",");
             List<Integer> bibIdList = new ArrayList<>();
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
-                    institutionMap, itemChangeLogDetailsRepository, RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository);
+                    institutionMap, itemChangeLogDetailsRepository, RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository, institutionDetailsRepository);
             for (String id : bibIds) {
                 bibIdList.add(Integer.valueOf(id));
             }
+            // get from db
             matchingAlgorithmCGDProcessor.populateItemEntityMap(itemEntityMap, bibIdList);
+            //save in db
             matchingAlgorithmCGDProcessor.updateItemsCGD(itemEntityMap);
         }
         return null;

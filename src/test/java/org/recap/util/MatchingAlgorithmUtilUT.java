@@ -28,7 +28,6 @@ import org.recap.model.jpa.ReportEntity;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
 import org.recap.repository.jpa.ReportDetailRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -93,7 +92,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
         matchingBibEntities.addAll(Arrays.asList(getMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN,1,"PUL","Middleware for ReCAP"),getMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN,2,"CUL","Middleware for ReCAP"),getMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN,3,"NYPL","Middleware for ReCAP")));
         Mockito.when(matchingBibDetailsRepository.getSingleMatchBibIdsBasedOnMatching(Mockito.anyString())).thenReturn(bibIds);
         Mockito.when(matchingBibDetailsRepository.getBibEntityBasedOnBibIds(Mockito.anyList())).thenReturn(matchingBibEntities);
-        Map countsMap= mockMatchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1,RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
+        Map countsMap= mockMatchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1,RecapCommonConstants.MATCH_POINT_FIELD_ISBN, getStringIntegerMap());
         assertNotNull(countsMap);
     }
 
@@ -154,7 +153,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
         bibIdSet.addAll(bibIds);
         Map<Integer, MatchingBibEntity> matchingBibEntityMap = getIntegerMatchingBibEntityMap();
         Map countsMap= mockMatchingAlgorithmUtil.populateAndSaveReportEntity(bibIdSet,matchingBibEntityMap, RecapCommonConstants.OCLC_CRITERIA, RecapCommonConstants.MATCH_POINT_FIELD_ISBN,
-               "2939384", "883939");
+               "2939384", "883939",getStringIntegerMap());
         assertNotNull(countsMap);
     }
 
@@ -196,9 +195,17 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
             bibIdSet.addAll(bibIds);
             List<MatchingBibEntity> matchingBibEntities = new ArrayList<>();
             matchingBibEntities.addAll(Arrays.asList(getMatchingBibEntity(re, 1, "PUL", "Middleware for ReCAP"), getMatchingBibEntity(re, 2, "CUL", "Middleware for ReCAP"), getMatchingBibEntity(re, 3, "NYPL", "Middleware for ReCAP")));
-            Map countsMap = mockMatchingAlgorithmUtil.processPendingMatchingBibs(matchingBibEntities, bibIdSet);
+            Map countsMap = mockMatchingAlgorithmUtil.processPendingMatchingBibs(matchingBibEntities, bibIdSet, getStringIntegerMap());
             assertNotNull(countsMap);
         }
+    }
+
+    private Map<String, Integer> getStringIntegerMap() {
+        Map<String, Integer> matchingAlgoMap = new HashMap<>();
+        matchingAlgoMap.put("pulMatchingCount", 1);
+        matchingAlgoMap.put("culMatchingCount", 2);
+        matchingAlgoMap.put("nyplMatchingCount", 3);
+        return matchingAlgoMap;
     }
 
     private SolrDocumentList getSolrDocuments() {

@@ -7,10 +7,12 @@ import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
+import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemChangeLogEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 
@@ -23,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -38,11 +41,11 @@ public class MatchingAlgorithmCGDProcessor {
     private String matchingType;
     private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
     private ItemDetailsRepository itemDetailsRepository;
+    private InstitutionDetailsRepository institutionDetailsRepository;
 
     /**
      * This method instantiates a new matching algorithm cgd processor.
-     *
-     * @param bibliographicDetailsRepository   the bibliographic details repository
+     *  @param bibliographicDetailsRepository   the bibliographic details repository
      * @param producerTemplate                 the producer template
      * @param collectionGroupMap               the collection group map
      * @param institutionMap                   the institution map
@@ -50,10 +53,11 @@ public class MatchingAlgorithmCGDProcessor {
      * @param matchingType                     the matching type
      * @param collectionGroupDetailsRepository the collection group details repository
      * @param itemDetailsRepository            the item details repository
+     * @param institutionDetailsRepository
      */
     public MatchingAlgorithmCGDProcessor(BibliographicDetailsRepository bibliographicDetailsRepository, ProducerTemplate producerTemplate, Map collectionGroupMap, Map institutionMap,
                                          ItemChangeLogDetailsRepository itemChangeLogDetailsRepository, String matchingType, CollectionGroupDetailsRepository collectionGroupDetailsRepository,
-                                         ItemDetailsRepository itemDetailsRepository) {
+                                         ItemDetailsRepository itemDetailsRepository, InstitutionDetailsRepository institutionDetailsRepository) {
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
         this.producerTemplate = producerTemplate;
         this.collectionGroupMap = collectionGroupMap;
@@ -62,6 +66,7 @@ public class MatchingAlgorithmCGDProcessor {
         this.matchingType = matchingType;
         this.collectionGroupDetailsRepository = collectionGroupDetailsRepository;
         this.itemDetailsRepository = itemDetailsRepository;
+        this.institutionDetailsRepository=institutionDetailsRepository;
     }
 
     /**
@@ -107,12 +112,7 @@ public class MatchingAlgorithmCGDProcessor {
         ItemEntity itemEntityToBeShared = getItemToBeSharedBasedOnInitialMatchingDate(itemEntities);
         if(itemEntityToBeShared != null) {
             itemEntityMap.remove(itemEntityToBeShared.getId());
-            if(matchingType.equalsIgnoreCase(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE)){
-                MatchingCounter.updateCounter(itemEntityToBeShared.getOwningInstitutionId(), false);
-            }
-            else{
-                OngoingMatchingCounter.updateCGDCounter(itemEntityToBeShared.getInstitutionEntity().getInstitutionCode(),false);
-            }
+            MatchingCounter.updateCGDCounter(itemEntityToBeShared.getInstitutionEntity().getInstitutionCode(),false);
         } else {
             itemEntities.sort(Comparator.comparing(ItemEntity::getCreatedDate, Comparator.naturalOrder()));
             findAndremoveSharedItem(itemEntityMap, itemEntities);
@@ -144,12 +144,7 @@ public class MatchingAlgorithmCGDProcessor {
         for (Iterator<ItemEntity> iterator = itemEntityMap.values().iterator(); iterator.hasNext(); ) {
             // Items which needs to be changed to open status
             ItemEntity itemEntity = iterator.next();
-            if(matchingType.equalsIgnoreCase(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE)){
-                MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), true);
-            }
-            else{
-                OngoingMatchingCounter.updateCGDCounter(itemEntity.getInstitutionEntity().getInstitutionCode(),true);
-            }
+            MatchingCounter.updateCGDCounter(itemEntity.getInstitutionEntity().getInstitutionCode(),true);
             Integer oldCgd = itemEntity.getCollectionGroupId();
             itemEntity.setLastUpdatedDate(new Date());
             itemEntity.setCollectionGroupId(collectionGroupId);
@@ -363,35 +358,31 @@ public class MatchingAlgorithmCGDProcessor {
         ItemEntity itemEntity = itemEntities.get(0);
         itemEntityMap.remove(itemEntity.getId());
         if(matchingType.equalsIgnoreCase(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE)) {
-            MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), false);
+            MatchingCounter.updateCGDCounter(itemEntity.getInstitutionEntity().getInstitutionCode(),false);
             itemEntity.setInitialMatchingDate(new Date());
             producerTemplate.sendBody("scsbactivemq:queue:updateItemsQ", itemEntity);
         }
         else{
-            OngoingMatchingCounter.updateCGDCounter(itemEntity.getInstitutionEntity().getInstitutionCode(),false);
+            MatchingCounter.updateCGDCounter(itemEntity.getInstitutionEntity().getInstitutionCode(),false);
         }
     }
 
     private void populateCounterMap(Map<Integer, List<Integer>> counterMap, Integer institution) {
-        Integer counter = getCounterForGivenInst(institution);
-        if(counterMap.containsKey(counter)) {
-            List<Integer> institutions = new ArrayList<>(counterMap.get(counter));
-            institutions.add(institution);
-            counterMap.put(counter, institutions);
-        } else {
-            counterMap.put(counter, Arrays.asList(institution));
+        Optional<InstitutionEntity> institutionEntity = institutionDetailsRepository.findById(institution);
+        if(institutionEntity.isPresent()) {
+            Integer counter = getCounterForGivenInst(institutionEntity.get().getInstitutionCode());
+            if(counterMap.containsKey(counter)) {
+                List<Integer> institutions = new ArrayList<>(counterMap.get(counter));
+                institutions.add(institution);
+                counterMap.put(counter, institutions);
+            } else {
+                counterMap.put(counter, Arrays.asList(institution));
+            }
         }
     }
 
-    private Integer getCounterForGivenInst(Integer institution) {
-        if(institution == 1) {
-            return MatchingCounter.getPulSharedCount();
-        } else if(institution == 2) {
-            return MatchingCounter.getCulSharedCount();
-        } else if(institution == 3) {
-            return MatchingCounter.getNyplSharedCount();
-        }
-        return null;
+    private Integer getCounterForGivenInst(String institution) {
+        return MatchingCounter.getSpecificInstitutionCounterMap(institution).get(RecapConstants.MATCHING_COUNTER_SHARED);
     }
 
     private Integer getUseRestrictionInNumbers(String useRestrictions) {

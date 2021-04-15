@@ -24,6 +24,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+import static org.recap.RecapConstants.MATCHING_COUNTER_SHARED;
+
 /**
  * Created by angelind on 11/1/17.
  */
@@ -117,7 +119,6 @@ public class MatchingAlgorithmUpdateCGDService {
      */
     public void updateCGDProcessForMonographs(Integer batchSize) throws IOException, SolrServerException, InterruptedException {
         getLogger().info("Start CGD Process For Monographs.");
-
         getMatchingAlgorithmUtil().populateMatchingCounter();
         ExecutorService executor = getExecutorService(50);
 
@@ -125,10 +126,10 @@ public class MatchingAlgorithmUpdateCGDService {
         Integer updateItemsQ = getUpdatedItemsQ();
         processCallablesForMonographs(batchSize, executor, true);
         getMatchingAlgorithmUtil().saveCGDUpdatedSummaryReport(RecapConstants.MATCHING_SUMMARY_MONOGRAPH);
-
-        logger.info("PUL Final Counter Value:{} " , MatchingCounter.getPulSharedCount());
-        logger.info("CUL Final Counter Value: {}" , MatchingCounter.getCulSharedCount());
-        logger.info("NYPL Final Counter Value: {}" , MatchingCounter.getNyplSharedCount());
+        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+        for (String institutionCode : allInstitutionCodeExceptHTC) {
+            logger.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
+        }
 
         while (updateItemsQ != 0) {
             Thread.sleep(10000);
@@ -161,7 +162,7 @@ public class MatchingAlgorithmUpdateCGDService {
         logger.info(RecapConstants.TOTAL_PAGES + "{}" , totalPagesCount);
         for(int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
             Callable callable = new MatchingAlgorithmMonographCGDCallable(getReportDataDetailsRepository(), getBibliographicDetailsRepository(), pageNum, batchSize, getProducerTemplate(),
-                    getCollectionGroupMap(), getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),isPendingMatch);
+                    getCollectionGroupMap(), getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),isPendingMatch,getInstitutionDetailsRepository());
             callables.add(callable);
         }
         Map<String, List<Integer>> unProcessedRecordNumberMap = executeCallables(executor, callables);
@@ -183,9 +184,7 @@ public class MatchingAlgorithmUpdateCGDService {
      */
     public void updateCGDProcessForSerials(Integer batchSize) throws IOException, SolrServerException, InterruptedException {
         logger.info("Start CGD Process For Serials.");
-
         getMatchingAlgorithmUtil().populateMatchingCounter();
-
         ExecutorService executor = getExecutorService(50);
         List<Callable<Integer>> callables = new ArrayList<>();
         long countOfRecordNum = getReportDataDetailsRepository().getCountOfRecordNumForMatchingSerials(RecapCommonConstants.BIB_ID);
@@ -194,7 +193,7 @@ public class MatchingAlgorithmUpdateCGDService {
         logger.info(RecapConstants.TOTAL_PAGES + "{}" , totalPagesCount);
         for(int pageNum=0; pageNum < totalPagesCount + 1; pageNum++) {
             Callable callable = new MatchingAlgorithmSerialsCGDCallable(getReportDataDetailsRepository(), getBibliographicDetailsRepository(), pageNum, batchSize, getProducerTemplate(), getCollectionGroupMap(),
-                    getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository());
+                    getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),institutionDetailsRepository);
             callables.add(callable);
         }
         setCGDUpdateSummaryReport(executor, callables, RecapConstants.MATCHING_SUMMARY_SERIAL);
@@ -220,7 +219,7 @@ public class MatchingAlgorithmUpdateCGDService {
         logger.info(RecapConstants.TOTAL_PAGES + "{}" , totalPagesCount);
         for(int pageNum=0; pageNum < totalPagesCount + 1; pageNum++) {
             Callable callable = new MatchingAlgorithmMVMsCGDCallable(getReportDataDetailsRepository(), getBibliographicDetailsRepository(), pageNum, batchSize, getProducerTemplate(), getCollectionGroupMap(),
-                    getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository());
+                    getInstitutionEntityMap(), getItemChangeLogDetailsRepository(), getCollectionGroupDetailsRepository(), getItemDetailsRepository(),institutionDetailsRepository);
             callables.add(callable);
         }
         setCGDUpdateSummaryReport(executor, callables, RecapConstants.MATCHING_SUMMARY_MVM);
@@ -323,7 +322,7 @@ public class MatchingAlgorithmUpdateCGDService {
         for(BibliographicEntity bibliographicEntity : bibliographicEntities) {
             for(ItemEntity itemEntity : bibliographicEntity.getItemEntities()) {
                 if(itemEntity.getCollectionGroupId().equals(getCollectionGroupMap().get(RecapCommonConstants.SHARED_CGD))) {
-                    MatchingCounter.updateCounter(itemEntity.getOwningInstitutionId(), false);
+                    MatchingCounter.updateCGDCounter(itemEntity.getInstitutionEntity().getInstitutionCode(),false);
                 }
             }
         }
@@ -366,9 +365,10 @@ public class MatchingAlgorithmUpdateCGDService {
     private void setCGDUpdateSummaryReport(ExecutorService executor, List<Callable<Integer>> callables, String reportName) throws InterruptedException {
         getFutures(executor, callables);
         getMatchingAlgorithmUtil().saveCGDUpdatedSummaryReport(reportName);
-        logger.info("PUL Final Counter Value:{} " , MatchingCounter.getPulSharedCount());
-        logger.info("CUL Final Counter Value: {}" , MatchingCounter.getCulSharedCount());
-        logger.info("NYPL Final Counter Value: {}" , MatchingCounter.getNyplSharedCount());
+        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+        for (String institutionCode : allInstitutionCodeExceptHTC) {
+            logger.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
+        }
         getUpdatedItemsQ();
         executor.shutdown();
 

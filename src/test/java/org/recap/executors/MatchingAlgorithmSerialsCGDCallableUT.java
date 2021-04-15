@@ -17,6 +17,7 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
@@ -62,6 +63,8 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT {
     Integer batchSize = 10;
     BibliographicEntity bibliographicEntity = null;
     int collectionGroupId = 0;
+    @Mock
+    private InstitutionDetailsRepository institutionDetailsRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -79,9 +82,8 @@ public class MatchingAlgorithmSerialsCGDCallableUT extends BaseTestCaseUT {
     @Test
     public void testMatchingAlgorithmSerialsCGDCallable() throws Exception {
         Map institutionMap = new HashMap();
-
         MatchingAlgorithmSerialsCGDCallable matchingAlgorithmSerialsCGDCallable = new MatchingAlgorithmSerialsCGDCallable(reportDataDetailsRepository,mockedBibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository);
+                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,institutionDetailsRepository);
         Object object = matchingAlgorithmSerialsCGDCallable.call();
         assertEquals(1,collectionGroupId);
         BibliographicEntity afterUpdate = mockedBibliographicDetailsRepository.findById(bibliographicEntity.getId()).orElse(null);

@@ -17,6 +17,7 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
@@ -61,7 +62,8 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCaseUT {
     Integer batchSize = 10;
     BibliographicEntity bibliographicEntity = null;
     int collectionGroupId = 0;
-
+    @Mock
+    InstitutionDetailsRepository institutionDetailsRepository;
 
 
     public MatchingAlgorithmMVMsCGDCallableUT() throws Exception {
@@ -92,7 +94,7 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCaseUT {
     public void testMatchingAlgorithmMVMsCGDCallable() throws Exception {
         Map institutionMap = new HashMap();
         MatchingAlgorithmMVMsCGDCallable matchingAlgorithmMVMsCGDCallable = new MatchingAlgorithmMVMsCGDCallable(reportDataDetailsRepository, mockedBibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository);
+                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,institutionDetailsRepository);
         Object object = matchingAlgorithmMVMsCGDCallable.call();
         assertEquals(1,collectionGroupId);
         BibliographicEntity afterUpdate = mockedBibliographicDetailsRepository.findById(bibliographicEntity.getId()).orElse(null);
