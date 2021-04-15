@@ -16,6 +16,7 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
@@ -39,6 +40,9 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
     private ReportDataDetailsRepository reportDataDetailsRepository;
     @Mock
     private BibliographicDetailsRepository bibliographicDetailsRepository;
+
+    @Mock
+    private InstitutionDetailsRepository institutionDetailsRepository;
     @Mock
     private ItemChangeLogDetailsRepository itemChangeLogDetailsRepository;
     @Mock
@@ -67,7 +71,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
         Map collectionGroupMap = new HashMap();
         Map institutionMap = new HashMap();
         MatchingAlgorithmMonographCGDCallable matchingAlgorithmMonographCGDCallable = new MatchingAlgorithmMonographCGDCallable(reportDataDetailsRepository,bibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                                                                                        collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true);
+                                                                                        collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true, institutionDetailsRepository);
         Object object = matchingAlgorithmMonographCGDCallable.call();
         assertNotNull(object);
     }
@@ -79,7 +83,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
         institutionMap.put("NYPL",3);
         Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
         MatchingAlgorithmMonographCGDCallable matchingAlgorithmMonographCGDCallable = new MatchingAlgorithmMonographCGDCallable(reportDataDetailsRepository,bibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true);
+                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true, institutionDetailsRepository);
         Object object = matchingAlgorithmMonographCGDCallable.call();
         assertNotNull(object);
     }
@@ -92,7 +96,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
         institutionMap.put("NYPL",3);
         Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
         MatchingAlgorithmMonographCGDCallable matchingAlgorithmMonographCGDCallable = new MatchingAlgorithmMonographCGDCallable(reportDataDetailsRepository,bibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true);
+                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,true, institutionDetailsRepository);
         Object object = matchingAlgorithmMonographCGDCallable.call();
         assertNotNull(object);
     }
@@ -103,7 +107,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
         Map institutionMap = new HashMap();
 
         MatchingAlgorithmMonographCGDCallable matchingAlgorithmMonographCGDCallable = new MatchingAlgorithmMonographCGDCallable(reportDataDetailsRepository,bibliographicDetailsRepository,pageNum,batchSize,producerTemplate,
-                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,false);
+                collectionGroupMap,institutionMap,itemChangeLogDetailsRepository,collectionGroupDetailsRepository,itemDetailsRepository,false, institutionDetailsRepository);
         Object object = matchingAlgorithmMonographCGDCallable.call();
         assertNotNull(object);
     }

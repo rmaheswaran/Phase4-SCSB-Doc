@@ -13,7 +13,6 @@ import org.apache.solr.common.SolrDocumentList;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.matchingalgorithm.MatchingCounter;
-import org.recap.matchingalgorithm.OngoingMatchingCounter;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.jpa.ReportDataEntity;
@@ -34,19 +33,21 @@ import org.springframework.util.StopWatch;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.Normalizer;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.recap.RecapConstants.MATCHING_COUNTER_OPEN;
 import static org.recap.RecapConstants.MATCHING_COUNTER_SHARED;
+import static org.recap.RecapConstants.MATCHING_COUNTER_UPDATED_OPEN;
+import static org.recap.RecapConstants.MATCHING_COUNTER_UPDATED_SHARED;
 
 /**
  * Created by angelind on 4/11/16.
@@ -55,9 +56,6 @@ import static org.recap.RecapConstants.MATCHING_COUNTER_SHARED;
 public class MatchingAlgorithmUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchingAlgorithmUtil.class);
-    private String pulMatchingCountStr = "pulMatchingCount";
-    private String culMatchingCountStr = "culMatchingCount";
-    private String nyplMatchingCountStr = "nyplMatchingCount";
 
     @Autowired
     private ProducerTemplate producerTemplate;
@@ -104,14 +102,12 @@ public class MatchingAlgorithmUtil {
      *
      * @param batchSize the batch size
      * @param matching  the matching
+     * @param institutionCounterMap
      * @return the single match bibs and save report
      */
-    public Map<String,Integer> getSingleMatchBibsAndSaveReport(Integer batchSize, String matching) {
+    public Map<String,Integer> getSingleMatchBibsAndSaveReport(Integer batchSize, String matching, Map<String, Integer> institutionCounterMap) {
         Map<String, Set<Integer>> criteriaMap = new HashMap<>();
         Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
-        Integer pulMatchingCount = 0;
-        Integer culMatchingCount = 0;
-        Integer nyplMatchingCount = 0;
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         List<Integer> singleMatchBibIdsBasedOnMatching = matchingBibDetailsRepository.getSingleMatchBibIdsBasedOnMatching(matching);
@@ -119,13 +115,13 @@ public class MatchingAlgorithmUtil {
         logger.info("Time taken to fetch {} from db : {} ",matching,stopWatch.getTotalTimeSeconds());
         logger.info("Total {}  : {} " ,matching ,singleMatchBibIdsBasedOnMatching.size());
 
-        if(org.apache.commons.collections.CollectionUtils.isNotEmpty(singleMatchBibIdsBasedOnMatching)) {
+        if(CollectionUtils.isNotEmpty(singleMatchBibIdsBasedOnMatching)) {
             List<List<Integer>> bibIdLists = Lists.partition(singleMatchBibIdsBasedOnMatching, batchSize);
             logger.info("Total {} list : {} ",matching, bibIdLists.size());
             for (Iterator<List<Integer>> iterator = bibIdLists.iterator(); iterator.hasNext(); ) {
                 List<Integer> bibIds = iterator.next();
                 List<MatchingBibEntity> matchingBibEntities = matchingBibDetailsRepository.getBibEntityBasedOnBibIds(bibIds);
-                if(org.apache.commons.collections.CollectionUtils.isNotEmpty(matchingBibEntities)) {
+                if(CollectionUtils.isNotEmpty(matchingBibEntities)) {
                     for (Iterator<MatchingBibEntity> matchingBibEntityIterator = matchingBibEntities.iterator(); matchingBibEntityIterator.hasNext(); ) {
                         MatchingBibEntity matchingBibEntity = matchingBibEntityIterator.next();
                         Integer bibId = matchingBibEntity.getBibId();
@@ -153,19 +149,11 @@ public class MatchingAlgorithmUtil {
                         tempBibIds.addAll(getBibIdsForCriteriaValue(criteriaMap, criteriaValueSet, criteriaValue, matching, criteriaValueList, bibEntityMap, matchPointValue));
                     }
                     List<Integer> tempBibIdList = new ArrayList<>(tempBibIds);
-                    Map<String, Integer> countsMap = saveReportForSingleMatch(matchPointValue.toString(), tempBibIdList, matching, bibEntityMap, false);
-                    pulMatchingCount = pulMatchingCount + countsMap.get(pulMatchingCountStr);
-                    culMatchingCount = culMatchingCount + countsMap.get(culMatchingCountStr);
-                    nyplMatchingCount = nyplMatchingCount + countsMap.get(nyplMatchingCountStr);
+                    saveReportForSingleMatch(matchPointValue.toString(), tempBibIdList, matching, bibEntityMap, false,institutionCounterMap);
                 }
             }
         }
-
-        Map countsMap = new HashMap();
-        countsMap.put(pulMatchingCountStr, pulMatchingCount);
-        countsMap.put(culMatchingCountStr, culMatchingCount);
-        countsMap.put(nyplMatchingCountStr, nyplMatchingCount);
-        return countsMap;
+        return institutionCounterMap;
     }
 
     /**
@@ -173,13 +161,10 @@ public class MatchingAlgorithmUtil {
      *
      * @param matchingBibEntityList the matching bib entity list
      * @param matchingBibIds        the matching bib ids
+     * @param institutionCounterMap
      * @return the map
      */
-    public Map processPendingMatchingBibs(List<MatchingBibEntity> matchingBibEntityList, Set<Integer> matchingBibIds) {
-        Integer pulMatchingCount = 0;
-        Integer culMatchingCount = 0;
-        Integer nyplMatchingCount = 0;
-
+    public Map processPendingMatchingBibs(List<MatchingBibEntity> matchingBibEntityList, Set<Integer> matchingBibIds, Map<String, Integer> institutionCounterMap) {
         if(CollectionUtils.isNotEmpty(matchingBibEntityList)) {
             for(MatchingBibEntity matchingBibEntity : matchingBibEntityList) {
                 if(!matchingBibIds.contains(matchingBibEntity.getId())) {
@@ -209,20 +194,13 @@ public class MatchingAlgorithmUtil {
                             matchingBibEntityMap.put(bibEntity.getBibId(), bibEntity);
                             matchingBibIds.add(bibEntity.getId());
                         }
-                        Map<String, Integer> countsMap = saveReportForSingleMatch(matchPointValue, bibIds, matchingBibEntity.getMatching(), matchingBibEntityMap, true);
-                        pulMatchingCount = pulMatchingCount + countsMap.get(pulMatchingCountStr);
-                        culMatchingCount = culMatchingCount + countsMap.get(culMatchingCountStr);
-                        nyplMatchingCount = nyplMatchingCount + countsMap.get(nyplMatchingCountStr);
+                        saveReportForSingleMatch(matchPointValue, bibIds, matchingBibEntity.getMatching(), matchingBibEntityMap, true, institutionCounterMap);
                     }
                 }
             }
         }
 
-        Map countsMap = new HashMap();
-        countsMap.put(pulMatchingCountStr, pulMatchingCount);
-        countsMap.put(culMatchingCountStr, culMatchingCount);
-        countsMap.put(nyplMatchingCountStr, nyplMatchingCount);
-        return countsMap;
+        return institutionCounterMap;
     }
 
     private List<Integer> getBibsFromSolr(String query) {
@@ -308,9 +286,10 @@ public class MatchingAlgorithmUtil {
      * @param criteria             the criteria
      * @param matchingBibEntityMap the matching bib entity map
      * @param isPendingBibs        the is pending bibs
+     * @param institutionCounterMap
      * @return the map
      */
-    public Map<String, Integer> saveReportForSingleMatch(String criteriaValue, List<Integer> bibIdList, String criteria, Map<Integer, MatchingBibEntity> matchingBibEntityMap, boolean isPendingBibs) {
+    public Map<String, Integer> saveReportForSingleMatch(String criteriaValue, List<Integer> bibIdList, String criteria, Map<Integer, MatchingBibEntity> matchingBibEntityMap, boolean isPendingBibs, Map<String, Integer> institutionCounterMap) {
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         Set<String> owningInstSet = new HashSet<>();
         Set<String> materialTypeSet = new HashSet<>();
@@ -320,9 +299,7 @@ public class MatchingAlgorithmUtil {
         Map<String,String> titleMap = new HashMap<>();
         List<ReportEntity> reportEntitiesToSave = new ArrayList<>();
         List<String> owningInstBibIds = new ArrayList<>();
-        Integer pulMatchingCount = 0;
-        Integer culMatchingCount = 0;
-        Integer nyplMatchingCount = 0;
+
 
         int index=0;
         for (Iterator<Integer> iterator = bibIdList.iterator(); iterator.hasNext(); ) {
@@ -366,15 +343,7 @@ public class MatchingAlgorithmUtil {
                 reportEntity.setType(RecapConstants.MATERIAL_TYPE_EXCEPTION);
             } else {
                 reportEntity.setType(RecapConstants.SINGLE_MATCH);
-                for(String owningInst : owningInstList) {
-                    if(owningInst.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
-                        pulMatchingCount++;
-                    } else if(owningInst.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
-                        culMatchingCount++;
-                    } else if(owningInst.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
-                        nyplMatchingCount++;
-                    }
-                }
+                owningInstList.forEach(owningInst -> institutionCounterMap.replace(owningInst, +1));
             }
 
             getReportDataEntityList(reportDataEntities, owningInstList, bibIds, materialTypeList, owningInstBibIds);
@@ -393,11 +362,7 @@ public class MatchingAlgorithmUtil {
         if(CollectionUtils.isNotEmpty(reportEntitiesToSave)) {
             producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", reportEntitiesToSave);
         }
-        Map countsMap = new HashMap();
-        countsMap.put(pulMatchingCountStr, pulMatchingCount);
-        countsMap.put(culMatchingCountStr, culMatchingCount);
-        countsMap.put(nyplMatchingCountStr, nyplMatchingCount);
-        return countsMap;
+        return institutionCounterMap;
     }
 
     /**
@@ -610,7 +575,7 @@ public class MatchingAlgorithmUtil {
      * @param isbns        the isbns
      * @return the map
      */
-    public Map<String,Integer> populateAndSaveReportEntity(Set<Integer> bibIds, Map<Integer, MatchingBibEntity> bibEntityMap, String header1, String header2, String oclcNumbers, String isbns) {
+    public Map<String,Integer> populateAndSaveReportEntity(Set<Integer> bibIds, Map<Integer, MatchingBibEntity> bibEntityMap, String header1, String header2, String oclcNumbers, String isbns,Map<String, Integer> institutionCounterMap) {
         ReportEntity reportEntity = new ReportEntity();
         Set<String> owningInstSet = new HashSet<>();
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
@@ -622,9 +587,7 @@ public class MatchingAlgorithmUtil {
         List<String> materialTypeList = new ArrayList<>();
         Set<String> materialTypes = new HashSet<>();
         List<String> owningInstBibIds = new ArrayList<>();
-        Integer pulMatchingCount = 0;
-        Integer culMatchingCount = 0;
-        Integer nyplMatchingCount = 0;
+
 
         for (Iterator<Integer> integerIterator = bibIds.iterator(); integerIterator.hasNext(); ) {
             Integer bibId = integerIterator.next();
@@ -643,21 +606,10 @@ public class MatchingAlgorithmUtil {
         }
         if(owningInstSet.size() > 1) {
             getReportDataEntityList(reportDataEntities, owningInstList, bibIdList, materialTypeList, owningInstBibIds);
-
-            for(String owningInst : owningInstList) {
-                if(owningInst.equalsIgnoreCase(RecapCommonConstants.PRINCETON)) {
-                    pulMatchingCount++;
-                } else if(owningInst.equalsIgnoreCase(RecapCommonConstants.COLUMBIA)) {
-                    culMatchingCount++;
-                } else if(owningInst.equalsIgnoreCase(RecapCommonConstants.NYPL)) {
-                    nyplMatchingCount++;
-                }
-            }
-
+            owningInstList.forEach(owningInst -> institutionCounterMap.replace(owningInst, +1));
             if(StringUtils.isNotBlank(oclcNumbers)) {
                 getReportDataEntity(header1, oclcNumbers, reportDataEntities);
             }
-
             if(StringUtils.isNotBlank(isbns)) {
                 getReportDataEntity(header2, isbns, reportDataEntities);
             }
@@ -668,12 +620,7 @@ public class MatchingAlgorithmUtil {
             producerTemplate.sendBody("scsbactivemq:queue:updateMatchingBibEntityQ", matchingBibMap);
             producerTemplate.sendBody("scsbactivemq:queue:saveMatchingReportsQ", Arrays.asList(reportEntity));
         }
-
-        Map countsMap = new HashMap();
-        countsMap.put(pulMatchingCountStr, pulMatchingCount);
-        countsMap.put(culMatchingCountStr, culMatchingCount);
-        countsMap.put(nyplMatchingCountStr, nyplMatchingCount);
-        return countsMap;
+        return institutionCounterMap;
     }
 
     /**
@@ -908,36 +855,14 @@ public class MatchingAlgorithmUtil {
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName(RecapCommonConstants.ALL_INST);
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
-        getReportDataEntity("PULSharedCount", String.valueOf(MatchingCounter.getPulCGDUpdatedSharedCount()), reportDataEntities);
-        getReportDataEntity("CULSharedCount", String.valueOf(MatchingCounter.getCulCGDUpdatedSharedCount()), reportDataEntities);
-        getReportDataEntity("NYPLSharedCount", String.valueOf(MatchingCounter.getNyplCGDUpdatedSharedCount()), reportDataEntities);
-        getReportDataEntity("PULOpenCount", String.valueOf(MatchingCounter.getPulCGDUpdatedOpenCount()), reportDataEntities);
-        getReportDataEntity("CULOpenCount", String.valueOf(MatchingCounter.getCulCGDUpdatedOpenCount()), reportDataEntities);
-        getReportDataEntity("NYPLOpenCount", String.valueOf(MatchingCounter.getNyplCGDUpdatedOpenCount()), reportDataEntities);
+        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+        for (String institutionCode : allInstitutionCodeExceptHTC) {
+            logger.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
+            getReportDataEntity(institutionCode+"SharedCount", String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_UPDATED_SHARED)), reportDataEntities);
+            getReportDataEntity(institutionCode+"OpenCount", String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_UPDATED_OPEN)), reportDataEntities);
+        }
         reportEntity.addAll(reportDataEntities);
         getReportDetailRepository().save(reportEntity);
-    }
-
-    /**
-     * This method populates matching counter to process the CGD update in the matching algorithm.
-     *
-     * @throws IOException         the io exception
-     * @throws SolrServerException the solr server exception
-     */
-    public void populateMatchingCounter() throws IOException, SolrServerException {
-        MatchingCounter.reset();
-
-        MatchingCounter.setPulSharedCount(getCGDCountBasedOnInst(RecapCommonConstants.PRINCETON, RecapCommonConstants.SHARED_CGD));
-        MatchingCounter.setCulSharedCount(getCGDCountBasedOnInst(RecapCommonConstants.COLUMBIA, RecapCommonConstants.SHARED_CGD));
-        MatchingCounter.setNyplSharedCount(getCGDCountBasedOnInst(RecapCommonConstants.NYPL, RecapCommonConstants.SHARED_CGD));
-
-        MatchingCounter.setPulOpenCount(getCGDCountBasedOnInst(RecapCommonConstants.PRINCETON, RecapCommonConstants.REPORTS_OPEN));
-        MatchingCounter.setCulOpenCount(getCGDCountBasedOnInst(RecapCommonConstants.COLUMBIA, RecapCommonConstants.REPORTS_OPEN));
-        MatchingCounter.setNyplOpenCount(getCGDCountBasedOnInst(RecapCommonConstants.NYPL, RecapCommonConstants.REPORTS_OPEN));
-
-        logger.info("PUL Initial Counter Value: {}" , MatchingCounter.getPulSharedCount());
-        logger.info("CUL Initial Counter Value: {}" , MatchingCounter.getCulSharedCount());
-        logger.info("NYPL Initial Counter Value: {}" , MatchingCounter.getNyplSharedCount());
     }
 
     /**
@@ -946,17 +871,17 @@ public class MatchingAlgorithmUtil {
      * @throws IOException         the io exception
      * @throws SolrServerException the solr server exception
      */
-    public void populateOngoingMatchingCounter() throws IOException, SolrServerException {
+    public void populateMatchingCounter() throws IOException, SolrServerException {
         List<String> institutions = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
-        OngoingMatchingCounter ongoingMatchingCounter=new OngoingMatchingCounter(institutions);
-        OngoingMatchingCounter.reset();
+        MatchingCounter.setScsbInstitutions(institutions);
+        MatchingCounter.reset();
         for (String institution : institutions) {
-            synchronized (OngoingMatchingCounter.class) {
-                Map<String, Integer> specificInstitutionCounterMap = OngoingMatchingCounter.getSpecificInstitutionCounterMap(institution);
+            synchronized (MatchingCounter.class) {
+                Map<String, Integer> specificInstitutionCounterMap = MatchingCounter.getSpecificInstitutionCounterMap(institution);
                 specificInstitutionCounterMap.put(MATCHING_COUNTER_SHARED, getCGDCountBasedOnInst(institution, RecapConstants.SHARED));
                 specificInstitutionCounterMap.put(MATCHING_COUNTER_OPEN, getCGDCountBasedOnInst(institution, RecapConstants.OPEN));
                 logger.info("{} Initial Counter Value: {}",institution,specificInstitutionCounterMap.get(MATCHING_COUNTER_SHARED));
-                OngoingMatchingCounter.setSpecificInstitutionCounterMap(institution, specificInstitutionCounterMap);
+                MatchingCounter.setSpecificInstitutionCounterMap(institution, specificInstitutionCounterMap);
             }
         }
     }

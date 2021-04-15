@@ -11,7 +11,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
-import org.recap.matchingalgorithm.OngoingMatchingCounter;
+import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.model.matchingreports.MatchingSerialAndMVMReports;
@@ -296,8 +296,8 @@ public class OngoingMatchingReportsService {
         for (String institutionCode : allInstitutionCodeExceptHTC) {
             MatchingSummaryReport matchingSummaryReport = new MatchingSummaryReport();
             matchingSummaryReport.setInstitution(institutionCode);
-            matchingSummaryReport.setOpenItemsBeforeMatching(String.valueOf(OngoingMatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_OPEN)));
-            matchingSummaryReport.setSharedItemsBeforeMatching(String.valueOf(OngoingMatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED)));
+            matchingSummaryReport.setOpenItemsBeforeMatching(String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_OPEN)));
+            matchingSummaryReport.setSharedItemsBeforeMatching(String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED)));
             matchingSummaryReports.add(matchingSummaryReport);
         }
         return matchingSummaryReports;
@@ -333,8 +333,8 @@ public class OngoingMatchingReportsService {
                 List<String> institutions = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
                 for (String institution : institutions) {
                     if (matchingSummaryReport.getInstitution().equalsIgnoreCase(institution)) {
-                        openItemsAfterMatching = String.valueOf(OngoingMatchingCounter.getSpecificInstitutionCounterMap(institution).get(MATCHING_COUNTER_OPEN));
-                        sharedItemsAfterMatching = String.valueOf(OngoingMatchingCounter.getSpecificInstitutionCounterMap(institution).get(MATCHING_COUNTER_SHARED));
+                        openItemsAfterMatching = String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institution).get(MATCHING_COUNTER_OPEN));
+                        sharedItemsAfterMatching = String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institution).get(MATCHING_COUNTER_SHARED));
                     }
                 }
                 String openItemsDiff = String.valueOf(Integer.valueOf(openItemsAfterMatching) - Integer.valueOf(matchingSummaryReport.getOpenItemsBeforeMatching()));

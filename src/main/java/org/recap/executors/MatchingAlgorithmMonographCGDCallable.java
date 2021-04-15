@@ -9,6 +9,7 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
@@ -26,6 +27,7 @@ import java.util.concurrent.Callable;
  */
 public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable implements Callable {
 
+    private InstitutionDetailsRepository institutionDetailsRepository;
     private ReportDataDetailsRepository reportDataDetailsRepository;
     private BibliographicDetailsRepository bibliographicDetailsRepository;
     private int pageNum;
@@ -40,8 +42,7 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
 
     /**
      * This method instantiates a new matching algorithm cgd callable.
-     *
-     * @param reportDataDetailsRepository      the report data details repository
+     *  @param reportDataDetailsRepository      the report data details repository
      * @param bibliographicDetailsRepository   the bibliographic details repository
      * @param pageNum                          the page num
      * @param batchSize                        the batch size
@@ -52,11 +53,12 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
      * @param collectionGroupDetailsRepository the collection group details repository
      * @param itemDetailsRepository            the item details repository
      * @param isPendingMatch                   the is pending match
+     * @param institutionDetailsRepository
      */
     public MatchingAlgorithmMonographCGDCallable(ReportDataDetailsRepository reportDataDetailsRepository, BibliographicDetailsRepository bibliographicDetailsRepository,
                                                  int pageNum, Integer batchSize, ProducerTemplate producerTemplate, Map collectionGroupMap, Map institutionMap,
                                                  ItemChangeLogDetailsRepository itemChangeLogDetailsRepository, CollectionGroupDetailsRepository collectionGroupDetailsRepository,
-                                                 ItemDetailsRepository itemDetailsRepository, boolean isPendingMatch) {
+                                                 ItemDetailsRepository itemDetailsRepository, boolean isPendingMatch, InstitutionDetailsRepository institutionDetailsRepository) {
         this.reportDataDetailsRepository = reportDataDetailsRepository;
         this.bibliographicDetailsRepository = bibliographicDetailsRepository;
         this.pageNum = pageNum;
@@ -68,6 +70,7 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
         this.collectionGroupDetailsRepository = collectionGroupDetailsRepository;
         this.itemDetailsRepository = itemDetailsRepository;
         this.isPendingMatch = isPendingMatch;
+        this.institutionDetailsRepository = institutionDetailsRepository;
     }
 
     /**
@@ -94,7 +97,7 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
             List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
             Set<String> materialTypeSet = new HashSet<>();
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
-                    institutionMap, itemChangeLogDetailsRepository, RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository);
+                    institutionMap, itemChangeLogDetailsRepository, RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository,institutionDetailsRepository);
             boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,useRestrictionMap, itemEntityMap, bibIdList);
             if(isMonograph) {
                 matchingAlgorithmCGDProcessor.updateCGDProcess(useRestrictionMap, itemEntityMap);
