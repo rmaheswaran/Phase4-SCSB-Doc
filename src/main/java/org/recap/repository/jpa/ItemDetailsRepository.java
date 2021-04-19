@@ -155,4 +155,16 @@ public interface ItemDetailsRepository extends BaseRepository<ItemEntity> {
      * @return the list
      */
     List<ItemEntity> findByIdIn(List<Integer> itemIds);
+
+    /**
+     *
+     * @param itemBarcode
+     * @return Instituiton COde
+     */
+
+    @Query(value = "SELECT INSTITUTION_CODE" +
+            "    FROM ITEM_T" +
+            "    INNER JOIN INSTITUTION_T ON ITEM_T.OWNING_INST_ID = INSTITUTION_T.INSTITUTION_ID" +
+            "    WHERE ITEM_T.BARCODE = :itemBarcode",nativeQuery = true)
+    String findInstitutionCodeByBarcode(@Param("itemBarcode") String itemBarcode);
 }
