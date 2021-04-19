@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by dharmendrag on 29/11/16.
  */
@@ -83,5 +85,27 @@ public interface UserDetailsRepository extends BaseRepository<UsersEntity> {
     Page<UsersEntity> findByLoginIdAndInstitutionEntity(String loginId,InstitutionEntity institutionId,Pageable pageable);
 
 
+    /**
+     *
+     * @param username
+     * @return the Institution Name
+     */
+    @Query(value = "SELECT INSTITUTION_CODE " +
+            "FROM USER_T    " +
+            "INNER JOIN  INSTITUTION_T ON USER_T.USER_INSTITUTION = INSTITUTION_T.INSTITUTION_ID    " +
+            "WHERE USER_T.LOGIN_ID = :username",nativeQuery = true)
+    String findInstitutionCodeByUserName(@Param("username") String username);
 
+    /**
+     * Gets ROles based on the given userName
+     *
+     * @param userName the login id
+     * @return the RoleEntity
+     */
+    @Query(value="SELECT ROLE_NAME  " +
+            "FROM USER_T    " +
+            "INNER JOIN  USER_ROLE_T ON USER_T.USER_ID = USER_ROLE_T.USER_ID    " +
+            "INNER JOIN ROLES_T ON USER_ROLE_T.ROLE_ID = ROLES_T.ROLE_ID    " +
+            "WHERE USER_T.LOGIN_ID = :userName",nativeQuery = true)
+    List<String> getUserRoles(@Param("userName") String userName);
 }
