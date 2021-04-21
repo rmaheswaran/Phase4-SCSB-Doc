@@ -64,6 +64,7 @@ import org.recap.model.search.resolver.impl.item.OwningInstitutionItemIdValueRes
 import org.recap.model.search.resolver.impl.item.UseRestrictionDisplayValueResolver;
 import org.recap.model.search.resolver.impl.item.UseRestrictionSearchValueResolver;
 import org.recap.model.search.resolver.impl.item.VolumePartYearValueResolver;
+import org.recap.model.search.resolver.impl.item.ImsLocationValueResolver;
 import org.recap.model.solr.BibItem;
 import org.recap.model.solr.Item;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
@@ -216,6 +217,7 @@ public class CommonUtil {
             itemValueResolvers.add(new ItemLastUpdatedByValueResolver());
             itemValueResolvers.add(new ItemBibIdValueResolver());
             itemValueResolvers.add(new HoldingsIdsValueResolver());
+            itemValueResolvers.add(new ImsLocationValueResolver());
         }
         return itemValueResolvers;
     }
