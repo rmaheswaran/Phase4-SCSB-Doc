@@ -143,6 +143,7 @@ public final class SearchRecordsUtil {
                         searchResultRow.setAvailability(item.getAvailabilityDisplay());
                         searchResultRow.setSummaryHoldings(holdings.getSummaryHoldings());
                         searchResultRow.setOwningInstitutionHoldingsId(getMatchedOwningInstitutionHoldingsId(bibItem.getHoldingsList(), item.getHoldingsIdList()));
+                        searchResultRow.setImsLocation(item.getImsLocation());
                     }
                 } else {
                     if (!CollectionUtils.isEmpty(bibItem.getItems())) {
@@ -161,9 +162,11 @@ public final class SearchRecordsUtil {
                                 searchItemResultRow.setCollectionGroupDesignation(item.getCollectionGroupDesignation());
                                 searchItemResultRow.setAvailability(item.getAvailabilityDisplay());
                                 searchItemResultRow.setOwningInstitutionHoldingsId(getMatchedOwningInstitutionHoldingsId(bibItem.getHoldingsList(), item.getHoldingsIdList()));
+                                searchItemResultRow.setImsLocation(item.getImsLocation());
                                 searchItemResultRows.add(searchItemResultRow);
                                 mixedStatus.add(item.getAvailabilityDisplay());
                                 searchResultRow.setAvailability(item.getAvailabilityDisplay());
+                                searchResultRow.setImsLocation(item.getImsLocation());
                             }
                         }
                         for (String status:mixedStatus){

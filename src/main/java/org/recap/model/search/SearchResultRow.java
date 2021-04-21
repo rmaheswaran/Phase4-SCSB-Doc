@@ -57,6 +57,8 @@ public class SearchResultRow implements Serializable {
     private String owningInstitutionHoldingsId;
     @ApiModelProperty(name= "owningInstitutionItemId", value= "Owning Institution Item Id",position = 20)
     private String owningInstitutionItemId;
+    @ApiModelProperty(name= "imsLocation", value= "Ims Location",position = 21)
+    private String imsLocation;
 
     private Integer patronBarcode;
     private String requestingInstitution;
