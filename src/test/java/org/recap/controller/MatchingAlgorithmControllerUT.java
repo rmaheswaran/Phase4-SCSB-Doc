@@ -168,12 +168,12 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT {
         Mockito.when(matchingAlgoController.getMatchingAlgorithmHelperService()).thenReturn(matchingAlgorithmHelperService);
         Mockito.when(matchingAlgorithmHelperService.findMatchingAndPopulateMatchPointsEntities()).thenReturn(Long.valueOf(10));
         Mockito.when(matchingAlgorithmHelperService.populateMatchingBibEntities()).thenReturn(Long.valueOf(10));
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCandISBN(batchSize,getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndISSN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndLCCN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndISSN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndLCCN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISSNAndLCCN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
         Mockito.when(matchingAlgorithmHelperService.populateReportsForSingleMatch(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
         Mockito.when(matchingAlgoController.matchingAlgorithmFindMatchingAndReports()).thenCallRealMethod();
         String response = matchingAlgoController.matchingAlgorithmFindMatchingAndReports();
@@ -185,12 +185,12 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT {
         Mockito.when(matchingAlgoController.getMatchingAlgorithmHelperService()).thenReturn(matchingAlgorithmHelperService);
         Mockito.when(matchingAlgorithmHelperService.findMatchingAndPopulateMatchPointsEntities()).thenReturn(Long.valueOf(10));
         Mockito.when(matchingAlgorithmHelperService.populateMatchingBibEntities()).thenReturn(Long.valueOf(10));
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCandISBN(batchSize,getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndISSN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndLCCN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndISSN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndLCCN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISSNAndLCCN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
         Mockito.when(matchingAlgorithmHelperService.populateReportsForSingleMatch(batchSize, getStringIntegerMap())).thenThrow(NullPointerException.class);
         Mockito.when(matchingAlgoController.matchingAlgorithmFindMatchingAndReports()).thenCallRealMethod();
         String response = matchingAlgoController.matchingAlgorithmFindMatchingAndReports();
@@ -209,12 +209,12 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT {
     @Test
     public void matchingAlgorithmOnlyReports() throws Exception {
         Mockito.when(matchingAlgoController.getMatchingAlgorithmHelperService()).thenReturn(matchingAlgorithmHelperService);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCandISBN(batchSize,getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndISSN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndLCCN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndISSN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndLCCN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISSNAndLCCN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
         Mockito.when(matchingAlgorithmHelperService.populateReportsForSingleMatch(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
         Mockito.when(matchingAlgoController.matchingAlgorithmOnlyReports()).thenCallRealMethod();
         String response = matchingAlgoController.matchingAlgorithmOnlyReports();
@@ -224,12 +224,12 @@ public class MatchingAlgorithmControllerUT extends BaseTestCaseUT {
     @Test
     public void matchingAlgorithmOnlyReportsException() throws Exception {
         Mockito.when(matchingAlgoController.getMatchingAlgorithmHelperService()).thenReturn(matchingAlgorithmHelperService);
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCandISBN(batchSize,getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndISSN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForOCLCAndLCCN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndISSN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISBNAndLCCN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
-        Mockito.when(matchingAlgorithmHelperService.populateReportsForISSNAndLCCN(batchSize, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
+        Mockito.when(matchingAlgorithmHelperService.populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(getStringIntegerMap());
         Mockito.when(matchingAlgorithmHelperService.populateReportsForSingleMatch(batchSize, getStringIntegerMap())).thenThrow(NullPointerException.class);
         Mockito.when(matchingAlgoController.matchingAlgorithmOnlyReports()).thenCallRealMethod();
         String response = matchingAlgoController.matchingAlgorithmOnlyReports();

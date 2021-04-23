@@ -162,7 +162,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
         matchingBibEntityMap.put(matchingBibEntity.getBibId(), matchingBibEntity);
         Mockito.when(matchingAlgorithmUtil.populateAndSaveReportEntity(bibIdSet, matchingBibEntityMap, RecapCommonConstants.OCLC_CRITERIA, RecapCommonConstants.MATCH_POINT_FIELD_ISBN,
                 matchingBibEntity.getOclc(), matchingBibEntity.getIsbn(),getStringIntegerMap())).thenReturn(countMap);
-        Map<String, Integer> countsMap = matchingAlgorithmHelperService.populateReportsForOCLCandISBN(1000,getStringIntegerMap());
+        Map<String, Integer> countsMap = matchingAlgorithmHelperService.populateReportsForMatchPoints(1000, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISBN,getStringIntegerMap());
         assertNotNull(countsMap);
         assertEquals(countMap, countsMap);
     }
@@ -197,7 +197,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
         matchingBibEntityMap.put(matchingBibEntity.getBibId(), matchingBibEntity);
         Mockito.when(matchingAlgorithmUtil.populateAndSaveReportEntity(bibIdSet, matchingBibEntityMap, RecapCommonConstants.OCLC_CRITERIA, RecapCommonConstants.MATCH_POINT_FIELD_ISSN,
                 matchingBibEntity.getOclc(), matchingBibEntity.getIssn(),getStringIntegerMap())).thenReturn(countMap);
-        Map<String, Integer> countsMap = matchingAlgorithmHelperService.populateReportsForOCLCAndISSN(1000, getStringIntegerMap());
+        Map<String, Integer> countsMap = matchingAlgorithmHelperService.populateReportsForMatchPoints(1000, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, getStringIntegerMap());
         assertNotNull(countsMap);
         assertEquals(countMap, countsMap);
     }
@@ -224,7 +224,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
         matchingBibEntityMap.put(matchingBibEntity.getBibId(), matchingBibEntity);
         Mockito.when(matchingAlgorithmUtil.populateAndSaveReportEntity(bibIdSet, matchingBibEntityMap, RecapCommonConstants.OCLC_CRITERIA, RecapCommonConstants.MATCH_POINT_FIELD_LCCN,
                 matchingBibEntity.getOclc(), matchingBibEntity.getLccn(),getStringIntegerMap())).thenReturn(countMap);
-        Map<String, Integer> countsMap = matchingAlgorithmHelperService.populateReportsForOCLCAndLCCN(1000, getStringIntegerMap());
+        Map<String, Integer> countsMap = matchingAlgorithmHelperService.populateReportsForMatchPoints(1000, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap());
         assertNotNull(countsMap);
         assertEquals(countMap, countsMap);
     }
@@ -251,7 +251,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
         matchingBibEntityMap.put(matchingBibEntity.getBibId(), matchingBibEntity);
         Mockito.when(matchingAlgorithmUtil.populateAndSaveReportEntity(bibIdSet, matchingBibEntityMap, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_ISSN,
                 matchingBibEntity.getIsbn(), matchingBibEntity.getIssn(),getStringIntegerMap())).thenReturn(countMap);
-        Map<String, Integer> countsMap = matchingAlgorithmHelperService.populateReportsForISBNAndISSN(1000, getStringIntegerMap());
+        Map<String, Integer> countsMap = matchingAlgorithmHelperService.populateReportsForMatchPoints(1000, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, getStringIntegerMap());
         assertNotNull(countsMap);
         assertEquals(countMap, countsMap);
     }
@@ -278,7 +278,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
         matchingBibEntityMap.put(matchingBibEntity.getBibId(), matchingBibEntity);
         Mockito.when(matchingAlgorithmUtil.populateAndSaveReportEntity(bibIdSet, matchingBibEntityMap, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN,
                 matchingBibEntity.getIsbn(), matchingBibEntity.getLccn(),getStringIntegerMap())).thenReturn(countMap);
-        Map<String, Integer> countsMap = matchingAlgorithmHelperService.populateReportsForISBNAndLCCN(1000, getStringIntegerMap());
+        Map<String, Integer> countsMap = matchingAlgorithmHelperService.populateReportsForMatchPoints(1000, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap());
         assertNotNull(countsMap);
         assertEquals(countMap, countsMap);
     }
@@ -305,7 +305,7 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
         matchingBibEntityMap.put(matchingBibEntity.getBibId(), matchingBibEntity);
         Mockito.when(matchingAlgorithmUtil.populateAndSaveReportEntity(bibIdSet, matchingBibEntityMap, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN,
                 matchingBibEntity.getIssn(), matchingBibEntity.getLccn(),getStringIntegerMap())).thenReturn(countMap);
-        Map<String, Integer> countsMap = matchingAlgorithmHelperService.populateReportsForISSNAndLCCN(1000, getStringIntegerMap());
+        Map<String, Integer> countsMap = matchingAlgorithmHelperService.populateReportsForMatchPoints(1000,  RecapCommonConstants.MATCH_POINT_FIELD_ISSN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap());
         assertNotNull(countsMap);
         assertEquals(countMap, countsMap);
     }

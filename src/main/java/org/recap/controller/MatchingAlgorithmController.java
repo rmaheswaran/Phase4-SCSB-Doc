@@ -351,13 +351,14 @@ public class MatchingAlgorithmController {
     private void runReportsForMatchingAlgorithm(Integer batchSize){
         List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
         Map<String, Integer> institutionCounterMap = allInstitutionCodeExceptHTC.stream().collect(Collectors.toMap(Function.identity(), institution -> 0));
-        StopWatchUtil.executeAndEstimateTotalTimeTaken(getMatchingAlgorithmHelperService()::populateReportsForOCLCandISBN,batchSize,institutionCounterMap,"OCLC&ISBN Combination Reports");
-        StopWatchUtil.executeAndEstimateTotalTimeTaken(getMatchingAlgorithmHelperService()::populateReportsForOCLCAndISSN,batchSize,institutionCounterMap,"OCLC&ISSN Combination Reports");
-        StopWatchUtil.executeAndEstimateTotalTimeTaken(getMatchingAlgorithmHelperService()::populateReportsForOCLCAndLCCN,batchSize,institutionCounterMap,"OCLC&LCCN Combination Reports");
-        StopWatchUtil.executeAndEstimateTotalTimeTaken(getMatchingAlgorithmHelperService()::populateReportsForISBNAndISSN,batchSize,institutionCounterMap,"ISBN&ISSN Combination Reports");
-        StopWatchUtil.executeAndEstimateTotalTimeTaken(getMatchingAlgorithmHelperService()::populateReportsForISBNAndLCCN,batchSize,institutionCounterMap,"ISBN&LCCN Combination Reports");
-        StopWatchUtil.executeAndEstimateTotalTimeTaken(getMatchingAlgorithmHelperService()::populateReportsForISSNAndLCCN,batchSize,institutionCounterMap,"ISSN&LCCN Combination Reports");
-        StopWatchUtil.executeAndEstimateTotalTimeTaken(getMatchingAlgorithmHelperService()::populateReportsForSingleMatch,batchSize,institutionCounterMap,"Single Matching Reports");
+
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForSingleMatch(batchSize,institutionCounterMap);
         getMatchingAlgorithmHelperService().saveMatchingSummaryCount(institutionCounterMap);
     }
 

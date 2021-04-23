@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -201,223 +202,71 @@ public class MatchingAlgorithmHelperService {
             }
         }
     }
-    /**
-     * This method is used to populate reports for oclc and isbn matching combination based on the given batch size.
-     *
-     * @param batchSize the batch size
-     * @return the map
-     */
-    public Map<String,Integer> populateReportsForOCLCandISBN(Integer batchSize,Map<String, Integer> institutionCounterMap) {
 
-        List<Integer> multiMatchBibIdsForOCLCAndISBN = getMatchingBibDetailsRepository().getMultiMatchBibIdsForOclcAndIsbn();
-        List<List<Integer>> multipleMatchBibIds = Lists.partition(multiMatchBibIdsForOCLCAndISBN, batchSize);
-        Map<String, Set<Integer>> oclcAndBibIdMap = new HashMap<>();
+    public Map<String, Integer> populateReportsForMatchPoints(Integer batchSize, String matchPoint1, String matchPoint2, Map<String, Integer> institutionCounterMap) {
+
+        List<Integer> multiMatchBibIdsForMatchPoint1AndMatchPoint2 = null;
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_OCLC) && matchPoint2.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_ISBN)) {
+            multiMatchBibIdsForMatchPoint1AndMatchPoint2 = getMatchingBibDetailsRepository().getMultiMatchBibIdsForOclcAndIsbn();
+        } else if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_OCLC) && matchPoint2.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_ISSN)) {
+            multiMatchBibIdsForMatchPoint1AndMatchPoint2 = getMatchingBibDetailsRepository().getMultiMatchBibIdsForOclcAndIssn();
+        } else if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_OCLC) && matchPoint2.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_LCCN)) {
+            multiMatchBibIdsForMatchPoint1AndMatchPoint2 = getMatchingBibDetailsRepository().getMultiMatchBibIdsForOclcAndLccn();
+        } else if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_ISBN) && matchPoint2.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_ISSN)) {
+            multiMatchBibIdsForMatchPoint1AndMatchPoint2 = getMatchingBibDetailsRepository().getMultiMatchBibIdsForIsbnAndIssn();
+        } else if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_ISBN) && matchPoint2.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_LCCN)) {
+            multiMatchBibIdsForMatchPoint1AndMatchPoint2 = getMatchingBibDetailsRepository().getMultiMatchBibIdsForIsbnAndLccn();
+        } else if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_ISSN) && matchPoint2.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_LCCN)) {
+            multiMatchBibIdsForMatchPoint1AndMatchPoint2 = getMatchingBibDetailsRepository().getMultiMatchBibIdsForIssnAndLccn();
+        }
+        List<List<Integer>> multipleMatchBibIds = Lists.partition(multiMatchBibIdsForMatchPoint1AndMatchPoint2, batchSize);
+        Map<String, Set<Integer>> matchPoint1AndBibIdMap = new HashMap<>();
         Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
-
-        buildBibIdAndBibEntityMap(multipleMatchBibIds, oclcAndBibIdMap, bibEntityMap, getLogger(), RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
-
-        Set<String> oclcNumberSet = new HashSet<>();
-        for (Iterator<String> iterator = oclcAndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
-            String oclc = iterator.next();
-            if(!oclcNumberSet.contains(oclc)) {
-                StringBuilder oclcNumbers  = new StringBuilder();
-                StringBuilder isbns = new StringBuilder();
-                oclcNumberSet.add(oclc);
-                Set<Integer> bibIds = oclcAndBibIdMap.get(oclc);
+        buildBibIdAndBibEntityMap(multipleMatchBibIds, matchPoint1AndBibIdMap, bibEntityMap, getLogger(), matchPoint1, matchPoint2);
+        Set<String> matchPoint1Set = new HashSet<>();
+        for (Iterator<String> iterator = matchPoint1AndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
+            String matchPoint = iterator.next();
+            if (!matchPoint1Set.contains(matchPoint)) {
+                StringBuilder matchPoints1 = new StringBuilder();
+                StringBuilder matchPoints2 = new StringBuilder();
+                matchPoint1Set.add(matchPoint);
+                Set<Integer> bibIds = matchPoint1AndBibIdMap.get(matchPoint);
                 Set<Integer> tempBibIds = new HashSet<>(bibIds);
-                for(Integer bibId : bibIds) {
+                for (Integer bibId : bibIds) {
                     MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
-                    oclcNumbers.append(StringUtils.isNotBlank(oclcNumbers.toString()) ? "," : "").append(matchingBibEntity.getOclc());
-                    isbns.append(StringUtils.isNotBlank(isbns.toString()) ? "," : "").append(matchingBibEntity.getIsbn());
-                    String[] oclcList = oclcNumbers.toString().split(",");
-                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(oclcAndBibIdMap, oclcNumberSet, oclc, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, oclcList, bibEntityMap, oclcNumbers));
+                    if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_OCLC) && matchPoint2.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_ISBN)) {
+                        matchPoints1.append(StringUtils.isNotBlank(matchPoints1.toString()) ? "," : "").append(matchingBibEntity.getOclc());
+                        matchPoints2.append(StringUtils.isNotBlank(matchPoints2.toString()) ? "," : "").append(matchingBibEntity.getIsbn());
+                    } else if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_OCLC) && matchPoint2.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_ISSN)) {
+                        matchPoints1.append(StringUtils.isNotBlank(matchPoints1.toString()) ? "," : "").append(matchingBibEntity.getOclc());
+                        matchPoints2.append(StringUtils.isNotBlank(matchPoints2.toString()) ? "," : "").append(matchingBibEntity.getIssn());
+                    } else if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_OCLC) && matchPoint2.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_LCCN)) {
+                        matchPoints1.append(StringUtils.isNotBlank(matchPoints1.toString()) ? "," : "").append(matchingBibEntity.getOclc());
+                        matchPoints2.append(StringUtils.isNotBlank(matchPoints2.toString()) ? "," : "").append(matchingBibEntity.getLccn());
+                    } else if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_ISBN) && matchPoint2.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_ISSN)) {
+                        matchPoints1.append(StringUtils.isNotBlank(matchPoints1.toString()) ? "," : "").append(matchingBibEntity.getIsbn());
+                        matchPoints2.append(StringUtils.isNotBlank(matchPoints2.toString()) ? "," : "").append(matchingBibEntity.getIssn());
+                    } else if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_ISBN) && matchPoint2.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_LCCN)) {
+                        matchPoints1.append(StringUtils.isNotBlank(matchPoints2.toString()) ? "," : "").append(matchingBibEntity.getIsbn());
+                        matchPoints2.append(StringUtils.isNotBlank(matchPoints2.toString()) ? "," : "").append(matchingBibEntity.getLccn());
+                    } else if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_ISSN) && matchPoint2.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_LCCN)) {
+                        matchPoints1.append(StringUtils.isNotBlank(matchPoints2.toString()) ? "," : "").append(matchingBibEntity.getIssn());
+                        matchPoints2.append(StringUtils.isNotBlank(matchPoints2.toString()) ? "," : "").append(matchingBibEntity.getLccn());
+                    }
+                    String[] matchPoint1List = matchPoints1.toString().split(",");
+                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(matchPoint1AndBibIdMap, matchPoint1Set, matchPoint, matchPoint1, matchPoint1List, bibEntityMap, matchPoints1));
                 }
-                getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.OCLC_CRITERIA, RecapCommonConstants.ISBN_CRITERIA, oclcNumbers.toString(), isbns.toString(),institutionCounterMap);
+                if (matchPoint1.equalsIgnoreCase(RecapCommonConstants.MATCH_POINT_FIELD_OCLC)) {
+                    getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.OCLC_CRITERIA, matchPoint2, matchPoints1.toString(), matchPoints2.toString(), institutionCounterMap);
+                } else {
+                    getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, matchPoint1, matchPoint2, matchPoints1.toString(), matchPoints2.toString(), institutionCounterMap);
+                }
             }
         }
-        return institutionCounterMap;
-    }
-
-    /**
-     * This method is used to populate reports for oclc and issn combination.
-     *
-     * @param batchSize the batch size
-     * @param institutionCounterMap
-     * @return the map
-     */
-    public Map<String,Integer> populateReportsForOCLCAndISSN(Integer batchSize, Map<String, Integer> institutionCounterMap) {
-        List<Integer> multiMatchBibIdsForOCLCAndISSN = getMatchingBibDetailsRepository().getMultiMatchBibIdsForOclcAndIssn();
-        List<List<Integer>> multipleMatchBibIds = Lists.partition(multiMatchBibIdsForOCLCAndISSN, batchSize);
-        Map<String, Set<Integer>> oclcAndBibIdMap = new HashMap<>();
-        Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
-
-        buildBibIdAndBibEntityMap(multipleMatchBibIds, oclcAndBibIdMap, bibEntityMap, logger, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
-
-        Set<String> oclcNumberSet = new HashSet<>();
-        for (Iterator<String> iterator = oclcAndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
-            String oclc = iterator.next();
-            if(!oclcNumberSet.contains(oclc)) {
-                StringBuilder oclcNumbers  = new StringBuilder();
-                StringBuilder issns = new StringBuilder();
-                oclcNumberSet.add(oclc);
-                Set<Integer> bibIds = oclcAndBibIdMap.get(oclc);
-                Set<Integer> tempBibIds = new HashSet<>(bibIds);
-                for(Integer bibId : bibIds) {
-                    MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
-                    oclcNumbers.append(StringUtils.isNotBlank(oclcNumbers.toString()) ? "," : "").append(matchingBibEntity.getOclc());
-                    issns.append(StringUtils.isNotBlank(issns.toString()) ? "," : "").append(matchingBibEntity.getIssn());
-                    String[] oclcList = oclcNumbers.toString().split(",");
-                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(oclcAndBibIdMap, oclcNumberSet, oclc, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, oclcList, bibEntityMap, oclcNumbers));
-                }
-                getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.OCLC_CRITERIA, RecapCommonConstants.ISSN_CRITERIA, oclcNumbers.toString(), issns.toString(),institutionCounterMap);
-            }
-        }
-        return institutionCounterMap;
-    }
-
-    /**
-     * This method is used to populate reports for oclc and lccn combination.
-     *
-     * @param batchSize the batch size
-     * @param institutionCounterMap
-     * @return the map
-     */
-    public Map<String,Integer> populateReportsForOCLCAndLCCN(Integer batchSize, Map<String, Integer> institutionCounterMap) {
-        List<Integer> multiMatchBibIdsForOCLCAndLCCN = getMatchingBibDetailsRepository().getMultiMatchBibIdsForOclcAndLccn();
-        List<List<Integer>> multipleMatchBibIds = Lists.partition(multiMatchBibIdsForOCLCAndLCCN, batchSize);
-        Map<String, Set<Integer>> oclcAndBibIdMap = new HashMap<>();
-        Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
-
-        buildBibIdAndBibEntityMap(multipleMatchBibIds, oclcAndBibIdMap, bibEntityMap, logger, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
-
-        Set<String> oclcNumberSet = new HashSet<>();
-        for (Iterator<String> iterator = oclcAndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
-            String oclc = iterator.next();
-            if(!oclcNumberSet.contains(oclc)) {
-                StringBuilder oclcNumbers  = new StringBuilder();
-                StringBuilder lccns = new StringBuilder();
-                oclcNumberSet.add(oclc);
-                Set<Integer> bibIds = oclcAndBibIdMap.get(oclc);
-                Set<Integer> tempBibIds = new HashSet<>(bibIds);
-                for(Integer bibId : bibIds) {
-                    MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
-                    oclcNumbers.append(StringUtils.isNotBlank(oclcNumbers.toString()) ? "," : "").append(matchingBibEntity.getOclc());
-                    lccns.append(StringUtils.isNotBlank(lccns.toString()) ? "," : "").append(matchingBibEntity.getLccn());
-                    String[] oclcList = oclcNumbers.toString().split(",");
-                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(oclcAndBibIdMap, oclcNumberSet, oclc, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, oclcList, bibEntityMap, oclcNumbers));
-                }
-                getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.OCLC_CRITERIA, RecapCommonConstants.LCCN_CRITERIA, oclcNumbers.toString(), lccns.toString(),institutionCounterMap);
-            }
-        }
-        return institutionCounterMap;
-    }
-
-    /**
-     * This method is used to populate reports for isbn and issn combination.
-     *
-     * @param batchSize the batch size
-     * @param institutionCounterMap
-     * @return the map
-     */
-    public Map<String,Integer> populateReportsForISBNAndISSN(Integer batchSize, Map<String, Integer> institutionCounterMap) {
-        List<Integer> multiMatchBibIdsForISBNAndISSN = getMatchingBibDetailsRepository().getMultiMatchBibIdsForIsbnAndIssn();
-        List<List<Integer>> multipleMatchBibIds = Lists.partition(multiMatchBibIdsForISBNAndISSN, batchSize);
-        Map<String, Set<Integer>> isbnAndBibIdMap = new HashMap<>();
-        Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
-        populateBibIds(isbnAndBibIdMap, bibEntityMap,multipleMatchBibIds,  RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
-
-        Set<String> isbnSet = new HashSet<>();
-        for (Iterator<String> iterator = isbnAndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
-            String isbn = iterator.next();
-            if(!isbnSet.contains(isbn)) {
-                StringBuilder isbns  = new StringBuilder();
-                StringBuilder issns = new StringBuilder();
-                isbnSet.add(isbn);
-                Set<Integer> bibIds = isbnAndBibIdMap.get(isbn);
-                Set<Integer> tempBibIds = new HashSet<>(bibIds);
-                for(Integer bibId : bibIds) {
-                    MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
-                    isbns.append(StringUtils.isNotBlank(isbns.toString()) ? "," : "").append(matchingBibEntity.getIsbn());
-                    issns.append(StringUtils.isNotBlank(issns.toString()) ? "," : "").append(matchingBibEntity.getIssn());
-                    String[] isbnList = isbns.toString().split(",");
-                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(isbnAndBibIdMap, isbnSet, isbn, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, isbnList, bibEntityMap, isbns));
-                }
-                getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.ISBN_CRITERIA, RecapCommonConstants.ISSN_CRITERIA, isbns.toString(), issns.toString(),institutionCounterMap);
-            }
-        }
-        return institutionCounterMap;
-    }
-
-    /**
-     * This method is used to populate reports for isbn and lccn combination.
-     *
-     * @param batchSize the batch size
-     * @param institutionCounterMap
-     * @return the map
-     */
-    public Map<String,Integer> populateReportsForISBNAndLCCN(Integer batchSize, Map<String, Integer> institutionCounterMap) {
-        List<Integer> multiMatchBibIdsForISBNAndLCCN = getMatchingBibDetailsRepository().getMultiMatchBibIdsForIsbnAndLccn();
-        List<List<Integer>> multipleMatchBibIds = Lists.partition(multiMatchBibIdsForISBNAndLCCN, batchSize);
-        Map<String, Set<Integer>> isbnAndBibIdMap = new HashMap<>();
-        Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
-        populateBibIds(isbnAndBibIdMap, bibEntityMap,multipleMatchBibIds,  RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
-
-        Set<String> isbnSet = new HashSet<>();
-        for (Iterator<String> iterator = isbnAndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
-            String isbn = iterator.next();
-            if(!isbnSet.contains(isbn)) {
-                StringBuilder isbns  = new StringBuilder();
-                StringBuilder lccns = new StringBuilder();
-                isbnSet.add(isbn);
-                Set<Integer> bibIds = isbnAndBibIdMap.get(isbn);
-                Set<Integer> tempBibIds = new HashSet<>(bibIds);
-                for(Integer bibId : bibIds) {
-                    MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
-                    isbns.append(StringUtils.isNotBlank(isbns.toString()) ? "," : "").append(matchingBibEntity.getIsbn());
-                    lccns.append(StringUtils.isNotBlank(lccns.toString()) ? "," : "").append(matchingBibEntity.getLccn());
-                    String[] isbnList = isbns.toString().split(",");
-                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(isbnAndBibIdMap, isbnSet, isbn, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, isbnList, bibEntityMap, isbns));
-                }
-                getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.ISBN_CRITERIA, RecapCommonConstants.LCCN_CRITERIA, isbns.toString(), lccns.toString(),institutionCounterMap);
-            }
-        }
-        return institutionCounterMap;
-    }
-
-    /**
-     * This method is used to populate reports for issn and lccn combination.
-     *
-     * @param batchSize the batch size
-     * @param institutionCounterMap
-     * @return the map
-     */
-    public Map<String,Integer> populateReportsForISSNAndLCCN(Integer batchSize, Map<String, Integer> institutionCounterMap) {
-        List<Integer> multiMatchBibIdsForISSNAndLCCN = getMatchingBibDetailsRepository().getMultiMatchBibIdsForIssnAndLccn();
-        List<List<Integer>> multipleMatchBibIds = Lists.partition(multiMatchBibIdsForISSNAndLCCN, batchSize);
-        Map<String, Set<Integer>> issnAndBibIdMap = new HashMap<>();
-        Map<Integer, MatchingBibEntity> bibEntityMap = new HashMap<>();
-
-        buildBibIdAndBibEntityMap(multipleMatchBibIds, issnAndBibIdMap, bibEntityMap, logger, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
-
-        Set<String> issnSet = new HashSet<>();
-        for (Iterator<String> iterator = issnAndBibIdMap.keySet().iterator(); iterator.hasNext(); ) {
-            String issn = iterator.next();
-            if(!issnSet.contains(issn)) {
-                StringBuilder issns  = new StringBuilder();
-                StringBuilder lccns = new StringBuilder();
-                issnSet.add(issn);
-                Set<Integer> bibIds = issnAndBibIdMap.get(issn);
-                Set<Integer> tempBibIds = new HashSet<>(bibIds);
-                for(Integer bibId : bibIds) {
-                    MatchingBibEntity matchingBibEntity = bibEntityMap.get(bibId);
-                    issns.append(StringUtils.isNotBlank(issns.toString()) ? "," : "").append(matchingBibEntity.getIssn());
-                    lccns.append(StringUtils.isNotBlank(lccns.toString()) ? "," : "").append(matchingBibEntity.getLccn());
-                    String[] issnList = issns.toString().split(",");
-                    tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(issnAndBibIdMap, issnSet, issn, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, issnList, bibEntityMap, issns));
-                }
-                getMatchingAlgorithmUtil().populateAndSaveReportEntity(tempBibIds, bibEntityMap, RecapCommonConstants.ISSN_CRITERIA, RecapCommonConstants.LCCN_CRITERIA, issns.toString(), lccns.toString(),institutionCounterMap);
-            }
-        }
+        stopWatch.stop();
+        getLogger().info("Time taken to save - {} and {} Combination Reports : {}" , matchPoint1, matchPoint2, stopWatch.getTotalTimeSeconds());
         return institutionCounterMap;
     }
 
@@ -429,6 +278,8 @@ public class MatchingAlgorithmHelperService {
      * @return the map
      */
     public Map<String,Integer> populateReportsForSingleMatch(Integer batchSize, Map<String, Integer> institutionCounterMap) {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC,institutionCounterMap);
         getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, institutionCounterMap);
         getMatchingAlgorithmUtil().getSingleMatchBibsAndSaveReport(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap);
@@ -445,6 +296,8 @@ public class MatchingAlgorithmHelperService {
             }
         }
         populateReportsForPendingMatches(batchSize,institutionCounterMap);
+        stopWatch.stop();
+        getLogger().info("Time taken to save Single Matching Reports : {}" , stopWatch.getTotalTimeSeconds());
         return institutionCounterMap;
     }
 
@@ -575,12 +428,12 @@ public class MatchingAlgorithmHelperService {
         buildBibIdAndBibEntityMap(multipleMatchBibIds, isbnAndBibIdMap, bibEntityMap, logger, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, matchPoint);
     }
 
-    private void buildBibIdAndBibEntityMap(List<List<Integer>> multipleMatchBibIds, Map<String, Set<Integer>> oclcAndBibIdMap, Map<Integer, MatchingBibEntity> bibEntityMap, Logger logger, String matchPointFieldOclc, String matchPointFieldLccn) {
+    private void buildBibIdAndBibEntityMap(List<List<Integer>> multipleMatchBibIds, Map<String, Set<Integer>> matchPoint1AndBibIdMap, Map<Integer, MatchingBibEntity> bibEntityMap, Logger logger, String matchPoint1, String matchPoint2) {
         logger.info(RecapConstants.TOTAL_BIB_ID_PARTITION_LIST, multipleMatchBibIds.size());
         for (List<Integer> bibIds : multipleMatchBibIds) {
-            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, matchPointFieldOclc, matchPointFieldLccn);
+            List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, matchPoint1, matchPoint2);
             if (CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
-                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(oclcAndBibIdMap, bibEntitiesBasedOnBibIds, matchPointFieldOclc, bibEntityMap);
+                getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(matchPoint1AndBibIdMap, bibEntitiesBasedOnBibIds, matchPoint1, bibEntityMap);
             }
         }
     }
