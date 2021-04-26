@@ -14,8 +14,9 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
+import org.recap.repository.jpa.ItemDetailsRepository;
+import org.recap.repository.jpa.UserDetailsRepository;
 import org.recap.repository.solr.main.ItemCrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +69,10 @@ public class UpdateCgdUtil {
     @Autowired
     private ProducerTemplate producerTemplate;
 
+    @Autowired
+    private UserDetailsRepository userDetailsRepository;
+
+
     /**
      * This method updates cgd for item in both solr and database based on the given input parameters and sends email on successful cgd updation.
      *
@@ -83,14 +88,21 @@ public class UpdateCgdUtil {
         List<ItemEntity> itemEntities = new ArrayList<>();
         Date lastUpdatedDate = new Date();
         String cgdChangeLog = oldCollectionGroupDesignation + RecapConstants.TO + newCollectionGroupDesignation;
+        String institutionCodeUser = userDetailsRepository.findInstitutionCodeByUserName(username);
+        String institutionCodeItem = itemDetailsRepository.findInstitutionCodeByBarcode(itemBarcode);
+        List<String> rolesUser = userDetailsRepository.getUserRoles(userName);
         try {
-            updateCGDForItemInDB(itemBarcode, newCollectionGroupDesignation, userName, lastUpdatedDate);
-            itemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
-            setCGDChangeLogToItemEntity(cgdChangeLog,itemEntities);
-            updateCGDForItemInSolr(itemEntities);
-            saveItemChangeLogEntity(itemEntities, userName, lastUpdatedDate, RecapCommonConstants.UPDATE_CGD, cgdChangeNotes);
-            sendEmail(itemBarcode, owningInstitution, oldCollectionGroupDesignation, newCollectionGroupDesignation, cgdChangeNotes);
-            return RecapCommonConstants.SUCCESS;
+            if (validateUserRoles(rolesUser,institutionCodeUser,institutionCodeItem)) {
+                updateCGDForItemInDB(itemBarcode, newCollectionGroupDesignation, userName, lastUpdatedDate);
+                itemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
+                setCGDChangeLogToItemEntity(cgdChangeLog, itemEntities);
+                updateCGDForItemInSolr(itemEntities);
+                saveItemChangeLogEntity(itemEntities, userName, lastUpdatedDate, RecapCommonConstants.UPDATE_CGD, cgdChangeNotes);
+                sendEmail(itemBarcode, owningInstitution, oldCollectionGroupDesignation, newCollectionGroupDesignation, cgdChangeNotes);
+                return RecapCommonConstants.SUCCESS;
+            } else {
+                return RecapConstants.FAILURE_UPDATE_CGD;
+            }
         } catch (Exception e) {
             logger.error(RecapCommonConstants.LOG_ERROR,e);
             return RecapCommonConstants.FAILURE + "-" + e.getMessage();
@@ -184,5 +196,15 @@ public class UpdateCgdUtil {
         for(ItemEntity itemEntity:itemEntityList){
             itemEntity.setCgdChangeLog(cgdChangeLog);
         }
+    }
+
+    private Boolean validateUserRoles(List<String> userRoles, String userInstitutionCode, String institutionCodeItem) {
+        int roleCount = 0;
+        for (String s : userRoles){
+            if(s.equalsIgnoreCase(RecapConstants.ROLE_RECAP) || s.equalsIgnoreCase(RecapConstants.ROLE_SUPER_ADMIN)
+                    || userInstitutionCode.equalsIgnoreCase(institutionCodeItem))
+                roleCount++;
+        }
+        return (roleCount > 0) ? RecapConstants.BOOLEAN_TRUE : RecapConstants.BOOLEAN_FALSE;
     }
 }
