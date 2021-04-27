@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by angelind on 6/1/17.
@@ -72,37 +73,22 @@ public class MatchingAlgorithmCGDProcessor {
     /**
      * This method updates cgd based on the counter values of use restriction for each institution and saves them in the database.
      *
-     * @param useRestrictionMap the use restriction map
      * @param itemEntityMap     the item entity map
      */
-    public void updateCGDProcess(Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap, Map<Integer, ItemEntity> itemEntityMap) {
-        if(useRestrictionMap.size() > 1) {
-            // Multiple Use Restriction
-            if(useRestrictionMap.containsKey(0)) {
-                // Institutions which has no restriction
-                Map<Integer, List<ItemEntity>> owningInstitutionMap = useRestrictionMap.get(0);
-                findItemsToBeUpdatedAsOpen(itemEntityMap, owningInstitutionMap);
-            } else if(useRestrictionMap.containsKey(1)) {
-                // Institutions which has least restriction
-                Map<Integer, List<ItemEntity>> owningInstitutionMap = useRestrictionMap.get(1);
-                findItemsToBeUpdatedAsOpen(itemEntityMap, owningInstitutionMap);
-            }
+    public void updateCGDProcess(Map<Integer, ItemEntity> itemEntityMap) {
+        Map<Integer, List<ItemEntity>> owningInstitutionMap=itemEntityMap.values()
+                .stream()
+                .collect(Collectors.groupingBy(itemEntity -> itemEntity.getInstitutionEntity().getId()));
+        if(matchingType.equalsIgnoreCase(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE)) {
+            /* For Initial Matching algorithm if the use restriction are same,
+             * then we need to check for counter and select the item which needs to be Shared
+             */
+            findItemToBeSharedBasedOnCounter(itemEntityMap, owningInstitutionMap);
         } else {
-            //Same UseRestriction
-            for (Iterator<Map<Integer, List<ItemEntity>>> iterator = useRestrictionMap.values().iterator(); iterator.hasNext(); ) {
-                Map<Integer, List<ItemEntity>> owningInstitutionMap = iterator.next();
-                if(matchingType.equalsIgnoreCase(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE)) {
-                    /* For Initial Matching algorithm if the use restriction are same,
-                     * then we need to check for counter and select the item which needs to be Shared
-                    */
-                    findItemToBeSharedBasedOnCounter(itemEntityMap, owningInstitutionMap);
-                } else {
-                    /* For Ongoing Matching algorithm if the use restriction are same,
-                     * then we need to check for date of accession and select the item which needs to be Shared
-                    */
-                    findItemToBeSharedBasedOnDate(itemEntityMap);
-                }
-            }
+            /* For Ongoing Matching algorithm if the use restriction are same,
+             * then we need to check for date of accession and select the item which needs to be Shared
+             */
+            findItemToBeSharedBasedOnDate(itemEntityMap);
         }
         updateItemsCGD(itemEntityMap);
     }
@@ -114,7 +100,7 @@ public class MatchingAlgorithmCGDProcessor {
             itemEntityMap.remove(itemEntityToBeShared.getId());
             MatchingCounter.updateCGDCounter(itemEntityToBeShared.getInstitutionEntity().getInstitutionCode(),false);
         } else {
-            itemEntities.sort(Comparator.comparing(ItemEntity::getCreatedDate, Comparator.naturalOrder()));
+            itemEntities.sort(Comparator.comparing(ItemEntity::getCreatedDate));
             findAndremoveSharedItem(itemEntityMap, itemEntities);
         }
     }
@@ -182,12 +168,11 @@ public class MatchingAlgorithmCGDProcessor {
      * This method checks whether the item is monograph or monographic set and populates value for monograph item.
      *
      * @param materialTypeSet   the material type set
-     * @param useRestrictionMap the use restriction map
      * @param itemEntityMap     the item entity map
      * @param bibIdList         the bib id list
      * @return the boolean
      */
-    public boolean checkForMonographAndPopulateValues(Set<String> materialTypeSet, Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap, Map<Integer, ItemEntity> itemEntityMap, List<Integer> bibIdList) {
+    public boolean checkForMonographAndPopulateValues(Set<String> materialTypeSet,Map<Integer, ItemEntity> itemEntityMap, List<Integer> bibIdList) {
         boolean isMonograph = true;
         List<BibliographicEntity> bibliographicEntities = bibliographicDetailsRepository.findByIdIn(bibIdList);
         for(BibliographicEntity bibliographicEntity : bibliographicEntities) {
@@ -196,7 +181,7 @@ public class MatchingAlgorithmCGDProcessor {
             if(itemEntities != null && itemEntities.size() == 1) {
                 ItemEntity itemEntity = itemEntities.get(0);
                 if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
-                    populateValues(useRestrictionMap, itemEntityMap, itemEntity);
+                    populateValues(itemEntityMap, itemEntity);
                 }
                 materialTypeSet.add(RecapCommonConstants.MONOGRAPH);
             } else {
@@ -209,7 +194,7 @@ public class MatchingAlgorithmCGDProcessor {
                                 isMultipleCopy = true;
                             }
                             if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
-                                populateValues(useRestrictionMap, itemEntityMap, itemEntity);
+                                populateValues(itemEntityMap, itemEntity);
                             }
                         }
                     }
@@ -224,14 +209,14 @@ public class MatchingAlgorithmCGDProcessor {
                     if(bibliographicEntity.getHoldingsEntities().size() > 1) {
                         for(ItemEntity itemEntity : itemEntities) {
                             if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
-                                populateValues(useRestrictionMap, itemEntityMap, itemEntity);
+                                populateValues(itemEntityMap, itemEntity);
                             }
                         }
                         materialTypeSet.add(RecapCommonConstants.MONOGRAPH);
                     } else {
                         for(ItemEntity itemEntity : itemEntities) {
                             if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD))) {
-                                populateValues(useRestrictionMap, itemEntityMap, itemEntity);
+                                populateValues(itemEntityMap, itemEntity);
                             }
                         }
                         isMonograph = false;
@@ -262,66 +247,12 @@ public class MatchingAlgorithmCGDProcessor {
     }
 
     /**
-     * This method is used to populate values for the monograph based on the given materialTypeSet, useRestrictionMap, itemEntityMap and itemEntity.
-     * @param useRestrictionMap
+     * This method is used to populate values for the monograph based on the given materialTypeSet, itemEntityMap and itemEntity.
      * @param itemEntityMap
      * @param itemEntity
      */
-    private void populateValues(Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap, Map<Integer, ItemEntity> itemEntityMap, ItemEntity itemEntity) {
+    private void populateValues(Map<Integer, ItemEntity> itemEntityMap, ItemEntity itemEntity) {
         itemEntityMap.put(itemEntity.getId(), itemEntity);
-        Integer owningInstitutionId = itemEntity.getOwningInstitutionId();
-        Integer useRestriction = getUseRestrictionInNumbers(itemEntity.getUseRestrictions());
-        populateUseRestrictionMap(useRestrictionMap, itemEntity, owningInstitutionId, useRestriction);
-    }
-
-    /**
-     * This method populates use restriction and puts it in a map.
-     *
-     * @param useRestrictionMap   the use restriction map
-     * @param itemEntity          the item entity
-     * @param owningInstitutionId the owning institution id
-     * @param useRestriction      the use restriction
-     */
-    public void populateUseRestrictionMap(Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap, ItemEntity itemEntity, Integer owningInstitutionId, Integer useRestriction) {
-        if(useRestrictionMap.containsKey(useRestriction)) {
-            Map<Integer, List<ItemEntity>> owningInstitutionMap = new HashMap<>(useRestrictionMap.get(useRestriction));
-            if(owningInstitutionMap.containsKey(owningInstitutionId)) {
-                List<ItemEntity> itemEntityList = new ArrayList<>(owningInstitutionMap.get(owningInstitutionId));
-                itemEntityList.add(itemEntity);
-                owningInstitutionMap.put(owningInstitutionId, itemEntityList);
-            } else {
-                owningInstitutionMap.put(owningInstitutionId, Arrays.asList(itemEntity));
-            }
-            useRestrictionMap.put(useRestriction, owningInstitutionMap);
-        } else {
-            Map<Integer, List<ItemEntity>> owningInstitutionMap = new HashMap<>();
-            owningInstitutionMap.put(owningInstitutionId, Arrays.asList(itemEntity));
-            useRestrictionMap.put(useRestriction, owningInstitutionMap);
-        }
-    }
-
-    private void findItemsToBeUpdatedAsOpen(Map<Integer, ItemEntity> itemEntityMap, Map<Integer, List<ItemEntity>> institutionMap) {
-        if(institutionMap.size() > 1) {
-            // Multiple Institution sharing the same use restriction
-            if(matchingType.equalsIgnoreCase(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE)) {
-                /* For Initial Matching algorithm if the use restriction are same,
-                 * then we need to check for counter and select the item which needs to be Shared
-                 */
-                findItemToBeSharedBasedOnCounter(itemEntityMap, institutionMap);
-            } else {
-                /* For Ongoing Matching algorithm if the use restriction are same,
-                 * then we need to check for date of accession and select the item which needs to be Shared
-                 */
-                findItemToBeSharedBasedOnDate(itemEntityMap);
-            }
-
-        } else {
-            // Has only One Institution with this use Restriction
-            for (Iterator<List<ItemEntity>> iterator = institutionMap.values().iterator(); iterator.hasNext(); ) {
-                List<ItemEntity> itemEntities = iterator.next();
-                findAndremoveSharedItem(itemEntityMap, itemEntities);
-            }
-        }
     }
 
     private void findItemToBeSharedBasedOnCounter(Map<Integer, ItemEntity> itemEntityMap, Map<Integer, List<ItemEntity>> institutionMap) {
@@ -383,16 +314,5 @@ public class MatchingAlgorithmCGDProcessor {
 
     private Integer getCounterForGivenInst(String institution) {
         return MatchingCounter.getSpecificInstitutionCounterMap(institution).get(RecapConstants.MATCHING_COUNTER_SHARED);
-    }
-
-    private Integer getUseRestrictionInNumbers(String useRestrictions) {
-        if(StringUtils.isBlank(useRestrictions)) {
-            return 0;
-        } else if(useRestrictions.equalsIgnoreCase(RecapCommonConstants.IN_LIBRARY_USE)) {
-            return 1;
-        } else if(useRestrictions.equalsIgnoreCase(RecapCommonConstants.SUPERVISED_USE)) {
-            return 2;
-        }
-        return 0;
     }
 }

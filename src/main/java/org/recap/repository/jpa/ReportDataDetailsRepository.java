@@ -133,5 +133,11 @@ public interface ReportDataDetailsRepository extends BaseRepository<ReportDataEn
             "and RECORD_NUM in (select record_num from report_t where type in ('SingleMatch','MultiMatch'))) " +
             "and header_name=?1 order by record_num limit ?2,?3", nativeQuery = true)
     List<ReportDataEntity> getReportDataEntityForMatchingMVMs(String headerName, long from, long batchsize);
+
+    @Query(value = "select * from report_data_t\n" +
+            "where RECORD_NUM in \n" +
+            "(select RECORD_NUM from report_data_t where record_num in \n" +
+            "(select record_num from report_t where date(CREATED_DATE)=?1 and type like %?2%) and HEADER_VALUE like %?3%) and HEADER_NAME='BibId' and HEADER_VALUE like %?4% ;", nativeQuery = true)
+    List<ReportDataEntity> getReportDataEntityForSingleMatch(String date,String type,String matchTypeValue,String bibIds);
 }
 

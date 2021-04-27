@@ -77,7 +77,6 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
 
     @Test
     public void updateCGDProcess() throws Exception {
-        Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap=new HashMap<>();
         List<ItemEntity> itemEntities=new ArrayList<>();
         itemEntities.add(getItemEntity(1));
         itemEntities.add(getItemEntity(2));
@@ -86,21 +85,18 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         owningInstitutionMap.put(1,itemEntities);
         owningInstitutionMap.put(2,itemEntities);
         owningInstitutionMap.put(3,itemEntities);
-        useRestrictionMap.put(0,owningInstitutionMap);
-        useRestrictionMap.put(1,owningInstitutionMap);
         Map collectionGroupMap=new HashMap();
         collectionGroupMap.put(RecapCommonConstants.REPORTS_OPEN,2);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
         String matchingType= RecapConstants.INITIAL_MATCHING_OPERATION_TYPE;
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"matchingType",matchingType);
         Map<Integer, ItemEntity> itemEntityMap = getIntegerItemEntityMap();
-        matchingAlgorithmCGDProcessor.updateCGDProcess(useRestrictionMap,itemEntityMap);
+        matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
         assertNotNull(itemEntityMap);
     }
 
     @Test
     public void updateCGDProcess1() throws Exception {
-        Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap=new HashMap<>();
         ItemEntity itemEntityPUL = getItemEntity(1);
         itemEntityPUL.setInitialMatchingDate(new Date());
         ItemEntity itemEntityCUL = getItemEntity(2);
@@ -115,8 +111,6 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         owningInstitutionMap.put(1,itemEntities);
         owningInstitutionMap.put(2,itemEntities);
         owningInstitutionMap.put(3,itemEntities);
-        useRestrictionMap.put(1,owningInstitutionMap);
-        useRestrictionMap.put(2,owningInstitutionMap);
         Map<Integer, ItemEntity> itemEntityMap=new HashMap<>();
         itemEntityMap.put(1,itemEntityPUL);
         itemEntityMap.put(2,itemEntityCUL);
@@ -126,34 +120,29 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
         String matchingType= RecapCommonConstants.ONGOING_MATCHING_ALGORITHM;
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"matchingType",matchingType);
-        matchingAlgorithmCGDProcessor.updateCGDProcess(useRestrictionMap,itemEntityMap);
+        matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
         assertNotNull(itemEntityMap);
     }
 
     @Test
     public void updateCGDProcess2() throws Exception {
-        Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap=new HashMap<>();
         List<ItemEntity> itemEntities=new ArrayList<>();
         itemEntities.add(getItemEntity(1));
         itemEntities.add(getItemEntity(2));
         itemEntities.add(getItemEntity(3));
         Map<Integer, List<ItemEntity>> owningInstitutionMap=new HashMap<>();
         owningInstitutionMap.put(1,itemEntities);
-        useRestrictionMap.put(1,owningInstitutionMap);
-        useRestrictionMap.put(2,owningInstitutionMap);
         Map collectionGroupMap=new HashMap();
         collectionGroupMap.put(RecapCommonConstants.REPORTS_OPEN,2);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
         String matchingType= RecapCommonConstants.ONGOING_MATCHING_ALGORITHM;
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"matchingType",matchingType);
         Map<Integer, ItemEntity> itemEntityMap = getIntegerItemEntityMap();
-        matchingAlgorithmCGDProcessor.updateCGDProcess(useRestrictionMap,itemEntityMap);
         assertNotNull(itemEntityMap);
     }
 
     @Test
     public void updateCGDProcess3() throws Exception {
-        Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap=new HashMap<>();
         List<ItemEntity> itemEntities=new ArrayList<>();
         itemEntities.add(getItemEntity(1));
         itemEntities.add(getItemEntity(2));
@@ -162,20 +151,18 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         owningInstitutionMap.put(1,itemEntities);
         owningInstitutionMap.put(2,itemEntities);
         owningInstitutionMap.put(3,itemEntities);
-        useRestrictionMap.put(0,owningInstitutionMap);
         Map collectionGroupMap=new HashMap();
         collectionGroupMap.put(RecapCommonConstants.REPORTS_OPEN,2);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
         String matchingType= RecapConstants.INITIAL_MATCHING_OPERATION_TYPE;
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"matchingType",matchingType);
         Map<Integer, ItemEntity> itemEntityMap = getIntegerItemEntityMap();
-        matchingAlgorithmCGDProcessor.updateCGDProcess(useRestrictionMap,itemEntityMap);
+        matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
         assertNotNull(itemEntityMap);
     }
 
     @Test
     public void updateCGDProcess4() throws Exception {
-        Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap=new HashMap<>();
         List<ItemEntity> itemEntities=new ArrayList<>();
         itemEntities.add(getItemEntity(1));
         itemEntities.add(getItemEntity(2));
@@ -184,21 +171,19 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         owningInstitutionMap.put(1,itemEntities);
         owningInstitutionMap.put(2,itemEntities);
         owningInstitutionMap.put(3,itemEntities);
-        useRestrictionMap.put(0,owningInstitutionMap);
         Map collectionGroupMap=new HashMap();
         collectionGroupMap.put(RecapCommonConstants.REPORTS_OPEN,2);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
         String matchingType= RecapCommonConstants.ONGOING_MATCHING_ALGORITHM;
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"matchingType",matchingType);
         Map<Integer, ItemEntity> itemEntityMap = getIntegerItemEntityMap();
-        matchingAlgorithmCGDProcessor.updateCGDProcess(useRestrictionMap,itemEntityMap);
+        matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
         assertNotNull(itemEntityMap);
     }
 
     @Test
     public void checkForMonographAndPopulateValues() throws Exception {
         Map<Integer, ItemEntity> itemEntityMap = getIntegerItemEntityMap();
-        Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap=new HashMap<>();
         List<ItemEntity> itemEntities=new ArrayList<>();
         itemEntities.add(getItemEntity(1));
         itemEntities.add(getItemEntity(2));
@@ -207,7 +192,6 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         owningInstitutionMap.put(1,itemEntities);
         owningInstitutionMap.put(2,itemEntities);
         owningInstitutionMap.put(3,itemEntities);
-        useRestrictionMap.put(0,owningInstitutionMap);
 
         Set<String> materialTypeSet=new HashSet<>();
         List<Integer> bibIdList=new ArrayList<>();
@@ -227,14 +211,13 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         Map collectionGroupMap=new HashMap();
         collectionGroupMap.put(RecapCommonConstants.SHARED_CGD,1);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"collectionGroupMap",collectionGroupMap);
-        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,useRestrictionMap,itemEntityMap,bibIdList);
+        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList);
         assertEquals(true,checkForMonographAndPopulateValues);
     }
 
     @Test
     public void checkForMonographAndPopulateValuesElseNYPL() throws Exception {
         Map<Integer, ItemEntity> itemEntityMap = getIntegerItemEntityMap();
-        Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap=new HashMap<>();
         List<ItemEntity> itemEntities=new ArrayList<>();
         itemEntities.add(getItemEntity(1));
         itemEntities.add(getItemEntity(2));
@@ -243,7 +226,6 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         owningInstitutionMap.put(1,itemEntities);
         owningInstitutionMap.put(2,itemEntities);
         owningInstitutionMap.put(3,itemEntities);
-        useRestrictionMap.put(0,owningInstitutionMap);
 
         Set<String> materialTypeSet=new HashSet<>();
         List<Integer> bibIdList=new ArrayList<>();
@@ -269,14 +251,13 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         Map institutionMap=new HashMap();
         institutionMap.put("NYPL",3);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"institutionMap",institutionMap);
-        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,useRestrictionMap,itemEntityMap,bibIdList);
+        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList);
         assertEquals(true,checkForMonographAndPopulateValues);
     }
 
     @Test
     public void checkForMonographAndPopulateValuesElseCUL() throws Exception {
         Map<Integer, ItemEntity> itemEntityMap = getIntegerItemEntityMap();
-        Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap=new HashMap<>();
         List<ItemEntity> itemEntities=new ArrayList<>();
         itemEntities.add(getItemEntity(1));
         itemEntities.add(getItemEntity(2));
@@ -285,7 +266,6 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         owningInstitutionMap.put(1,itemEntities);
         owningInstitutionMap.put(2,itemEntities);
         owningInstitutionMap.put(3,itemEntities);
-        useRestrictionMap.put(0,owningInstitutionMap);
 
         Set<String> materialTypeSet=new HashSet<>();
         List<Integer> bibIdList=new ArrayList<>();
@@ -311,14 +291,13 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         Map institutionMap=new HashMap();
         institutionMap.put("CUL",2);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"institutionMap",institutionMap);
-        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,useRestrictionMap,itemEntityMap,bibIdList);
+        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList);
         assertEquals(true,checkForMonographAndPopulateValues);
     }
 
     @Test
     public void checkForMonographAndPopulateValuesElsePUL() throws Exception {
         Map<Integer, ItemEntity> itemEntityMap = getIntegerItemEntityMap();
-        Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap=new HashMap<>();
         List<ItemEntity> itemEntities=new ArrayList<>();
         itemEntities.add(getItemEntity(1));
         itemEntities.add(getItemEntity(2));
@@ -327,7 +306,6 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         owningInstitutionMap.put(1,itemEntities);
         owningInstitutionMap.put(2,itemEntities);
         owningInstitutionMap.put(3,itemEntities);
-        useRestrictionMap.put(0,owningInstitutionMap);
 
         Set<String> materialTypeSet=new HashSet<>();
         List<Integer> bibIdList=new ArrayList<>();
@@ -351,7 +329,7 @@ public class MatchingAlgorithmCGDProcessorUT extends BaseTestCaseUT {
         Map institutionMap=new HashMap();
         institutionMap.put("PUL",1);
         ReflectionTestUtils.setField(matchingAlgorithmCGDProcessor,"institutionMap",institutionMap);
-        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,useRestrictionMap,itemEntityMap,bibIdList);
+        boolean checkForMonographAndPopulateValues=matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,itemEntityMap,bibIdList);
         assertEquals(false,checkForMonographAndPopulateValues);
     }
 

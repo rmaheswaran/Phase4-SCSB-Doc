@@ -92,15 +92,14 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
         List<Integer> exceptionRecordNums = new ArrayList<>();
         Map<String, List<Integer>> unProcessedRecordNumMap = new HashMap<>();
         for(ReportDataEntity reportDataEntity : reportDataEntities) {
-            Map<Integer, Map<Integer, List<ItemEntity>>> useRestrictionMap = new HashMap<>();
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
             List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
             Set<String> materialTypeSet = new HashSet<>();
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
                     institutionMap, itemChangeLogDetailsRepository, RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository,institutionDetailsRepository);
-            boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet,useRestrictionMap, itemEntityMap, bibIdList);
+            boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList);
             if(isMonograph) {
-                matchingAlgorithmCGDProcessor.updateCGDProcess(useRestrictionMap, itemEntityMap);
+                matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
             } else {
                 if(materialTypeSet.size() > 1) {
                     exceptionRecordNums.add(Integer.valueOf(reportDataEntity.getRecordNum()));
