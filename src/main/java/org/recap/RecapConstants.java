@@ -87,6 +87,7 @@ public final class RecapConstants {
     public static final String MATCH_POINT = "MatchPoint";
 
     public static final String IMS_LOCATION_CODE = "ImsLocation";
+    public  static  final String FAILURE_UPDATE_CGD = "Failure: User is not allowed to update other instituion Item";
 
     //Error Message
     public static final String SERVER_ERROR_MSG = "Server is down for maintenance. Please try again later.";
@@ -157,6 +158,11 @@ public final class RecapConstants {
     public static final String TOTAL_BIB_ID_PARTITION_LIST="Total Bib Id partition List : {}";
     public static final String NON_MONOGRAPH_RECORD_NUMS="NonMonographRecordNums";
     public static final String EXCEPTION_RECORD_NUMS="ExceptionRecordNums";
+    //Permissions
+    public static final String ROLE_SUPER_ADMIN = "Super Admin";
+    public static final String ROLE_RECAP = "ReCAP";
+    public static final Boolean BOOLEAN_TRUE = true;
+    public static final Boolean BOOLEAN_FALSE = false;
 
     //Logger
     public static final String SCSB_PERSISTENCE_SERVICE_IS_UNAVAILABLE = "Scsb Persistence Service is Unavailable.";
