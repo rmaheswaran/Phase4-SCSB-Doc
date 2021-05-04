@@ -3,6 +3,7 @@ package org.recap.controller;
 import org.recap.RecapCommonConstants;
 import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
 import org.recap.model.solr.SolrIndexRequest;
+import org.recap.service.OngoingMatchingAlgorithmService;
 import org.recap.util.DateUtil;
 import org.recap.util.OngoingMatchingAlgorithmUtil;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.util.StopWatch;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +42,9 @@ public class OngoingMatchingAlgorithmJobRestController {
     @Value("${matching.algorithm.bibinfo.batchsize}")
     private String batchSize;
 
+    @Autowired
+    private OngoingMatchingAlgorithmService ongoingMatchingAlgorithmService;
+
     @PostMapping(value = "/ongoingMatchingAlgorithmJob", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String startMatchingAlgorithmJob(@RequestBody SolrIndexRequest solrIndexRequest) {
@@ -59,5 +64,10 @@ public class OngoingMatchingAlgorithmJobRestController {
         stopWatch.stop();
         logger.info("Total Time taken to complete Ongoing Matching Algorithm : {}", stopWatch.getTotalTimeSeconds());
         return status;
+    }
+
+    @GetMapping("/generateCGDRoundTripReport")
+    public String generateCGDRoundTripReport() throws Exception {
+        return ongoingMatchingAlgorithmService.generateCGDRoundTripReport();
     }
 }

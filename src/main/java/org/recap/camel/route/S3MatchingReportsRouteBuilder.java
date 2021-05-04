@@ -10,6 +10,7 @@ import org.recap.camel.processor.EmailService;
 import org.recap.camel.processor.StopRouteProcessor;
 import org.recap.model.matchingreports.MatchingSerialAndMVMReports;
 import org.recap.model.matchingreports.MatchingSummaryReport;
+import org.recap.model.matchingreports.OngoingMatchingCGDReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -94,6 +95,29 @@ public class S3MatchingReportsRouteBuilder {
             } catch (Exception e) {
                 logger.info(RecapCommonConstants.LOG_ERROR, e);
             }
+
+            try {
+                camelContext.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from(RecapConstants.S3_ONGOING_MATCHING_CGD_REPORT_Q)
+                                .routeId(RecapConstants.S3_ONGOING_MATCHING_CGD_REPORT_ROUTE_ID)
+                                .noAutoStartup()
+                                .marshal().bindy(BindyType.Csv, OngoingMatchingCGDReport.class)
+                                .setHeader(S3Constants.KEY, simple(s3MatchingReportsDirectory+"cgd-round-trip/"+"${in.header.Institution}"+"/"+RecapConstants.MATCHING_REPORT_FILE_NAME_CAMEL_HEADER))
+                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
+                                .onCompletion()
+                                .bean(applicationContext.getBean(EmailService.class), RecapConstants.MATCHING_REPORTS_SEND_EMAIL)
+                                .process(new StopRouteProcessor(RecapConstants.S3_ONGOING_MATCHING_CGD_REPORT_ROUTE_ID))
+                                .log("Ongoing Matching CGD reports generated and uploaded to s3 successfully.")
+                                .end();
+
+                    }
+                });
+            } catch (Exception e) {
+                logger.info(RecapCommonConstants.LOG_ERROR, e);
+            }
+
         }
     }
 }
