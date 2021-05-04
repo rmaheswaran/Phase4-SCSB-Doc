@@ -1,16 +1,16 @@
 package org.recap.service;
 
+import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.BibAvailabilityResponse;
 import org.recap.model.BibItemAvailabityStatusRequest;
 import org.recap.model.ItemAvailabilityResponse;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CollectionGroupEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.*;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
+import org.recap.repository.jpa.ItemStatusDetailsRepository;
+import org.recap.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +39,12 @@ public class ItemAvailabilityService {
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
 
+    @Autowired
+    private ItemStatusDetailsRepository itemStatusDetailsRepository;
+
+    @Autowired
+    private PropertyUtil propertyUtil;
+
     /**
      * This method gets item status by item's barcode and isDeleted field which is false.
      *
@@ -63,8 +69,12 @@ public class ItemAvailabilityService {
         Map<String, String> barcodeStatusMap = new HashMap<>();
         List<ItemAvailabilityResponse> itemAvailabilityResponses = new ArrayList<>();
         List<ItemEntity> itemEntityList = itemDetailsRepository.getItemStatusByBarcodeAndIsDeletedFalseList(barcodes);
+        Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(RecapCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+        ItemStatusEntity itemNotAvailableStatusEntity = itemStatusDetailsRepository.findByStatusCode(RecapCommonConstants.NOT_AVAILABLE);
         for (ItemEntity itemEntity : itemEntityList) {
-            barcodeStatusMap.put(itemEntity.getBarcode(), itemEntity.getItemStatusEntity().getStatusDescription());
+            String institutionCode = itemEntity.getInstitutionEntity().getInstitutionCode().toUpperCase();
+            boolean isCirculationFreezeEnabled = Boolean.parseBoolean(propertyMap.get(institutionCode));
+            barcodeStatusMap.put(itemEntity.getBarcode(), isCirculationFreezeEnabled ? itemNotAvailableStatusEntity.getStatusDescription() : itemEntity.getItemStatusEntity().getStatusDescription());
         }
         for (String requestedBarcode : barcodes) {
             ItemAvailabilityResponse itemAvailabilityResponse = new ItemAvailabilityResponse();
@@ -81,42 +91,46 @@ public class ItemAvailabilityService {
     }
 
     /**
-     * This method gets bibItem avaiablity status based on the bib item availabity status request.
+     * This method gets bibItem availability status based on the bib item availability status request.
      *
-     * @param bibItemAvailabityStatusRequest the bib item availabity status request
-     * @return the item avaiablity status
+     * @param bibItemAvailabilityStatusRequest the bib item availability status request
+     * @return the item availability status
      */
-    public List<BibAvailabilityResponse> getbibItemAvaiablityStatus(BibItemAvailabityStatusRequest bibItemAvailabityStatusRequest) {
+    public List<BibAvailabilityResponse> getBibItemAvailabilityStatus(BibItemAvailabityStatusRequest bibItemAvailabilityStatusRequest) {
         List<BibAvailabilityResponse> bibAvailabilityResponses = new ArrayList<>();
         BibliographicEntity bibliographicEntity;
         try {
-            if (bibItemAvailabityStatusRequest.getInstitutionId().equalsIgnoreCase(RecapConstants.SCSB)) {
-                bibliographicEntity = bibliographicDetailsRepository.findById(Integer.parseInt(bibItemAvailabityStatusRequest.getBibliographicId())).orElse(null);
+            Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(RecapCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+            ItemStatusEntity itemNotAvailableStatusEntity = itemStatusDetailsRepository.findByStatusCode(RecapCommonConstants.NOT_AVAILABLE);
+            if (bibItemAvailabilityStatusRequest.getInstitutionId().equalsIgnoreCase(RecapConstants.SCSB)) {
+                bibliographicEntity = bibliographicDetailsRepository.findById(Integer.parseInt(bibItemAvailabilityStatusRequest.getBibliographicId())).orElse(null);
             } else {
-                InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(bibItemAvailabityStatusRequest.getInstitutionId());
-                bibliographicEntity = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(institutionEntity.getId(), bibItemAvailabityStatusRequest.getBibliographicId());
+                InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(bibItemAvailabilityStatusRequest.getInstitutionId());
+                bibliographicEntity = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(institutionEntity.getId(), bibItemAvailabilityStatusRequest.getBibliographicId());
             }
             if (bibliographicEntity != null) {
+                String institutionCode = bibliographicEntity.getInstitutionEntity().getInstitutionCode().toUpperCase();
+                boolean isCirculationFreezeEnabled = Boolean.parseBoolean(propertyMap.get(institutionCode));
                 for (ItemEntity itemEntity : bibliographicEntity.getItemEntities()) {
-                    if(!itemEntity.isDeleted()) {
+                    if (!itemEntity.isDeleted()) {
                         BibAvailabilityResponse bibAvailabilityResponse = new BibAvailabilityResponse();
                         bibAvailabilityResponse.setItemBarcode(itemEntity.getBarcode());
-                        bibAvailabilityResponse.setItemAvailabilityStatus(itemEntity.getItemStatusEntity().getStatusCode());
+                        bibAvailabilityResponse.setItemAvailabilityStatus(isCirculationFreezeEnabled ? itemNotAvailableStatusEntity.getStatusDescription() : itemEntity.getItemStatusEntity().getStatusDescription());
                         CollectionGroupEntity collectionGroupEntity = itemEntity.getCollectionGroupEntity();
-                        if(collectionGroupEntity != null && !StringUtils.isEmpty(collectionGroupEntity.getCollectionGroupDescription())){
+                        if (collectionGroupEntity != null && !StringUtils.isEmpty(collectionGroupEntity.getCollectionGroupDescription())) {
                             bibAvailabilityResponse.setCollectionGroupDesignation(collectionGroupEntity.getCollectionGroupDescription());
                         }
                         bibAvailabilityResponses.add(bibAvailabilityResponse);
                     }
                 }
-            }else{
+            } else {
                 BibAvailabilityResponse bibAvailabilityResponse = new BibAvailabilityResponse();
                 bibAvailabilityResponse.setItemBarcode("");
                 bibAvailabilityResponse.setErrorMessage(RecapConstants.BIB_ITEM_DOESNOT_EXIST);
                 bibAvailabilityResponses.add(bibAvailabilityResponse);
             }
         } catch (Exception e) {
-            logger.error(RecapConstants.EXCEPTION,e);
+            logger.error(RecapConstants.EXCEPTION, e);
         }
         return bibAvailabilityResponses;
     }
