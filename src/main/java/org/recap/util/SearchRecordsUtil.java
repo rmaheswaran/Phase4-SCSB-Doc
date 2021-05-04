@@ -116,8 +116,11 @@ public final class SearchRecordsUtil {
      */
     private List<SearchResultRow> buildGeneralResults(List<BibItem> bibItems) {
         List<SearchResultRow> searchResultRows = new ArrayList<>();
+        Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(RecapCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
         if (!CollectionUtils.isEmpty(bibItems)) {
             for (BibItem bibItem : bibItems) {
+                String institutionCode = bibItem.getOwningInstitution();
+                boolean isCirculationFreezeEnabled = Boolean.parseBoolean(propertyMap.get(institutionCode));
                 SearchResultRow searchResultRow = new SearchResultRow();
                 searchResultRow.setBibId(bibItem.getBibId());
                 searchResultRow.setTitle(bibItem.getTitleDisplay());
@@ -140,7 +143,7 @@ public final class SearchRecordsUtil {
                         searchResultRow.setCollectionGroupDesignation(item.getCollectionGroupDesignation());
                         searchResultRow.setUseRestriction(item.getUseRestrictionDisplay());
                         searchResultRow.setBarcode(item.getBarcode());
-                        searchResultRow.setAvailability(item.getAvailabilityDisplay());
+                        searchResultRow.setAvailability(isCirculationFreezeEnabled ? RecapCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
                         searchResultRow.setSummaryHoldings(holdings.getSummaryHoldings());
                         searchResultRow.setOwningInstitutionHoldingsId(getMatchedOwningInstitutionHoldingsId(bibItem.getHoldingsList(), item.getHoldingsIdList()));
                         searchResultRow.setImsLocation(item.getImsLocation());
@@ -160,12 +163,12 @@ public final class SearchRecordsUtil {
                                 searchItemResultRow.setBarcode(item.getBarcode());
                                 searchItemResultRow.setUseRestriction(item.getUseRestrictionDisplay());
                                 searchItemResultRow.setCollectionGroupDesignation(item.getCollectionGroupDesignation());
-                                searchItemResultRow.setAvailability(item.getAvailabilityDisplay());
+                                searchItemResultRow.setAvailability(isCirculationFreezeEnabled ? RecapCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
                                 searchItemResultRow.setOwningInstitutionHoldingsId(getMatchedOwningInstitutionHoldingsId(bibItem.getHoldingsList(), item.getHoldingsIdList()));
                                 searchItemResultRow.setImsLocation(item.getImsLocation());
                                 searchItemResultRows.add(searchItemResultRow);
-                                mixedStatus.add(item.getAvailabilityDisplay());
-                                searchResultRow.setAvailability(item.getAvailabilityDisplay());
+                                mixedStatus.add(isCirculationFreezeEnabled ? RecapCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
+                                searchResultRow.setAvailability(isCirculationFreezeEnabled ? RecapCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
                                 searchResultRow.setImsLocation(item.getImsLocation());
                             }
                         }

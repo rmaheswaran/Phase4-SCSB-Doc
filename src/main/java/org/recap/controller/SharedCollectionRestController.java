@@ -77,7 +77,7 @@ public class SharedCollectionRestController {
     public ResponseEntity bibAvailabilityStatus(@RequestBody BibItemAvailabityStatusRequest bibItemAvailabityStatusRequest) {
         List<BibAvailabilityResponse> bibAvailabilityResponses;
         ResponseEntity responseEntity;
-        bibAvailabilityResponses = getItemAvailabilityService().getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
+        bibAvailabilityResponses = getItemAvailabilityService().getBibItemAvailabilityStatus(bibItemAvailabityStatusRequest);
         if (bibAvailabilityResponses.isEmpty()) {
             BibAvailabilityResponse bibAvailabilityResponse = new BibAvailabilityResponse();
             bibAvailabilityResponse.setErrorMessage(RecapConstants.BIB_ITEM_DOESNOT_EXIST);

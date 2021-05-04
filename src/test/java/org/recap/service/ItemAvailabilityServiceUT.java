@@ -61,34 +61,34 @@ public class ItemAvailabilityServiceUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void testgetbibItemAvaiablityStatus() throws Exception {
+    public void testGetBibItemAvailabilityStatus() throws Exception {
         BibItemAvailabityStatusRequest bibItemAvailabityStatusRequest = new BibItemAvailabityStatusRequest();
         bibItemAvailabityStatusRequest.setBibliographicId("93540");
         bibItemAvailabityStatusRequest.setInstitutionId("PUL");
         InstitutionEntity institutionEntity = getInstitutionEntity();
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Mockito.when(bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibId(Mockito.anyInt(),Mockito.anyString())).thenReturn(saveBibSingleHoldingsSingleItem());
-        List<BibAvailabilityResponse> bibAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
+        List<BibAvailabilityResponse> bibAvailabilityResponses = itemAvailabilityService.getBibItemAvailabilityStatus(bibItemAvailabityStatusRequest);
         assertNotNull(bibAvailabilityResponses);
         assertEquals("Available",bibAvailabilityResponses.get(0).getItemAvailabilityStatus());
     }
 
     @Test
-    public void testgetbibItemAvaiablityStatusException() throws Exception {
+    public void testGetBibItemAvailabilityStatusException() throws Exception {
         BibItemAvailabityStatusRequest bibItemAvailabityStatusRequest = new BibItemAvailabityStatusRequest();
         bibItemAvailabityStatusRequest.setBibliographicId("93540");
         bibItemAvailabityStatusRequest.setInstitutionId("PUL");
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenThrow(NullPointerException.class);
-        List<BibAvailabilityResponse> bibAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
+        List<BibAvailabilityResponse> bibAvailabilityResponses = itemAvailabilityService.getBibItemAvailabilityStatus(bibItemAvailabityStatusRequest);
         assertNotNull(bibAvailabilityResponses);
     }
 
     @Test
-    public void testgetbibItemAvaiablityStatusSCSB() throws Exception {
+    public void testGetBibItemAvailabilityStatusSCSB() throws Exception {
         BibItemAvailabityStatusRequest bibItemAvailabityStatusRequest = new BibItemAvailabityStatusRequest();
         bibItemAvailabityStatusRequest.setBibliographicId("93540");
         bibItemAvailabityStatusRequest.setInstitutionId("SCSB");
-        List<BibAvailabilityResponse> bibAvailabilityResponses = itemAvailabilityService.getbibItemAvaiablityStatus(bibItemAvailabityStatusRequest);
+        List<BibAvailabilityResponse> bibAvailabilityResponses = itemAvailabilityService.getBibItemAvailabilityStatus(bibItemAvailabityStatusRequest);
         assertNotNull(bibAvailabilityResponses);
         assertEquals(RecapConstants.BIB_ITEM_DOESNOT_EXIST,bibAvailabilityResponses.get(0).getErrorMessage());
     }
