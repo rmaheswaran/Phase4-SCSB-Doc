@@ -32,6 +32,7 @@ public final class RecapConstants {
     public static final String EMAIL_Q = "scsbactivemq:queue:solrClientEmailQ";
     public static final String FTP_SERIAL_MVM_REPORT_Q = "scsbactivemq:queue:ftpSerialMvmReportsQ";
     public static final String FTP_MATCHING_SUMMARY_REPORT_Q = "scsbactivemq:queue:ftpMatchingSummaryReportQ";
+    public static final String S3_ONGOING_MATCHING_CGD_REPORT_Q = "scsbactivemq:queue:s3OngoingMatchingCGDReportQ";
 
     //Camel Route Id Constants
     public static final String FS_SUBMIT_COLLECTION_REJECTION_REPORT_ID = "fsSubmitCollectionRejectionReport";
@@ -49,6 +50,7 @@ public final class RecapConstants {
     public static final String FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID = "ftpTitleExceptionReportsRoute";
     public static final String FTP_SERIAL_MVM_REPORT_ROUTE_ID = "ftpSerialMvmReportsRoute";
     public static final String FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID = "ftpMatchingSummaryReportRoute";
+    public static final String S3_ONGOING_MATCHING_CGD_REPORT_ROUTE_ID = "s3OngoingMatchingCGDReportRoute";
 
     public static final String SUBMIT_COLLECTION_SUMMARY_Q_SUFFIX = "SubmitCollectionSummaryReportQ";
     public static final String SUMMARY_REPORT_FILE_NAME = "MatchingCGDSummaryReport";
@@ -57,6 +59,7 @@ public final class RecapConstants {
     public static final String MATCHING_SUMMARY_MVM = "MatchingMVMCGDSummary";
     public static final String TITLE_EXCEPTION_REPORT = "TitleExceptionReport";
     public static final String MATCHING_SUMMARY_REPORT = "MatchingSummaryReport";
+    public static final String CGD_ROUND_TRIP_REPORT = "CGD_RoundTripReport";
     public static final String MATCHING_SERIAL_MVM_REPORT = "MatchingSerialMvmReport";
     public static final String UNDER_SCORE = "_";
     public static final String CSV_EXTENSION = ".csv";
@@ -214,6 +217,8 @@ public final class RecapConstants {
     public static final String LOGGER_MSG = " : {0}";
     public static final List<String> MATCHING_MATCH_POINTS = Arrays.asList(RecapCommonConstants.MATCH_POINT_FIELD_OCLC,RecapCommonConstants.MATCH_POINT_FIELD_ISBN,RecapCommonConstants.MATCH_POINT_FIELD_LCCN,RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
     public static final String LOG_EXECUTION_TIME = "Time taken to execute {} : {}";
+    public static final String INSTITUTION = "Institution";
+    public static final String CGD_ROUND_TRIP_EXCEPTION_MESSAGE = "The reported item is not found";
 
     public static class ServicePath {
         private ServicePath() {}
