@@ -201,14 +201,4 @@ public class UpdateCgdUtil {
             itemEntity.setCgdChangeLog(cgdChangeLog);
         }
     }
-
-    private Boolean validateUserRoles(List<String> userRoles, String userInstitutionCode, String institutionCodeItem) {
-        int roleCount = 0;
-        for (String s : userRoles){
-            if(s.equalsIgnoreCase(RecapConstants.ROLE_RECAP) || s.equalsIgnoreCase(RecapConstants.ROLE_SUPER_ADMIN)
-                    || userInstitutionCode.equalsIgnoreCase(institutionCodeItem))
-                roleCount++;
-        }
-        return (roleCount > 0) ? RecapConstants.BOOLEAN_TRUE : RecapConstants.BOOLEAN_FALSE;
-    }
 }
