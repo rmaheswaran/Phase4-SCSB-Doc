@@ -18,6 +18,7 @@ import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.UserDetailsRepository;
 import org.recap.repository.solr.main.ItemCrudRepository;
+import org.recap.service.SCSBService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,9 @@ public class UpdateCgdUtil {
     @Autowired
     private UserDetailsRepository userDetailsRepository;
 
+    @Autowired
+    private SCSBService scsbService;
+
 
     /**
      * This method updates cgd for item in both solr and database based on the given input parameters and sends email on successful cgd updation.
@@ -88,11 +92,11 @@ public class UpdateCgdUtil {
         List<ItemEntity> itemEntities = new ArrayList<>();
         Date lastUpdatedDate = new Date();
         String cgdChangeLog = oldCollectionGroupDesignation + RecapConstants.TO + newCollectionGroupDesignation;
-        String institutionCodeUser = userDetailsRepository.findInstitutionCodeByUserName(username);
-        String institutionCodeItem = itemDetailsRepository.findInstitutionCodeByBarcode(itemBarcode);
-        List<String> rolesUser = userDetailsRepository.getUserRoles(userName);
+        String userCode = userDetailsRepository.findInstitutionCodeByUserName(username);
+        String itemCode = itemDetailsRepository.findInstitutionCodeByBarcode(itemBarcode);
+        List<String> userRoles = userDetailsRepository.getUserRoles(userName);
         try {
-            if (validateUserRoles(rolesUser,institutionCodeUser,institutionCodeItem)) {
+            if (scsbService.validateUserRoles(userRoles,userCode,itemCode)) {
                 updateCGDForItemInDB(itemBarcode, newCollectionGroupDesignation, userName, lastUpdatedDate);
                 itemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
                 setCGDChangeLogToItemEntity(cgdChangeLog, itemEntities);
