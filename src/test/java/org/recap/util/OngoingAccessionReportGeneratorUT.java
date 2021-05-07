@@ -3,8 +3,8 @@ package org.recap.util;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.OngoingAccessionReportRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
@@ -48,8 +48,8 @@ public class OngoingAccessionReportGeneratorUT extends BaseTestCaseUT {
     private ReportEntity getReportEntity(){
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapCommonConstants.ACCESSION_REPORT);
-        reportEntity.setType(RecapConstants.ONGOING_ACCESSION_REPORT);
+        reportEntity.setFileName(ScsbCommonConstants.ACCESSION_REPORT);
+        reportEntity.setType(ScsbConstants.ONGOING_ACCESSION_REPORT);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 

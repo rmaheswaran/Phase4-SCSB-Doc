@@ -9,7 +9,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.search.DataDumpSearchResult;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchRecordsResponse;
@@ -48,7 +48,7 @@ public class SearchRecordRestControllerUT extends BaseTestCaseUT {
     @Test
     public void searchRecordsServiceGetParam() throws Exception {
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
-        searchRecordsRequest.setFieldName(RecapCommonConstants.CUSTOMER_CODE);
+        searchRecordsRequest.setFieldName(ScsbCommonConstants.CUSTOMER_CODE);
         searchRecordsRequest.setFieldValue("pa");
         searchRecordsRequest.setErrorMessage("test");
         List<SearchResultRow> searchResultRows=new ArrayList<>();

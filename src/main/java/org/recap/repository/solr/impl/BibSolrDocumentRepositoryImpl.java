@@ -7,8 +7,8 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.solr.BibItem;
@@ -59,7 +59,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         try {
             if (isEmptyField(searchRecordsRequest)) {
                 searchRecordsRequest.setShowTotalCount(true);
-                searchRecordsRequest.setFieldName(RecapCommonConstants.ALL_FIELDS);
+                searchRecordsRequest.setFieldName(ScsbCommonConstants.ALL_FIELDS);
                 bibItems = searchByBib(searchRecordsRequest);
                 if(CollectionUtils.isEmpty(bibItems)) {
                     bibItems = searchByItem(searchRecordsRequest);
@@ -70,10 +70,10 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             } else {
                 bibItems = searchByBib(searchRecordsRequest);
             }
-            response.put(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE, bibItems);
+            response.put(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE, bibItems);
         } catch (IOException|SolrServerException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
-            response.put(RecapCommonConstants.SEARCH_ERROR_RESPONSE, e.getMessage());
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            response.put(ScsbCommonConstants.SEARCH_ERROR_RESPONSE, e.getMessage());
         }
         return response;
     }
@@ -88,10 +88,10 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         queryForChildAndParentCriteria.setStart(searchRecordsRequest.getPageNumber() * searchRecordsRequest.getPageSize());
         queryForChildAndParentCriteria.setRows(searchRecordsRequest.getPageSize());
         if (searchRecordsRequest.isSortIncompleteRecords()){
-            queryForChildAndParentCriteria.setSort(RecapConstants.ITEM_CREATED_DATE, SolrQuery.ORDER.desc);
+            queryForChildAndParentCriteria.setSort(ScsbConstants.ITEM_CREATED_DATE, SolrQuery.ORDER.desc);
         }
         else {
-            queryForChildAndParentCriteria.setSort(RecapCommonConstants.TITLE_SORT, SolrQuery.ORDER.asc);
+            queryForChildAndParentCriteria.setSort(ScsbCommonConstants.TITLE_SORT, SolrQuery.ORDER.asc);
         }
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(queryForChildAndParentCriteria);
         SolrDocumentList itemSolrDocumentList = queryResponse.getResults();
@@ -110,7 +110,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         SolrQuery queryForParentAndChildCriteria = solrQueryBuilder.getQueryForParentAndChildCriteria(searchRecordsRequest);
         queryForParentAndChildCriteria.setStart(searchRecordsRequest.getPageNumber() * searchRecordsRequest.getPageSize());
         queryForParentAndChildCriteria.setRows(searchRecordsRequest.getPageSize());
-        queryForParentAndChildCriteria.setSort(RecapCommonConstants.TITLE_SORT, SolrQuery.ORDER.asc);
+        queryForParentAndChildCriteria.setSort(ScsbCommonConstants.TITLE_SORT, SolrQuery.ORDER.asc);
         QueryResponse queryResponse = solrTemplate.getSolrClient().query(queryForParentAndChildCriteria);
         SolrDocumentList bibSolrDocumentList = queryResponse.getResults();
         if(CollectionUtils.isNotEmpty(bibSolrDocumentList)) {
@@ -133,10 +133,10 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             BibItem bibItem = new BibItem();
             for (Iterator<SolrDocument> iterator = solrDocuments.iterator(); iterator.hasNext(); ) {
                 SolrDocument solrDocument = iterator.next();
-                String docType = (String) solrDocument.getFieldValue(RecapCommonConstants.DOCTYPE);
-                if (docType.equalsIgnoreCase(RecapCommonConstants.BIB)) {
-                    boolean isDeletedBib = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_BIB);
-                    String bibCatalogingStatus = (String) solrDocument.getFieldValue(RecapConstants.BIB_CATALOGING_STATUS);
+                String docType = (String) solrDocument.getFieldValue(ScsbCommonConstants.DOCTYPE);
+                if (docType.equalsIgnoreCase(ScsbCommonConstants.BIB)) {
+                    boolean isDeletedBib = (boolean) solrDocument.getFieldValue(ScsbCommonConstants.IS_DELETED_BIB);
+                    String bibCatalogingStatus = (String) solrDocument.getFieldValue(ScsbConstants.BIB_CATALOGING_STATUS);
                     if (isDeletedBib == isDeleted && catalogingStatus.equals(bibCatalogingStatus)) {
                         populateBibItem(solrDocument, bibItem);
                         bibItem.setItems(Collections.singletonList(item));
@@ -146,14 +146,14 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             }
             bibItems.add(bibItem);
         } catch (IOException|SolrServerException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return bibItems;
     }
 
     private void addHoldingsToBibItem(boolean isDeleted, BibItem bibItem, SolrDocument solrDocument, String docType) {
-        if (docType.equalsIgnoreCase(RecapCommonConstants.HOLDINGS)) {
-            boolean isDeletedHoldings = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_HOLDINGS);
+        if (docType.equalsIgnoreCase(ScsbCommonConstants.HOLDINGS)) {
+            boolean isDeletedHoldings = (boolean) solrDocument.getFieldValue(ScsbCommonConstants.IS_DELETED_HOLDINGS);
             if (isDeletedHoldings == isDeleted) {
                 Holdings holdings = getHoldings(solrDocument);
                 bibItem.addHoldings(holdings);
@@ -174,10 +174,10 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
             SolrDocumentList solrDocuments = commonUtil.getSolrDocumentsByDocType(solrQueryForItem, solrTemplate);
             for (Iterator<SolrDocument> iterator = solrDocuments.iterator(); iterator.hasNext(); ) {
                 SolrDocument solrDocument = iterator.next();
-                String docType = (String) solrDocument.getFieldValue(RecapCommonConstants.DOCTYPE);
-                if(docType.equalsIgnoreCase(RecapCommonConstants.ITEM)) {
-                    boolean isDeletedItem = (boolean) solrDocument.getFieldValue(RecapCommonConstants.IS_DELETED_ITEM);
-                    String itemCatalogingStatus = (String) solrDocument.getFieldValue(RecapConstants.ITEM_CATALOGING_STATUS);
+                String docType = (String) solrDocument.getFieldValue(ScsbCommonConstants.DOCTYPE);
+                if(docType.equalsIgnoreCase(ScsbCommonConstants.ITEM)) {
+                    boolean isDeletedItem = (boolean) solrDocument.getFieldValue(ScsbCommonConstants.IS_DELETED_ITEM);
+                    String itemCatalogingStatus = (String) solrDocument.getFieldValue(ScsbConstants.ITEM_CATALOGING_STATUS);
                     if (isDeletedItem == isDeleted && catalogingStatus.equals(itemCatalogingStatus)) {
                         Item item = commonUtil.getItem(solrDocument);
                         bibItem.addItem(item);
@@ -186,17 +186,17 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
                 addHoldingsToBibItem(isDeleted, bibItem, solrDocument, docType);
             }
         } catch (IOException|SolrServerException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
     }
 
     private boolean isItemField(SearchRecordsRequest searchRecordsRequest) {
         return StringUtils.isNotBlank(searchRecordsRequest.getFieldName())
-                && (searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.BARCODE)
-                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.CALL_NUMBER)
-                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapConstants.ITEM_CATALOGING_STATUS)
-                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.CUSTOMER_CODE)
-                || searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapConstants.IMS_LOCATION_CODE));
+                && (searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.BARCODE)
+                || searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.CALL_NUMBER)
+                || searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbConstants.ITEM_CATALOGING_STATUS)
+                || searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.CUSTOMER_CODE)
+                || searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbConstants.IMS_LOCATION_CODE));
     }
 
     private void setCountsByBib(SearchRecordsRequest searchRecordsRequest, SolrDocumentList bibSolrDocuments) throws IOException, SolrServerException {
@@ -204,7 +204,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         String totalBibCount = NumberFormat.getNumberInstance().format(numFound);
         searchRecordsRequest.setTotalBibRecordsCount(totalBibCount);
         searchRecordsRequest.setTotalRecordsCount(totalBibCount);
-        if(!searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.ALL_FIELDS)) {
+        if(!searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.ALL_FIELDS)) {
             String totalItemCount = NumberFormat.getNumberInstance().format(getItemCountsForBib(searchRecordsRequest));
             searchRecordsRequest.setTotalItemRecordsCount(totalItemCount);
         }
@@ -223,7 +223,7 @@ public class BibSolrDocumentRepositoryImpl implements CustomDocumentRepository {
         String totalItemCount = NumberFormat.getNumberInstance().format(numFound);
         searchRecordsRequest.setTotalItemRecordsCount(totalItemCount);
         searchRecordsRequest.setTotalRecordsCount(totalItemCount);
-        if(!searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.ALL_FIELDS)) {
+        if(!searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.ALL_FIELDS)) {
             String totalBibCount = NumberFormat.getNumberInstance().format(getBibCountsForItem(searchRecordsRequest));
             searchRecordsRequest.setTotalBibRecordsCount(totalBibCount);
         }

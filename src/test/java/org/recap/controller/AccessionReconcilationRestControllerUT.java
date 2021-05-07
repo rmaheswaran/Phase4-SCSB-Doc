@@ -14,7 +14,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -52,7 +52,7 @@ public class AccessionReconcilationRestControllerUT extends BaseTestCaseUT {
         Collection<Object> barcodes=new ArrayList<>();
         barcodes.add("123456");
         Mockito.when(fieldStatsInfo.getDistinctValues()).thenReturn(barcodes);
-        getFieldStatsInfo.put(RecapCommonConstants.BARCODE,fieldStatsInfo);
+        getFieldStatsInfo.put(ScsbCommonConstants.BARCODE,fieldStatsInfo);
         Mockito.when(queryResponse.getFieldStatsInfo()).thenReturn(getFieldStatsInfo);
         ReflectionTestUtils.setField(accessionReconcilationRestController,"solrTemplate",mocksolrTemplate1);
         Map<String,String> responseMessage=accessionReconcilationRestController.startAccessionReconcilation(barcodesAndCustomerCodes);

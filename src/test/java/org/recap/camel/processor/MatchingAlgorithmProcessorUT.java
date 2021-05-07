@@ -5,8 +5,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
@@ -66,8 +66,8 @@ public class MatchingAlgorithmProcessorUT extends BaseTestCaseUT {
 
     private Map getMap() {
         Map matchingBibMap=new HashMap();
-        matchingBibMap.put(RecapCommonConstants.STATUS,RecapCommonConstants.COMPLETE_STATUS);
-        matchingBibMap.put(RecapConstants.MATCHING_BIB_IDS,Arrays.asList(1));
+        matchingBibMap.put(ScsbCommonConstants.STATUS,ScsbCommonConstants.COMPLETE_STATUS);
+        matchingBibMap.put(ScsbConstants.MATCHING_BIB_IDS,Arrays.asList(1));
         return matchingBibMap;
     }
 

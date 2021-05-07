@@ -5,7 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.util.UpdateCgdUtil;
 
 import static org.junit.Assert.assertEquals;
@@ -32,9 +32,9 @@ public class UpdateCgdRestControllerUT extends BaseTestCaseUT {
 
     @Test
     public void updateCgdForItem() throws Exception {
-        Mockito.when(updateCgdUtil.updateCGDForItem(itemBarcode, owningInstitution, oldCollectionGroupDesignation, newCollectionGroupDesignation, cgdChangeNotes,username)).thenReturn(RecapCommonConstants.SUCCESS);
+        Mockito.when(updateCgdUtil.updateCGDForItem(itemBarcode, owningInstitution, oldCollectionGroupDesignation, newCollectionGroupDesignation, cgdChangeNotes,username)).thenReturn(ScsbCommonConstants.SUCCESS);
         String statusMessage= UpdateCgdRestController.updateCgdForItem(itemBarcode,owningInstitution,oldCollectionGroupDesignation,newCollectionGroupDesignation,cgdChangeNotes,username);
-        assertEquals(RecapCommonConstants.SUCCESS,statusMessage);
+        assertEquals(ScsbCommonConstants.SUCCESS,statusMessage);
     }
 
     @Test

@@ -4,8 +4,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.model.dataformat.BindyType;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,17 +34,17 @@ public class S3SubmitCollectionReportRouteBuilder {
                 context.addRoutes(new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {
-                        from(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q)
-                                .routeId(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_ID)
+                        from(ScsbConstants.FTP_SUBMIT_COLLECTION_REPORT_Q)
+                                .routeId(ScsbConstants.FTP_SUBMIT_COLLECTION_REPORT_ID)
                                 .marshal().bindy(BindyType.Csv, SubmitCollectionReportRecord.class)
                                 .setHeader(S3Constants.KEY, simple(submitCollectionS3ReportPath + "${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
+                                .to(ScsbConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
                                 .onCompletion().log("Submit Collection Report file generated in the S3");
                     }
                 });
             }
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
         }
     }
 

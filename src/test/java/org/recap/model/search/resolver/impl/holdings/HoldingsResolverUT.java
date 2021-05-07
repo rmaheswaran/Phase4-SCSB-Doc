@@ -2,7 +2,7 @@ package org.recap.model.search.resolver.impl.holdings;
 
 import org.junit.Test;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.solr.Holdings;
 
 import java.util.Date;
@@ -20,7 +20,7 @@ public class HoldingsResolverUT extends BaseTestCaseUT {
     @Test
     public void testIsDeletedHoldingsValueResolver() throws Exception {
         IsDeletedHoldingsValueResolver isDeletedHoldingsValueResolver = new IsDeletedHoldingsValueResolver();
-        isDeletedHoldingsValueResolver.isInterested(RecapCommonConstants.IS_DELETED_HOLDINGS);
+        isDeletedHoldingsValueResolver.isInterested(ScsbCommonConstants.IS_DELETED_HOLDINGS);
         isDeletedHoldingsValueResolver.setValue(holdings,true);
         assertNotNull(isDeletedHoldingsValueResolver.getClass());
     }
@@ -49,14 +49,14 @@ public class HoldingsResolverUT extends BaseTestCaseUT {
     @Test
     public void testHoldingsIdValueResolver() throws Exception {
         HoldingsIdValueResolver holdingsIdValueResolver = new HoldingsIdValueResolver();
-        holdingsIdValueResolver.isInterested(RecapCommonConstants.HOLDING_ID);
+        holdingsIdValueResolver.isInterested(ScsbCommonConstants.HOLDING_ID);
         holdingsIdValueResolver.setValue(holdings,1);
         assertNotNull(holdingsIdValueResolver.getClass());
     }
     @Test
     public void testOwningInstitutionHoldingsIdValueResolver() throws Exception {
         OwningInstitutionHoldingsIdValueResolver owningInstitutionHoldingsIdValueResolver = new OwningInstitutionHoldingsIdValueResolver();
-        owningInstitutionHoldingsIdValueResolver.isInterested(RecapCommonConstants.OWNING_INSTITUTION_HOLDINGS_ID);
+        owningInstitutionHoldingsIdValueResolver.isInterested(ScsbCommonConstants.OWNING_INSTITUTION_HOLDINGS_ID);
         owningInstitutionHoldingsIdValueResolver.setValue(holdings,"true");
         assertNotNull(owningInstitutionHoldingsIdValueResolver.getClass());
     }

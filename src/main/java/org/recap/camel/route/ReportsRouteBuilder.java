@@ -2,7 +2,7 @@ package org.recap.camel.route;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.camel.processor.ReportProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +28,13 @@ public class ReportsRouteBuilder {
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapCommonConstants.REPORT_Q + "?concurrentConsumers=10")
-                            .routeId(RecapCommonConstants.REPORT_ROUTE_ID).threads(10)
+                    from(ScsbCommonConstants.REPORT_Q + "?concurrentConsumers=10")
+                            .routeId(ScsbCommonConstants.REPORT_ROUTE_ID).threads(10)
                             .process(reportProcessor);
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
     }
 }

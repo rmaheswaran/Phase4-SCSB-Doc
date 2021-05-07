@@ -7,7 +7,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.util.StopWatch;
 
@@ -36,8 +36,8 @@ public class MatchingSolrQueryAT extends BaseTestCase {
         List<String> duplicateOCLCNumbers = new ArrayList<>();
         SolrQuery solrQuery = new SolrQuery("*:* AND DocType:Bib");
         solrQuery.setFacet(true);
-        solrQuery.setFields(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
-        solrQuery.addFacetField(RecapCommonConstants.MATCH_POINT_FIELD_OCLC);
+        solrQuery.setFields(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC);
+        solrQuery.addFacetField(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC);
         solrQuery.setFacetLimit(-1);
         solrQuery.setFacetMinCount(2);
         solrQuery.setRows(0);

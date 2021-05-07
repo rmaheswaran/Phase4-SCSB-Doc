@@ -5,7 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.TestUtil;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.JobParamDataEntity;
@@ -44,7 +44,7 @@ public class GenerateReportRestControllerUT extends BaseTestCaseUT {
     public void generateReportsJob() throws Exception{
         Mockito.when(jobParamDetailRepository.findByJobName(Mockito.anyString())).thenReturn(getJobParamEntity());
         Mockito.when(institutionDetailsRepository.findByInstitutionCodeNotIn(Mockito.anyList())).thenReturn(getInstitutionEntities());
-        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT);
+        Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(ScsbConstants.SUBMIT_COLLECTION_SUMMARY_REPORT);
         String reponse =generateReportRestController.generateReportsJob(getSolrIndexRequest());
         assertEquals("Report generated Successfully in S3",reponse);
     }
@@ -74,9 +74,9 @@ public class GenerateReportRestControllerUT extends BaseTestCaseUT {
     private JobParamEntity getJobParamEntity() {
         JobParamEntity jobParamEntity = new JobParamEntity();
         List<JobParamDataEntity> jobParamDataEntities = new ArrayList<>();
-        jobParamDataEntities.add(getJobParamDataEntity(RecapConstants.TRANSMISSION_TYPE));
-        jobParamDataEntities.add(getJobParamDataEntity(RecapConstants.REPORT_TYPE));
-        jobParamDataEntities.add(getJobParamDataEntity(RecapConstants.JOB_PARAM_DATA_FILE_NAME));
+        jobParamDataEntities.add(getJobParamDataEntity(ScsbConstants.TRANSMISSION_TYPE));
+        jobParamDataEntities.add(getJobParamDataEntity(ScsbConstants.REPORT_TYPE));
+        jobParamDataEntities.add(getJobParamDataEntity(ScsbConstants.JOB_PARAM_DATA_FILE_NAME));
         jobParamEntity.setJobParamDataEntities(jobParamDataEntities);
         return jobParamEntity;
     }

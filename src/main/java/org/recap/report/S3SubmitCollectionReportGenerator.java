@@ -2,8 +2,8 @@ package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
@@ -24,12 +24,12 @@ public class S3SubmitCollectionReportGenerator implements ReportGeneratorInterfa
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION);
+        return reportType.equalsIgnoreCase(ScsbConstants.SUBMIT_COLLECTION);
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP);
+        return transmissionType.equalsIgnoreCase(ScsbCommonConstants.FTP);
     }
 
     @Override
@@ -42,27 +42,27 @@ public class S3SubmitCollectionReportGenerator implements ReportGeneratorInterfa
             }
         }
         if(CollectionUtils.isNotEmpty(submitCollectionReportRecordList)){
-            String reportFileName = RecapConstants.SUBMIT_COLLECTION+submitCollectionReportRecordList.get(0).getOwningInstitution();
-            producerTemplate.sendBodyAndHeader(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q,submitCollectionReportRecordList,"fileName",reportFileName);
-            return RecapCommonConstants.SUCCESS;
+            String reportFileName = ScsbConstants.SUBMIT_COLLECTION+submitCollectionReportRecordList.get(0).getOwningInstitution();
+            producerTemplate.sendBodyAndHeader(ScsbConstants.FTP_SUBMIT_COLLECTION_REPORT_Q,submitCollectionReportRecordList,"fileName",reportFileName);
+            return ScsbCommonConstants.SUCCESS;
         }
         else {
-            return RecapConstants.ERROR;
+            return ScsbConstants.ERROR;
         }
     }
 
     private SubmitCollectionReportRecord getSubmitCollectionReportRecord(ReportEntity reportEntity) {
         SubmitCollectionReportRecord submitCollectionReportRecord = new SubmitCollectionReportRecord();
         for(ReportDataEntity reportDataEntity :reportEntity.getReportDataEntities()){
-            if (RecapCommonConstants.ITEM_BARCODE.equalsIgnoreCase(reportDataEntity.getHeaderName())){
+            if (ScsbCommonConstants.ITEM_BARCODE.equalsIgnoreCase(reportDataEntity.getHeaderName())){
                 submitCollectionReportRecord.setItemBarcode(reportDataEntity.getHeaderValue());
             }
-            else if(RecapCommonConstants.CUSTOMER_CODE.equalsIgnoreCase(reportDataEntity.getHeaderName())){
+            else if(ScsbCommonConstants.CUSTOMER_CODE.equalsIgnoreCase(reportDataEntity.getHeaderName())){
                 submitCollectionReportRecord.setCustomerCode(reportDataEntity.getHeaderValue());
             }
-            else if(RecapCommonConstants.OWNING_INSTITUTION.equalsIgnoreCase(reportDataEntity.getHeaderName())){
+            else if(ScsbCommonConstants.OWNING_INSTITUTION.equalsIgnoreCase(reportDataEntity.getHeaderName())){
                 submitCollectionReportRecord.setOwningInstitution(reportDataEntity.getHeaderValue());
-            }else if(RecapCommonConstants.MESSAGE.equalsIgnoreCase(reportDataEntity.getHeaderName())){
+            }else if(ScsbCommonConstants.MESSAGE.equalsIgnoreCase(reportDataEntity.getHeaderName())){
                 submitCollectionReportRecord.setMessage(reportDataEntity.getHeaderValue());
             }
         }

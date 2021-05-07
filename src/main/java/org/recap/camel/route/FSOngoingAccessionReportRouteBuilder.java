@@ -3,7 +3,7 @@ package org.recap.camel.route;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.BindyType;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.OngoingAccessionReportRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +33,14 @@ public class FSOngoingAccessionReportRouteBuilder {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapConstants.FS_ONGOING_ACCESSION_REPORT_Q)
-                            .routeId(RecapConstants.FS_ONGOING_ACCESSION_REPORT_ID)
+                    from(ScsbConstants.FS_ONGOING_ACCESSION_REPORT_Q)
+                            .routeId(ScsbConstants.FS_ONGOING_ACCESSION_REPORT_ID)
                             .marshal().bindy(BindyType.Csv, OngoingAccessionReportRecord.class)
                             .to("file:" + reportsDirectory + File.separator + "?fileName=${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv&fileExist=append");
                 }
             });
         } catch (Exception e) {
-            logger.error(RecapConstants.ERROR,e);
+            logger.error(ScsbConstants.ERROR,e);
         }
     }
 }

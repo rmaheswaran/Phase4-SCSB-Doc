@@ -4,8 +4,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.controller.OngoingMatchingAlgorithmJobRestController;
 import org.recap.model.solr.SolrIndexRequest;
 import org.slf4j.Logger;
@@ -36,35 +36,35 @@ public class MatchingAlgorithmJobRouteBuilder {
             camelContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from(RecapCommonConstants.MATCHING_ALGORITHM_JOB_INITIATE_QUEUE)
-                            .routeId(RecapConstants.MATCHING_ALGORITHM_JOB_INITIATE_ROUTE_ID)
+                    from(ScsbCommonConstants.MATCHING_ALGORITHM_JOB_INITIATE_QUEUE)
+                            .routeId(ScsbConstants.MATCHING_ALGORITHM_JOB_INITIATE_ROUTE_ID)
                             .process(new Processor() {
                                 @Override
                                 public void process(Exchange exchange) {
                                     String jobId = null;
                                     try {
                                         Map<String, String> requestMap = (Map<String, String>) exchange.getIn().getBody();
-                                        jobId = requestMap.get(RecapCommonConstants.JOB_ID);
+                                        jobId = requestMap.get(ScsbCommonConstants.JOB_ID);
                                         logger.info("Ongoing Matching Algorithm Job Initiated for Job Id : {}" , jobId);
                                         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
-                                        solrIndexRequest.setProcessType(requestMap.get(RecapCommonConstants.PROCESS_TYPE));
-                                        solrIndexRequest.setCreatedDate(new SimpleDateFormat(RecapConstants.MATCHING_BATCH_JOB_DATE_FORMAT).parse(requestMap.get(RecapCommonConstants.CREATED_DATE)));
+                                        solrIndexRequest.setProcessType(requestMap.get(ScsbCommonConstants.PROCESS_TYPE));
+                                        solrIndexRequest.setCreatedDate(new SimpleDateFormat(ScsbConstants.MATCHING_BATCH_JOB_DATE_FORMAT).parse(requestMap.get(ScsbCommonConstants.CREATED_DATE)));
                                         String matchingAlgorithmJobStatus = ongoingMatchingAlgorithmJobRestController.startMatchingAlgorithmJob(solrIndexRequest);
                                         logger.info("Job Id : {} Ongoing Matching Algorithm Job Status : {}", jobId, matchingAlgorithmJobStatus);
                                         exchange.getIn().setBody("JobId:" + jobId + "|" + matchingAlgorithmJobStatus);
                                     } catch (Exception ex) {
                                         exchange.getIn().setBody("JobId:" + jobId + "|" + ex.getMessage());
-                                        logger.info(RecapCommonConstants.LOG_ERROR, ex);
+                                        logger.info(ScsbCommonConstants.LOG_ERROR, ex);
                                     }
                                 }
                             })
                             .onCompletion()
-                            .to(RecapCommonConstants.MATCHING_ALGORITHM_JOB_COMPLETION_OUTGOING_QUEUE)
+                            .to(ScsbCommonConstants.MATCHING_ALGORITHM_JOB_COMPLETION_OUTGOING_QUEUE)
                             .end();
                 }
             });
         } catch (Exception ex) {
-            logger.error(RecapConstants.EXCEPTION, ex);
+            logger.error(ScsbConstants.EXCEPTION, ex);
         }
     }
 }

@@ -3,7 +3,7 @@ package org.recap.util;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.marc4j.marc.Record;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ReportDataEntity;
@@ -32,7 +32,7 @@ public class HoldingsJSONUtil extends MarcUtil {
             Holdings holdings = new Holdings();
             holdings.setHoldingsId(holdingsEntity.getId());
             holdings.setOwningInstitutionHoldingsId(holdingsEntity.getOwningInstitutionHoldingsId());
-            holdings.setDocType(RecapCommonConstants.HOLDINGS);
+            holdings.setDocType(ScsbCommonConstants.HOLDINGS);
             holdings.setId(holdingsEntity.getOwningInstitutionId()+holdingsEntity.getOwningInstitutionHoldingsId());
             String holdingsContent = new String(holdingsEntity.getContent());
             List<Record> records = convertMarcXmlToRecord(holdingsContent);
@@ -58,36 +58,36 @@ public class HoldingsJSONUtil extends MarcUtil {
 
         ReportEntity reportEntity = new ReportEntity();
         reportEntity.setCreatedDate(new Date());
-        reportEntity.setType(RecapCommonConstants.SOLR_INDEX_EXCEPTION);
-        reportEntity.setFileName(RecapCommonConstants.SOLR_INDEX_FAILURE_REPORT);
+        reportEntity.setType(ScsbCommonConstants.SOLR_INDEX_EXCEPTION);
+        reportEntity.setFileName(ScsbCommonConstants.SOLR_INDEX_FAILURE_REPORT);
         InstitutionEntity institutionEntity = holdingsEntity.getInstitutionEntity();
-        String institutionCode = null != institutionEntity ? institutionEntity.getInstitutionCode() : RecapCommonConstants.NA;
+        String institutionCode = null != institutionEntity ? institutionEntity.getInstitutionCode() : ScsbCommonConstants.NA;
         reportEntity.setInstitutionName(institutionCode);
 
         ReportDataEntity docTypeDataEntity = new ReportDataEntity();
-        docTypeDataEntity.setHeaderName(RecapCommonConstants.DOCTYPE);
-        docTypeDataEntity.setHeaderValue(RecapCommonConstants.HOLDINGS);
+        docTypeDataEntity.setHeaderName(ScsbCommonConstants.DOCTYPE);
+        docTypeDataEntity.setHeaderValue(ScsbCommonConstants.HOLDINGS);
         reportDataEntities.add(docTypeDataEntity);
 
         ReportDataEntity owningInstDataEntity = new ReportDataEntity();
-        owningInstDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
+        owningInstDataEntity.setHeaderName(ScsbCommonConstants.OWNING_INSTITUTION);
         owningInstDataEntity.setHeaderValue(institutionCode);
         reportDataEntities.add(owningInstDataEntity);
 
         ReportDataEntity exceptionMsgDataEntity = new ReportDataEntity();
-        exceptionMsgDataEntity.setHeaderName(RecapCommonConstants.EXCEPTION_MSG);
+        exceptionMsgDataEntity.setHeaderName(ScsbCommonConstants.EXCEPTION_MSG);
         exceptionMsgDataEntity.setHeaderValue(StringUtils.isNotBlank(e.getMessage()) ? e.getMessage() : e.toString());
         reportDataEntities.add(exceptionMsgDataEntity);
 
         if(holdingsEntity.getId() != null) {
             ReportDataEntity holdingsIdDataEntity = new ReportDataEntity();
-            holdingsIdDataEntity.setHeaderName(RecapCommonConstants.HOLDINGS_ID);
+            holdingsIdDataEntity.setHeaderName(ScsbCommonConstants.HOLDINGS_ID);
             holdingsIdDataEntity.setHeaderValue(String.valueOf(holdingsEntity.getId()));
             reportDataEntities.add(holdingsIdDataEntity);
         }
 
         reportEntity.addAll(reportDataEntities);
-        producerTemplate.sendBody(RecapCommonConstants.REPORT_Q, reportEntity);
+        producerTemplate.sendBody(ScsbCommonConstants.REPORT_Q, reportEntity);
     }
 
     /**

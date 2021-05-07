@@ -19,8 +19,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -132,7 +132,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         BibliographicEntity bibliographicEntity=getBibliographicEntity();
         Mockito.when(bibliographicDetailsRepository.findById(Mockito.anyInt())).thenReturn(Optional.ofNullable(bibliographicEntity));
         Map<String, Object> search=dataDumpSolrDocumentRepository.search(searchRecordsRequest);
-        assertEquals(true,search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+        assertEquals(true,search.containsKey(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE));
     }
 
 
@@ -160,15 +160,15 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenReturn(solrDocumentList);
         Map<String, Object> search=dataDumpSolrDocumentRepository.search(searchRecordsRequest);
-        assertEquals(true,search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+        assertEquals(true,search.containsKey(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE));
     }
 
     @Test
     public void searchByBib() throws Exception{
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         searchRecordsRequest.setRequestingInstitution("NYPL");
-        searchRecordsRequest.setFieldValue(RecapConstants.INCREMENTAL_DUMP_TO_NOW);
-        searchRecordsRequest.setFieldName(RecapConstants.BIBITEM_LASTUPDATED_DATE);
+        searchRecordsRequest.setFieldValue(ScsbConstants.INCREMENTAL_DUMP_TO_NOW);
+        searchRecordsRequest.setFieldName(ScsbConstants.BIBITEM_LASTUPDATED_DATE);
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteriaForDataDump(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
@@ -185,15 +185,15 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenReturn(solrDocumentList);
         Map<String, Object> search=dataDumpSolrDocumentRepository.search(searchRecordsRequest);
-        assertEquals(true,search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+        assertEquals(true,search.containsKey(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE));
     }
 
     @Test
     public void searchByBibException() throws Exception{
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         searchRecordsRequest.setRequestingInstitution("NYPL");
-        searchRecordsRequest.setFieldValue(RecapConstants.INCREMENTAL_DUMP_TO_NOW);
-        searchRecordsRequest.setFieldName(RecapConstants.BIBITEM_LASTUPDATED_DATE);
+        searchRecordsRequest.setFieldValue(ScsbConstants.INCREMENTAL_DUMP_TO_NOW);
+        searchRecordsRequest.setFieldName(ScsbConstants.BIBITEM_LASTUPDATED_DATE);
         SolrQuery queryForParentAndChildCriteria=new SolrQuery();
         Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteriaForDataDump(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
@@ -203,7 +203,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenThrow(SolrServerException.class);
         Map<String, Object> search=dataDumpSolrDocumentRepository.search(searchRecordsRequest);
         assertNull(dataDumpSolrDocumentRepository.getPageNumberOnPageSizeChange(searchRecordsRequest));
-        assertEquals(true,search.containsKey(RecapCommonConstants.SEARCH_ERROR_RESPONSE));
+        assertEquals(true,search.containsKey(ScsbCommonConstants.SEARCH_ERROR_RESPONSE));
     }
 
     private SolrDocumentList getSolrDocumentList() {
@@ -212,7 +212,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         solrDocumentList.add(getEntries("ItemId",1));
         solrDocumentList.add(getEntries("DocType","true"));
         solrDocumentList.add(getEntries("id","id"));
-        solrDocumentList.add(getEntries(RecapCommonConstants.IS_DELETED_ITEM,true));
+        solrDocumentList.add(getEntries(ScsbCommonConstants.IS_DELETED_ITEM,true));
         solrDocumentList.add(getEntries("ItemBibId",Arrays.asList(2)));
         solrDocumentList.setNumFound(1);
         return  solrDocumentList;
@@ -263,7 +263,7 @@ public class DataDumpSolrDocumentRepositoryImplAT extends BaseTestCaseUT {
         itemEntity.setLastUpdatedBy("tst");
         itemEntity.setItemAvailabilityStatusId(1);
         itemEntity.setId(1);
-        itemEntity.setCgdChangeLog(RecapConstants.CGD_CHANGE_LOG_OPEN_TO_PRIVATE);
+        itemEntity.setCgdChangeLog(ScsbConstants.CGD_CHANGE_LOG_OPEN_TO_PRIVATE);
         List<ItemEntity> itemEntitylist = new LinkedList(Arrays.asList(itemEntity));
 
         holdingsEntity.setBibliographicEntities(bibliographicEntitylist);

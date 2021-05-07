@@ -1,7 +1,7 @@
 package org.recap.service;
 
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.BibAvailabilityResponse;
 import org.recap.model.BibItemAvailabityStatusRequest;
 import org.recap.model.ItemAvailabilityResponse;
@@ -69,8 +69,8 @@ public class ItemAvailabilityService {
         Map<String, String> barcodeStatusMap = new HashMap<>();
         List<ItemAvailabilityResponse> itemAvailabilityResponses = new ArrayList<>();
         List<ItemEntity> itemEntityList = itemDetailsRepository.getItemStatusByBarcodeAndIsDeletedFalseList(barcodes);
-        Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(RecapCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
-        ItemStatusEntity itemNotAvailableStatusEntity = itemStatusDetailsRepository.findByStatusCode(RecapCommonConstants.NOT_AVAILABLE);
+        Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+        ItemStatusEntity itemNotAvailableStatusEntity = itemStatusDetailsRepository.findByStatusCode(ScsbCommonConstants.NOT_AVAILABLE);
         for (ItemEntity itemEntity : itemEntityList) {
             String institutionCode = itemEntity.getInstitutionEntity().getInstitutionCode().toUpperCase();
             boolean isCirculationFreezeEnabled = Boolean.parseBoolean(propertyMap.get(institutionCode));
@@ -83,7 +83,7 @@ public class ItemAvailabilityService {
                 itemAvailabilityResponse.setItemAvailabilityStatus(barcodeStatusMap.get(requestedBarcode));
             } else {
                 itemAvailabilityResponse.setItemBarcode(requestedBarcode);
-                itemAvailabilityResponse.setItemAvailabilityStatus(RecapConstants.ITEM_BARCDE_DOESNOT_EXIST);
+                itemAvailabilityResponse.setItemAvailabilityStatus(ScsbConstants.ITEM_BARCDE_DOESNOT_EXIST);
             }
             itemAvailabilityResponses.add(itemAvailabilityResponse);
         }
@@ -100,9 +100,9 @@ public class ItemAvailabilityService {
         List<BibAvailabilityResponse> bibAvailabilityResponses = new ArrayList<>();
         BibliographicEntity bibliographicEntity;
         try {
-            Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(RecapCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
-            ItemStatusEntity itemNotAvailableStatusEntity = itemStatusDetailsRepository.findByStatusCode(RecapCommonConstants.NOT_AVAILABLE);
-            if (bibItemAvailabilityStatusRequest.getInstitutionId().equalsIgnoreCase(RecapConstants.SCSB)) {
+            Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+            ItemStatusEntity itemNotAvailableStatusEntity = itemStatusDetailsRepository.findByStatusCode(ScsbCommonConstants.NOT_AVAILABLE);
+            if (bibItemAvailabilityStatusRequest.getInstitutionId().equalsIgnoreCase(ScsbConstants.SCSB)) {
                 bibliographicEntity = bibliographicDetailsRepository.findById(Integer.parseInt(bibItemAvailabilityStatusRequest.getBibliographicId())).orElse(null);
             } else {
                 InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(bibItemAvailabilityStatusRequest.getInstitutionId());
@@ -126,11 +126,11 @@ public class ItemAvailabilityService {
             } else {
                 BibAvailabilityResponse bibAvailabilityResponse = new BibAvailabilityResponse();
                 bibAvailabilityResponse.setItemBarcode("");
-                bibAvailabilityResponse.setErrorMessage(RecapConstants.BIB_ITEM_DOESNOT_EXIST);
+                bibAvailabilityResponse.setErrorMessage(ScsbConstants.BIB_ITEM_DOESNOT_EXIST);
                 bibAvailabilityResponses.add(bibAvailabilityResponse);
             }
         } catch (Exception e) {
-            logger.error(RecapConstants.EXCEPTION, e);
+            logger.error(ScsbConstants.EXCEPTION, e);
         }
         return bibAvailabilityResponses;
     }

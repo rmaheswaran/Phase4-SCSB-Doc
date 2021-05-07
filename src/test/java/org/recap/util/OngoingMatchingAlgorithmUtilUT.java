@@ -15,8 +15,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.matchingalgorithm.service.OngoingMatchingReportsService;
@@ -118,7 +118,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         List<InstitutionEntity> institutionEntities = getInstitutionEntities();
         List<Integer> itemIds=new ArrayList<>();
         itemIds.add(1);
-        String[]  matchPoints={RecapCommonConstants.OCLC_NUMBER,RecapCommonConstants.ISBN_CRITERIA,RecapCommonConstants.ISSN_CRITERIA,RecapCommonConstants.LCCN_CRITERIA};
+        String[]  matchPoints={ScsbCommonConstants.OCLC_NUMBER,ScsbCommonConstants.ISBN_CRITERIA,ScsbCommonConstants.ISSN_CRITERIA,ScsbCommonConstants.LCCN_CRITERIA};
         for (String matchPoint:matchPoints) {
             SolrDocumentList solrDocumentList = getSolrDocumentsSingle(matchPoint);
             ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
@@ -129,17 +129,17 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
             PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
             Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
             Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
-            Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(SolrDocument.class),Mockito.anyCollection(),Mockito.any(BibItem.class))).thenReturn(getBibItemSingle("PUL",1,RecapCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("CUL",2,RecapCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("NYPL",3,RecapCommonConstants.MONOGRAPH));
+            Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(SolrDocument.class),Mockito.anyCollection(),Mockito.any(BibItem.class))).thenReturn(getBibItemSingle("PUL",1,ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("CUL",2,ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("NYPL",3,ScsbCommonConstants.MONOGRAPH));
             Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
             Mockito.when(solrQueryBuilder.fetchCreatedOrUpdatedBibs(Mockito.anyString())).thenReturn("testquery");
-            Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(RecapCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
+            Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
             Mockito.when(matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
             Mockito.when(matchingAlgorithmUtil.buildReportEntity(Mockito.anyString())).thenReturn(buildReportEntity("test"));
             Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(collectionGroupEntities);
             Mockito.when(institutionDetailsRepository.findAll()).thenReturn(institutionEntities);
             ongoingMatchingAlgorithmUtil.updateCGDForItemInSolr(itemIds);
             String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, 1);
-            assertEquals(RecapCommonConstants.SUCCESS, status);
+            assertEquals(ScsbCommonConstants.SUCCESS, status);
             
         }
     }
@@ -161,7 +161,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         List<InstitutionEntity> institutionEntities = getInstitutionEntities();
         List<Integer> itemIds=new ArrayList<>();
         itemIds.add(1);
-        SolrDocumentList solrDocumentList = getSolrDocumentsSingle(RecapCommonConstants.OCLC_NUMBER);
+        SolrDocumentList solrDocumentList = getSolrDocumentsSingle(ScsbCommonConstants.OCLC_NUMBER);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"ongoingMatchingReportsService",ongoingMatchingReportsService);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"solrQueryBuilder",solrQueryBuilder);
@@ -170,10 +170,10 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
-        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(SolrDocument.class),Mockito.anyCollection(),Mockito.any(BibItem.class))).thenReturn(getBibItemSingle("PUL",1,RecapCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("CUL",2,RecapCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("NYPL",3,RecapCommonConstants.MONOGRAPH));
+        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(SolrDocument.class),Mockito.anyCollection(),Mockito.any(BibItem.class))).thenReturn(getBibItemSingle("PUL",1,ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("CUL",2,ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("NYPL",3,ScsbCommonConstants.MONOGRAPH));
         Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
         Mockito.when(solrQueryBuilder.fetchCreatedOrUpdatedBibs(Mockito.anyString())).thenReturn("testquery");
-        Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(RecapCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
+        Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
         Mockito.when(matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
         Mockito.when(matchingAlgorithmUtil.buildReportEntity(Mockito.anyString())).thenReturn(buildReportEntity("test"));
         Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(collectionGroupEntities);
@@ -197,7 +197,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.anyList())).thenReturn(bibliographicEntities);
         ongoingMatchingAlgorithmUtil.updateCGDForItemInSolr(itemIds);
         String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, 1);
-        assertEquals(RecapCommonConstants.SUCCESS, status);
+        assertEquals(ScsbCommonConstants.SUCCESS, status);
     }
 
     @Test
@@ -217,7 +217,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         List<InstitutionEntity> institutionEntities = getInstitutionEntities();
         List<Integer> itemIds=new ArrayList<>();
         itemIds.add(1);
-        SolrDocumentList solrDocumentList = getSolrDocumentsSingle(RecapCommonConstants.OCLC_NUMBER);
+        SolrDocumentList solrDocumentList = getSolrDocumentsSingle(ScsbCommonConstants.OCLC_NUMBER);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"ongoingMatchingReportsService",ongoingMatchingReportsService);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"solrQueryBuilder",solrQueryBuilder);
@@ -226,10 +226,10 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
-        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(SolrDocument.class),Mockito.anyCollection(),Mockito.any(BibItem.class))).thenReturn(getBibItemSingle("PUL",1,RecapCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("CUL",2,RecapCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("NYPL",3,RecapCommonConstants.MONOGRAPH));
+        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(SolrDocument.class),Mockito.anyCollection(),Mockito.any(BibItem.class))).thenReturn(getBibItemSingle("PUL",1,ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("CUL",2,ScsbCommonConstants.MONOGRAPH)).thenReturn(getBibItemSingle("NYPL",3,ScsbCommonConstants.MONOGRAPH));
         Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
         Mockito.when(solrQueryBuilder.fetchCreatedOrUpdatedBibs(Mockito.anyString())).thenReturn("testquery");
-        Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(RecapCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
+        Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
         Mockito.when(matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
         Mockito.when(matchingAlgorithmUtil.buildReportEntity(Mockito.anyString())).thenReturn(buildReportEntity("test"));
         Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(collectionGroupEntities);
@@ -254,7 +254,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         Mockito.doThrow(NullPointerException.class).when(matchingAlgorithmUtil).getReportDataEntity(Mockito.anyString(),Mockito.anyString(),Mockito.anyList());
         ongoingMatchingAlgorithmUtil.updateCGDForItemInSolr(itemIds);
         String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, 1);
-        assertEquals(RecapCommonConstants.FAILURE, status);
+        assertEquals(ScsbCommonConstants.FAILURE, status);
     }
 
     private BibliographicEntity getBibliographicEntity(int inst) {
@@ -312,7 +312,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         itemEntity.setCustomerCode("1");
         itemEntity.setItemAvailabilityStatusId(1);
         itemEntity.setDeleted(false);
-        itemEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
+        itemEntity.setCatalogingStatus(ScsbCommonConstants.COMPLETE_STATUS);
         ItemStatusEntity itemStatusEntity = new ItemStatusEntity();
         itemStatusEntity.setId(1);
         itemStatusEntity.setStatusCode("Available");
@@ -334,7 +334,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         Date fromDate = getFromDate(processDate);
         Set<String> unMatchingTitleHeaderSet=new HashSet<>();
         unMatchingTitleHeaderSet.add("test");
-        SolrDocumentList solrDocumentList = getSolrDocumentsSingle(RecapCommonConstants.OCLC_NUMBER);
+        SolrDocumentList solrDocumentList = getSolrDocumentsSingle(ScsbCommonConstants.OCLC_NUMBER);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"ongoingMatchingReportsService",ongoingMatchingReportsService);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"solrQueryBuilder",solrQueryBuilder);
@@ -343,14 +343,14 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
-        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(SolrDocument.class),Mockito.anyCollection(),Mockito.any(BibItem.class))).thenReturn(getBibItemSingle("PUL",1,RecapCommonConstants.SERIAL)).thenReturn(getBibItemSingle("CUL",2,RecapCommonConstants.SERIAL)).thenReturn(getBibItemSingle("NYPL",3,RecapCommonConstants.SERIAL));
+        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(SolrDocument.class),Mockito.anyCollection(),Mockito.any(BibItem.class))).thenReturn(getBibItemSingle("PUL",1,ScsbCommonConstants.SERIAL)).thenReturn(getBibItemSingle("CUL",2,ScsbCommonConstants.SERIAL)).thenReturn(getBibItemSingle("NYPL",3,ScsbCommonConstants.SERIAL));
         Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
         Mockito.when(solrQueryBuilder.fetchCreatedOrUpdatedBibs(Mockito.anyString())).thenReturn("testquery");
-        Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(RecapCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
+        Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
         Mockito.when(matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
         Mockito.when(matchingAlgorithmUtil.buildReportEntity(Mockito.anyString())).thenReturn(buildReportEntity("test"));
         String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, 1);
-        assertEquals(RecapCommonConstants.SUCCESS, status);
+        assertEquals(ScsbCommonConstants.SUCCESS, status);
     }
 
     @Test
@@ -366,7 +366,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         Date fromDate = getFromDate(processDate);
         Set<String> unMatchingTitleHeaderSet=new HashSet<>();
         unMatchingTitleHeaderSet.add("test");
-        SolrDocumentList solrDocumentList = getSolrDocumentsSingleList(RecapCommonConstants.OCLC_NUMBER);
+        SolrDocumentList solrDocumentList = getSolrDocumentsSingleList(ScsbCommonConstants.OCLC_NUMBER);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"matchingAlgorithmUtil",matchingAlgorithmUtil);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"ongoingMatchingReportsService",ongoingMatchingReportsService);
         ReflectionTestUtils.setField(ongoingMatchingAlgorithmUtil,"solrQueryBuilder",solrQueryBuilder);
@@ -375,15 +375,15 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
-        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(SolrDocument.class),Mockito.anyCollection(),Mockito.any(BibItem.class))).thenReturn(getBibItemSingle("PUL",1,RecapCommonConstants.SERIAL)).thenReturn(getBibItemSingle("CUL",2,RecapCommonConstants.SERIAL)).thenReturn(getBibItemSingle("NYPL",3,RecapCommonConstants.SERIAL));
+        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(SolrDocument.class),Mockito.anyCollection(),Mockito.any(BibItem.class))).thenReturn(getBibItemSingle("PUL",1,ScsbCommonConstants.SERIAL)).thenReturn(getBibItemSingle("CUL",2,ScsbCommonConstants.SERIAL)).thenReturn(getBibItemSingle("NYPL",3,ScsbCommonConstants.SERIAL));
         Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
         Mockito.when(solrQueryBuilder.fetchCreatedOrUpdatedBibs(Mockito.anyString())).thenReturn("testquery");
-        Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(RecapCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
+        Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
         Mockito.when(matchingAlgorithmUtil.getMatchingAndUnMatchingBibsOnTitleVerification(Mockito.anyMap())).thenReturn(unMatchingTitleHeaderSet);
         Mockito.when(matchingAlgorithmUtil.buildReportEntity(Mockito.anyString())).thenReturn(buildReportEntity("test"));
         Mockito.when(collectionGroupDetailsRepository.findAll()).thenThrow(NullPointerException.class);
         String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, 1);
-        assertEquals(RecapCommonConstants.SUCCESS, status);
+        assertEquals(ScsbCommonConstants.SUCCESS, status);
     }
 
     @Test
@@ -406,12 +406,12 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
-        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(SolrDocument.class),Mockito.anyCollection(),Mockito.any(BibItem.class))).thenReturn(getBibItemSingle("PUL",1,RecapCommonConstants.SERIAL)).thenReturn(getBibItemSingle("CUL",2,RecapCommonConstants.SERIAL)).thenReturn(getBibItemSingle("NYPL",3,RecapCommonConstants.SERIAL));
+        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(SolrDocument.class),Mockito.anyCollection(),Mockito.any(BibItem.class))).thenReturn(getBibItemSingle("PUL",1,ScsbCommonConstants.SERIAL)).thenReturn(getBibItemSingle("CUL",2,ScsbCommonConstants.SERIAL)).thenReturn(getBibItemSingle("NYPL",3,ScsbCommonConstants.SERIAL));
         Mockito.doCallRealMethod().when(mockedmatchingAlgorithmUtil).populateMatchingCounter();
         Mockito.when(solrQueryBuilder.fetchCreatedOrUpdatedBibs(Mockito.anyString())).thenReturn("testquery");
-        Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(RecapCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
+        Mockito.when(solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.OCLC_NUMBER,"test")).thenReturn("testquery");
         String status = ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(fromDate, 1);
-        assertEquals(RecapCommonConstants.SUCCESS, status);
+        assertEquals(ScsbCommonConstants.SUCCESS, status);
 
     }
 
@@ -439,7 +439,7 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         ReportEntity unMatchReportEntity = new ReportEntity();
         unMatchReportEntity.setType("TitleException");
         unMatchReportEntity.setCreatedDate(new Date());
-        unMatchReportEntity.setInstitutionName(RecapCommonConstants.ALL_INST);
+        unMatchReportEntity.setInstitutionName(ScsbCommonConstants.ALL_INST);
         unMatchReportEntity.setFileName(fileName);
         return unMatchReportEntity;
     }
@@ -463,13 +463,13 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         SolrDocumentList solrDocumentList =new SolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
         solrDocument.setField(matchPoint,String.valueOf(1));
-        solrDocument.setField(RecapConstants.MATERIAL_TYPE,RecapCommonConstants.MONOGRAPH);
+        solrDocument.setField(ScsbConstants.MATERIAL_TYPE,ScsbCommonConstants.MONOGRAPH);
         SolrDocument solrDocument1 = new SolrDocument();
         solrDocument1.setField(matchPoint,String.valueOf(2));
-        solrDocument1.setField(RecapConstants.MATERIAL_TYPE,RecapCommonConstants.MONOGRAPH);
+        solrDocument1.setField(ScsbConstants.MATERIAL_TYPE,ScsbCommonConstants.MONOGRAPH);
         SolrDocument solrDocument2 = new SolrDocument();
         solrDocument2.setField(matchPoint,String.valueOf(3));
-        solrDocument2.setField(RecapConstants.MATERIAL_TYPE,RecapCommonConstants.MONOGRAPH);
+        solrDocument2.setField(ScsbConstants.MATERIAL_TYPE,ScsbCommonConstants.MONOGRAPH);
         solrDocumentList.add(0,solrDocument);
         solrDocumentList.add(1,solrDocument1);
         solrDocumentList.add(2,solrDocument2);
@@ -481,13 +481,13 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
         SolrDocumentList solrDocumentList =new SolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
         solrDocument.setField(matchPoint,Arrays.asList(String.valueOf(1)));
-        solrDocument.setField(RecapConstants.MATERIAL_TYPE,Arrays.asList(RecapCommonConstants.MONOGRAPH));
+        solrDocument.setField(ScsbConstants.MATERIAL_TYPE,Arrays.asList(ScsbCommonConstants.MONOGRAPH));
         SolrDocument solrDocument1 = new SolrDocument();
         solrDocument1.setField(matchPoint,Arrays.asList(String.valueOf(2)));
-        solrDocument1.setField(RecapConstants.MATERIAL_TYPE,Arrays.asList(RecapCommonConstants.MONOGRAPH));
+        solrDocument1.setField(ScsbConstants.MATERIAL_TYPE,Arrays.asList(ScsbCommonConstants.MONOGRAPH));
         SolrDocument solrDocument2 = new SolrDocument();
         solrDocument2.setField(matchPoint,Arrays.asList(String.valueOf(3)));
-        solrDocument2.setField(RecapConstants.MATERIAL_TYPE,Arrays.asList(RecapCommonConstants.MONOGRAPH));
+        solrDocument2.setField(ScsbConstants.MATERIAL_TYPE,Arrays.asList(ScsbCommonConstants.MONOGRAPH));
         solrDocumentList.add(0,solrDocument);
         solrDocumentList.add(1,solrDocument1);
         solrDocumentList.add(2,solrDocument2);
@@ -498,10 +498,10 @@ public class OngoingMatchingAlgorithmUtilUT extends BaseTestCaseUT {
     private SolrDocumentList getSolrDocumentsMulti() {
         SolrDocumentList solrDocumentList =new SolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
-        solrDocument.setField(RecapCommonConstants.OCLC_NUMBER,String.valueOf(1));
-        solrDocument.setField(RecapCommonConstants.ISBN_CRITERIA,String.valueOf(11));
-        solrDocument.setField(RecapCommonConstants.ISSN_CRITERIA,String.valueOf(111));
-        solrDocument.setField(RecapCommonConstants.LCCN_CRITERIA,String.valueOf(1111));
+        solrDocument.setField(ScsbCommonConstants.OCLC_NUMBER,String.valueOf(1));
+        solrDocument.setField(ScsbCommonConstants.ISBN_CRITERIA,String.valueOf(11));
+        solrDocument.setField(ScsbCommonConstants.ISSN_CRITERIA,String.valueOf(111));
+        solrDocument.setField(ScsbCommonConstants.LCCN_CRITERIA,String.valueOf(1111));
         solrDocumentList.add(0,solrDocument);
         solrDocumentList.setNumFound(5);
         return solrDocumentList;

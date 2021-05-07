@@ -1,8 +1,8 @@
 package org.recap.util;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
@@ -47,7 +47,7 @@ public class SubmitCollectionReportGenerator {
                 try {
                     setterMethod.invoke(submitCollectionReportRecord, headerValue);
                 } catch (Exception e) {
-                    logger.error(RecapCommonConstants.LOG_ERROR,e);
+                    logger.error(ScsbCommonConstants.LOG_ERROR,e);
                 }
                 if(isReportRecordFullyUpdated(submitCollectionReportRecord) ) {
                     submitCollectionReportRecordList.add(submitCollectionReportRecord);
@@ -71,14 +71,14 @@ public class SubmitCollectionReportGenerator {
 
     private String getReportType(String type) {
         switch (type) {
-            case RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT:
-                return RecapCommonConstants.SUCCESS;
-            case RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT:
-                return RecapCommonConstants.FAIL;
-            case RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT:
-                return RecapConstants.EXCEPTION_TEXT;
-            case RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT:
-                return RecapConstants.REJECTION;
+            case ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT:
+                return ScsbCommonConstants.SUCCESS;
+            case ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT:
+                return ScsbCommonConstants.FAIL;
+            case ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT:
+                return ScsbConstants.EXCEPTION_TEXT;
+            case ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT:
+                return ScsbConstants.REJECTION;
             default:
                 return null;
         }
@@ -95,7 +95,7 @@ public class SubmitCollectionReportGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, SubmitCollectionReportRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
@@ -111,7 +111,7 @@ public class SubmitCollectionReportGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SubmitCollectionReportRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

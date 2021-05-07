@@ -1,8 +1,8 @@
 package org.recap.controller;
 
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.executors.MatchingBibItemIndexExecutorService;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.matchingalgorithm.service.MatchingAlgorithmHelperService;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.recap.RecapConstants.MATCHING_COUNTER_UPDATED_SHARED;
+import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_SHARED;
 
 /**
  * Created by angelind on 12/7/16.
@@ -161,11 +161,11 @@ public class MatchingAlgorithmController {
             status.append(updateCGDInSolr(matchingAlgoDate));
             stopWatch.stop();
             getLogger().info("Total Time taken to process the full Matching Algorithm Process : {}" ,  stopWatch.getTotalTimeSeconds());
-            status.append(RecapConstants.STATUS_DONE ).append("\n");
-            status.append(RecapConstants.TOTAL_TIME_TAKEN + "to run full Matching Algorithm Process : " + stopWatch.getTotalTimeSeconds()).append("\n");
+            status.append(ScsbConstants.STATUS_DONE ).append("\n");
+            status.append(ScsbConstants.TOTAL_TIME_TAKEN + "to run full Matching Algorithm Process : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
-            status.append(RecapConstants.STATUS_FAILED);
+            getLogger().error(ScsbCommonConstants.LOG_ERROR,e);
+            status.append(ScsbConstants.STATUS_FAILED);
         }
         return status.toString();
     }
@@ -190,11 +190,11 @@ public class MatchingAlgorithmController {
             StopWatchUtil.executeAndEstimateTotalTimeTaken(this::runReportsForMatchingAlgorithm,Integer.valueOf(getMatchingAlgoBatchSize()),"RunningReports For Initial Matching Algorithm");
             stopWatch.stop();
             getLogger().info("Total Time taken to process Matching Algorithm : {}" , stopWatch.getTotalTimeSeconds());
-            status.append(RecapConstants.STATUS_DONE ).append("\n");
-            status.append(RecapConstants.TOTAL_TIME_TAKEN + "for matching and save reports : " + stopWatch.getTotalTimeSeconds()).append("\n");
+            status.append(ScsbConstants.STATUS_DONE ).append("\n");
+            status.append(ScsbConstants.TOTAL_TIME_TAKEN + "for matching and save reports : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
-            status.append(RecapConstants.STATUS_FAILED);
+            getLogger().error(ScsbCommonConstants.LOG_ERROR,e);
+            status.append(ScsbConstants.STATUS_FAILED);
         }
         return status.toString();
     }
@@ -214,11 +214,11 @@ public class MatchingAlgorithmController {
             runReportsForMatchingAlgorithm(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
             getLogger().info("Total Time taken to process Matching Algorithm Reports :{} " , stopWatch.getTotalTimeSeconds());
-            status.append(RecapConstants.STATUS_DONE ).append("\n");
-            status.append(RecapConstants.TOTAL_TIME_TAKEN + "to save reports only : " + stopWatch.getTotalTimeSeconds()).append("\n");
+            status.append(ScsbConstants.STATUS_DONE ).append("\n");
+            status.append(ScsbConstants.TOTAL_TIME_TAKEN + "to save reports only : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
-            status.append(RecapConstants.STATUS_FAILED);
+            getLogger().error(ScsbCommonConstants.LOG_ERROR,e);
+            status.append(ScsbConstants.STATUS_FAILED);
         }
         return status.toString();
     }
@@ -238,11 +238,11 @@ public class MatchingAlgorithmController {
             getMatchingAlgorithmUpdateCGDService().updateCGDProcessForMonographs(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
             getLogger().info("Total Time taken to Update Monographs CGD In DB For Matching Algorithm : {}" , stopWatch.getTotalTimeSeconds());
-            status.append(RecapConstants.STATUS_DONE ).append("\n");
-            status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update monograph CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
+            status.append(ScsbConstants.STATUS_DONE ).append("\n");
+            status.append(ScsbConstants.TOTAL_TIME_TAKEN + "to update monograph CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
-            status.append(RecapConstants.STATUS_FAILED);
+            getLogger().error(ScsbCommonConstants.LOG_ERROR,e);
+            status.append(ScsbConstants.STATUS_FAILED);
         }
         return status.toString();
     }
@@ -262,11 +262,11 @@ public class MatchingAlgorithmController {
             getMatchingAlgorithmUpdateCGDService().updateCGDProcessForSerials(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
             getLogger().info("Total Time taken to Update Serials CGD In DB For Matching Algorithm : {}" , stopWatch.getTotalTimeSeconds());
-            status.append(RecapConstants.STATUS_DONE ).append("\n");
-            status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update Serial CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
+            status.append(ScsbConstants.STATUS_DONE ).append("\n");
+            status.append(ScsbConstants.TOTAL_TIME_TAKEN + "to update Serial CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
-            status.append(RecapConstants.STATUS_FAILED);
+            getLogger().error(ScsbCommonConstants.LOG_ERROR,e);
+            status.append(ScsbConstants.STATUS_FAILED);
         }
         return status.toString();
     }
@@ -286,11 +286,11 @@ public class MatchingAlgorithmController {
             getMatchingAlgorithmUpdateCGDService().updateCGDProcessForMVMs(Integer.valueOf(getMatchingAlgoBatchSize()));
             stopWatch.stop();
             getLogger().info("Total Time taken to Update MVMs CGD In DB For Matching Algorithm : {}" , stopWatch.getTotalTimeSeconds());
-            status.append(RecapConstants.STATUS_DONE ).append("\n");
-            status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update MVM CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
+            status.append(ScsbConstants.STATUS_DONE ).append("\n");
+            status.append(ScsbConstants.TOTAL_TIME_TAKEN + "to update MVM CGD in DB : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
-            status.append(RecapConstants.STATUS_FAILED);
+            getLogger().error(ScsbCommonConstants.LOG_ERROR,e);
+            status.append(ScsbConstants.STATUS_FAILED);
         }
         return status.toString();
     }
@@ -317,16 +317,16 @@ public class MatchingAlgorithmController {
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
-            Integer totalProcessedRecords = getMatchingBibItemIndexExecutorService().indexingForMatchingAlgorithm(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, updatedDate);
+            Integer totalProcessedRecords = getMatchingBibItemIndexExecutorService().indexingForMatchingAlgorithm(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, updatedDate);
             stopWatch.stop();
             getLogger().info("Total Time taken to Update CGD In Solr For Matching Algorithm : {}" , stopWatch.getTotalTimeSeconds());
             String recordsProcessed = "Total number of records processed : " + totalProcessedRecords;
-            status.append(RecapConstants.STATUS_DONE).append("\n");
+            status.append(ScsbConstants.STATUS_DONE).append("\n");
             status.append(recordsProcessed).append("\n");
-            status.append(RecapConstants.TOTAL_TIME_TAKEN + "to update CGD in solr : " + stopWatch.getTotalTimeSeconds()).append("\n");
+            status.append(ScsbConstants.TOTAL_TIME_TAKEN + "to update CGD in solr : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
-            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
-            status.append(RecapConstants.STATUS_FAILED);
+            getLogger().error(ScsbCommonConstants.LOG_ERROR,e);
+            status.append(ScsbConstants.STATUS_FAILED);
         }
         return status.toString();
     }
@@ -343,7 +343,7 @@ public class MatchingAlgorithmController {
         try {
             respone = getMatchingBibInfoDetailService().populateMatchingBibInfo();
         } catch (Exception e) {
-            getLogger().error(RecapCommonConstants.LOG_ERROR,e);
+            getLogger().error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return respone;
     }
@@ -352,12 +352,12 @@ public class MatchingAlgorithmController {
         List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
         Map<String, Integer> institutionCounterMap = allInstitutionCodeExceptHTC.stream().collect(Collectors.toMap(Function.identity(), institution -> 0));
 
-        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, institutionCounterMap);
-        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap);
-        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_OCLC, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
-        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap);
-        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISBN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
-        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, RecapCommonConstants.MATCH_POINT_FIELD_ISSN, RecapCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
+        getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, institutionCounterMap);
         getMatchingAlgorithmHelperService().populateReportsForSingleMatch(batchSize,institutionCounterMap);
         getMatchingAlgorithmHelperService().saveMatchingSummaryCount(institutionCounterMap);
     }

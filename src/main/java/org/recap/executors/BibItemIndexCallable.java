@@ -4,7 +4,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.common.SolrInputDocument;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
@@ -85,16 +85,16 @@ public class BibItemIndexCallable extends CommonCallable implements Callable {
 
         Page<BibliographicEntity> bibliographicEntities = null;
         if(StringUtils.isNotBlank(partialIndexType) && partialIndexMap != null) {
-            if(partialIndexType.equalsIgnoreCase(RecapConstants.BIB_ID_LIST)) {
-                List<Integer> bibIdList = (List<Integer>) partialIndexMap.get(RecapConstants.BIB_ID_LIST);
+            if(partialIndexType.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST)) {
+                List<Integer> bibIdList = (List<Integer>) partialIndexMap.get(ScsbConstants.BIB_ID_LIST);
                 bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnBibIds(PageRequest.of(pageNum, docsPerPage), bibIdList);
-            } else if(partialIndexType.equalsIgnoreCase(RecapConstants.BIB_ID_RANGE)) {
-                String bibIdFrom = (String) partialIndexMap.get(RecapConstants.BIB_ID_RANGE_FROM);
-                String bibIdTo = (String) partialIndexMap.get(RecapConstants.BIB_ID_RANGE_TO);
+            } else if(partialIndexType.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE)) {
+                String bibIdFrom = (String) partialIndexMap.get(ScsbConstants.BIB_ID_RANGE_FROM);
+                String bibIdTo = (String) partialIndexMap.get(ScsbConstants.BIB_ID_RANGE_TO);
                 bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnBibIdRange(PageRequest.of(pageNum, docsPerPage), Integer.valueOf(bibIdFrom), Integer.valueOf(bibIdTo));
-            } else if(partialIndexType.equalsIgnoreCase(RecapConstants.DATE_RANGE)) {
-                Date dateFrom = (Date) partialIndexMap.get(RecapConstants.DATE_RANGE_FROM);
-                Date dateTo = (Date) partialIndexMap.get(RecapConstants.DATE_RANGE_TO);
+            } else if(partialIndexType.equalsIgnoreCase(ScsbConstants.DATE_RANGE)) {
+                Date dateFrom = (Date) partialIndexMap.get(ScsbConstants.DATE_RANGE_FROM);
+                Date dateTo = (Date) partialIndexMap.get(ScsbConstants.DATE_RANGE_TO);
                 bibliographicEntities = bibliographicDetailsRepository.getBibsBasedOnDateRange(PageRequest.of(pageNum, docsPerPage), dateFrom, dateTo);
             }
          } else {

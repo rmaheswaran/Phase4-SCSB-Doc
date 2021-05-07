@@ -1,6 +1,6 @@
 package org.recap.controller;
 
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.util.UpdateCgdUtil;
@@ -73,7 +73,7 @@ public class UpdateItemStatusController {
             statusMessage = "Solr Indexing Successful";
         } catch (Exception e) {
             statusMessage = "Solr Indexing Failed";
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return statusMessage;
     }

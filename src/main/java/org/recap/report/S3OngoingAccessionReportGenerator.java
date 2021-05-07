@@ -2,8 +2,8 @@ package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.OngoingAccessionReportRecord;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.util.OngoingAccessionReportGenerator;
@@ -29,12 +29,12 @@ public class S3OngoingAccessionReportGenerator implements ReportGeneratorInterfa
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapConstants.ONGOING_ACCESSION_REPORT);
+        return reportType.equalsIgnoreCase(ScsbConstants.ONGOING_ACCESSION_REPORT);
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP);
+        return transmissionType.equalsIgnoreCase(ScsbCommonConstants.FTP);
     }
 
     @Override
@@ -47,11 +47,11 @@ public class S3OngoingAccessionReportGenerator implements ReportGeneratorInterfa
         }
         if(CollectionUtils.isNotEmpty(ongoingAccessionReportRecordList)) {
             Map<String, Object>  accessionMap = new HashMap<>();
-            accessionMap.put(RecapConstants.FILE_NAME, reportEntityList.get(0).getInstitutionName()+ "/"+ fileName);
-            accessionMap.put(RecapConstants.INSTITUTION_NAME, reportEntityList.get(0).getInstitutionName());
-            producerTemplate.sendBodyAndHeaders(RecapConstants.FTP_ONGOING_ACCESSON_REPORT_Q, ongoingAccessionReportRecordList, accessionMap);
+            accessionMap.put(ScsbConstants.FILE_NAME, reportEntityList.get(0).getInstitutionName()+ "/"+ fileName);
+            accessionMap.put(ScsbConstants.INSTITUTION_NAME, reportEntityList.get(0).getInstitutionName());
+            producerTemplate.sendBodyAndHeaders(ScsbConstants.FTP_ONGOING_ACCESSON_REPORT_Q, ongoingAccessionReportRecordList, accessionMap);
 
-            DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_REPORT_FILE_NAME);
+            DateFormat df = new SimpleDateFormat(ScsbConstants.DATE_FORMAT_FOR_REPORT_FILE_NAME);
             generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";
             return generatedFileName;
         }

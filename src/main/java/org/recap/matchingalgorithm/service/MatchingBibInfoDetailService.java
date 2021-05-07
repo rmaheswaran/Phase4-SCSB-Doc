@@ -1,8 +1,8 @@
 package org.recap.matchingalgorithm.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.MatchingBibInfoDetail;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.repository.jpa.MatchingBibInfoDetailRepository;
@@ -69,13 +69,13 @@ public class MatchingBibInfoDetailService {
      */
     public String populateMatchingBibInfo(Date fromDate, Date toDate) {
         List<String> typeList = new ArrayList<>();
-        typeList.add(RecapConstants.SINGLE_MATCH);
-        typeList.add(RecapConstants.MULTI_MATCH);
+        typeList.add(ScsbConstants.SINGLE_MATCH);
+        typeList.add(ScsbConstants.MULTI_MATCH);
         List<String> headerNameList = new ArrayList<>();
-        headerNameList.add(RecapCommonConstants.BIB_ID);
-        headerNameList.add(RecapCommonConstants.OWNING_INSTITUTION);
-        headerNameList.add(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
-        Integer matchingCount = getReportDetailRepository().getCountByTypeAndFileNameAndDateRange(typeList, RecapCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate);
+        headerNameList.add(ScsbCommonConstants.BIB_ID);
+        headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION);
+        headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
+        Integer matchingCount = getReportDetailRepository().getCountByTypeAndFileNameAndDateRange(typeList, ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate);
         logger.info("matchingReports Count ------> {} ",matchingCount);
         Integer pageCount = getPageCount(matchingCount,getBatchSize());
         logger.info("Total pages ---> {}",pageCount);
@@ -86,7 +86,7 @@ public class MatchingBibInfoDetailService {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             Page<Integer> recordNumbers = getReportDetailRepository().getRecordNumByTypeAndFileNameAndDateRange(PageRequest.of(pageNum, getBatchSize()), typeList,
-                    RecapCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate);
+                    ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, fromDate, toDate);
             List<Integer> recordNumberList = recordNumbers.getContent();
             logger.info("recordNumberList size -----> {}", recordNumberList.size());
             List<String> stringList = getStringList(recordNumberList);
@@ -111,12 +111,12 @@ public class MatchingBibInfoDetailService {
      */
     public String populateMatchingBibInfo(){
         List<String> typeList = new ArrayList<>();
-        typeList.add(RecapConstants.SINGLE_MATCH);
-        typeList.add(RecapConstants.MULTI_MATCH);
+        typeList.add(ScsbConstants.SINGLE_MATCH);
+        typeList.add(ScsbConstants.MULTI_MATCH);
         List<String> headerNameList = new ArrayList<>();
-        headerNameList.add(RecapCommonConstants.BIB_ID);
-        headerNameList.add(RecapCommonConstants.OWNING_INSTITUTION);
-        headerNameList.add(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
+        headerNameList.add(ScsbCommonConstants.BIB_ID);
+        headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION);
+        headerNameList.add(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
         Integer matchingCount = getReportDetailRepository().getCountByType(typeList);
         logger.info("matchingCount------> {}", matchingCount);
         Integer pageCount = getPageCount(matchingCount,getBatchSize());
@@ -183,9 +183,9 @@ public class MatchingBibInfoDetailService {
         List<MatchingBibInfoDetail> matchingBibInfoDetailList = new ArrayList<>();
         for(Map.Entry<String,List<ReportDataEntity>> entry:reportDataEntityMap.entrySet()){
             Map<String, String[]> dataArrayMap = populateDataArrays(entry.getValue());
-            String[] bibIdArray = dataArrayMap.get(RecapCommonConstants.BIB_ID);
-            String[] institutionArray = dataArrayMap.get(RecapCommonConstants.OWNING_INSTITUTION);
-            String[] owningInstitutionBibIdArray = dataArrayMap.get(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
+            String[] bibIdArray = dataArrayMap.get(ScsbCommonConstants.BIB_ID);
+            String[] institutionArray = dataArrayMap.get(ScsbCommonConstants.OWNING_INSTITUTION);
+            String[] owningInstitutionBibIdArray = dataArrayMap.get(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
             for(int count=0;count<bibIdArray.length;count++){
                 MatchingBibInfoDetail matchingBibInfoDetail = new MatchingBibInfoDetail();
                 matchingBibInfoDetail.setBibId(bibIdArray[count]);
@@ -208,9 +208,9 @@ public class MatchingBibInfoDetailService {
         for(Map.Entry<String,List<ReportDataEntity>> entry:reportDataEntityMap.entrySet()){
             Integer recordNum = Integer.valueOf(entry.getKey());
             Map<String, String[]> dataArrayMap = populateDataArrays(entry.getValue());
-            String[] bibIdArray = dataArrayMap.get(RecapCommonConstants.BIB_ID);
-            String[] institutionArray = dataArrayMap.get(RecapCommonConstants.OWNING_INSTITUTION);
-            String[] owningInstitutionBibIdArray = dataArrayMap.get(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
+            String[] bibIdArray = dataArrayMap.get(ScsbCommonConstants.BIB_ID);
+            String[] institutionArray = dataArrayMap.get(ScsbCommonConstants.OWNING_INSTITUTION);
+            String[] owningInstitutionBibIdArray = dataArrayMap.get(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
 
             matchingBibInfoDetailList.addAll(getMatchingBibInfoDetailsToBeSaved(recordNum, bibIdArray, institutionArray, owningInstitutionBibIdArray));
         }
@@ -246,12 +246,12 @@ public class MatchingBibInfoDetailService {
     private Map<String, String[]> populateDataArrays(List<ReportDataEntity> reportDataEntities) {
         Map<String, String[]> dataArrayMap = new HashMap<>();
         for(ReportDataEntity reportDataEntity : reportDataEntities) {
-            if (RecapCommonConstants.BIB_ID.equals(reportDataEntity.getHeaderName())) {
-                dataArrayMap.put(RecapCommonConstants.BIB_ID, reportDataEntity.getHeaderValue().split(","));
-            } else if (RecapCommonConstants.OWNING_INSTITUTION.equals(reportDataEntity.getHeaderName())) {
-                dataArrayMap.put(RecapCommonConstants.OWNING_INSTITUTION, reportDataEntity.getHeaderValue().split(","));
-            } else if (RecapCommonConstants.OWNING_INSTITUTION_BIB_ID.equals(reportDataEntity.getHeaderName())) {
-                dataArrayMap.put(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID, reportDataEntity.getHeaderValue().split(","));
+            if (ScsbCommonConstants.BIB_ID.equals(reportDataEntity.getHeaderName())) {
+                dataArrayMap.put(ScsbCommonConstants.BIB_ID, reportDataEntity.getHeaderValue().split(","));
+            } else if (ScsbCommonConstants.OWNING_INSTITUTION.equals(reportDataEntity.getHeaderName())) {
+                dataArrayMap.put(ScsbCommonConstants.OWNING_INSTITUTION, reportDataEntity.getHeaderValue().split(","));
+            } else if (ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID.equals(reportDataEntity.getHeaderName())) {
+                dataArrayMap.put(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID, reportDataEntity.getHeaderValue().split(","));
             }
         }
         return dataArrayMap;

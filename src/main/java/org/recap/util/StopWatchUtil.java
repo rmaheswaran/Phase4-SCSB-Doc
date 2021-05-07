@@ -1,6 +1,6 @@
 package org.recap.util;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
@@ -21,7 +21,7 @@ public class StopWatchUtil  {
         supplier.get();
         stopWatchFunc.stop();
         stopWatchFunc.getTotalTimeSeconds();
-        logger.info(RecapConstants.LOG_EXECUTION_TIME,functionName,stopWatchFunc.getTotalTimeSeconds());
+        logger.info(ScsbConstants.LOG_EXECUTION_TIME,functionName,stopWatchFunc.getTotalTimeSeconds());
     }
 
     public static void executeAndEstimateTotalTimeTaken(IntConsumer consumer, Integer batchSize, String functionName) {
@@ -30,6 +30,6 @@ public class StopWatchUtil  {
         consumer.accept(batchSize);
         stopWatchFunc.stop();
         stopWatchFunc.getTotalTimeSeconds();
-        logger.info(RecapConstants.LOG_EXECUTION_TIME ,functionName, stopWatchFunc.getTotalTimeSeconds());
+        logger.info(ScsbConstants.LOG_EXECUTION_TIME ,functionName, stopWatchFunc.getTotalTimeSeconds());
     }
 }

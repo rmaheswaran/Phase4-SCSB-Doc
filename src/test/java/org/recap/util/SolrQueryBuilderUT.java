@@ -4,8 +4,8 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.search.SearchRecordsRequest;
 
@@ -39,7 +39,7 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
 
     @Test
     public void getQueryForChildAndParentCriteria() throws Exception {
-        SearchRecordsRequest[] searchRecordsRequests = {getSearchRecordsRequest("BibLastUpdated","2016-10-21T14:30Z TO NOW"),getSearchRecordsRequest(RecapCommonConstants.BARCODE,"123125123"),getSearchRecordsRequest(RecapCommonConstants.CALL_NUMBER,"1234")};
+        SearchRecordsRequest[] searchRecordsRequests = {getSearchRecordsRequest("BibLastUpdated","2016-10-21T14:30Z TO NOW"),getSearchRecordsRequest(ScsbCommonConstants.BARCODE,"123125123"),getSearchRecordsRequest(ScsbCommonConstants.CALL_NUMBER,"1234")};
         for (SearchRecordsRequest searchRecordsRequest:
         searchRecordsRequests) {
             SolrQuery quryForAllFieldsNoValue = solrQueryBuilder.getQueryForChildAndParentCriteria(searchRecordsRequest);
@@ -109,7 +109,7 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
     @Test
     public void getDeletedQueryForDataDumpNonPrivate(){
         SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-        searchRecordsRequest.setFieldName(RecapCommonConstants.TITLE_STARTS_WITH);
+        searchRecordsRequest.setFieldName(ScsbCommonConstants.TITLE_STARTS_WITH);
         searchRecordsRequest.setFieldValue("test");
         searchRecordsRequest.setAvailability(null);
         searchRecordsRequest.setOwningInstitutions(null);
@@ -129,7 +129,7 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
         searchRecordsRequest.getMaterialTypes().addAll(Arrays.asList("Monograph", "Serial", "Other"));
         SolrQuery queryForAllFieldsNoValue = solrQueryBuilder.getCountQueryForParentAndChildCriteria(searchRecordsRequest);
         SolrQuery query = solrQueryBuilder.buildSolrQueryToGetBibDetails(Arrays.asList(1),1);
-        assertEquals(RecapConstants.BIB_DOC_TYPE,query.getQuery());
+        assertEquals(ScsbConstants.BIB_DOC_TYPE,query.getQuery());
         SolrQuery queryBib = solrQueryBuilder.getSolrQueryForBibItem("test");
         assertEquals("test",queryBib.getQuery());
         assertNotNull(queryForAllFieldsNoValue);
@@ -137,7 +137,7 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
 
     @Test
     public void getCountQueryForChildAndParentCriteria(){
-        String[] names={RecapCommonConstants.CALL_NUMBER,"test","",RecapCommonConstants.TITLE_STARTS_WITH};
+        String[] names={ScsbCommonConstants.CALL_NUMBER,"test","",ScsbCommonConstants.TITLE_STARTS_WITH};
         for (String name: names) {
             SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
             searchRecordsRequest.setFieldName(name);
@@ -166,9 +166,9 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
 
     @Test
     public void buildSolrQueryForCGDReports(){
-        SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForCGDReports("PUL",RecapCommonConstants.SHARED_CGD);
+        SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForCGDReports("PUL",ScsbCommonConstants.SHARED_CGD);
         assertNotNull(solrQuery);
-        assertTrue(solrQuery.getQuery().contains(RecapCommonConstants.SHARED_CGD));
+        assertTrue(solrQuery.getQuery().contains(ScsbCommonConstants.SHARED_CGD));
     }
 
     @Test
@@ -182,13 +182,13 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
     public void buildSolrQueryForIncompleteReports(){
         SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForIncompleteReports("PUL");
         assertNotNull(solrQuery);
-        assertTrue(solrQuery.getQuery().contains(RecapConstants.ITEM_STATUS_INCOMPLETE));
+        assertTrue(solrQuery.getQuery().contains(ScsbConstants.ITEM_STATUS_INCOMPLETE));
     }
 
     @Test
     public void buildSolrQueryForAccessionReports(){
-        SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForAccessionReports(new Date().toString(),"PUL",true,RecapCommonConstants.SHARED_CGD);
+        SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForAccessionReports(new Date().toString(),"PUL",true,ScsbCommonConstants.SHARED_CGD);
         assertNotNull(solrQuery);
-        assertTrue(solrQuery.getQuery().contains(RecapCommonConstants.SHARED_CGD));
+        assertTrue(solrQuery.getQuery().contains(ScsbCommonConstants.SHARED_CGD));
     }
 }

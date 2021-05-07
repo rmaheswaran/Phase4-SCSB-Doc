@@ -1,8 +1,8 @@
 package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.DeAccessionSummaryRecord;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.util.DeAccessionSummaryRecordGenerator;
@@ -26,12 +26,12 @@ public class S3DeAccessionReportGenerator implements ReportGeneratorInterface {
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapCommonConstants.DEACCESSION_SUMMARY_REPORT);
+        return reportType.equalsIgnoreCase(ScsbCommonConstants.DEACCESSION_SUMMARY_REPORT);
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP);
+        return transmissionType.equalsIgnoreCase(ScsbCommonConstants.FTP);
     }
 
     @Override
@@ -44,9 +44,9 @@ public class S3DeAccessionReportGenerator implements ReportGeneratorInterface {
             DeAccessionSummaryRecord deAccessionSummaryRecord = deAccessionSummaryRecordGenerator.prepareDeAccessionSummaryReportRecord(reportEntity);
             deAccessionSummaryRecordList.add(deAccessionSummaryRecord);
         }
-        producerTemplate.sendBodyAndHeader(RecapConstants.FTP_DE_ACCESSION_SUMMARY_REPORT_Q, deAccessionSummaryRecordList, "fileName", fileName);
+        producerTemplate.sendBodyAndHeader(ScsbConstants.FTP_DE_ACCESSION_SUMMARY_REPORT_Q, deAccessionSummaryRecordList, "fileName", fileName);
 
-        DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
+        DateFormat df = new SimpleDateFormat(ScsbConstants.DATE_FORMAT_FOR_FILE_NAME);
         generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";
         return generatedFileName;
     }

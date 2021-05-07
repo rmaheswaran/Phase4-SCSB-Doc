@@ -1,7 +1,7 @@
 package org.recap.util;
 
 import com.csvreader.CsvWriter;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.matchingreports.TitleExceptionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class CsvUtil {
                 writeDataRowForTitleExceptionReport(exceptionReport, csvOutput);
             }
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         } finally {
             if(csvOutput != null) {
                 csvOutput.flush();

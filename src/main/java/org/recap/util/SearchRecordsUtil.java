@@ -1,8 +1,8 @@
 package org.recap.util;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.search.DataDumpSearchResult;
 import org.recap.model.search.SearchItemResultRow;
 import org.recap.model.search.SearchRecordsRequest;
@@ -61,7 +61,7 @@ public final class SearchRecordsUtil {
             }
             return searchAndBuildResults(searchRecordsRequest);
         }
-        searchRecordsRequest.setErrorMessage(RecapConstants.EMPTY_FACET_ERROR_MSG);
+        searchRecordsRequest.setErrorMessage(ScsbConstants.EMPTY_FACET_ERROR_MSG);
         return new ArrayList<>();
     }
 
@@ -75,11 +75,11 @@ public final class SearchRecordsUtil {
      */
     public List<SearchResultRow> searchAndBuildResults(SearchRecordsRequest searchRecordsRequest) throws Exception{
         Map<String, Object> searchResponse = bibSolrDocumentRepository.search(searchRecordsRequest);
-        String errorResponse = (String) searchResponse.get(RecapCommonConstants.SEARCH_ERROR_RESPONSE);
+        String errorResponse = (String) searchResponse.get(ScsbCommonConstants.SEARCH_ERROR_RESPONSE);
         if(errorResponse != null) {
-            searchRecordsRequest.setErrorMessage(RecapConstants.SERVER_ERROR_MSG);
+            searchRecordsRequest.setErrorMessage(ScsbConstants.SERVER_ERROR_MSG);
         } else {
-            List<BibItem> bibItems = (List<BibItem>) searchResponse.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
+            List<BibItem> bibItems = (List<BibItem>) searchResponse.get(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE);
             return buildGeneralResults(bibItems);
         }
 
@@ -96,15 +96,15 @@ public final class SearchRecordsUtil {
     public List<DataDumpSearchResult> searchRecordsForDataDump(SearchRecordsRequest searchRecordsRequest) throws Exception{
         if (!isEmptySearch(searchRecordsRequest)) {
             Map<String, Object> searchResponse = getDataDumpSolrDocumentRepository().search(searchRecordsRequest);
-            String errorResponse = (String) searchResponse.get(RecapCommonConstants.SEARCH_ERROR_RESPONSE);
+            String errorResponse = (String) searchResponse.get(ScsbCommonConstants.SEARCH_ERROR_RESPONSE);
             if(errorResponse != null) {
-                searchRecordsRequest.setErrorMessage(RecapConstants.SERVER_ERROR_MSG);
+                searchRecordsRequest.setErrorMessage(ScsbConstants.SERVER_ERROR_MSG);
             } else {
-                List<BibItem> bibItems = (List<BibItem>) searchResponse.get(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE);
+                List<BibItem> bibItems = (List<BibItem>) searchResponse.get(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE);
                 return buildResultsForDataDump(bibItems);
             }
         }
-        searchRecordsRequest.setErrorMessage(RecapConstants.EMPTY_FACET_ERROR_MSG);
+        searchRecordsRequest.setErrorMessage(ScsbConstants.EMPTY_FACET_ERROR_MSG);
         return new ArrayList<>();
     }
 
@@ -116,7 +116,7 @@ public final class SearchRecordsUtil {
      */
     private List<SearchResultRow> buildGeneralResults(List<BibItem> bibItems) {
         List<SearchResultRow> searchResultRows = new ArrayList<>();
-        Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(RecapCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+        Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
         if (!CollectionUtils.isEmpty(bibItems)) {
             for (BibItem bibItem : bibItems) {
                 String institutionCode = bibItem.getOwningInstitution();
@@ -134,7 +134,7 @@ public final class SearchRecordsUtil {
                 String authorSearch = CollectionUtils.isNotEmpty(bibItem.getAuthorSearch()) ? bibItem.getAuthorSearch().get(0) : " ";
                 searchResultRow.setAuthorSearch(authorSearch);
                 Holdings holdings = CollectionUtils.isEmpty(bibItem.getHoldingsList()) ? new Holdings() : bibItem.getHoldingsList().get(0);
-                if (null != bibItem.getItems() && bibItem.getItems().size() == 1 && !RecapCommonConstants.SERIAL.equals(bibItem.getLeaderMaterialType())) {
+                if (null != bibItem.getItems() && bibItem.getItems().size() == 1 && !ScsbCommonConstants.SERIAL.equals(bibItem.getLeaderMaterialType())) {
                     Item item = bibItem.getItems().get(0);
                     if (null != item) {
                         searchResultRow.setItemId(item.getItemId());
@@ -143,7 +143,7 @@ public final class SearchRecordsUtil {
                         searchResultRow.setCollectionGroupDesignation(item.getCollectionGroupDesignation());
                         searchResultRow.setUseRestriction(item.getUseRestrictionDisplay());
                         searchResultRow.setBarcode(item.getBarcode());
-                        searchResultRow.setAvailability(isCirculationFreezeEnabled ? RecapCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
+                        searchResultRow.setAvailability(isCirculationFreezeEnabled ? ScsbCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
                         searchResultRow.setSummaryHoldings(holdings.getSummaryHoldings());
                         searchResultRow.setOwningInstitutionHoldingsId(getMatchedOwningInstitutionHoldingsId(bibItem.getHoldingsList(), item.getHoldingsIdList()));
                         searchResultRow.setImsLocation(item.getImsLocation());
@@ -163,18 +163,18 @@ public final class SearchRecordsUtil {
                                 searchItemResultRow.setBarcode(item.getBarcode());
                                 searchItemResultRow.setUseRestriction(item.getUseRestrictionDisplay());
                                 searchItemResultRow.setCollectionGroupDesignation(item.getCollectionGroupDesignation());
-                                searchItemResultRow.setAvailability(isCirculationFreezeEnabled ? RecapCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
+                                searchItemResultRow.setAvailability(isCirculationFreezeEnabled ? ScsbCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
                                 searchItemResultRow.setOwningInstitutionHoldingsId(getMatchedOwningInstitutionHoldingsId(bibItem.getHoldingsList(), item.getHoldingsIdList()));
                                 searchItemResultRow.setImsLocation(item.getImsLocation());
                                 searchItemResultRows.add(searchItemResultRow);
-                                mixedStatus.add(isCirculationFreezeEnabled ? RecapCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
-                                searchResultRow.setAvailability(isCirculationFreezeEnabled ? RecapCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
+                                mixedStatus.add(isCirculationFreezeEnabled ? ScsbCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
+                                searchResultRow.setAvailability(isCirculationFreezeEnabled ? ScsbCommonConstants.NOT_AVAILABLE : item.getAvailabilityDisplay());
                                 searchResultRow.setImsLocation(item.getImsLocation());
                             }
                         }
                         for (String status:mixedStatus){
-                            if (RecapCommonConstants.NOT_AVAILABLE.equals(status) && (mixedStatus.size()==2)){
-                                searchResultRow.setAvailability(RecapConstants.MIXED_STATUS);
+                            if (ScsbCommonConstants.NOT_AVAILABLE.equals(status) && (mixedStatus.size()==2)){
+                                searchResultRow.setAvailability(ScsbConstants.MIXED_STATUS);
                             }
                         }
                         searchResultRow.setSummaryHoldings(holdings.getSummaryHoldings());

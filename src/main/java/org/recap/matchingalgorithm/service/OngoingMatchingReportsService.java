@@ -9,8 +9,8 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
@@ -44,8 +44,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.recap.RecapConstants.MATCHING_COUNTER_OPEN;
-import static org.recap.RecapConstants.MATCHING_COUNTER_SHARED;
+import static org.recap.ScsbConstants.MATCHING_COUNTER_OPEN;
+import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
 
 /**
  * Created by angelind on 21/6/17.
@@ -142,27 +142,27 @@ public class OngoingMatchingReportsService {
      * @return the string
      */
     public String generateTitleExceptionReport(Date createdDate, Integer batchSize) {
-        Page<ReportEntity> reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(0, batchSize), RecapCommonConstants.ONGOING_MATCHING_ALGORITHM, RecapConstants.TITLE_EXCEPTION_TYPE,
+        Page<ReportEntity> reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(0, batchSize), ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, ScsbConstants.TITLE_EXCEPTION_TYPE,
                 getDateUtil().getFromDate(createdDate), getDateUtil().getToDate(createdDate));
         int totalPages = reportEntityPage.getTotalPages();
         List<TitleExceptionReport> titleExceptionReports = new ArrayList<>();
         int maxTitleCount = 0;
         maxTitleCount = getTitleExceptionReport(reportEntityPage.getContent(), titleExceptionReports, maxTitleCount);
         for(int pageNum=1; pageNum<totalPages; pageNum++) {
-            reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(pageNum, batchSize), RecapCommonConstants.ONGOING_MATCHING_ALGORITHM, RecapConstants.TITLE_EXCEPTION_TYPE,
+            reportEntityPage = getReportDetailRepository().findByFileAndTypeAndDateRangeWithPaging(PageRequest.of(pageNum, batchSize), ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM, ScsbConstants.TITLE_EXCEPTION_TYPE,
                     getDateUtil().getFromDate(createdDate), getDateUtil().getToDate(createdDate));
             maxTitleCount = getTitleExceptionReport(reportEntityPage.getContent(), titleExceptionReports, maxTitleCount);
         }
         File file = null;
         if(CollectionUtils.isNotEmpty(titleExceptionReports)) {
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_REPORTS);
+                SimpleDateFormat sdf = new SimpleDateFormat(ScsbConstants.DATE_FORMAT_FOR_REPORTS);
                 String formattedDate = sdf.format(new Date());
-                String fileNameWithExtension = getMatchingReportsDirectory() + File.separator + RecapConstants.TITLE_EXCEPTION_REPORT + RecapConstants.UNDER_SCORE + formattedDate + RecapConstants.CSV_EXTENSION;
+                String fileNameWithExtension = getMatchingReportsDirectory() + File.separator + ScsbConstants.TITLE_EXCEPTION_REPORT + ScsbConstants.UNDER_SCORE + formattedDate + ScsbConstants.CSV_EXTENSION;
                 file = getCsvUtil().createTitleExceptionReportFile(fileNameWithExtension, maxTitleCount, titleExceptionReports);
-                getCamelContext().getRouteController().startRoute(RecapConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID);
+                getCamelContext().getRouteController().startRoute(ScsbConstants.FTP_TITLE_EXCEPTION_REPORT_ROUTE_ID);
             } catch (Exception e) {
-                getLogger().error(RecapConstants.EXCEPTION_TEXT + RecapConstants.LOGGER_MSG, e);
+                getLogger().error(ScsbConstants.EXCEPTION_TEXT + ScsbConstants.LOGGER_MSG, e);
             }
         }
         return file != null ? file.getName() : null;
@@ -206,9 +206,9 @@ public class OngoingMatchingReportsService {
         if(CollectionUtils.isNotEmpty(serialMvmBibIds)) {
             List<List<Integer>> bibIdLists = Lists.partition(serialMvmBibIds, 100);
             for(List<Integer> bibIds : bibIdLists) {
-                String bibIdQuery = RecapCommonConstants.BIB_ID + ":" + "(" + StringUtils.join(bibIds, " ") + ")";
+                String bibIdQuery = ScsbCommonConstants.BIB_ID + ":" + "(" + StringUtils.join(bibIds, " ") + ")";
                 SolrQuery solrQuery = new SolrQuery(bibIdQuery);
-                String[] fieldNameList = {RecapConstants.TITLE_SUBFIELD_A, RecapCommonConstants.BIB_ID, RecapCommonConstants.BIB_OWNING_INSTITUTION, RecapCommonConstants.OWNING_INST_BIB_ID, RecapCommonConstants.ROOT};
+                String[] fieldNameList = {ScsbConstants.TITLE_SUBFIELD_A, ScsbCommonConstants.BIB_ID, ScsbCommonConstants.BIB_OWNING_INSTITUTION, ScsbCommonConstants.OWNING_INST_BIB_ID, ScsbCommonConstants.ROOT};
                 solrQuery.setFields(fieldNameList);
                 solrQuery.setRows(100);
                 try {
@@ -219,16 +219,16 @@ public class OngoingMatchingReportsService {
                         matchingSerialAndMvmReports.addAll(getMatchingSerialAndMvmReports(solrDocument));
                     }
                 } catch (Exception e) {
-                    getLogger().error(RecapConstants.EXCEPTION_TEXT + RecapConstants.LOGGER_MSG, e);
+                    getLogger().error(ScsbConstants.EXCEPTION_TEXT + ScsbConstants.LOGGER_MSG, e);
                 }
             }
         }
         if(CollectionUtils.isNotEmpty(matchingSerialAndMvmReports)) {
             try {
-                getCamelContext().getRouteController().startRoute(RecapConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID);
-                getProducerTemplate().sendBodyAndHeader(RecapConstants.FTP_SERIAL_MVM_REPORT_Q, matchingSerialAndMvmReports, RecapConstants.FILE_NAME, RecapConstants.MATCHING_SERIAL_MVM_REPORT);
+                getCamelContext().getRouteController().startRoute(ScsbConstants.FTP_SERIAL_MVM_REPORT_ROUTE_ID);
+                getProducerTemplate().sendBodyAndHeader(ScsbConstants.FTP_SERIAL_MVM_REPORT_Q, matchingSerialAndMvmReports, ScsbConstants.FILE_NAME, ScsbConstants.MATCHING_SERIAL_MVM_REPORT);
             } catch (Exception e) {
-                getLogger().error(RecapConstants.EXCEPTION_TEXT + RecapConstants.LOGGER_MSG, e);
+                getLogger().error(ScsbConstants.EXCEPTION_TEXT + ScsbConstants.LOGGER_MSG, e);
             }
         }
     }
@@ -236,13 +236,13 @@ public class OngoingMatchingReportsService {
     private List<MatchingSerialAndMVMReports> getMatchingSerialAndMvmReports(SolrDocument solrDocument) {
 
         List<MatchingSerialAndMVMReports> matchingSerialAndMVMReportsList = new ArrayList<>();
-        SolrQuery solrQueryForChildDocuments = getSolrQueryBuilder().getSolrQueryForBibItem(RecapCommonConstants.ROOT + ":" + solrDocument.getFieldValue(RecapCommonConstants.ROOT));
-        solrQueryForChildDocuments.setFilterQueries(RecapCommonConstants.DOCTYPE + ":" + "(\"" + RecapCommonConstants.HOLDINGS + "\" \"" + RecapCommonConstants.ITEM + "\")");
-        String[] fieldNameList = {RecapConstants.VOLUME_PART_YEAR, RecapCommonConstants.HOLDING_ID, RecapConstants.SUMMARY_HOLDINGS, RecapCommonConstants.BARCODE,
-                RecapConstants.USE_RESTRICTION_DISPLAY, RecapCommonConstants.ITEM_ID, RecapCommonConstants.ROOT, RecapCommonConstants.DOCTYPE, RecapCommonConstants.HOLDINGS_ID,
-                RecapCommonConstants.IS_DELETED_ITEM, RecapConstants.ITEM_CATALOGING_STATUS};
+        SolrQuery solrQueryForChildDocuments = getSolrQueryBuilder().getSolrQueryForBibItem(ScsbCommonConstants.ROOT + ":" + solrDocument.getFieldValue(ScsbCommonConstants.ROOT));
+        solrQueryForChildDocuments.setFilterQueries(ScsbCommonConstants.DOCTYPE + ":" + "(\"" + ScsbCommonConstants.HOLDINGS + "\" \"" + ScsbCommonConstants.ITEM + "\")");
+        String[] fieldNameList = {ScsbConstants.VOLUME_PART_YEAR, ScsbCommonConstants.HOLDING_ID, ScsbConstants.SUMMARY_HOLDINGS, ScsbCommonConstants.BARCODE,
+                ScsbConstants.USE_RESTRICTION_DISPLAY, ScsbCommonConstants.ITEM_ID, ScsbCommonConstants.ROOT, ScsbCommonConstants.DOCTYPE, ScsbCommonConstants.HOLDINGS_ID,
+                ScsbCommonConstants.IS_DELETED_ITEM, ScsbConstants.ITEM_CATALOGING_STATUS};
         solrQueryForChildDocuments.setFields(fieldNameList);
-        solrQueryForChildDocuments.setSort(RecapCommonConstants.DOCTYPE, SolrQuery.ORDER.asc);
+        solrQueryForChildDocuments.setSort(ScsbCommonConstants.DOCTYPE, SolrQuery.ORDER.asc);
         QueryResponse queryResponse = null;
         try {
             queryResponse = getSolrTemplate().getSolrClient().query(solrQueryForChildDocuments);
@@ -255,24 +255,24 @@ public class OngoingMatchingReportsService {
             Map<Integer, String> holdingsMap = new HashMap<>();
             for (Iterator<SolrDocument> iterator = solrDocuments.iterator(); iterator.hasNext(); ) {
                 SolrDocument solrChildDocument =  iterator.next();
-                String docType = (String) solrChildDocument.getFieldValue(RecapCommonConstants.DOCTYPE);
-                if(docType.equalsIgnoreCase(RecapCommonConstants.HOLDINGS)) {
-                    holdingsMap.put((Integer) solrChildDocument.getFieldValue(RecapCommonConstants.HOLDING_ID),
-                            String.valueOf(solrChildDocument.getFieldValue(RecapConstants.SUMMARY_HOLDINGS)));
+                String docType = (String) solrChildDocument.getFieldValue(ScsbCommonConstants.DOCTYPE);
+                if(docType.equalsIgnoreCase(ScsbCommonConstants.HOLDINGS)) {
+                    holdingsMap.put((Integer) solrChildDocument.getFieldValue(ScsbCommonConstants.HOLDING_ID),
+                            String.valueOf(solrChildDocument.getFieldValue(ScsbConstants.SUMMARY_HOLDINGS)));
                 }
-                if(docType.equalsIgnoreCase(RecapCommonConstants.ITEM)) {
-                    boolean isDeletedItem = (boolean) solrChildDocument.getFieldValue(RecapCommonConstants.IS_DELETED_ITEM);
-                    String itemCatalogingStatus = String.valueOf(solrChildDocument.getFieldValue(RecapConstants.ITEM_CATALOGING_STATUS));
-                    if(!isDeletedItem && itemCatalogingStatus.equalsIgnoreCase(RecapCommonConstants.COMPLETE_STATUS)) {
+                if(docType.equalsIgnoreCase(ScsbCommonConstants.ITEM)) {
+                    boolean isDeletedItem = (boolean) solrChildDocument.getFieldValue(ScsbCommonConstants.IS_DELETED_ITEM);
+                    String itemCatalogingStatus = String.valueOf(solrChildDocument.getFieldValue(ScsbConstants.ITEM_CATALOGING_STATUS));
+                    if(!isDeletedItem && itemCatalogingStatus.equalsIgnoreCase(ScsbCommonConstants.COMPLETE_STATUS)) {
                         MatchingSerialAndMVMReports matchingSerialAndMVMReports = new MatchingSerialAndMVMReports();
-                        matchingSerialAndMVMReports.setTitle(String.valueOf(solrDocument.getFieldValue(RecapConstants.TITLE_SUBFIELD_A)));
-                        matchingSerialAndMVMReports.setBibId(String.valueOf(solrDocument.getFieldValue(RecapCommonConstants.BIB_ID)));
-                        matchingSerialAndMVMReports.setOwningInstitutionId(String.valueOf(solrDocument.getFieldValue(RecapCommonConstants.BIB_OWNING_INSTITUTION)));
-                        matchingSerialAndMVMReports.setOwningInstitutionBibId(String.valueOf(solrDocument.getFieldValue(RecapCommonConstants.OWNING_INST_BIB_ID)));
-                        matchingSerialAndMVMReports.setBarcode(String.valueOf(solrChildDocument.getFieldValue(RecapCommonConstants.BARCODE)));
-                        matchingSerialAndMVMReports.setVolumePartYear(String.valueOf(solrChildDocument.getFieldValue(RecapConstants.VOLUME_PART_YEAR)));
-                        matchingSerialAndMVMReports.setUseRestriction(String.valueOf(solrChildDocument.getFieldValue(RecapConstants.USE_RESTRICTION_DISPLAY)));
-                        List<Integer> holdingsIds = (List<Integer>) solrChildDocument.getFieldValue(RecapCommonConstants.HOLDINGS_ID);
+                        matchingSerialAndMVMReports.setTitle(String.valueOf(solrDocument.getFieldValue(ScsbConstants.TITLE_SUBFIELD_A)));
+                        matchingSerialAndMVMReports.setBibId(String.valueOf(solrDocument.getFieldValue(ScsbCommonConstants.BIB_ID)));
+                        matchingSerialAndMVMReports.setOwningInstitutionId(String.valueOf(solrDocument.getFieldValue(ScsbCommonConstants.BIB_OWNING_INSTITUTION)));
+                        matchingSerialAndMVMReports.setOwningInstitutionBibId(String.valueOf(solrDocument.getFieldValue(ScsbCommonConstants.OWNING_INST_BIB_ID)));
+                        matchingSerialAndMVMReports.setBarcode(String.valueOf(solrChildDocument.getFieldValue(ScsbCommonConstants.BARCODE)));
+                        matchingSerialAndMVMReports.setVolumePartYear(String.valueOf(solrChildDocument.getFieldValue(ScsbConstants.VOLUME_PART_YEAR)));
+                        matchingSerialAndMVMReports.setUseRestriction(String.valueOf(solrChildDocument.getFieldValue(ScsbConstants.USE_RESTRICTION_DISPLAY)));
+                        List<Integer> holdingsIds = (List<Integer>) solrChildDocument.getFieldValue(ScsbCommonConstants.HOLDINGS_ID);
                         Integer holdingsId = holdingsIds.get(0);
                         matchingSerialAndMVMReports.setSummaryHoldings(holdingsMap.get(holdingsId));
                         matchingSerialAndMVMReportsList.add(matchingSerialAndMVMReports);
@@ -280,7 +280,7 @@ public class OngoingMatchingReportsService {
                 }
             }
         }catch (Exception e) {
-            getLogger().error(RecapConstants.EXCEPTION_TEXT + RecapConstants.LOGGER_MSG, e);
+            getLogger().error(ScsbConstants.EXCEPTION_TEXT + ScsbConstants.LOGGER_MSG, e);
         }
         return matchingSerialAndMVMReportsList;
     }
@@ -322,7 +322,7 @@ public class OngoingMatchingReportsService {
             bibCount = Math.toIntExact(queryResponseForBib.getResults().getNumFound());
             itemCount = Math.toIntExact(queryResponseForItem.getResults().getNumFound());
         } catch (Exception e) {
-            getLogger().error(RecapConstants.EXCEPTION_TEXT + RecapConstants.LOGGER_MSG, e);
+            getLogger().error(ScsbConstants.EXCEPTION_TEXT + ScsbConstants.LOGGER_MSG, e);
         }
         try {
             for(MatchingSummaryReport matchingSummaryReport : matchingSummaryReports) {
@@ -344,10 +344,10 @@ public class OngoingMatchingReportsService {
                 matchingSummaryReport.setOpenItemsAfterMatching(openItemsAfterMatching);
                 matchingSummaryReport.setSharedItemsAfterMatching(sharedItemsAfterMatching);
             }
-            getCamelContext().getRouteController().startRoute(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID);
-            getProducerTemplate().sendBodyAndHeader(RecapConstants.FTP_MATCHING_SUMMARY_REPORT_Q, matchingSummaryReports, RecapConstants.FILE_NAME, RecapConstants.MATCHING_SUMMARY_REPORT);
+            getCamelContext().getRouteController().startRoute(ScsbConstants.FTP_MATCHING_SUMMARY_REPORT_ROUTE_ID);
+            getProducerTemplate().sendBodyAndHeader(ScsbConstants.FTP_MATCHING_SUMMARY_REPORT_Q, matchingSummaryReports, ScsbConstants.FILE_NAME, ScsbConstants.MATCHING_SUMMARY_REPORT);
         } catch (Exception e) {
-            getLogger().error(RecapConstants.EXCEPTION_TEXT + RecapConstants.LOGGER_MSG, e);
+            getLogger().error(ScsbConstants.EXCEPTION_TEXT + ScsbConstants.LOGGER_MSG, e);
         }
     }
 }

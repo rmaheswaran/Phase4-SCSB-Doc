@@ -21,8 +21,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.TestUtil;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.InstitutionEntity;
@@ -152,7 +152,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
         SolrDocumentList solrDocumentList =new SolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
         solrDocument.setField("",String.valueOf(1));
-        solrDocument.setField(RecapConstants.MATERIAL_TYPE, RecapCommonConstants.MONOGRAPH);
+        solrDocument.setField(ScsbConstants.MATERIAL_TYPE, ScsbCommonConstants.MONOGRAPH);
         solrDocumentList.add(solrDocument);
         Mockito.when(mockOngoingMatchingReportsService.getSolrTemplate()).thenReturn(mocksolrTemplate1);
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
@@ -175,10 +175,10 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
         solrQuery.setRows(1);
         SolrDocumentList solrDocumentList =new SolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
-        solrDocument.setField(RecapCommonConstants.DOCTYPE,RecapCommonConstants.ITEM);
-        solrDocument.setField(RecapCommonConstants.IS_DELETED_ITEM,false);
-        solrDocument.setField(RecapConstants.ITEM_CATALOGING_STATUS,RecapCommonConstants.COMPLETE_STATUS);
-        solrDocument.setField(RecapCommonConstants.HOLDINGS_ID,Arrays.asList(1));
+        solrDocument.setField(ScsbCommonConstants.DOCTYPE,ScsbCommonConstants.ITEM);
+        solrDocument.setField(ScsbCommonConstants.IS_DELETED_ITEM,false);
+        solrDocument.setField(ScsbConstants.ITEM_CATALOGING_STATUS,ScsbCommonConstants.COMPLETE_STATUS);
+        solrDocument.setField(ScsbCommonConstants.HOLDINGS_ID,Arrays.asList(1));
         solrDocumentList.add(solrDocument);
         solrDocumentList.setNumFound(11);
         Mockito.when(mockOngoingMatchingReportsService.getSolrTemplate()).thenReturn(mocksolrTemplate1);
@@ -210,9 +210,9 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
         solrQuery.setRows(1);
         SolrDocumentList solrDocumentList =new SolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
-        solrDocument.setField(RecapCommonConstants.DOCTYPE,RecapCommonConstants.HOLDINGS);
-        solrDocument.setField(RecapCommonConstants.HOLDING_ID,345);
-        solrDocument.setField(RecapConstants.SUMMARY_HOLDINGS,"45");
+        solrDocument.setField(ScsbCommonConstants.DOCTYPE,ScsbCommonConstants.HOLDINGS);
+        solrDocument.setField(ScsbCommonConstants.HOLDING_ID,345);
+        solrDocument.setField(ScsbConstants.SUMMARY_HOLDINGS,"45");
         solrDocumentList.add(solrDocument);
         solrDocumentList.setNumFound(11);
         Mockito.when(mockOngoingMatchingReportsService.getSolrTemplate()).thenReturn(mocksolrTemplate1);
@@ -228,7 +228,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
 
     @Test
     public void generateSummaryReport() throws Exception {
-        String[] institutions={RecapCommonConstants.PRINCETON,RecapCommonConstants.COLUMBIA,RecapCommonConstants.NYPL};
+        String[] institutions={ScsbCommonConstants.PRINCETON,ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.NYPL};
         for (String institution:institutions) {
         List<MatchingSummaryReport> matchingSummaryReports=new ArrayList<>();
         matchingSummaryReports.add(getMatchingSummaryReport(institution));
@@ -242,9 +242,9 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         SolrDocumentList solrDocumentList =new SolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
-        solrDocument.setField(RecapCommonConstants.DOCTYPE,RecapCommonConstants.HOLDINGS);
-        solrDocument.setField(RecapCommonConstants.HOLDING_ID,345);
-        solrDocument.setField(RecapConstants.SUMMARY_HOLDINGS,"45");
+        solrDocument.setField(ScsbCommonConstants.DOCTYPE,ScsbCommonConstants.HOLDINGS);
+        solrDocument.setField(ScsbCommonConstants.HOLDING_ID,345);
+        solrDocument.setField(ScsbConstants.SUMMARY_HOLDINGS,"45");
         solrDocumentList.add(solrDocument);
         solrDocumentList.setNumFound(11);
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
@@ -260,9 +260,9 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
     @Test
     public void populateSummaryReport() throws Exception {
         List<InstitutionEntity> institutionEntities=new ArrayList<>();
-        institutionEntities.add(TestUtil.getInstitutionEntity(3,RecapCommonConstants.NYPL,RecapCommonConstants.NYPL));
-        institutionEntities.add(TestUtil.getInstitutionEntity(2,RecapCommonConstants.COLUMBIA,RecapCommonConstants.COLUMBIA));
-        institutionEntities.add(TestUtil.getInstitutionEntity(1,RecapCommonConstants.PRINCETON,RecapCommonConstants.PRINCETON));
+        institutionEntities.add(TestUtil.getInstitutionEntity(3,ScsbCommonConstants.NYPL,ScsbCommonConstants.NYPL));
+        institutionEntities.add(TestUtil.getInstitutionEntity(2,ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.COLUMBIA));
+        institutionEntities.add(TestUtil.getInstitutionEntity(1,ScsbCommonConstants.PRINCETON,ScsbCommonConstants.PRINCETON));
         Mockito.when(institutionDetailsRepository.findByInstitutionCodeNotIn(Mockito.anyList())).thenReturn(institutionEntities);
         List<MatchingSummaryReport> matchingSummaryReports=ongoingMatchingReportsService.populateSummaryReportBeforeMatching();
         assertNotNull(matchingSummaryReports);

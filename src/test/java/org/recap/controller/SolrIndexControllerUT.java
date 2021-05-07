@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.admin.SolrAdmin;
 import org.recap.executors.BibItemIndexExecutorService;
 import org.recap.model.jpa.BibliographicEntity;
@@ -124,7 +124,7 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
     public void indexByOwningInstBibliographicIdList()throws Exception{
         String response =solrIndexController.indexByOwningInstBibliographicIdList(getRequestParameters());
         assertNotNull(response);
-        assertTrue(response.contains(RecapCommonConstants.SUCCESS));
+        assertTrue(response.contains(ScsbCommonConstants.SUCCESS));
     }
 
     @Test
@@ -132,13 +132,13 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
         Mockito.doThrow(NullPointerException.class).when(solrIndexService).indexByOwnInstBibId(Mockito.anyList(),Mockito.anyInt());
         String response =solrIndexController.indexByOwningInstBibliographicIdList(getRequestParameters());
         assertNotNull(response);
-        assertTrue(response.contains(RecapCommonConstants.FAILURE));
+        assertTrue(response.contains(ScsbCommonConstants.FAILURE));
     }
 
     private Map<String, Object> getRequestParameters() {
         Map<String,Object> requestParameters = new HashMap<>();
-        requestParameters.put(RecapConstants.OWN_INST_BIBID_LIST, "[123/456/789]");
-        requestParameters.put(RecapCommonConstants.OWN_INSTITUTION_ID,"1");
+        requestParameters.put(ScsbConstants.OWN_INST_BIBID_LIST, "[123/456/789]");
+        requestParameters.put(ScsbCommonConstants.OWN_INSTITUTION_ID,"1");
         return requestParameters;
     }
 
@@ -146,7 +146,7 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
     public void deleteByBibIdAndIsDeletedFlag()throws Exception{
         String response =solrIndexController.deleteByBibIdAndIsDeletedFlag(getBibIdMapToRemoveIndexList());
         assertNotNull(response);
-        assertTrue(response.contains(RecapCommonConstants.SUCCESS));
+        assertTrue(response.contains(ScsbCommonConstants.SUCCESS));
     }
 
     @Test
@@ -154,7 +154,7 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
         Mockito.doThrow(NullPointerException.class).when(solrIndexService).deleteBySolrQuery(Mockito.anyString());
         String response =solrIndexController.deleteByBibIdAndIsDeletedFlag(getBibIdMapToRemoveIndexList());
         assertNotNull(response);
-        assertTrue(response.contains(RecapCommonConstants.FAILURE));
+        assertTrue(response.contains(ScsbCommonConstants.FAILURE));
     }
 
     private List<Map<String, String>> getBibIdMapToRemoveIndexList() {
@@ -167,7 +167,7 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
     public void deleteByBibHoldingItemId()throws Exception{
         String response =solrIndexController.deleteByBibHoldingItemId(getidMapToRemoveIndexList());
         assertNotNull(response);
-        assertTrue(response.contains(RecapCommonConstants.SUCCESS));
+        assertTrue(response.contains(ScsbCommonConstants.SUCCESS));
     }
 
     @Test
@@ -187,7 +187,7 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
     private Map<String, String> getStringStringMap(String root) {
         Map<String,String> idMapToRemoveIndex=new HashMap<>();
         idMapToRemoveIndex.put("BibId","1");
-        idMapToRemoveIndex.put(RecapCommonConstants.IS_DELETED_BIB,"1");
+        idMapToRemoveIndex.put(ScsbCommonConstants.IS_DELETED_BIB,"1");
         idMapToRemoveIndex.put("HoldingId","1");
         idMapToRemoveIndex.put("ItemId","1");
         idMapToRemoveIndex.put("_root_",root);
@@ -215,16 +215,16 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
     public void indexByBibliographicId()throws Exception{
         String response =solrIndexController.indexByBibliographicId(getBibliographicIdList());
         assertNotNull(response);
-        assertTrue(response.contains(RecapCommonConstants.SUCCESS));
+        assertTrue(response.contains(ScsbCommonConstants.SUCCESS));
     }
 
     @Test
     public void getInstitution(){
-        List<String> institutionCodes= Arrays.asList(RecapCommonConstants.NYPL,RecapCommonConstants.COLUMBIA,RecapCommonConstants.PRINCETON);
+        List<String> institutionCodes= Arrays.asList(ScsbCommonConstants.NYPL,ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.PRINCETON);
         Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(institutionCodes);
         List<String> institution=solrIndexController.getInstitution();
         assertNotNull(institution);
-        assertTrue(institution.get(0).contains(RecapCommonConstants.NYPL));
+        assertTrue(institution.get(0).contains(ScsbCommonConstants.NYPL));
     }
 
 
@@ -233,7 +233,7 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
         Mockito.when(solrIndexService.indexByBibliographicId(Mockito.anyInt())).thenThrow(NullPointerException.class);
         String response =solrIndexController.indexByBibliographicId(getBibliographicIdList());
         assertNotNull(response);
-        assertTrue(response.contains(RecapCommonConstants.FAILURE));
+        assertTrue(response.contains(ScsbCommonConstants.FAILURE));
     }
 
     private List<Integer> getBibliographicIdList() {

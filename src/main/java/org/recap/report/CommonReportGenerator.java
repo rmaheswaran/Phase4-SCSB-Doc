@@ -2,14 +2,14 @@ package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.AccessionSummaryRecord;
-import org.recap.model.csv.SolrExceptionReportReCAPCSVRecord;
+import org.recap.model.csv.SolrExceptionReportCSVRecord;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.util.AccessionSummaryRecordGenerator;
-import org.recap.util.ReCAPCSVSolrExceptionRecordGenerator;
+import org.recap.util.SolrExceptionCSVRecordGenerator;
 import org.recap.util.SubmitCollectionReportGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,22 +41,22 @@ public class CommonReportGenerator {
             List<SubmitCollectionReportRecord> submitCollectionReportRecords = submitCollectionReportGenerator.prepareSubmitCollectionRejectionRecord(reportEntity);
             submitCollectionReportRecordList.addAll(submitCollectionReportRecords);
         }
-        DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
+        DateFormat df = new SimpleDateFormat(ScsbConstants.DATE_FORMAT_FOR_FILE_NAME);
 
-        Predicate<String> checkForProtectionOrNotProtectionKeyword = p-> p.contains(RecapConstants.PROTECTED) || p.contains(RecapConstants.NOT_PROTECTED);
+        Predicate<String> checkForProtectionOrNotProtectionKeyword = p-> p.contains(ScsbConstants.PROTECTED) || p.contains(ScsbConstants.NOT_PROTECTED);
         if (checkForProtectionOrNotProtectionKeyword.test(fileName)) {
             fileNameSplit = fileName.split("/", 5);
-            generatedFileName = RecapConstants.SUBMIT_COLLECTION_REPORTS_BASE_PATH + fileNameSplit[2] + RecapCommonConstants.PATH_SEPARATOR +fileNameSplit[3] + RecapCommonConstants.PATH_SEPARATOR+ RecapCommonConstants.SUBMIT_COLLECTION_REPORT + "-" + fileNameSplit[4] + "-" + df.format(new Date()) + ".csv";
+            generatedFileName = ScsbConstants.SUBMIT_COLLECTION_REPORTS_BASE_PATH + fileNameSplit[2] + ScsbCommonConstants.PATH_SEPARATOR +fileNameSplit[3] + ScsbCommonConstants.PATH_SEPARATOR+ ScsbCommonConstants.SUBMIT_COLLECTION_REPORT + "-" + fileNameSplit[4] + "-" + df.format(new Date()) + ".csv";
         } else {
             generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";
         }
-        if (StringUtils.containsIgnoreCase(reportQueue, RecapConstants.SUBMIT_COLLECTION_SUMMARY_Q_SUFFIX)) {
+        if (StringUtils.containsIgnoreCase(reportQueue, ScsbConstants.SUBMIT_COLLECTION_SUMMARY_Q_SUFFIX)) {
             fileName = generatedFileName;
         }
         if (checkForProtectionOrNotProtectionKeyword.test(fileName)  && Objects.requireNonNull(fileNameSplit)[2] != null && Objects.requireNonNull(fileNameSplit)[3] != null && Objects.requireNonNull(fileNameSplit)[4] != null) {
-            producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileNameSplit[2] + RecapCommonConstants.PATH_SEPARATOR + fileNameSplit[3] + RecapCommonConstants.PATH_SEPARATOR + RecapCommonConstants.SUBMIT_COLLECTION_REPORT + "-" + fileNameSplit[4] + "-" + df.format(new Date()) + ".csv");
+            producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, ScsbConstants.FILE_NAME, fileNameSplit[2] + ScsbCommonConstants.PATH_SEPARATOR + fileNameSplit[3] + ScsbCommonConstants.PATH_SEPARATOR + ScsbCommonConstants.SUBMIT_COLLECTION_REPORT + "-" + fileNameSplit[4] + "-" + df.format(new Date()) + ".csv");
         } else {
-            producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, RecapConstants.FILE_NAME, fileName);
+            producerTemplate.sendBodyAndHeader(reportQueue, submitCollectionReportRecordList, ScsbConstants.FILE_NAME, fileName);
         }
 
         return generatedFileName;
@@ -67,38 +67,38 @@ public class CommonReportGenerator {
         List<AccessionSummaryRecord> accessionSummaryRecordList;
         AccessionSummaryRecordGenerator accessionSummaryRecordGenerator = new AccessionSummaryRecordGenerator();
         accessionSummaryRecordList = accessionSummaryRecordGenerator.prepareAccessionSummaryReportRecord(reportEntityList);
-        producerTemplate.sendBodyAndHeader(reportQueue, accessionSummaryRecordList, RecapConstants.FILE_NAME, fileName);
-        DateFormat df = new SimpleDateFormat(RecapCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
+        producerTemplate.sendBodyAndHeader(reportQueue, accessionSummaryRecordList, ScsbConstants.FILE_NAME, fileName);
+        DateFormat df = new SimpleDateFormat(ScsbCommonConstants.DATE_FORMAT_FOR_FILE_NAME);
         generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";
         return generatedFileName;
     }
 
     public String generateReportForSolrExceptionCsvRecords(String fileName, String queueName, List<ReportEntity> reportEntityList) {
-        List<SolrExceptionReportReCAPCSVRecord> solrExceptionReportReCAPCSVRecords = getSolrExceptionReportReCAPCSVRecords(reportEntityList);
-        logger.info("Total Num of CSVRecords Prepared : {}  ", solrExceptionReportReCAPCSVRecords.size());
+        List<SolrExceptionReportCSVRecord> solrExceptionReportCSVRecords = getSolrExceptionReportReCAPCSVRecords(reportEntityList);
+        logger.info("Total Num of CSVRecords Prepared : {}  ", solrExceptionReportCSVRecords.size());
 
-        if (!CollectionUtils.isEmpty(solrExceptionReportReCAPCSVRecords)) {
-            producerTemplate.sendBodyAndHeader(queueName, solrExceptionReportReCAPCSVRecords, RecapCommonConstants.REPORT_FILE_NAME, fileName);
-            DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_FILE_NAME);
+        if (!CollectionUtils.isEmpty(solrExceptionReportCSVRecords)) {
+            producerTemplate.sendBodyAndHeader(queueName, solrExceptionReportCSVRecords, ScsbCommonConstants.REPORT_FILE_NAME, fileName);
+            DateFormat df = new SimpleDateFormat(ScsbConstants.DATE_FORMAT_FOR_FILE_NAME);
             return fileName + "-" + df.format(new Date()) + ".csv";
         }
         return null;
     }
 
-    public List<SolrExceptionReportReCAPCSVRecord> getSolrExceptionReportReCAPCSVRecords(List<ReportEntity> reportEntityList) {
+    public List<SolrExceptionReportCSVRecord> getSolrExceptionReportReCAPCSVRecords(List<ReportEntity> reportEntityList) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        List<SolrExceptionReportReCAPCSVRecord> solrExceptionReportReCAPCSVRecords = new ArrayList<>();
+        List<SolrExceptionReportCSVRecord> solrExceptionReportCSVRecords = new ArrayList<>();
 
-        ReCAPCSVSolrExceptionRecordGenerator reCAPCSVSolrExceptionRecordGenerator = new ReCAPCSVSolrExceptionRecordGenerator();
+        SolrExceptionCSVRecordGenerator solrExceptionCSVRecordGenerator = new SolrExceptionCSVRecordGenerator();
         for (ReportEntity reportEntity : reportEntityList) {
-            SolrExceptionReportReCAPCSVRecord solrExceptionReportReCAPCSVRecord = reCAPCSVSolrExceptionRecordGenerator.prepareSolrExceptionReportReCAPCSVRecord(reportEntity, new SolrExceptionReportReCAPCSVRecord());
-            solrExceptionReportReCAPCSVRecords.add(solrExceptionReportReCAPCSVRecord);
+            SolrExceptionReportCSVRecord solrExceptionReportCSVRecord = solrExceptionCSVRecordGenerator.prepareSolrExceptionReportCSVRecord(reportEntity, new SolrExceptionReportCSVRecord());
+            solrExceptionReportCSVRecords.add(solrExceptionReportCSVRecord);
         }
 
         stopWatch.stop();
         logger.info("Total time taken to prepare CSVRecords : {} ", stopWatch.getTotalTimeSeconds());
-        return solrExceptionReportReCAPCSVRecords;
+        return solrExceptionReportCSVRecords;
     }
 }

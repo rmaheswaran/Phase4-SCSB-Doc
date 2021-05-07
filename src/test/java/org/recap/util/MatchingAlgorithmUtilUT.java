@@ -19,8 +19,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.jpa.ReportDataEntity;
@@ -83,16 +83,16 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
         String[] criteriaValueList={"1","2","3"};
         Map<Integer, MatchingBibEntity> bibEntityMap=getIntegerMatchingBibEntityMap();
         StringBuilder matchPointValue=new StringBuilder();
-        String[] recap={RecapCommonConstants.MATCH_POINT_FIELD_OCLC,RecapCommonConstants.MATCH_POINT_FIELD_ISSN,RecapCommonConstants.MATCH_POINT_FIELD_LCCN,""};
-        for (String re:recap){
+        String[] matchpoints={ScsbCommonConstants.MATCH_POINT_FIELD_OCLC,ScsbCommonConstants.MATCH_POINT_FIELD_ISSN,ScsbCommonConstants.MATCH_POINT_FIELD_LCCN,""};
+        for (String re:matchpoints){
             Set<Integer> getBibIdsForCriteriaValue=mockMatchingAlgorithmUtil.getBibIdsForCriteriaValue(criteriaMap,criteriaValueSet,re,re,criteriaValueList,bibEntityMap,matchPointValue);
         }
         List<Integer> bibIds = Arrays.asList(4,5,6);
         List<MatchingBibEntity> matchingBibEntities = new ArrayList<>();
-        matchingBibEntities.addAll(Arrays.asList(getMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN,1,"PUL","Middleware for ReCAP"),getMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN,2,"CUL","Middleware for ReCAP"),getMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN,3,"NYPL","Middleware for ReCAP")));
+        matchingBibEntities.addAll(Arrays.asList(getMatchingBibEntity(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,1,"PUL","Middleware for SCSB"),getMatchingBibEntity(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,2,"CUL","Middleware for SCSB"),getMatchingBibEntity(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,3,"NYPL","Middleware for SCSB")));
         Mockito.when(matchingBibDetailsRepository.getSingleMatchBibIdsBasedOnMatching(Mockito.anyString())).thenReturn(bibIds);
         Mockito.when(matchingBibDetailsRepository.getBibEntityBasedOnBibIds(Mockito.anyList())).thenReturn(matchingBibEntities);
-        Map countsMap= mockMatchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1,RecapCommonConstants.MATCH_POINT_FIELD_ISBN, getStringIntegerMap());
+        Map countsMap= mockMatchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1,ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, getStringIntegerMap());
         assertNotNull(countsMap);
     }
 
@@ -105,15 +105,15 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
 
         List<FacetField> facetFields=new ArrayList<>();
-        FacetField facetField=new FacetField(RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
-        facetField.add(RecapCommonConstants.MATCH_POINT_FIELD_ISBN,93930);
-        FacetField facetField1=new FacetField(RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
-        facetField.add(RecapCommonConstants.MATCH_POINT_FIELD_ISBN,93931);
+        FacetField facetField=new FacetField(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN);
+        facetField.add(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,93930);
+        FacetField facetField1=new FacetField(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN);
+        facetField.add(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,93931);
         facetFields.add(facetField);
         facetFields.add(facetField1);
         Mockito.when(queryResponse.getFacetFields()).thenReturn(facetFields);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
-        List<MatchingMatchPointsEntity> countsMap= mockMatchingAlgorithmUtil.getMatchingMatchPointsEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN);
+        List<MatchingMatchPointsEntity> countsMap= mockMatchingAlgorithmUtil.getMatchingMatchPointsEntity(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN);
         assertNotNull(countsMap);
     }
 
@@ -152,7 +152,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
         Set<Integer> bibIdSet = new HashSet<>();
         bibIdSet.addAll(bibIds);
         Map<Integer, MatchingBibEntity> matchingBibEntityMap = getIntegerMatchingBibEntityMap();
-        Map countsMap= mockMatchingAlgorithmUtil.populateAndSaveReportEntity(bibIdSet,matchingBibEntityMap, RecapCommonConstants.OCLC_CRITERIA, RecapCommonConstants.MATCH_POINT_FIELD_ISBN,
+        Map countsMap= mockMatchingAlgorithmUtil.populateAndSaveReportEntity(bibIdSet,matchingBibEntityMap, ScsbCommonConstants.OCLC_CRITERIA, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,
                "2939384", "883939",getStringIntegerMap());
         assertNotNull(countsMap);
     }
@@ -176,8 +176,8 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     @Test
     public void processPendingMatchingBibs() throws Exception {
-        String[] recap={RecapCommonConstants.MATCH_POINT_FIELD_OCLC,RecapCommonConstants.MATCH_POINT_FIELD_ISSN,RecapCommonConstants.MATCH_POINT_FIELD_LCCN,RecapCommonConstants.MATCH_POINT_FIELD_ISBN};
-        for (String re:recap) {
+        String[] matchpoints={ScsbCommonConstants.MATCH_POINT_FIELD_OCLC,ScsbCommonConstants.MATCH_POINT_FIELD_ISSN,ScsbCommonConstants.MATCH_POINT_FIELD_LCCN,ScsbCommonConstants.MATCH_POINT_FIELD_ISBN};
+        for (String re:matchpoints) {
             SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
             SolrClient solrClient = PowerMockito.mock(SolrClient.class);
             QueryResponse queryResponse = Mockito.mock(QueryResponse.class);
@@ -194,7 +194,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
             Set<Integer> bibIdSet = new HashSet<>();
             bibIdSet.addAll(bibIds);
             List<MatchingBibEntity> matchingBibEntities = new ArrayList<>();
-            matchingBibEntities.addAll(Arrays.asList(getMatchingBibEntity(re, 1, "PUL", "Middleware for ReCAP"), getMatchingBibEntity(re, 2, "CUL", "Middleware for ReCAP"), getMatchingBibEntity(re, 3, "NYPL", "Middleware for ReCAP")));
+            matchingBibEntities.addAll(Arrays.asList(getMatchingBibEntity(re, 1, "PUL", "Middleware for SCSB"), getMatchingBibEntity(re, 2, "CUL", "Middleware for ReCAP"), getMatchingBibEntity(re, 3, "NYPL", "Middleware for ReCAP")));
             Map countsMap = mockMatchingAlgorithmUtil.processPendingMatchingBibs(matchingBibEntities, bibIdSet, getStringIntegerMap());
             assertNotNull(countsMap);
         }
@@ -211,11 +211,11 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
     private SolrDocumentList getSolrDocuments() {
         SolrDocumentList solrDocumentList =new SolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
-        solrDocument.setField(RecapCommonConstants.BIB_ID,Integer.valueOf(1));
+        solrDocument.setField(ScsbCommonConstants.BIB_ID,Integer.valueOf(1));
         SolrDocument solrDocument1 = new SolrDocument();
-        solrDocument1.setField(RecapCommonConstants.BIB_ID,Integer.valueOf(2));
+        solrDocument1.setField(ScsbCommonConstants.BIB_ID,Integer.valueOf(2));
         SolrDocument solrDocument2 = new SolrDocument();
-        solrDocument2.setField(RecapCommonConstants.BIB_ID,Integer.valueOf(3));
+        solrDocument2.setField(ScsbCommonConstants.BIB_ID,Integer.valueOf(3));
         solrDocumentList.add(0,solrDocument);
         solrDocumentList.add(1,solrDocument1);
         solrDocumentList.add(2,solrDocument2);
@@ -225,9 +225,9 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
 
     private Map<Integer, MatchingBibEntity> getIntegerMatchingBibEntityMap() {
         Map<Integer, MatchingBibEntity> matchingBibEntityMap = new HashMap<>();
-        matchingBibEntityMap.put(1, getMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN,1,"PUL","Middleware for ReCAP"));
-        matchingBibEntityMap.put(2, getMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN,2,"CUL","Middleware for ReCAP"));
-        matchingBibEntityMap.put(3, getMatchingBibEntity(RecapCommonConstants.MATCH_POINT_FIELD_ISBN,3,"NYPL","Middleware for ReCAP"));
+        matchingBibEntityMap.put(1, getMatchingBibEntity(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,1,"PUL","Middleware for SCSB"));
+        matchingBibEntityMap.put(2, getMatchingBibEntity(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,2,"CUL","Middleware for SCSB"));
+        matchingBibEntityMap.put(3, getMatchingBibEntity(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,3,"NYPL","Middleware for SCSB"));
         return matchingBibEntityMap;
     }
 
@@ -257,7 +257,7 @@ public class MatchingAlgorithmUtilUT extends BaseTestCaseUT {
         matchingBibEntity.setLccn("039329");
         matchingBibEntity.setMaterialType("monograph");
         matchingBibEntity.setRoot("31");
-        matchingBibEntity.setStatus(RecapConstants.PENDING);
+        matchingBibEntity.setStatus(ScsbConstants.PENDING);
         return matchingBibEntity;
     }
 

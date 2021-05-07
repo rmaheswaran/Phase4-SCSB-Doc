@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.BibliographicEntity;
@@ -76,9 +76,9 @@ public class MatchingAlgorithmMVMsCGDCallableUT extends BaseTestCaseUT {
         MatchingCounter.reset();
         bibliographicEntity = saveBibSingleHoldingsSingleItem();
         collectionGroupId = bibliographicEntity.getItemEntities().get(0).getCollectionGroupId();
-        Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingMVMs(RecapCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity(bibliographicEntity.getId()));
-        Mockito.when((Integer) collectionGroupMap.get(RecapCommonConstants.REPORTS_OPEN)).thenReturn(2);
-        Mockito.when(collectionGroupMap.get(RecapCommonConstants.SHARED_CGD)).thenReturn(1);
+        Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingMVMs(ScsbCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity(bibliographicEntity.getId()));
+        Mockito.when((Integer) collectionGroupMap.get(ScsbCommonConstants.REPORTS_OPEN)).thenReturn(2);
+        Mockito.when(collectionGroupMap.get(ScsbCommonConstants.SHARED_CGD)).thenReturn(1);
         Mockito.when(mockedBibliographicDetailsRepository.findById(Mockito.any())).thenReturn(Optional.ofNullable(bibliographicEntity));
     }
 

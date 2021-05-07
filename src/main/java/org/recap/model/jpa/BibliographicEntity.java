@@ -2,7 +2,7 @@ package org.recap.model.jpa;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
@@ -74,7 +74,7 @@ public class BibliographicEntity extends BibliographicAbstractEntity {
     public List<ItemEntity> getNonDeletedAndCompleteItemEntities() {
         List<ItemEntity> itemEntityList = new ArrayList<>();
         for(ItemEntity itemEntity : getItemEntities()) {
-            if(!itemEntity.isDeleted() && itemEntity.getCatalogingStatus().equalsIgnoreCase(RecapCommonConstants.COMPLETE_STATUS)) {
+            if(!itemEntity.isDeleted() && itemEntity.getCatalogingStatus().equalsIgnoreCase(ScsbCommonConstants.COMPLETE_STATUS)) {
                 itemEntityList.add(itemEntity);
             }
         }

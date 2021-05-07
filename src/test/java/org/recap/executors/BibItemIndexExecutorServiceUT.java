@@ -5,8 +5,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.NamedList;
@@ -23,8 +21,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.admin.SolrAdmin;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -148,7 +146,7 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
         solrIndexRequest.setNumberOfDocs(1);
         solrIndexRequest.setOwningInstitutionCode("PUL");
         solrIndexRequest.setCommitInterval(0);
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(RecapCommonConstants.INCREMENTAL_DATE_FORMAT);
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(ScsbCommonConstants.INCREMENTAL_DATE_FORMAT);
         Date from = DateUtils.addDays(new Date(), -1);
         solrIndexRequest.setDateFrom(dateFormatter.format(from));
         InstitutionEntity institutionEntity=new InstitutionEntity();
@@ -181,7 +179,7 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
             Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(getSolrInputFields());
             Mockito.when(mockBibliographicDetailsRepository.getCountOfBibBasedOnBibIds(Mockito.anyList())).thenReturn(1l);
             Mockito.when(mockBibliographicDetailsRepository.getBibsBasedOnBibIds(Mockito.any(), Mockito.anyList())).thenReturn(bibliographicEntities);
-            int count = bibItemIndexExecutorService.partialIndex(getSolrIndexRequest(RecapConstants.BIB_ID_LIST));
+            int count = bibItemIndexExecutorService.partialIndex(getSolrIndexRequest(ScsbConstants.BIB_ID_LIST));
             assertEquals(0, count);
     }
 
@@ -197,7 +195,7 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
             Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(getSolrInputFields());
             Mockito.when(mockBibliographicDetailsRepository.getCountOfBibBasedOnBibIdRange(Mockito.anyInt(),Mockito.anyInt())).thenReturn(1l);
             Mockito.when(mockBibliographicDetailsRepository.getBibsBasedOnBibIdRange(Mockito.any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bibliographicEntities);
-            int count = bibItemIndexExecutorService.partialIndex(getSolrIndexRequest(RecapConstants.BIB_ID_RANGE));
+            int count = bibItemIndexExecutorService.partialIndex(getSolrIndexRequest(ScsbConstants.BIB_ID_RANGE));
             assertEquals(0, count);
     }
 
@@ -215,7 +213,7 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
             Mockito.when(mockBibliographicDetailsRepository.getBibsBasedOnDateRange(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(bibliographicEntities);
             Mockito.when(dateUtil.getFromDate(Mockito.any())).thenCallRealMethod();
             Mockito.when(dateUtil.getToDate(Mockito.any())).thenCallRealMethod();
-            int count = bibItemIndexExecutorService.partialIndex(getSolrIndexRequest(RecapConstants.DATE_RANGE));
+            int count = bibItemIndexExecutorService.partialIndex(getSolrIndexRequest(ScsbConstants.DATE_RANGE));
             assertEquals(0, count);
     }
 
@@ -230,7 +228,7 @@ public class BibItemIndexExecutorServiceUT extends BaseTestCaseUT {
 
     @Test
     public void partialIndexException() throws Exception {
-        SolrIndexRequest solrIndexRequest = getSolrIndexRequest(RecapConstants.DATE_RANGE) ;
+        SolrIndexRequest solrIndexRequest = getSolrIndexRequest(ScsbConstants.DATE_RANGE) ;
         solrIndexRequest.setDateFrom("01-10-2020 00:00");
         solrIndexRequest.setDateTo("02-10-2020 00:00");
         solrIndexRequest.setCommitInterval(0);

@@ -1,8 +1,8 @@
 package org.recap.report;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.slf4j.Logger;
@@ -102,20 +102,20 @@ public class ReportGenerator {
 
         if(CollectionUtils.isNotEmpty(reportEntityList)) {
             String actualFileName = fileName;
-            if(reportType.equalsIgnoreCase(RecapCommonConstants.ACCESSION_SUMMARY_REPORT) || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY)){
+            if(reportType.equalsIgnoreCase(ScsbCommonConstants.ACCESSION_SUMMARY_REPORT) || reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_SUMMARY)){
                 actualFileName = fileName+"-"+institutionName;
-            } else if (reportType.equalsIgnoreCase(RecapConstants.ONGOING_ACCESSION_REPORT)){
-                actualFileName = RecapConstants.ONGOING_ACCESSION_REPORT+"-"+institutionName;
-            } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)){
-                actualFileName = RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT+"-"+institutionName;
-            } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT)){
-                actualFileName = RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT+"-"+institutionName;
-            } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)){
-                actualFileName = RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT+"-"+institutionName;
-            } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT)){
-                actualFileName = RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT+"-"+institutionName;
-            } else if(reportType.equalsIgnoreCase(RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT)){
-                actualFileName = RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT+"-"+institutionName;
+            } else if (reportType.equalsIgnoreCase(ScsbConstants.ONGOING_ACCESSION_REPORT)){
+                actualFileName = ScsbConstants.ONGOING_ACCESSION_REPORT+"-"+institutionName;
+            } else if(reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)){
+                actualFileName = ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT+"-"+institutionName;
+            } else if(reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT)){
+                actualFileName = ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT+"-"+institutionName;
+            } else if(reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)){
+                actualFileName = ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT+"-"+institutionName;
+            } else if(reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT)){
+                actualFileName = ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT+"-"+institutionName;
+            } else if(reportType.equalsIgnoreCase(ScsbConstants.SUBMIT_COLLECTION_SUMMARY_REPORT)){
+                actualFileName = ScsbConstants.SUBMIT_COLLECTION_SUMMARY_REPORT+"-"+institutionName;
             }
 
             stopWatch.stop();
@@ -137,23 +137,23 @@ public class ReportGenerator {
 
     private List<ReportEntity> getReportEntities(String fileName, String institutionName, String reportType, Date from, Date to) {
         List<ReportEntity> reportEntityList;
-        if(!institutionName.equalsIgnoreCase(RecapCommonConstants.LCCN_CRITERIA) && (reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)
-                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT)
-                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)
-                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT))){
+        if(!institutionName.equalsIgnoreCase(ScsbCommonConstants.LCCN_CRITERIA) && (reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)
+                || reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT)
+                || reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)
+                || reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT))){
             fileName = getFileNameLike(fileName);
             reportEntityList = reportDetailRepository.findByFileLikeAndInstitutionAndTypeAndDateRange(fileName,institutionName,reportType,from,to);
-        }else if(institutionName.equalsIgnoreCase(RecapCommonConstants.LCCN_CRITERIA) && (reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)
-                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT)
-                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)
-                || reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT))){
+        }else if(institutionName.equalsIgnoreCase(ScsbCommonConstants.LCCN_CRITERIA) && (reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)
+                || reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT)
+                || reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT)
+                || reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT))){
             fileName = getFileNameLike(fileName);
             reportEntityList = reportDetailRepository.findByFileLikeAndTypeAndDateRange(fileName,reportType,from,to);
-        } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY) && from == null && to== null){
+        } else if(reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_SUMMARY) && from == null && to== null){
             reportEntityList = reportDetailRepository.findByFileName(fileName);
-        } else if(reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY) && from != null && to!= null){
+        } else if(reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_SUMMARY) && from != null && to!= null){
             reportEntityList = reportDetailRepository.findByFileNameLikeAndInstitutionAndDateRange(fileName, institutionName,from, to);
-        } else if(institutionName.equalsIgnoreCase(RecapCommonConstants.LCCN_CRITERIA)) {
+        } else if(institutionName.equalsIgnoreCase(ScsbCommonConstants.LCCN_CRITERIA)) {
             reportEntityList = reportDetailRepository.findByFileLikeAndTypeAndDateRange(fileName, reportType, from, to);
         } else {
             reportEntityList = reportDetailRepository.findByFileAndInstitutionAndTypeAndDateRange(fileName, institutionName, reportType, from, to);
@@ -206,7 +206,7 @@ public class ReportGenerator {
         List<ReportGeneratorInterface> reportGeneratorInterfaces = getReportGenerators();
         for (ReportGeneratorInterface reportGeneratorInterface : reportGeneratorInterfaces) {
             if(reportGeneratorInterface.isInterested(reportType) && reportGeneratorInterface.isTransmitted(transmissionType)){
-                 response = reportGeneratorInterface.generateReport(RecapConstants.SUBMIT_COLLECTION, getReportEntityList(reportRecordNumberList));
+                 response = reportGeneratorInterface.generateReport(ScsbConstants.SUBMIT_COLLECTION, getReportEntityList(reportRecordNumberList));
             }
         }
         return response;

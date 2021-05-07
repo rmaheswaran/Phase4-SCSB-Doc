@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,14 +49,14 @@ public class EmailServiceUT extends BaseTestCaseUT {
     @Test
     public void testRecalEmail() {
             ReflectionTestUtils.setField(emailService,"recapSupportEmailTo",recapSupportEmailTo);
-            List<String> institutionCodes= Arrays.asList(RecapCommonConstants.NYPL,RecapCommonConstants.COLUMBIA,RecapCommonConstants.PRINCETON);
+            List<String> institutionCodes= Arrays.asList(ScsbCommonConstants.NYPL,ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.PRINCETON);
             Mockito.when(commonUtil.findAllInstitutionCodesExceptHTC()).thenReturn(institutionCodes);
             Mockito.when(propertyUtil.getPropertyByInstitutionAndKey(Mockito.anyString(),Mockito.anyString())).thenReturn("test@htcindia.com");
-            Exchange exchange = getExchange(RecapCommonConstants.NYPL);
-            emailService.setInstitutionCode(RecapCommonConstants.NYPL);
+            Exchange exchange = getExchange(ScsbCommonConstants.NYPL);
+            emailService.setInstitutionCode(ScsbCommonConstants.NYPL);
             emailService.sendEmailForMatchingReports(exchange);
             emailService.sendEmailForAccessionReports(exchange);
-            assertEquals(RecapCommonConstants.NYPL,emailService.getInstitutionCode());
+            assertEquals(ScsbCommonConstants.NYPL,emailService.getInstitutionCode());
     }
 
     private Exchange getExchange(String names) {

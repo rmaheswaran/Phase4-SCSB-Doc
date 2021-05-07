@@ -4,7 +4,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.camel.EmailPayLoad;
 import org.recap.util.CommonUtil;
 import org.recap.util.PropertyUtil;
@@ -73,7 +73,7 @@ public class EmailService {
      */
     public void sendEmailForMatchingReports(Exchange exchange) {
         logger.info("matching algorithm reports email started ");
-        producerTemplate.sendBodyAndHeader(RecapConstants.EMAIL_Q, getEmailPayLoadForMatching(exchange), RecapConstants.EMAIL_FOR, RecapConstants.MATCHING_REPORTS);
+        producerTemplate.sendBodyAndHeader(ScsbConstants.EMAIL_Q, getEmailPayLoadForMatching(exchange), ScsbConstants.EMAIL_FOR, ScsbConstants.MATCHING_REPORTS);
     }
 
     /**
@@ -83,7 +83,7 @@ public class EmailService {
      */
     public void sendEmailForAccessionReports(Exchange exchange) {
         logger.info("accession reports email started ");
-        producerTemplate.sendBodyAndHeader(RecapConstants.EMAIL_Q, getEmailPayLoadForAccession(exchange), RecapConstants.EMAIL_FOR, RecapConstants.ACCESSION_REPORTS);
+        producerTemplate.sendBodyAndHeader(ScsbConstants.EMAIL_Q, getEmailPayLoadForAccession(exchange), ScsbConstants.EMAIL_FOR, ScsbConstants.ACCESSION_REPORTS);
     }
 
     /**
@@ -113,7 +113,7 @@ public class EmailService {
     public EmailPayLoad getEmailPayLoadForAccession(Exchange exchange){
         EmailPayLoad emailPayLoad = new EmailPayLoad();
        String fileNameWithPath = (String)exchange.getIn().getHeader("CamelAwsS3Key");
-        institutionCode = (String) exchange.getIn().getHeader(RecapConstants.INSTITUTION_NAME);
+        institutionCode = (String) exchange.getIn().getHeader(ScsbConstants.INSTITUTION_NAME);
         File file = FileUtils.getFile(fileNameWithPath);
         String absolutePath = file.getParent();
         String fileName = file.getName();

@@ -21,7 +21,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -118,21 +118,21 @@ public class MatchingBibItemIndexExecutorServiceUT extends BaseTestCaseUT {
         CompletableFuture<Object> future=Mockito.mock(CompletableFuture.class);
         Mockito.when(producerTemplate.asyncRequestBodyAndHeader(solrRouterURI + "://" + solrUrl + "/" + solrCore, "", SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT)).thenReturn(future);
         Mockito.when(!future.isDone()).thenReturn(true);
-        Integer count = matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, new Date());
+        Integer count = matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, new Date());
         assertTrue(count > 0);
     }
 
     @Test
     public void indexingForMatchingAlgorithmTestEmpty() throws InterruptedException {
         Mockito.when(bibliographicDetailsRepository.getCountOfBibliographicEntitiesForChangedItems(Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn(0l);
-        Integer count = matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, new Date());
+        Integer count = matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, new Date());
         assertTrue(count == 0);
     }
 
     @Test
     public void indexingForMatchingAlgorithmTestException() throws InterruptedException {
         Mockito.when(bibliographicDetailsRepository.getCountOfBibliographicEntitiesForChangedItems(Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn(null);
-        Integer count = matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, new Date());
+        Integer count = matchingBibItemIndexExecutorService.indexingForMatchingAlgorithm(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, new Date());
         assertTrue(count == 0);
     }
 

@@ -2,7 +2,7 @@ package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.common.SolrInputDocument;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
@@ -45,7 +45,7 @@ public class CommonCallable {
                 if (solrInputDocument != null)
                     solrInputDocumentsToIndex.add(solrInputDocument);
             } catch (Exception e) {
-                logger.error(RecapCommonConstants.LOG_ERROR, e);
+                logger.error(ScsbCommonConstants.LOG_ERROR, e);
             }
         }
 

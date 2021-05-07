@@ -4,8 +4,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.camel.EmailPayLoad;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
@@ -88,10 +88,10 @@ public class UpdateCgdUtil {
      * @return the string
      */
     public String updateCGDForItem(String itemBarcode, String owningInstitution, String oldCollectionGroupDesignation, String newCollectionGroupDesignation, String cgdChangeNotes, String username) {
-        String userName = StringUtils.isBlank(username) ? RecapCommonConstants.GUEST : username;
+        String userName = StringUtils.isBlank(username) ? ScsbCommonConstants.GUEST : username;
         List<ItemEntity> itemEntities = new ArrayList<>();
         Date lastUpdatedDate = new Date();
-        String cgdChangeLog = oldCollectionGroupDesignation + RecapConstants.TO + newCollectionGroupDesignation;
+        String cgdChangeLog = oldCollectionGroupDesignation + ScsbConstants.TO + newCollectionGroupDesignation;
         String userCode = userDetailsRepository.findInstitutionCodeByUserName(username);
         String itemCode = itemDetailsRepository.findInstitutionCodeByBarcode(itemBarcode);
         List<String> userRoles = userDetailsRepository.getUserRoles(userName);
@@ -101,15 +101,15 @@ public class UpdateCgdUtil {
                 itemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
                 setCGDChangeLogToItemEntity(cgdChangeLog, itemEntities);
                 updateCGDForItemInSolr(itemEntities);
-                saveItemChangeLogEntity(itemEntities, userName, lastUpdatedDate, RecapCommonConstants.UPDATE_CGD, cgdChangeNotes);
+                saveItemChangeLogEntity(itemEntities, userName, lastUpdatedDate, ScsbCommonConstants.UPDATE_CGD, cgdChangeNotes);
                 sendEmail(itemBarcode, owningInstitution, oldCollectionGroupDesignation, newCollectionGroupDesignation, cgdChangeNotes);
-                return RecapCommonConstants.SUCCESS;
+                return ScsbCommonConstants.SUCCESS;
             } else {
-                return RecapConstants.FAILURE_UPDATE_CGD;
+                return ScsbConstants.FAILURE_UPDATE_CGD;
             }
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
-            return RecapCommonConstants.FAILURE + "-" + e.getMessage();
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            return ScsbCommonConstants.FAILURE + "-" + e.getMessage();
         }
     }
 
@@ -188,7 +188,7 @@ public class UpdateCgdUtil {
         emailPayLoad.setOldCgd(oldCollectionGroupDesignation);
         emailPayLoad.setNewCgd(newCollectionGroupDesignation);
         emailPayLoad.setNotes(cgdChangeNotes);
-        producerTemplate.sendBodyAndHeader(RecapConstants.EMAIL_Q, emailPayLoad, RecapConstants.EMAIL_FOR, RecapConstants.UPDATECGD);
+        producerTemplate.sendBodyAndHeader(ScsbConstants.EMAIL_Q, emailPayLoad, ScsbConstants.EMAIL_FOR, ScsbConstants.UPDATECGD);
     }
 
     /**

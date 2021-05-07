@@ -1,7 +1,7 @@
 package org.recap.util;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.csv.DeAccessionSummaryRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
@@ -40,7 +40,7 @@ public class DeAccessionSummaryRecordGenerator {
                 try {
                     setterMethod.invoke(deAccessionSummaryRecord, headerValue);
                 } catch (Exception e) {
-                    logger.error(RecapCommonConstants.LOG_ERROR,e);
+                    logger.error(ScsbCommonConstants.LOG_ERROR,e);
                 }
             }
         }
@@ -58,7 +58,7 @@ public class DeAccessionSummaryRecordGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, DeAccessionSummaryRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
@@ -74,7 +74,7 @@ public class DeAccessionSummaryRecordGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, DeAccessionSummaryRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

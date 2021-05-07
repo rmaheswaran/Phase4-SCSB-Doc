@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.admin.SolrAdmin;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.solr.Bib;
@@ -122,7 +122,7 @@ public abstract class IndexExecutorService {
                 }
             }
             if (isIncremental) {
-                SimpleDateFormat dateFormatter = new SimpleDateFormat(RecapCommonConstants.INCREMENTAL_DATE_FORMAT);
+                SimpleDateFormat dateFormatter = new SimpleDateFormat(ScsbCommonConstants.INCREMENTAL_DATE_FORMAT);
                 from = dateFormatter.parse(fromDate);
             }
             Integer totalDocCount = getTotalDocCount(owningInstitutionId, from);
@@ -187,7 +187,7 @@ public abstract class IndexExecutorService {
                             futureCount++;
                         } catch (InterruptedException | ExecutionException e) {
                             Thread.currentThread().interrupt();
-                            logger.error(RecapCommonConstants.LOG_ERROR, e);
+                            logger.error(ScsbCommonConstants.LOG_ERROR, e);
                         }
                     }
                     if (!isIncremental) {
@@ -200,7 +200,7 @@ public abstract class IndexExecutorService {
                     }
                     logger.info("Num of Bibs Processed and indexed to core {} on commit interval : {} ",coreName,numOfBibsProcessed);
                     logger.info("Total Num of Bibs Processed and indexed to core {} : {}",coreName,totalBibsProcessed);
-                    Long solrBibCount = bibSolrCrudRepository.countByDocType(RecapCommonConstants.BIB);
+                    Long solrBibCount = bibSolrCrudRepository.countByDocType(ScsbCommonConstants.BIB);
                     logger.info("Total number of Bibs in Solr in recap core : {}",solrBibCount);
                 }
                 logger.info("Total futures executed: {}",futureCount);
@@ -214,7 +214,7 @@ public abstract class IndexExecutorService {
                 logger.info("No records found to index for the criteria");
             }
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         stopWatch1.stop();
         logger.info("Total time taken:{} secs",stopWatch1.getTotalTimeSeconds());
@@ -293,12 +293,12 @@ public abstract class IndexExecutorService {
                             logger.info("Num of bibs fetched by thread : {}", entitiesCount);
                         } catch (InterruptedException | ExecutionException e) {
                             Thread.currentThread().interrupt();
-                            logger.error(RecapCommonConstants.LOG_ERROR, e);
+                            logger.error(ScsbCommonConstants.LOG_ERROR, e);
                         }
                     }
                     logger.info("Num of Bibs Processed and indexed to core {} on commit interval : {} ",coreName,numOfBibsProcessed);
                     logger.info("Total Num of Bibs Processed and indexed to core {} : {}",coreName,totalBibsProcessed);
-                    Long solrBibCount = bibSolrCrudRepository.countByDocType(RecapCommonConstants.BIB);
+                    Long solrBibCount = bibSolrCrudRepository.countByDocType(ScsbCommonConstants.BIB);
                     logger.info("Total number of Bibs in Solr in recap core : {}",solrBibCount);
                 }
                 logger.info("Total futures executed: {}",futureCount);
@@ -309,7 +309,7 @@ public abstract class IndexExecutorService {
                 logger.info("No records found to index for the criteria");
             }
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         stopWatch1.stop();
         logger.info("Total time taken:{} secs",stopWatch1.getTotalTimeSeconds());
@@ -325,7 +325,7 @@ public abstract class IndexExecutorService {
         Map<String, Object> partialIndexMap = null;
         if(StringUtils.isNotBlank(partialIndexType)) {
             partialIndexMap = new HashMap<>();
-            if(partialIndexType.equalsIgnoreCase(RecapConstants.BIB_ID_LIST)) {
+            if(partialIndexType.equalsIgnoreCase(ScsbConstants.BIB_ID_LIST)) {
                 String bibIds = solrIndexRequest.getBibIds();
                 if(StringUtils.isNotBlank(bibIds)) {
                     String[] bibIdString = bibIds.split(",");
@@ -333,15 +333,15 @@ public abstract class IndexExecutorService {
                     for(String bibId : bibIdString) {
                         bibIdList.add(Integer.valueOf(bibId));
                     }
-                    partialIndexMap.put(RecapConstants.BIB_ID_LIST, bibIdList);
+                    partialIndexMap.put(ScsbConstants.BIB_ID_LIST, bibIdList);
                 }
-            } else if(partialIndexType.equalsIgnoreCase(RecapConstants.BIB_ID_RANGE)) {
+            } else if(partialIndexType.equalsIgnoreCase(ScsbConstants.BIB_ID_RANGE)) {
                 if(StringUtils.isNotBlank(solrIndexRequest.getFromBibId()) && StringUtils.isNotBlank(solrIndexRequest.getToBibId())) {
-                    partialIndexMap.put(RecapConstants.BIB_ID_RANGE_FROM, solrIndexRequest.getFromBibId());
-                    partialIndexMap.put(RecapConstants.BIB_ID_RANGE_TO, solrIndexRequest.getToBibId());
+                    partialIndexMap.put(ScsbConstants.BIB_ID_RANGE_FROM, solrIndexRequest.getFromBibId());
+                    partialIndexMap.put(ScsbConstants.BIB_ID_RANGE_TO, solrIndexRequest.getToBibId());
                 }
-            } else if(partialIndexType.equalsIgnoreCase(RecapConstants.DATE_RANGE)) {
-                SimpleDateFormat dateFormatter = new SimpleDateFormat(RecapCommonConstants.INCREMENTAL_DATE_FORMAT);
+            } else if(partialIndexType.equalsIgnoreCase(ScsbConstants.DATE_RANGE)) {
+                SimpleDateFormat dateFormatter = new SimpleDateFormat(ScsbCommonConstants.INCREMENTAL_DATE_FORMAT);
                 Date fromDate;
                 Date toDate;
                 if(StringUtils.isNotBlank(solrIndexRequest.getDateFrom())) {
@@ -354,8 +354,8 @@ public abstract class IndexExecutorService {
                 } else {
                     toDate = dateUtil.getToDate(new Date());
                 }
-                partialIndexMap.put(RecapConstants.DATE_RANGE_FROM, fromDate);
-                partialIndexMap.put(RecapConstants.DATE_RANGE_TO, toDate);
+                partialIndexMap.put(ScsbConstants.DATE_RANGE_FROM, fromDate);
+                partialIndexMap.put(ScsbConstants.DATE_RANGE_TO, toDate);
             }
         }
         return partialIndexMap;

@@ -1,8 +1,8 @@
 package org.recap.controller;
 
 import org.apache.camel.ProducerTemplate;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.camel.EmailPayLoad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +28,7 @@ public class BatchJobEmailController {
      */
     @PostMapping(value="/batchJobEmail")
     public String batchJobSendEmail(@RequestBody EmailPayLoad emailPayLoad) {
-        producerTemplate.sendBodyAndHeader(RecapConstants.EMAIL_Q, emailPayLoad, RecapConstants.EMAIL_FOR, RecapConstants.BATCHJOB);
-        return RecapCommonConstants.SUCCESS;
+        producerTemplate.sendBodyAndHeader(ScsbConstants.EMAIL_Q, emailPayLoad, ScsbConstants.EMAIL_FOR, ScsbConstants.BATCHJOB);
+        return ScsbCommonConstants.SUCCESS;
     }
 }

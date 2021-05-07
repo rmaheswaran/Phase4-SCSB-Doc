@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.accession.AccessionRequest;
 import org.recap.model.jaxb.Bib;
 import org.recap.model.jaxb.BibRecord;
@@ -315,9 +315,9 @@ public class SCSBToBibEntityConverterUT extends BaseTestCaseUT {
         HoldingsEntity holdingsEntity = new HoldingsEntity();
         holdingsEntity.setDeleted(false);
         holdingsEntity.setCreatedDate(new Date());
-        holdingsEntity.setCreatedBy(RecapCommonConstants.ACCESSION);
+        holdingsEntity.setCreatedBy(ScsbCommonConstants.ACCESSION);
         holdingsEntity.setLastUpdatedDate(new Date());
-        holdingsEntity.setLastUpdatedBy(RecapCommonConstants.ACCESSION);
+        holdingsEntity.setLastUpdatedBy(ScsbCommonConstants.ACCESSION);
         holdingsEntity.setOwningInstitutionId(3);
         holdingsEntity.setOwningInstitutionHoldingsId("5123222f-2333-413e-8c9c-cb8709f010c3");
 

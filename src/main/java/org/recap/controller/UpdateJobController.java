@@ -1,6 +1,6 @@
 package org.recap.controller;
 
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.JobEntity;
 import org.recap.repository.jpa.JobDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,6 @@ public class UpdateJobController {
     @PostMapping(value="/updateJob")
     public String updateJob(@RequestBody JobEntity jobEntity) {
         jobDetailsRepository.save(jobEntity);
-        return RecapCommonConstants.SUCCESS;
+        return ScsbCommonConstants.SUCCESS;
     }
 }

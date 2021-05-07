@@ -37,7 +37,7 @@ public class BibUT extends BaseTestCaseUT {
         bib.setBibId(101);
         bib.setOwningInstitutionBibId("CU0021524");
         bib.setDocType("Bib");
-        bib.setTitle("Middleware for ReCAP");
+        bib.setTitle("Middleware for SCSB");
         bib.setBarcode("1");
         bib.setTitle("Test Bib 1");
         bib.setAuthorDisplay("Hoepli, Nancy L");

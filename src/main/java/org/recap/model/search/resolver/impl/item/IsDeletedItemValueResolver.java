@@ -1,6 +1,6 @@
 package org.recap.model.search.resolver.impl.item;
 
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.search.resolver.ItemValueResolver;
 import org.recap.model.solr.Item;
 
@@ -10,7 +10,7 @@ import org.recap.model.solr.Item;
 public class IsDeletedItemValueResolver implements ItemValueResolver {
     @Override
     public Boolean isInterested(String field) {
-        return field.equalsIgnoreCase(RecapCommonConstants.IS_DELETED_ITEM);
+        return field.equalsIgnoreCase(ScsbCommonConstants.IS_DELETED_ITEM);
     }
 
     @Override

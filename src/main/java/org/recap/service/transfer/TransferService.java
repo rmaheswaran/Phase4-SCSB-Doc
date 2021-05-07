@@ -3,8 +3,8 @@ package org.recap.service.transfer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.*;
 import org.recap.model.transfer.*;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
@@ -104,22 +104,22 @@ public class TransferService {
 
                         Map<String, Set<Integer>> recordToDelete = new HashMap<>();
                         Map<String, Set<Integer>> recordToIndex = new HashMap<>();
-                        addRecordToMap(RecapCommonConstants.ITEM_ID, sourceItem.getId(), recordToDelete);
+                        addRecordToMap(ScsbCommonConstants.ITEM_ID, sourceItem.getId(), recordToDelete);
 
                         List<BibliographicEntity> itemBibEntities = sourceItem.getBibliographicEntities();
                         if(CollectionUtils.isNotEmpty(itemBibEntities)) {
                             for (Iterator<BibliographicEntity> bibliographicEntityIterator = itemBibEntities.iterator(); bibliographicEntityIterator.hasNext(); ) {
                                 BibliographicEntity bibliographicEntity = bibliographicEntityIterator.next();
-                                addRecordToMap(RecapCommonConstants.BIB_ID, bibliographicEntity.getId(), recordToIndex);
+                                addRecordToMap(ScsbCommonConstants.BIB_ID, bibliographicEntity.getId(), recordToIndex);
                             }
                         }
 
                         saveAndIndexBib(sourceBib, sourceHoldings, destBib, destHoldings, Arrays.asList(sourceItem), recordToDelete, recordToIndex);
 
-                        transferValidationResponse.setMessage(RecapConstants.Transfer.SUCCESSFULLY_RELINKED);
+                        transferValidationResponse.setMessage(ScsbConstants.Transfer.SUCCESSFULLY_RELINKED);
                     } catch (Exception e) {
-                        logger.error(RecapCommonConstants.LOG_ERROR,e);
-                        transferValidationResponse.setMessage(RecapConstants.Transfer.RELINKED_FAILED);
+                        logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                        transferValidationResponse.setMessage(ScsbConstants.Transfer.RELINKED_FAILED);
                     }
                 }
                 ItemTransferResponse itemTransferResponse = new ItemTransferResponse(transferValidationResponse.getMessage(), itemTransferRequest, transferValidationResponse.isValid());
@@ -127,7 +127,7 @@ public class TransferService {
 
                 String requestString = getHelperUtil().getJsonString(itemTransferRequest);
                 String responseString = transferValidationResponse.getMessage();
-                saveReportForTransfer(requestString, responseString, institutionEntity.getInstitutionCode(), RecapConstants.Transfer.TransferTypes.ITEM_TRANSFER);
+                saveReportForTransfer(requestString, responseString, institutionEntity.getInstitutionCode(), ScsbConstants.Transfer.TransferTypes.ITEM_TRANSFER);
             }
         }
         return itemTransferResponses;
@@ -145,15 +145,15 @@ public class TransferService {
                         validDestinationBibAndHoldingsAndItem(destination, institutionId, transferValidationResponse);
                     }
                 } else {
-                    transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_DESTINATION_ITEM_IDS_NOT_MATCHING);
+                    transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_DESTINATION_ITEM_IDS_NOT_MATCHING);
                 }
 
             } else {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DESTINATION_EMPTY);
+                transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.DESTINATION_EMPTY);
             }
 
         } else {
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_EMPTY);
+            transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_EMPTY);
         }
         return transferValidationResponse;
     }
@@ -187,15 +187,15 @@ public class TransferService {
                             validateHoldingsEntity(owningInstitutionId, transferValidationResponse, owningInstitutionHoldingsId, destinationBibEntity, false);
                         }
                     } else {
-                        transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_OWN_INST_ITEM_ID_EMPTY);
+                        transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.DEST_OWN_INST_ITEM_ID_EMPTY);
                     }
                 } else {
-                    transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_OWN_INST_HOLDINGS_ID_EMPTY);
+                    transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.DEST_OWN_INST_HOLDINGS_ID_EMPTY);
                 }
 
             }
         }else {
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_OWN_INST_BIB_ID_EMPTY);
+            transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.DEST_OWN_INST_BIB_ID_EMPTY);
         }
     }
 
@@ -209,11 +209,11 @@ public class TransferService {
             holdingsEntity = getHoldingsDetailsRepository().
                     findByOwningInstitutionHoldingsIdAndOwningInstitutionId(owningInstitutionHoldingsId, owningInstitutionId);
             if(null != holdingsEntity) {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_HOLDINGS_ATTACHED_WITH_DIFF_BIB);
+                transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.DEST_HOLDINGS_ATTACHED_WITH_DIFF_BIB);
             }
         }
         else if (holdingsEntity.isDeleted()){
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_HOLDING_DEACCESSIONED);
+            transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.DEST_HOLDING_DEACCESSIONED);
         }
         else {
             transferValidationResponse.setDestHoldings(holdingsEntity);
@@ -233,29 +233,29 @@ public class TransferService {
                         transferValidationResponse.setSourceBib(sourceBibEntity);
                         HoldingsEntity holdingsEntity = matchHoldingIdWithHoldings(owningInstitutionHoldingsId, sourceBibEntity);
                         if (holdingsEntity == null) {
-                            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB);
+                            transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB);
                         } else {
                             transferValidationResponse.setSourceHoldings(holdingsEntity);
                             ItemEntity itemEntity = matchItemIdWithItem(owningInstitutionItemId, holdingsEntity,transferValidationResponse);
                             if (null == itemEntity) {
                                 if (StringUtils.isBlank(transferValidationResponse.getMessage())) {
-                                    transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_ITEM_NOT_UNDER_SOURCE_HOLDING);
+                                    transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_ITEM_NOT_UNDER_SOURCE_HOLDING);
                                 }
                             } else {
                                 transferValidationResponse.setSourceItem(itemEntity);
                             }
                         }
                     } else {
-                        transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_BIB_NOT_EXIST);
+                        transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_BIB_NOT_EXIST);
                     }
                 } else {
-                    transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_OWN_INST_ITEM_ID_EMPTY);
+                    transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_OWN_INST_ITEM_ID_EMPTY);
                 }
             } else {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_OWN_INST_HOLDINGS_ID_EMPTY);
+                transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_OWN_INST_HOLDINGS_ID_EMPTY);
             }
         } else {
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_OWN_INST_BIB_ID_EMPTY);
+            transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_OWN_INST_BIB_ID_EMPTY);
         }
     }
 
@@ -269,7 +269,7 @@ public class TransferService {
                         return itemEntity;
                     }
                     else {
-                        transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_ITEM_DEACCESSIONED);
+                        transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_ITEM_DEACCESSIONED);
                         return null;
                     }
                 }
@@ -304,7 +304,7 @@ public class TransferService {
                         linkRecords(destBib, sourceHoldings, currentDate);
 
                         sourceBib.setLastUpdatedDate(currentDate);
-                        sourceBib.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
+                        sourceBib.setLastUpdatedBy(ScsbConstants.Transfer.TRANSFER_REQUEST);
 
                         // todo : process for orphan records
                         processOrphanRecords(sourceBib);
@@ -313,13 +313,13 @@ public class TransferService {
                         Map<String, Set<Integer>> recordToDelete = new HashMap<>();
                         Map<String, Set<Integer>> recordToIndex = new HashMap<>();
 
-                        addRecordToMap(RecapCommonConstants.HOLDING_ID, sourceHoldings.getId(), recordToDelete);
+                        addRecordToMap(ScsbCommonConstants.HOLDING_ID, sourceHoldings.getId(), recordToDelete);
 
                         List<BibliographicEntity> bibliographicEntities = sourceHoldings.getBibliographicEntities();
                         if(CollectionUtils.isNotEmpty(bibliographicEntities)) {
                             for (Iterator<BibliographicEntity> bibliographicEntityIterator = bibliographicEntities.iterator(); bibliographicEntityIterator.hasNext(); ) {
                                 BibliographicEntity bibliographicEntity = bibliographicEntityIterator.next();
-                                addRecordToMap(RecapCommonConstants.BIB_ID, bibliographicEntity.getId(), recordToIndex);
+                                addRecordToMap(ScsbCommonConstants.BIB_ID, bibliographicEntity.getId(), recordToIndex);
                             }
                         }
 
@@ -327,13 +327,13 @@ public class TransferService {
                         if (CollectionUtils.isNotEmpty(itemEntities)) {
                             for (Iterator<ItemEntity> itemEntityIterator = itemEntities.iterator(); itemEntityIterator.hasNext(); ) {
                                 ItemEntity itemEntity = itemEntityIterator.next();
-                                addRecordToMap(RecapCommonConstants.ITEM_ID, itemEntity.getId(), recordToDelete);
+                                addRecordToMap(ScsbCommonConstants.ITEM_ID, itemEntity.getId(), recordToDelete);
 
                                 List<BibliographicEntity> itemBibEntities = itemEntity.getBibliographicEntities();
                                 if(CollectionUtils.isNotEmpty(itemBibEntities)) {
                                     for (Iterator<BibliographicEntity> bibliographicEntityIterator = itemBibEntities.iterator(); bibliographicEntityIterator.hasNext(); ) {
                                         BibliographicEntity bibliographicEntity = bibliographicEntityIterator.next();
-                                        addRecordToMap(RecapCommonConstants.BIB_ID, bibliographicEntity.getId(), recordToIndex);
+                                        addRecordToMap(ScsbCommonConstants.BIB_ID, bibliographicEntity.getId(), recordToIndex);
                                     }
                                 }
                             }
@@ -342,10 +342,10 @@ public class TransferService {
 
                         saveAndIndexBib(sourceBib, sourceHoldings, destBib, sourceHoldings, itemEntities, recordToDelete, recordToIndex);
 
-                        transferValidationResponse.setMessage(RecapConstants.Transfer.SUCCESSFULLY_RELINKED);
+                        transferValidationResponse.setMessage(ScsbConstants.Transfer.SUCCESSFULLY_RELINKED);
                     } catch (Exception e) {
-                        logger.error(RecapCommonConstants.LOG_ERROR,e);
-                        transferValidationResponse.setMessage(RecapConstants.Transfer.RELINKED_FAILED);
+                        logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                        transferValidationResponse.setMessage(ScsbConstants.Transfer.RELINKED_FAILED);
                     }
 
                 }
@@ -354,7 +354,7 @@ public class TransferService {
 
                 String requestString = getHelperUtil().getJsonString(holdingsTransferRequest);
                 String responseString = transferValidationResponse.getMessage();
-                saveReportForTransfer(requestString, responseString, institutionEntity.getInstitutionCode(), RecapConstants.Transfer.TransferTypes.HOLDINGS_TRANSFER);
+                saveReportForTransfer(requestString, responseString, institutionEntity.getInstitutionCode(), ScsbConstants.Transfer.TransferTypes.HOLDINGS_TRANSFER);
             }
         }
 
@@ -381,8 +381,8 @@ public class TransferService {
 
         deleteRecordForRelink(recordToDelete);
 
-        addRecordToMap(RecapCommonConstants.BIB_ID, savevdSourceBibRecord.getId(), recordToIndex);
-        addRecordToMap(RecapCommonConstants.BIB_ID, saveBibRecord.getId(), recordToIndex);
+        addRecordToMap(ScsbCommonConstants.BIB_ID, savevdSourceBibRecord.getId(), recordToIndex);
+        addRecordToMap(ScsbCommonConstants.BIB_ID, saveBibRecord.getId(), recordToIndex);
 
         indexRecordForRelink(recordToIndex);
 
@@ -400,7 +400,7 @@ public class TransferService {
                             logger.info("deleting {} from solr for relink, {} - {}, ",docId,docId,id);
                             solrIndexService.deleteByDocId(docId, String.valueOf(id));
                         } catch (IOException | SolrServerException e) {
-                            logger.error(RecapCommonConstants.LOG_ERROR,e);
+                            logger.error(ScsbCommonConstants.LOG_ERROR,e);
                         }
                     }
                 }
@@ -419,7 +419,7 @@ public class TransferService {
                         try {
                             solrIndexService.indexByBibliographicId(id);
                         } catch (Exception e) {
-                            logger.error(RecapCommonConstants.LOG_ERROR,e);
+                            logger.error(ScsbCommonConstants.LOG_ERROR,e);
                         }
                     }
                 }
@@ -472,15 +472,15 @@ public class TransferService {
         sourceHoldings.getItemEntities().remove(sourceItem);
 
         sourceBib.setLastUpdatedDate(updatedDate);
-        sourceBib.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
+        sourceBib.setLastUpdatedBy(ScsbConstants.Transfer.TRANSFER_REQUEST);
         sourceHoldings.setLastUpdatedDate(updatedDate);
-        sourceHoldings.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
+        sourceHoldings.setLastUpdatedBy(ScsbConstants.Transfer.TRANSFER_REQUEST);
     }
 
     private void linkRecords(BibliographicEntity destBib, HoldingsEntity sourceHoldings, Date updatedDate) {
         sourceHoldings.getBibliographicEntities().add(destBib);
         sourceHoldings.setLastUpdatedDate(updatedDate);
-        sourceHoldings.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
+        sourceHoldings.setLastUpdatedBy(ScsbConstants.Transfer.TRANSFER_REQUEST);
 
         List<ItemEntity> itemEntities = sourceHoldings.getItemEntities();
         if(CollectionUtils.isNotEmpty(itemEntities)) {
@@ -488,14 +488,14 @@ public class TransferService {
                 ItemEntity itemEntity = iterator.next();
                 itemEntity.getBibliographicEntities().add(destBib);
                 itemEntity.setLastUpdatedDate(updatedDate);
-                itemEntity.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
+                itemEntity.setLastUpdatedBy(ScsbConstants.Transfer.TRANSFER_REQUEST);
             }
         }
         destBib.getItemEntities().addAll(itemEntities);
         destBib.getHoldingsEntities().add(sourceHoldings);
 
         destBib.setLastUpdatedDate(updatedDate);
-        destBib.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
+        destBib.setLastUpdatedBy(ScsbConstants.Transfer.TRANSFER_REQUEST);
     }
 
     private void linkRecordsForItemTransfer(BibliographicEntity destBib, HoldingsEntity destHoldings, ItemEntity sourceItem, Date updatedDate) {
@@ -514,11 +514,11 @@ public class TransferService {
         }
 
         destBib.setLastUpdatedDate(updatedDate);
-        destHoldings.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
+        destHoldings.setLastUpdatedBy(ScsbConstants.Transfer.TRANSFER_REQUEST);
         sourceItem.setLastUpdatedDate(updatedDate);
-        sourceItem.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
+        sourceItem.setLastUpdatedBy(ScsbConstants.Transfer.TRANSFER_REQUEST);
         destBib.setLastUpdatedDate(updatedDate);
-        destBib.setLastUpdatedBy(RecapConstants.Transfer.TRANSFER_REQUEST);
+        destBib.setLastUpdatedBy(ScsbConstants.Transfer.TRANSFER_REQUEST);
     }
 
     private TransferValidationResponse validateHoldingTransferRequest(HoldingsTransferRequest holdingsTransferRequest, Integer institutionId) {
@@ -536,15 +536,15 @@ public class TransferService {
                         return transferValidationResponse;
                     }
                 } else {
-                    transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_DESTINATION_HOLDINGS_IDS_NOT_MATCHING);
+                    transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_DESTINATION_HOLDINGS_IDS_NOT_MATCHING);
                 }
 
             } else {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DESTINATION_EMPTY);
+                transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.DESTINATION_EMPTY);
             }
 
         } else {
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_EMPTY);
+            transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_EMPTY);
         }
         return transferValidationResponse;
     }
@@ -552,7 +552,7 @@ public class TransferService {
     private HoldingsEntity getDestinationHoldings(TransferValidationResponse holdingTransferValidationResponse, Date currentDate,Integer institutionId) {
         HoldingsEntity destHoldings = holdingTransferValidationResponse.getDestHoldings();
         if(null == destHoldings) {
-            destHoldings = dummyDataService.getHoldingsWithDummyDetails(institutionId, currentDate, RecapConstants.Transfer.TRANSFER_REQUEST, holdingTransferValidationResponse.getDestHoldingsId());
+            destHoldings = dummyDataService.getHoldingsWithDummyDetails(institutionId, currentDate, ScsbConstants.Transfer.TRANSFER_REQUEST, holdingTransferValidationResponse.getDestHoldingsId());
             destHoldings.setBibliographicEntities(new ArrayList<>());
             destHoldings.setItemEntities(new ArrayList<>());
         }
@@ -563,7 +563,7 @@ public class TransferService {
         BibliographicEntity destBib = transferValidationResponse.getDestBib();
         if(null == destBib) {
             destBib = new BibliographicEntity();
-            dummyDataService.updateBibWithDummyDetails(institutionId, destBib, currentDate, RecapConstants.Transfer.TRANSFER_REQUEST, transferValidationResponse.getDestinationBibId());
+            dummyDataService.updateBibWithDummyDetails(institutionId, destBib, currentDate, ScsbConstants.Transfer.TRANSFER_REQUEST, transferValidationResponse.getDestinationBibId());
             destBib.setItemEntities(new ArrayList<>());
             destBib.setHoldingsEntities(new ArrayList<>());
         }
@@ -583,17 +583,17 @@ public class TransferService {
                         transferValidationResponse.setDestBib(destinationBibEntity);
                     }
                     else {
-                        transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_BIB_DEACCESSIONED);
+                        transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.DEST_BIB_DEACCESSIONED);
                     }
                 } else {
                     transferValidationResponse.setDestinationBibId(owningInstitutionBibId);
                 }
             } else {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_OWN_INST_HOLDINGS_ID_EMPTY);
+                transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.DEST_OWN_INST_HOLDINGS_ID_EMPTY);
             }
 
         } else {
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.DEST_OWN_INST_BIB_ID_EMPTY);
+            transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.DEST_OWN_INST_BIB_ID_EMPTY);
         }
         return transferValidationResponse;
     }
@@ -608,22 +608,22 @@ public class TransferService {
                     transferValidationResponse.setSourceBib(sourceBibEntity);
                     HoldingsEntity holdingsEntity = matchHoldingIdWithHoldings(owningInstitutionHoldingsId, sourceBibEntity);
                     if (holdingsEntity == null) {
-                        transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB);
+                        transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_HOLDING_NOT_UNDER_SOURCE_BIB);
                     }
                     else if(holdingsEntity.isDeleted()){
-                        transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_HOLDING_DEACCESSIONED);
+                        transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_HOLDING_DEACCESSIONED);
                     }
                     else {
                         transferValidationResponse.setSourceHoldings(holdingsEntity);
                     }
                 } else {
-                    transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_BIB_NOT_EXIST);
+                    transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_BIB_NOT_EXIST);
                 }
             } else {
-                transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_OWN_INST_HOLDINGS_ID_EMPTY);
+                transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_OWN_INST_HOLDINGS_ID_EMPTY);
             }
         } else {
-            transferValidationResponse.setInvalidWithMessage(RecapConstants.Transfer.SOURCE_OWN_INST_BIB_ID_EMPTY);
+            transferValidationResponse.setInvalidWithMessage(ScsbConstants.Transfer.SOURCE_OWN_INST_BIB_ID_EMPTY);
         }
     }
 
@@ -652,10 +652,10 @@ public class TransferService {
      */
     public List<ReportDataEntity> createReportDataEntityList(String institution, String requestString, String responseString, String transferType){
         List<ReportDataEntity> reportDataEntityList = new ArrayList<>();
-        addToReportDataEntityList(transferType, reportDataEntityList, RecapConstants.Transfer.TRANSFER_TYPE);
-        addToReportDataEntityList(institution, reportDataEntityList, RecapConstants.Transfer.INSTITUTION);
-        addToReportDataEntityList(requestString, reportDataEntityList, RecapConstants.Transfer.REQUEST);
-        addToReportDataEntityList(responseString, reportDataEntityList, RecapConstants.Transfer.RESPONSE);
+        addToReportDataEntityList(transferType, reportDataEntityList, ScsbConstants.Transfer.TRANSFER_TYPE);
+        addToReportDataEntityList(institution, reportDataEntityList, ScsbConstants.Transfer.INSTITUTION);
+        addToReportDataEntityList(requestString, reportDataEntityList, ScsbConstants.Transfer.REQUEST);
+        addToReportDataEntityList(responseString, reportDataEntityList, ScsbConstants.Transfer.RESPONSE);
         return reportDataEntityList;
     }
 
@@ -669,12 +669,12 @@ public class TransferService {
     public void saveReportForTransfer(String requestString, String responseString, String institution, String transferType) {
         List<ReportDataEntity> reportDataEntityList = new ArrayList<>(createReportDataEntityList(institution,
                 requestString, responseString, transferType));
-        helperUtil.saveReportEntity(institution,RecapConstants.TRANSFER_REPORT, RecapConstants.TRANSFER_REPORT, reportDataEntityList);
+        helperUtil.saveReportEntity(institution, ScsbConstants.TRANSFER_REPORT, ScsbConstants.TRANSFER_REPORT, reportDataEntityList);
     }
 
     public void writeChangeLog(Integer sourceBibId, Integer sourceHoldingsId, List<ItemEntity> itemEntities, Integer destinationBibId, Integer destinationHoldingsId) {
         String message = "Item transferred from source (bibId : " + sourceBibId + " , holdingsId : " + sourceHoldingsId + ") to destination (bibId : " + destinationBibId + " , holdingsId : " + destinationHoldingsId + ")";
-        helperUtil.saveItemChangeLogEntity(RecapConstants.Transfer.TRANSFER_REQUEST, message, itemEntities);
+        helperUtil.saveItemChangeLogEntity(ScsbConstants.Transfer.TRANSFER_REQUEST, message, itemEntities);
     }
 
     class TransferValidationResponse {
