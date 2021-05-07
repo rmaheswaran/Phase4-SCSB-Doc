@@ -1,6 +1,6 @@
 package org.recap.model.search.resolver.impl.item;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.search.resolver.ItemValueResolver;
 import org.recap.model.solr.Item;
 
@@ -10,7 +10,7 @@ import org.recap.model.solr.Item;
 public class ImsLocationValueResolver implements ItemValueResolver {
     @Override
     public Boolean isInterested(String field) {
-        return RecapConstants.IMS_LOCATION_CODE.equals(field);
+        return ScsbConstants.IMS_LOCATION_CODE.equals(field);
     }
 
     @Override

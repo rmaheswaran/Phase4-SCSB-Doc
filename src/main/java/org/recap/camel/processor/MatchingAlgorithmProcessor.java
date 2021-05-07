@@ -1,7 +1,7 @@
 package org.recap.camel.processor;
 
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
@@ -105,8 +105,8 @@ public class MatchingAlgorithmProcessor {
      */
     @Transactional
     public void updateMatchingBibEntity(Map matchingBibMap) {
-        String status = (String) matchingBibMap.get(RecapCommonConstants.STATUS);
-        List<Integer> matchingBibIds = (List<Integer>) matchingBibMap.get(RecapConstants.MATCHING_BIB_IDS);
+        String status = (String) matchingBibMap.get(ScsbCommonConstants.STATUS);
+        List<Integer> matchingBibIds = (List<Integer>) matchingBibMap.get(ScsbConstants.MATCHING_BIB_IDS);
         try {
             matchingBibDetailsRepository.updateStatusBasedOnBibs(status, matchingBibIds);
             matchingBibDetailsRepository.flush();

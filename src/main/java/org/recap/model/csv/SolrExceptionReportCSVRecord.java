@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 @Data
 @CsvRecord(generateHeaderColumns = true, separator = ",", quoting = true, crlf = "UNIX", skipFirstLine = true)
-public class SolrExceptionReportReCAPCSVRecord implements Serializable {
+public class SolrExceptionReportCSVRecord implements Serializable {
 
     @DataField(pos = 1, columnName = "Document Type")
     private String docType;

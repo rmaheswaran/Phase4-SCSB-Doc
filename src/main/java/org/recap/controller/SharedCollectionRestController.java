@@ -1,6 +1,6 @@
 package org.recap.controller;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.BibAvailabilityResponse;
 import org.recap.model.BibItemAvailabityStatusRequest;
 import org.recap.model.ItemAvailabilityResponse;
@@ -58,8 +58,8 @@ public class SharedCollectionRestController {
         try {
             itemAvailabilityResponses = getItemAvailabilityService().getItemStatusByBarcodeAndIsDeletedFalseList(itemAvailabityStatusRequest.getBarcodes());
         } catch (Exception exception) {
-            responseEntity = new ResponseEntity(RecapConstants.SCSB_PERSISTENCE_SERVICE_IS_UNAVAILABLE, getHttpHeaders(), HttpStatus.SERVICE_UNAVAILABLE);
-            logger.error(RecapConstants.EXCEPTION, exception);
+            responseEntity = new ResponseEntity(ScsbConstants.SCSB_PERSISTENCE_SERVICE_IS_UNAVAILABLE, getHttpHeaders(), HttpStatus.SERVICE_UNAVAILABLE);
+            logger.error(ScsbConstants.EXCEPTION, exception);
             return responseEntity;
         }
         responseEntity = new ResponseEntity(itemAvailabilityResponses, getHttpHeaders(), HttpStatus.OK);
@@ -80,7 +80,7 @@ public class SharedCollectionRestController {
         bibAvailabilityResponses = getItemAvailabilityService().getBibItemAvailabilityStatus(bibItemAvailabityStatusRequest);
         if (bibAvailabilityResponses.isEmpty()) {
             BibAvailabilityResponse bibAvailabilityResponse = new BibAvailabilityResponse();
-            bibAvailabilityResponse.setErrorMessage(RecapConstants.BIB_ITEM_DOESNOT_EXIST);
+            bibAvailabilityResponse.setErrorMessage(ScsbConstants.BIB_ITEM_DOESNOT_EXIST);
             bibAvailabilityResponses.add(bibAvailabilityResponse);
         }
         responseEntity = new ResponseEntity(bibAvailabilityResponses, getHttpHeaders(), HttpStatus.OK);
@@ -89,7 +89,7 @@ public class SharedCollectionRestController {
 
     private HttpHeaders getHttpHeaders() {
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.add(RecapConstants.DATE, new Date().toString());
+        responseHeaders.add(ScsbConstants.DATE, new Date().toString());
         return responseHeaders;
     }
 }

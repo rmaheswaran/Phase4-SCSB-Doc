@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.search.DataDumpSearchResult;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchRecordsResponse;
@@ -61,13 +61,13 @@ public class SearchRecordRestController {
      * @return the SearchRecordsResponse.
      */
     @PostMapping(value="/search")
-    @ApiOperation(value = "search",notes = "Search Books in ReCAP - Using Method Post, Request data is String", nickname = "search")
+    @ApiOperation(value = "search",notes = "Search Books in Storage Location - Using Method Post, Request data is String", nickname = "search")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful Search")})
     @ResponseBody
     public SearchRecordsResponse searchRecordsServiceGetParam(@ApiParam(value = "Paramerters for Searching Records" , required = true, name="requestJson") @RequestBody SearchRecordsRequest searchRecordsRequest) {
 
         SearchRecordsResponse searchRecordsResponse = new SearchRecordsResponse();
-        if(RecapCommonConstants.CUSTOMER_CODE.equalsIgnoreCase(searchRecordsRequest.getFieldName())){
+        if(ScsbCommonConstants.CUSTOMER_CODE.equalsIgnoreCase(searchRecordsRequest.getFieldName())){
             searchRecordsRequest.setFieldValue(searchRecordsRequest.getFieldValue().toUpperCase());
         }
         try {
@@ -81,7 +81,7 @@ public class SearchRecordRestController {
             searchRecordsResponse.setErrorMessage(searchRecordsRequest.getErrorMessage());
             searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         } catch (Exception e) {
-            logger.info(RecapCommonConstants.LOG_ERROR,e);
+            logger.info(ScsbCommonConstants.LOG_ERROR,e);
             searchRecordsResponse.setErrorMessage(e.getMessage());
         }
         return searchRecordsResponse;
@@ -94,7 +94,7 @@ public class SearchRecordRestController {
      * @return the responseMap.
      */
     @PostMapping(value="/searchRecords")
-    @ApiOperation(value = "searchRecords",notes = "Search Books in ReCAP - Using Method Post, Request data is String", nickname = "searchRecords", consumes="application/json")
+    @ApiOperation(value = "searchRecords",notes = "Search Books in Storage Location - Using Method Post, Request data is String", nickname = "searchRecords", consumes="application/json")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful Search")})
     public Map searchRecords(@ApiParam(value = "Paramerters for Searching Records" , required = true, name="requestJson") @RequestBody SearchRecordsRequest searchRecordsRequest) {
         List<DataDumpSearchResult> dataDumpSearchResults = null;
@@ -105,7 +105,7 @@ public class SearchRecordRestController {
             responseMap.put("totalRecordsCount", searchRecordsRequest.getTotalRecordsCount());
             responseMap.put("dataDumpSearchResults", dataDumpSearchResults);
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return responseMap;
     }
@@ -125,7 +125,7 @@ public class SearchRecordRestController {
      * @return the SearchResultRow list.
      */
     @GetMapping(value="/searchByParam")
-    @ApiOperation(value = "searchParam",notes = "Search Books in ReCAP - Using Method GET, Request data as parameter", nickname = "search")
+    @ApiOperation(value = "searchParam",notes = "Search Books in Storage Location - Using Method GET, Request data as parameter", nickname = "search")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful Search")})
     public List<SearchResultRow> searchRecordsServiceGet(
             @RequestParam(name="fieldValue", required = false)  String fieldValue,
@@ -135,7 +135,7 @@ public class SearchRecordRestController {
             @ApiParam(name="availability", value = "Availability: Available, NotAvailable") @RequestParam(name="availability", value = "availability" , required = false)  String availability,
             @ApiParam(name="materialTypes", value = "MaterialTypes: Monograph, Serial, Other") @RequestParam(name="materialTypes", value = "materialTypes" , required = false)  String materialTypes,
             @ApiParam(name="useRestrictions", value = "Use Restrictions: NoRestrictions, InLibraryUse, SupervisedUse") @RequestParam(name="useRestrictions", value = "useRestrictions" , required = false)  String useRestrictions,
-            @ApiParam(name="pageSize", value = "Page Size in Numers - 10, 20 30...") @RequestParam(name="pageSize", required = false) Integer pageSize
+            @ApiParam(name="pageSize", value = "Page Size in Numbers - 10, 20 30...") @RequestParam(name="pageSize", required = false) Integer pageSize
     ) {
 
         SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest(propertyUtil.getAllInstitutions());
@@ -165,7 +165,7 @@ public class SearchRecordRestController {
             searchResultRows = searchRecordsUtil.searchRecords(searchRecordsRequest);
         } catch (Exception e) {
             searchResultRows = new ArrayList<>();
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return searchResultRows;
     }

@@ -17,8 +17,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.TestUtil;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
@@ -143,7 +143,7 @@ public class CommonUtilUT extends BaseTestCaseUT {
 
     @Test
     public void getAllInstitutionCodes(){
-        List<String> institutionCodes= Arrays.asList(RecapCommonConstants.PRINCETON);
+        List<String> institutionCodes= Arrays.asList(ScsbCommonConstants.PRINCETON);
         Mockito.when(institutionDetailsRepository.findAll()).thenReturn(getInstitutionEntities());
         List<String> response= commonUtil.getAllInstitutionCodes();
         Map response1= commonUtil.getInstitutionEntityMap();
@@ -206,7 +206,7 @@ public class CommonUtilUT extends BaseTestCaseUT {
         SolrDocument solrDocument=new SolrDocument();
         solrDocument.setField("_root_","123");
         solrDocument.setField("Availability_search","1");
-        solrDocument.setField(RecapCommonConstants.IS_DELETED_ITEM,true);
+        solrDocument.setField(ScsbCommonConstants.IS_DELETED_ITEM,true);
         solrDocument.setField("CollectionGroupDesignation","CollectionGroupDesignation");
         solrDocument.setField("CustomerCode","123456");
         solrDocument.setField("DocType","DocType");
@@ -215,14 +215,14 @@ public class CommonUtilUT extends BaseTestCaseUT {
         solrDocument.setField("ItemId",1);
         solrDocument.setField("ItemLastUpdatedBy","ItemLastUpdatedBy");
         solrDocument.setField("ItemLastUpdatedDate",new Date());
-        solrDocument.setField(RecapCommonConstants.HOLDINGS_ID,Arrays.asList(1));
+        solrDocument.setField(ScsbCommonConstants.HOLDINGS_ID,Arrays.asList(1));
         solrDocument.setField("VolumePartYear","true");
         solrDocument.setField("UseRestriction_display","true");
         solrDocument.setField("UseRestriction_search","true");
         solrDocument.setField("Availability_display","true");
         solrDocument.setField("CallNumber_display","true");
         solrDocument.setField("CallNumber_search","true");
-        solrDocument.setField(RecapConstants.OWNING_INSTITUTION_ITEM_ID,"true");
+        solrDocument.setField(ScsbConstants.OWNING_INSTITUTION_ITEM_ID,"true");
         solrDocument.setField("Barcode","true");
         ItemCreatedByValueResolver ItemCreatedByValueResolver = new ItemCreatedByValueResolver();
         ItemCreatedByValueResolver.setValue(new Item(),"true");

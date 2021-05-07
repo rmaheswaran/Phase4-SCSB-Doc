@@ -1,8 +1,8 @@
 package org.recap.util;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.recap.RecapCommonConstants;
-import org.recap.model.csv.SolrExceptionReportReCAPCSVRecord;
+import org.recap.ScsbCommonConstants;
+import org.recap.model.csv.SolrExceptionReportCSVRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.slf4j.Logger;
@@ -17,18 +17,18 @@ import java.util.List;
 /**
  * Created by angelind on 22/8/16.
  */
-public class ReCAPCSVSolrExceptionRecordGenerator {
+public class SolrExceptionCSVRecordGenerator {
 
-    private static final Logger logger= LoggerFactory.getLogger(ReCAPCSVSolrExceptionRecordGenerator.class);
+    private static final Logger logger= LoggerFactory.getLogger(SolrExceptionCSVRecordGenerator.class);
 
     /**
-     * This method prepares SolrExceptionReportReCAPCSVRecord which is used to generate csv report based on the given report entity
+     * This method prepares SolrExceptionReportCSVRecord which is used to generate csv report based on the given report entity
      *
      * @param reportEntity                      the report entity
-     * @param solrExceptionReportReCAPCSVRecord the solr exception report re capcsv record
+     * @param solrExceptionReportCSVRecord the solr exception report re capcsv record
      * @return the solr exception report re capcsv record
      */
-    public SolrExceptionReportReCAPCSVRecord prepareSolrExceptionReportReCAPCSVRecord(ReportEntity reportEntity, SolrExceptionReportReCAPCSVRecord solrExceptionReportReCAPCSVRecord) {
+    public SolrExceptionReportCSVRecord prepareSolrExceptionReportCSVRecord(ReportEntity reportEntity, SolrExceptionReportCSVRecord solrExceptionReportCSVRecord) {
 
         List<ReportDataEntity> reportDataEntities = reportEntity.getReportDataEntities();
 
@@ -39,17 +39,17 @@ public class ReCAPCSVSolrExceptionRecordGenerator {
             Method setterMethod = getSetterMethod(headerName);
             if(null != setterMethod){
                 try {
-                    setterMethod.invoke(solrExceptionReportReCAPCSVRecord, headerValue);
+                    setterMethod.invoke(solrExceptionReportCSVRecord, headerValue);
                 } catch (Exception e) {
-                    logger.error(RecapCommonConstants.LOG_ERROR,e);
+                    logger.error(ScsbCommonConstants.LOG_ERROR,e);
                 }
             }
         }
-        return solrExceptionReportReCAPCSVRecord;
+        return solrExceptionReportCSVRecord;
     }
 
     /**
-     * This method is used to get the setter method for the given one of the instance variable name in SolrExceptionReportReCAPCSVRecord class.
+     * This method is used to get the setter method for the given one of the instance variable name in SolrExceptionReportCSVRecord class.
      *
      * @param propertyName the property name
      * @return the setter method
@@ -57,15 +57,15 @@ public class ReCAPCSVSolrExceptionRecordGenerator {
     public Method getSetterMethod(String propertyName) {
         PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
         try {
-            return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, SolrExceptionReportReCAPCSVRecord.class));
+            return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, SolrExceptionReportCSVRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
 
     /**
-     * This method is used to get the getter method for the given one of the instance variable name in SolrExceptionReportReCAPCSVRecord class.
+     * This method is used to get the getter method for the given one of the instance variable name in SolrExceptionReportCSVRecord class.
      *
      * @param propertyName the property name
      * @return the getter method
@@ -73,9 +73,9 @@ public class ReCAPCSVSolrExceptionRecordGenerator {
     public Method getGetterMethod(String propertyName) {
         PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
         try {
-            return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SolrExceptionReportReCAPCSVRecord.class));
+            return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SolrExceptionReportCSVRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

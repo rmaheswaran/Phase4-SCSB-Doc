@@ -5,8 +5,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -59,10 +59,10 @@ public class DummyDataServiceUT extends BaseTestCaseUT {
 
         BibliographicEntity bibliographicEntity = dummyDataService.createDummyDataAsIncomplete(1,"3245678232","PA");
         assertNotNull(bibliographicEntity);
-        assertEquals(RecapCommonConstants.INCOMPLETE_STATUS,bibliographicEntity.getCatalogingStatus());
-        assertEquals(RecapConstants.DUMMY_CALL_NUMBER_TYPE,bibliographicEntity.getItemEntities().get(0).getCallNumberType());
-        assertEquals(RecapCommonConstants.DUMMYCALLNUMBER,bibliographicEntity.getItemEntities().get(0).getCallNumber());
-        assertEquals(RecapCommonConstants.INCOMPLETE_STATUS,bibliographicEntity.getItemEntities().get(0).getCatalogingStatus());
+        assertEquals(ScsbCommonConstants.INCOMPLETE_STATUS,bibliographicEntity.getCatalogingStatus());
+        assertEquals(ScsbConstants.DUMMY_CALL_NUMBER_TYPE,bibliographicEntity.getItemEntities().get(0).getCallNumberType());
+        assertEquals(ScsbCommonConstants.DUMMYCALLNUMBER,bibliographicEntity.getItemEntities().get(0).getCallNumber());
+        assertEquals(ScsbCommonConstants.INCOMPLETE_STATUS,bibliographicEntity.getItemEntities().get(0).getCatalogingStatus());
     }
 
     @Test
@@ -92,11 +92,11 @@ public class DummyDataServiceUT extends BaseTestCaseUT {
 
     private BibliographicEntity getBibliographicEntity() {
         BibliographicEntity bibliographicEntity=new BibliographicEntity();
-        bibliographicEntity.setCatalogingStatus(RecapCommonConstants.INCOMPLETE_STATUS);
+        bibliographicEntity.setCatalogingStatus(ScsbCommonConstants.INCOMPLETE_STATUS);
         ItemEntity itemEntity=new ItemEntity();
-        itemEntity.setCallNumberType(RecapConstants.DUMMY_CALL_NUMBER_TYPE);
-        itemEntity.setCallNumber(RecapCommonConstants.DUMMYCALLNUMBER);
-        itemEntity.setCatalogingStatus(RecapCommonConstants.INCOMPLETE_STATUS);
+        itemEntity.setCallNumberType(ScsbConstants.DUMMY_CALL_NUMBER_TYPE);
+        itemEntity.setCallNumber(ScsbCommonConstants.DUMMYCALLNUMBER);
+        itemEntity.setCatalogingStatus(ScsbCommonConstants.INCOMPLETE_STATUS);
         bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
         return bibliographicEntity;
     }

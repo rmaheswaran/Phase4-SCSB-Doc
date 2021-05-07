@@ -16,8 +16,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.solr.BibItem;
@@ -87,7 +87,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(item);
 
         Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
-        assertTrue(search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+        assertTrue(search.containsKey(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
-        assertTrue(search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+        assertTrue(search.containsKey(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenThrow(SolrServerException.class);
         Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
-        assertTrue(search.containsKey(RecapCommonConstants.SEARCH_ERROR_RESPONSE));
+        assertTrue(search.containsKey(ScsbCommonConstants.SEARCH_ERROR_RESPONSE));
     }
 
 
@@ -136,7 +136,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(solrQueryBuilder.getQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
         Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
-        assertTrue(search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+        assertTrue(search.containsKey(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         searchRecordsRequest.setRequestingInstitution("NYPL");
         searchRecordsRequest.setFieldValue("NA");
-        searchRecordsRequest.setFieldName(RecapCommonConstants.CUSTOMER_CODE);
+        searchRecordsRequest.setFieldName(ScsbCommonConstants.CUSTOMER_CODE);
         searchRecordsRequest.setPageSize(1);
         searchRecordsRequest.setPageNumber(1);
         searchRecordsRequest.setCatalogingStatus("Shared");
@@ -166,7 +166,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         item.setDocType("doctype");
         Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(item);
         Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
-        assertTrue(search.containsKey(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE));
+        assertTrue(search.containsKey(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE));
     }
 
     @Test
@@ -181,7 +181,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
 
     @Test
     public void getPageNumberOnPageSizeChange() throws Exception{
-        String[] fields={RecapCommonConstants.CUSTOMER_CODE,"","test"};
+        String[] fields={ScsbCommonConstants.CUSTOMER_CODE,"","test"};
         for (String field:fields) {
             SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
             searchRecordsRequest.setRequestingInstitution("NYPL");
@@ -216,17 +216,17 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
     private SolrDocumentList getSolrDocumentList() {
         SolrDocumentList solrDocumentList = new SolrDocumentList();
         SolrDocument solrDocument = new SolrDocument();
-        solrDocument.setField(RecapCommonConstants.DOCTYPE,RecapCommonConstants.ITEM);
-        solrDocument.setField(RecapCommonConstants.IS_DELETED_ITEM,false);
-        solrDocument.setField(RecapConstants.ITEM_CATALOGING_STATUS,"Shared");
+        solrDocument.setField(ScsbCommonConstants.DOCTYPE,ScsbCommonConstants.ITEM);
+        solrDocument.setField(ScsbCommonConstants.IS_DELETED_ITEM,false);
+        solrDocument.setField(ScsbConstants.ITEM_CATALOGING_STATUS,"Shared");
         solrDocument.setField("test","all");
         SolrDocument solrDocument1 = new SolrDocument();
-        solrDocument1.setField(RecapCommonConstants.DOCTYPE,RecapCommonConstants.HOLDINGS);
-        solrDocument1.setField(RecapCommonConstants.IS_DELETED_HOLDINGS,false);
+        solrDocument1.setField(ScsbCommonConstants.DOCTYPE,ScsbCommonConstants.HOLDINGS);
+        solrDocument1.setField(ScsbCommonConstants.IS_DELETED_HOLDINGS,false);
         SolrDocument solrDocument2 = new SolrDocument();
-        solrDocument2.setField(RecapCommonConstants.DOCTYPE,RecapCommonConstants.BIB);
-        solrDocument2.setField(RecapCommonConstants.IS_DELETED_BIB,false);
-        solrDocument2.setField(RecapConstants.BIB_CATALOGING_STATUS,"Shared");
+        solrDocument2.setField(ScsbCommonConstants.DOCTYPE,ScsbCommonConstants.BIB);
+        solrDocument2.setField(ScsbCommonConstants.IS_DELETED_BIB,false);
+        solrDocument2.setField(ScsbConstants.BIB_CATALOGING_STATUS,"Shared");
         solrDocumentList.setNumFound(1l);
         solrDocumentList.add(0,solrDocument);
         solrDocumentList.add(1,solrDocument1);
@@ -260,7 +260,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         bibResolverMap.put("Title_display","test");
         bibResolverMap.put("Title_search","test");
         bibResolverMap.put("Title_sort","test");
-        bibResolverMap.put(RecapCommonConstants.IS_DELETED_BIB,false);
+        bibResolverMap.put(ScsbCommonConstants.IS_DELETED_BIB,false);
         return bibResolverMap;
     }
 
@@ -281,7 +281,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         itemResolverMap.put("_root_","root");
         itemResolverMap.put("ItemId",1);
         itemResolverMap.put("id","1236598");
-        itemResolverMap.put(RecapCommonConstants.IS_DELETED_ITEM,false);
+        itemResolverMap.put(ScsbCommonConstants.IS_DELETED_ITEM,false);
         return itemResolverMap;
     }
 
@@ -292,7 +292,7 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT {
         holdingResolverMap.put("DocType","holdingId");
         holdingResolverMap.put("id","565456456");
         holdingResolverMap.put("HoldingsId",534541);
-        holdingResolverMap.put(RecapCommonConstants.IS_DELETED_HOLDINGS,false);
+        holdingResolverMap.put(ScsbCommonConstants.IS_DELETED_HOLDINGS,false);
         return holdingResolverMap;
     }
 

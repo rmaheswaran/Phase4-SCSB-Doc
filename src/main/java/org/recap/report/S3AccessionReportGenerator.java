@@ -1,7 +1,7 @@
 package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.ReportEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,16 +18,16 @@ public class S3AccessionReportGenerator extends CommonReportGenerator implements
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
+        return reportType.equalsIgnoreCase(ScsbCommonConstants.ACCESSION_SUMMARY_REPORT);
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP);
+        return transmissionType.equalsIgnoreCase(ScsbCommonConstants.FTP);
     }
 
     @Override
     public String generateReport(String fileName, List<ReportEntity> reportEntityList) {
-        return generateAccessionReportFile(fileName, reportEntityList, RecapCommonConstants.FTP_ACCESSION_SUMMARY_REPORT_Q);
+        return generateAccessionReportFile(fileName, reportEntityList, ScsbCommonConstants.FTP_ACCESSION_SUMMARY_REPORT_Q);
     }
 }

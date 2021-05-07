@@ -2,8 +2,8 @@ package org.recap.util;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.OngoingAccessionReportRecord;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.jpa.ReportDataEntity;
@@ -37,14 +37,14 @@ public class OngoingAccessionReportGenerator {
         for (Iterator<ReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
             ReportDataEntity report =  iterator.next();
             String headerName = report.getHeaderName();
-            if (!(StringUtils.equalsIgnoreCase(headerName, RecapConstants.ACCESSION_SUMMARY) || StringUtils.equalsIgnoreCase(headerName, RecapConstants.BULK_ACCESSION_SUMMARY))) {
+            if (!(StringUtils.equalsIgnoreCase(headerName, ScsbConstants.ACCESSION_SUMMARY) || StringUtils.equalsIgnoreCase(headerName, ScsbConstants.BULK_ACCESSION_SUMMARY))) {
                 String headerValue = report.getHeaderValue();
                 Method setterMethod = getSetterMethod(headerName);
                 if(null != setterMethod){
                     try {
                         setterMethod.invoke(ongoingAccessionReportRecord, headerValue);
                     } catch (Exception e) {
-                        logger.error(RecapConstants.EXCEPTION,e);
+                        logger.error(ScsbConstants.EXCEPTION,e);
                     }
                 }
             }
@@ -63,7 +63,7 @@ public class OngoingAccessionReportGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, OngoingAccessionReportRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }
@@ -79,7 +79,7 @@ public class OngoingAccessionReportGenerator {
         try {
             return propertyUtilsBean.getReadMethod(new PropertyDescriptor(propertyName, SubmitCollectionReportRecord.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

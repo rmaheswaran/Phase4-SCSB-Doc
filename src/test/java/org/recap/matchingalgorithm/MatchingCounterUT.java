@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.recap.RecapConstants.MATCHING_COUNTER_OPEN;
-import static org.recap.RecapConstants.MATCHING_COUNTER_SHARED;
-import static org.recap.RecapConstants.MATCHING_COUNTER_UPDATED_OPEN;
-import static org.recap.RecapConstants.MATCHING_COUNTER_UPDATED_SHARED;
+import static org.recap.ScsbConstants.MATCHING_COUNTER_OPEN;
+import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
+import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
+import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_SHARED;
 
 public class MatchingCounterUT {
 

@@ -2,8 +2,8 @@ package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
@@ -84,9 +84,9 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
         long from = pageNum * Long.valueOf(batchSize);
         List<ReportDataEntity> reportDataEntities;
         if(isPendingMatch) {
-            reportDataEntities = reportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(RecapCommonConstants.BIB_ID, from, batchSize);
+            reportDataEntities = reportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize);
         } else {
-            reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(RecapCommonConstants.BIB_ID, from, batchSize);
+            reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize);
         }
         List<Integer> nonMonographRecordNums = new ArrayList<>();
         List<Integer> exceptionRecordNums = new ArrayList<>();
@@ -96,7 +96,7 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
             List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
             Set<String> materialTypeSet = new HashSet<>();
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
-                    institutionMap, itemChangeLogDetailsRepository, RecapConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository,institutionDetailsRepository);
+                    institutionMap, itemChangeLogDetailsRepository, ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository,institutionDetailsRepository);
             boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList);
             if(isMonograph) {
                 matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
@@ -104,7 +104,7 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
                 if(materialTypeSet.size() > 1) {
                     exceptionRecordNums.add(Integer.valueOf(reportDataEntity.getRecordNum()));
                 } else {
-                    if(materialTypeSet.contains(RecapConstants.MONOGRAPHIC_SET)) {
+                    if(materialTypeSet.contains(ScsbConstants.MONOGRAPHIC_SET)) {
                         nonMonographRecordNums.add(Integer.valueOf(reportDataEntity.getRecordNum()));
                     }
                 }

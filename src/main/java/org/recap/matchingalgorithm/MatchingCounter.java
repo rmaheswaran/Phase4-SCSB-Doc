@@ -1,15 +1,15 @@
 package org.recap.matchingalgorithm;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.recap.RecapConstants.MATCHING_COUNTER_OPEN;
-import static org.recap.RecapConstants.MATCHING_COUNTER_SHARED;
-import static org.recap.RecapConstants.MATCHING_COUNTER_UPDATED_OPEN;
-import static org.recap.RecapConstants.MATCHING_COUNTER_UPDATED_SHARED;
+import static org.recap.ScsbConstants.MATCHING_COUNTER_OPEN;
+import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
+import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
+import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_SHARED;
 
 public class MatchingCounter {
 
@@ -43,10 +43,10 @@ public class MatchingCounter {
     public static void reset(){
         for (String institution : scsbInstitutions) {
             Map<String,Integer> cgdCounterMap=new HashMap<>();
-            cgdCounterMap.put(RecapConstants.MATCHING_COUNTER_SHARED,0);
-            cgdCounterMap.put(RecapConstants.MATCHING_COUNTER_OPEN,0);
-            cgdCounterMap.put(RecapConstants.MATCHING_COUNTER_UPDATED_SHARED,0);
-            cgdCounterMap.put(RecapConstants.MATCHING_COUNTER_UPDATED_OPEN,0);
+            cgdCounterMap.put(ScsbConstants.MATCHING_COUNTER_SHARED,0);
+            cgdCounterMap.put(ScsbConstants.MATCHING_COUNTER_OPEN,0);
+            cgdCounterMap.put(ScsbConstants.MATCHING_COUNTER_UPDATED_SHARED,0);
+            cgdCounterMap.put(ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN,0);
             institutionCounterMap.put(institution,cgdCounterMap);
         }
 

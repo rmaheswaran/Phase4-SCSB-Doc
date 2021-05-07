@@ -1,6 +1,6 @@
 package org.recap.model.search.resolver.impl.item;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.search.resolver.ItemValueResolver;
 import org.recap.model.solr.Item;
 
@@ -17,7 +17,7 @@ public class OwningInstitutionItemIdValueResolver implements ItemValueResolver {
      */
     @Override
     public Boolean isInterested(String field) {
-        return RecapConstants.OWNING_INSTITUTION_ITEM_ID.equals(field);
+        return ScsbConstants.OWNING_INSTITUTION_ITEM_ID.equals(field);
     }
 
     /**

@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
@@ -85,7 +85,7 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCaseUT {
         Mockito.when(reportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(Mockito.anyString())).thenReturn(1l);
         List<ReportDataEntity> reportDataEntities=new ArrayList<>();
         ReportDataEntity reportDataEntity=new ReportDataEntity();
-        reportDataEntity.setHeaderName(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM);
+        reportDataEntity.setHeaderName(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM);
         reportDataEntity.setHeaderValue("123");
         reportDataEntities.add(reportDataEntity);
         Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingSerials(Mockito.anyString(),Mockito.anyLong(),Mockito.anyLong())).thenReturn(reportDataEntities);
@@ -157,7 +157,7 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCaseUT {
         itemEntity.setCustomerCode("1");
         itemEntity.setItemAvailabilityStatusId(1);
         itemEntity.setDeleted(false);
-        itemEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
+        itemEntity.setCatalogingStatus(ScsbCommonConstants.COMPLETE_STATUS);
         ItemStatusEntity itemStatusEntity = new ItemStatusEntity();
         itemStatusEntity.setId(1);
         itemStatusEntity.setStatusCode("Available");

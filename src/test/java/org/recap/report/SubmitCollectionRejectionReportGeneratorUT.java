@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.repository.jpa.ReportDetailRepository;
@@ -51,7 +51,7 @@ public class SubmitCollectionRejectionReportGeneratorUT extends BaseTestCaseUT {
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
         Mockito.when(reportDetailRepository.findByFileLikeAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(saveSubmitCollectionRejectionReport());
-        String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.SUBMIT_COLLECTION_REPORT,"PUL", RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT,RecapCommonConstants.FILE_SYSTEM, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
+        String generatedReportFileName = reportGenerator.generateReport(ScsbCommonConstants.SUBMIT_COLLECTION_REPORT,"PUL", ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT,ScsbCommonConstants.FILE_SYSTEM, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
         assertNotNull(generatedReportFileName);
     }
 
@@ -64,7 +64,7 @@ public class SubmitCollectionRejectionReportGeneratorUT extends BaseTestCaseUT {
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
         Mockito.when(reportDetailRepository.findByFileLikeAndInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(saveSubmitCollectionRejectionReport());
-        String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.SUBMIT_COLLECTION_REPORT,"PUL", RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT,RecapCommonConstants.FTP, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
+        String generatedReportFileName = reportGenerator.generateReport(ScsbCommonConstants.SUBMIT_COLLECTION_REPORT,"PUL", ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT,ScsbCommonConstants.FTP, dateUtil.getFromDate(createdDate), dateUtil.getToDate(createdDate));
         assertNotNull(generatedReportFileName);
     }
 
@@ -72,23 +72,23 @@ public class SubmitCollectionRejectionReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList = new ArrayList<>();
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapCommonConstants.SUBMIT_COLLECTION_REPORT);
-        reportEntity.setType(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT);
+        reportEntity.setFileName(ScsbCommonConstants.SUBMIT_COLLECTION_REPORT);
+        reportEntity.setType(ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 
         ReportDataEntity itemBarcodeReportDataEntity = new ReportDataEntity();
-        itemBarcodeReportDataEntity.setHeaderName(RecapCommonConstants.SUBMIT_COLLECTION_ITEM_BARCODE);
+        itemBarcodeReportDataEntity.setHeaderName(ScsbCommonConstants.SUBMIT_COLLECTION_ITEM_BARCODE);
         itemBarcodeReportDataEntity.setHeaderValue("123");
         reportDataEntities.add(itemBarcodeReportDataEntity);
 
         ReportDataEntity customerCodeReportDataEntity = new ReportDataEntity();
-        customerCodeReportDataEntity.setHeaderName(RecapCommonConstants.SUBMIT_COLLECTION_CUSTOMER_CODE);
+        customerCodeReportDataEntity.setHeaderName(ScsbCommonConstants.SUBMIT_COLLECTION_CUSTOMER_CODE);
         customerCodeReportDataEntity.setHeaderValue("PB");
         reportDataEntities.add(customerCodeReportDataEntity);
 
         ReportDataEntity owningInstitutionReportDataEntity = new ReportDataEntity();
-        owningInstitutionReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
+        owningInstitutionReportDataEntity.setHeaderName(ScsbCommonConstants.OWNING_INSTITUTION);
         owningInstitutionReportDataEntity.setHeaderValue("1");
         reportDataEntities.add(owningInstitutionReportDataEntity);
 

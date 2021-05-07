@@ -2,8 +2,8 @@ package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.OngoingAccessionReportRecord;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.util.OngoingAccessionReportGenerator;
@@ -27,12 +27,12 @@ public class FSOngoingAccessionReportGenerator implements ReportGeneratorInterfa
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapConstants.ONGOING_ACCESSION_REPORT);
+        return reportType.equalsIgnoreCase(ScsbConstants.ONGOING_ACCESSION_REPORT);
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FILE_SYSTEM);
+        return transmissionType.equalsIgnoreCase(ScsbCommonConstants.FILE_SYSTEM);
     }
 
     @Override
@@ -44,9 +44,9 @@ public class FSOngoingAccessionReportGenerator implements ReportGeneratorInterfa
             ongoingAccessionReportRecordList.add(ongoingAccessionReportGenerator.prepareOngoingAccessionReportRecord(reportEntity));
         }
         if(CollectionUtils.isNotEmpty(ongoingAccessionReportRecordList)) {
-            producerTemplate.sendBodyAndHeader(RecapConstants.FS_ONGOING_ACCESSION_REPORT_Q, ongoingAccessionReportRecordList, "fileName", fileName);
+            producerTemplate.sendBodyAndHeader(ScsbConstants.FS_ONGOING_ACCESSION_REPORT_Q, ongoingAccessionReportRecordList, "fileName", fileName);
 
-            DateFormat df = new SimpleDateFormat(RecapConstants.DATE_FORMAT_FOR_REPORT_FILE_NAME);
+            DateFormat df = new SimpleDateFormat(ScsbConstants.DATE_FORMAT_FOR_REPORT_FILE_NAME);
             generatedFileName = fileName + "-" + df.format(new Date()) + ".csv";
             return generatedFileName;
         }

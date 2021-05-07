@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.util.DateUtil;
@@ -46,10 +46,10 @@ public class OngoingMatchingAlgorithmJobRestControllerUT extends BaseTestCaseUT 
 
     @Test
     public void testStartMatchingAlgorithmJob() throws Exception {
-        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(Mockito.any(),Mockito.anyInt())).thenReturn(RecapCommonConstants.SUCCESS);
-        Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo(Mockito.any(),Mockito.any())).thenReturn(RecapCommonConstants.SUCCESS);
+        Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(Mockito.any(),Mockito.anyInt())).thenReturn(ScsbCommonConstants.SUCCESS);
+        Mockito.when(matchingBibInfoDetailService.populateMatchingBibInfo(Mockito.any(),Mockito.any())).thenReturn(ScsbCommonConstants.SUCCESS);
         String status=ongoingMatchingAlgorithmJobRestController.startMatchingAlgorithmJob(getSolrIndexRequest());
-        assertEquals(RecapCommonConstants.SUCCESS,status);
+        assertEquals(ScsbCommonConstants.SUCCESS,status);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class OngoingMatchingAlgorithmJobRestControllerUT extends BaseTestCaseUT 
 
     private SolrIndexRequest getSolrIndexRequest() {
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
-        solrIndexRequest.setProcessType(RecapCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB);
+        solrIndexRequest.setProcessType(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM_JOB);
         solrIndexRequest.setCreatedDate(new Date());
         return solrIndexRequest;
     }

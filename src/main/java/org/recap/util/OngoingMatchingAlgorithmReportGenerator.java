@@ -1,7 +1,7 @@
 package org.recap.util;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.matchingreports.TitleExceptionReport;
 import org.slf4j.Logger;
@@ -31,8 +31,8 @@ public class OngoingMatchingAlgorithmReportGenerator {
 
         TitleExceptionReport titleExceptionReport = new TitleExceptionReport();
         String headerName = null;
-        Predicate<String> checkForMatchPoints = p -> RecapCommonConstants.MATCH_POINT_FIELD_OCLC.contains(p) || p.equals(RecapCommonConstants.MATCH_POINT_FIELD_ISBN) ||
-                p.equals(RecapCommonConstants.MATCH_POINT_FIELD_ISSN) || p.equals(RecapCommonConstants.MATCH_POINT_FIELD_LCCN);
+        Predicate<String> checkForMatchPoints = p -> ScsbCommonConstants.MATCH_POINT_FIELD_OCLC.contains(p) || p.equals(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN) ||
+                p.equals(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN) || p.equals(ScsbCommonConstants.MATCH_POINT_FIELD_LCCN);
 
         for (Iterator<ReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
             ReportDataEntity report =  iterator.next();
@@ -47,7 +47,7 @@ public class OngoingMatchingAlgorithmReportGenerator {
                 try {
                     setterMethod.invoke(titleExceptionReport, headerValue);
                 } catch (Exception e) {
-                    logger.error(RecapCommonConstants.LOG_ERROR,e.getMessage());
+                    logger.error(ScsbCommonConstants.LOG_ERROR,e.getMessage());
                 }
             }
         }
@@ -65,7 +65,7 @@ public class OngoingMatchingAlgorithmReportGenerator {
         try {
             return propertyUtilsBean.getWriteMethod(new PropertyDescriptor(propertyName, TitleExceptionReport.class));
         } catch (IntrospectionException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return null;
     }

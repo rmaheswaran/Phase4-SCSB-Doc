@@ -13,7 +13,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -81,8 +81,8 @@ public class UpdateCgdUtilUT extends BaseTestCaseUT {
         SolrInputDocument solrInputDocument=new SolrInputDocument();
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
         ReflectionTestUtils.setField(updateCgdUtil,"solrTemplate",mocksolrTemplate1);
-        String response=  updateCgdUtil.updateCGDForItem("123456", "PUL", "Shared", "Private", "Notes for updating CGD", RecapCommonConstants.GUEST);
-        assertEquals(RecapCommonConstants.SUCCESS,response);
+        String response=  updateCgdUtil.updateCGDForItem("123456", "PUL", "Shared", "Private", "Notes for updating CGD", ScsbCommonConstants.GUEST);
+        assertEquals(ScsbCommonConstants.SUCCESS,response);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class UpdateCgdUtilUT extends BaseTestCaseUT {
         Mockito.when(mocksolrTemplate1.convertBeanToSolrInputDocument(Mockito.any())).thenReturn(solrInputDocument);
         ReflectionTestUtils.setField(updateCgdUtil,"solrTemplate",mocksolrTemplate1);
         String response=  updateCgdUtil.updateCGDForItem("123456", "PUL", "Shared", "Private", "Notes for updating CGD","");
-        assertTrue(response.contains(RecapCommonConstants.FAILURE));
+        assertTrue(response.contains(ScsbCommonConstants.FAILURE));
     }
 
     private CollectionGroupEntity getCollectionGroupEntity() {

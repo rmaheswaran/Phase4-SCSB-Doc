@@ -1,8 +1,8 @@
 package org.recap.controller;
 
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.JobParamDataEntity;
 import org.recap.model.jpa.JobParamEntity;
@@ -57,9 +57,9 @@ public class GenerateReportRestController {
         for(JobParamDataEntity jobParamDataEntity : jobParamEntity.getJobParamDataEntities()) {
             jobParamMap.put(jobParamDataEntity.getParamName(), jobParamDataEntity.getParamValue());
         }
-        String transmissionType = jobParamMap.get(RecapConstants.TRANSMISSION_TYPE);
-        String reportType = jobParamMap.get(RecapConstants.REPORT_TYPE);
-        String fileName = jobParamMap.get(RecapConstants.JOB_PARAM_DATA_FILE_NAME);
+        String transmissionType = jobParamMap.get(ScsbConstants.TRANSMISSION_TYPE);
+        String reportType = jobParamMap.get(ScsbConstants.REPORT_TYPE);
+        String fileName = jobParamMap.get(ScsbConstants.JOB_PARAM_DATA_FILE_NAME);
         StringBuilder generateReportFileName = new StringBuilder();
         Iterable<InstitutionEntity> institutionEntities = institutionDetailsRepository.findByInstitutionCodeNotIn(Arrays.asList("HTC"));
 
@@ -87,7 +87,7 @@ public class GenerateReportRestController {
     @ResponseBody
     @PostMapping(value="/generateSubmitCollectionReport")
     public String generateSubmitCollectionReport(@RequestBody List<Integer> reportRecordNumberList) {
-       return reportGenerator.generateReportBasedOnReportRecordNum(reportRecordNumberList,RecapConstants.SUBMIT_COLLECTION, RecapCommonConstants.FTP);
+       return reportGenerator.generateReportBasedOnReportRecordNum(reportRecordNumberList, ScsbConstants.SUBMIT_COLLECTION, ScsbCommonConstants.FTP);
     }
 
 }

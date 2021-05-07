@@ -7,8 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.marc4j.marc.Leader;
 import org.marc4j.marc.Record;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -126,7 +126,7 @@ public class BibJSONUtil extends MarcUtil {
         List<String> oclcNumberList = getMultiDataFieldValues(record, "035", null, null, "a");
         for (String oclcNumber : oclcNumberList) {
             if (StringUtils.isNotBlank(oclcNumber) && oclcNumber.contains("OCoLC")) {
-                String modifiedOclc = oclcNumber.replaceAll(RecapConstants.NUMBER_PATTERN, "");
+                String modifiedOclc = oclcNumber.replaceAll(ScsbConstants.NUMBER_PATTERN, "");
                 modifiedOclc = StringUtils.stripStart(modifiedOclc, "0");
                 oclcNumbers.add(modifiedOclc);
             }
@@ -154,7 +154,7 @@ public class BibJSONUtil extends MarcUtil {
         List<String> isbnNumbers = new ArrayList<>();
         List<String> isbnNumberList = getMultiDataFieldValues(record,"020", null, null, "a");
         for(String isbnNumber : isbnNumberList){
-            isbnNumbers.add(isbnNumber.replaceAll(RecapConstants.NUMBER_PATTERN, ""));
+            isbnNumbers.add(isbnNumber.replaceAll(ScsbConstants.NUMBER_PATTERN, ""));
         }
         return isbnNumbers;
     }
@@ -169,7 +169,7 @@ public class BibJSONUtil extends MarcUtil {
         List<String> issnNumbers = new ArrayList<>();
         List<String> issnNumberList = getMultiDataFieldValues(record,"022", null, null, "a");
         for(String issnNumber : issnNumberList){
-            issnNumbers.add(issnNumber.replaceAll(RecapConstants.NUMBER_PATTERN, ""));
+            issnNumbers.add(issnNumber.replaceAll(ScsbConstants.NUMBER_PATTERN, ""));
         }
         return issnNumbers;
     }
@@ -275,7 +275,7 @@ public class BibJSONUtil extends MarcUtil {
             Integer bibliographicId = bibliographicEntity.getId();
             bib.setBibId(bibliographicId);
 
-            bib.setDocType(RecapCommonConstants.BIB);
+            bib.setDocType(ScsbCommonConstants.BIB);
             bib.setContentType("parent");
             bib.setId(bibliographicEntity.getOwningInstitutionId()+bibliographicEntity.getOwningInstitutionBibId());
             String bibContent = new String(bibliographicEntity.getContent());
@@ -370,43 +370,43 @@ public class BibJSONUtil extends MarcUtil {
 
         ReportEntity reportEntity = new ReportEntity();
         reportEntity.setCreatedDate(new Date());
-        reportEntity.setType(RecapCommonConstants.SOLR_INDEX_EXCEPTION);
-        reportEntity.setFileName(RecapCommonConstants.SOLR_INDEX_FAILURE_REPORT);
+        reportEntity.setType(ScsbCommonConstants.SOLR_INDEX_EXCEPTION);
+        reportEntity.setFileName(ScsbCommonConstants.SOLR_INDEX_FAILURE_REPORT);
         InstitutionEntity institutionEntity = null != bibliographicEntity ? bibliographicEntity.getInstitutionEntity() : null;
-        String institutionCode = null != institutionEntity ? institutionEntity.getInstitutionCode() : RecapCommonConstants.NA;
+        String institutionCode = null != institutionEntity ? institutionEntity.getInstitutionCode() : ScsbCommonConstants.NA;
         reportEntity.setInstitutionName(institutionCode);
 
         ReportDataEntity docTypeDataEntity = new ReportDataEntity();
-        docTypeDataEntity.setHeaderName(RecapCommonConstants.DOCTYPE);
-        docTypeDataEntity.setHeaderValue(RecapCommonConstants.BIB);
+        docTypeDataEntity.setHeaderName(ScsbCommonConstants.DOCTYPE);
+        docTypeDataEntity.setHeaderValue(ScsbCommonConstants.BIB);
         reportDataEntities.add(docTypeDataEntity);
 
         ReportDataEntity owningInstDataEntity = new ReportDataEntity();
-        owningInstDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
+        owningInstDataEntity.setHeaderName(ScsbCommonConstants.OWNING_INSTITUTION);
         owningInstDataEntity.setHeaderValue(institutionCode);
         reportDataEntities.add(owningInstDataEntity);
 
         ReportDataEntity exceptionMsgDataEntity = new ReportDataEntity();
-        exceptionMsgDataEntity.setHeaderName(RecapCommonConstants.EXCEPTION_MSG);
+        exceptionMsgDataEntity.setHeaderName(ScsbCommonConstants.EXCEPTION_MSG);
         exceptionMsgDataEntity.setHeaderValue(StringUtils.isNotBlank(e.getMessage()) ? e.getMessage() : e.toString());
         reportDataEntities.add(exceptionMsgDataEntity);
 
         if(bibliographicEntity != null && bibliographicEntity.getId() != null) {
             ReportDataEntity bibIdDataEntity = new ReportDataEntity();
-            bibIdDataEntity.setHeaderName(RecapCommonConstants.BIB_ID);
+            bibIdDataEntity.setHeaderName(ScsbCommonConstants.BIB_ID);
             bibIdDataEntity.setHeaderValue(String.valueOf(bibliographicEntity.getId()));
             reportDataEntities.add(bibIdDataEntity);
         }
 
         if(bibliographicEntity != null && StringUtils.isNotBlank(bibliographicEntity.getOwningInstitutionBibId())) {
             ReportDataEntity owningInstBibIdDataEntity = new ReportDataEntity();
-            owningInstBibIdDataEntity.setHeaderName(RecapCommonConstants.OWNING_INST_BIB_ID);
+            owningInstBibIdDataEntity.setHeaderName(ScsbCommonConstants.OWNING_INST_BIB_ID);
             owningInstBibIdDataEntity.setHeaderValue(bibliographicEntity.getOwningInstitutionBibId());
             reportDataEntities.add(owningInstBibIdDataEntity);
         }
 
         reportEntity.addAll(reportDataEntities);
-        producerTemplate.sendBody(RecapCommonConstants.REPORT_Q, reportEntity);
+        producerTemplate.sendBody(ScsbCommonConstants.REPORT_Q, reportEntity);
     }
 
     /**
@@ -421,11 +421,11 @@ public class BibJSONUtil extends MarcUtil {
         if (StringUtils.isNotBlank(leaderFieldValue) && leaderFieldValue.length() > 7) {
             char materialTypeChar = leaderFieldValue.charAt(7);
             if ('m' == materialTypeChar) {
-                leaderMaterialType = RecapCommonConstants.MONOGRAPH;
+                leaderMaterialType = ScsbCommonConstants.MONOGRAPH;
             } else if ('s' == materialTypeChar) {
-                leaderMaterialType = RecapCommonConstants.SERIAL;
+                leaderMaterialType = ScsbCommonConstants.SERIAL;
             } else {
-                leaderMaterialType = RecapCommonConstants.OTHER;
+                leaderMaterialType = ScsbCommonConstants.OTHER;
             }
         }
         return leaderMaterialType;

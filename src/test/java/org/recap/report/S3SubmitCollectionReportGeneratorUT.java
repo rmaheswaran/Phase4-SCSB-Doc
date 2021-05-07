@@ -8,8 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.repository.jpa.ReportDetailRepository;
@@ -73,13 +73,13 @@ public class S3SubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
 
     @Test
     public void testFTPSubmitCollectionFailureReportGenerator() throws Exception {
-        List<ReportEntity> reportEntityList =saveSubmitCollectionExceptionReport(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT);
+        List<ReportEntity> reportEntityList =saveSubmitCollectionExceptionReport(ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT);
         Mockito.when(reportDetailRepository.findByFileLikeAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
         List<ReportGeneratorInterface> reportGenerators=new ArrayList<>();
         ReportGeneratorInterface reportGeneratorInterface= S3SubmitCollectionFailureReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
-        String generatedReportFileName = reportGenerator.generateReport(RecapConstants.FTP_SUBMIT_COLLECTION_FAILURE_REPORT_Q, RecapCommonConstants.LCCN_CRITERIA, RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT, RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName = reportGenerator.generateReport(ScsbConstants.FTP_SUBMIT_COLLECTION_FAILURE_REPORT_Q, ScsbCommonConstants.LCCN_CRITERIA, ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT, ScsbCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
         assertNotNull(generatedReportFileName);
     }
 
@@ -90,9 +90,9 @@ public class S3SubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList=new ArrayList<>();
         ReportEntity reportEntity=new ReportEntity();
         reportEntityList.add(reportEntity);
-        String generatedReportFileName = FSSubmitCollectionFailureReportGenerator.generateReport(RecapConstants.FS_SUBMIT_COLLECTION_FAILURE_REPORT_Q,reportEntityList);
-        assertTrue(FSSubmitCollectionFailureReportGenerator.isTransmitted(RecapCommonConstants.FILE_SYSTEM));
-        assertTrue(FSSubmitCollectionFailureReportGenerator.isInterested(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT));
+        String generatedReportFileName = FSSubmitCollectionFailureReportGenerator.generateReport(ScsbConstants.FS_SUBMIT_COLLECTION_FAILURE_REPORT_Q,reportEntityList);
+        assertTrue(FSSubmitCollectionFailureReportGenerator.isTransmitted(ScsbCommonConstants.FILE_SYSTEM));
+        assertTrue(FSSubmitCollectionFailureReportGenerator.isInterested(ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT));
     }
 
 
@@ -101,9 +101,9 @@ public class S3SubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList=new ArrayList<>();
         ReportEntity reportEntity=new ReportEntity();
         reportEntityList.add(reportEntity);
-        String generatedReportFileName = S3SolrExceptionReportGenerator.generateReport(RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q,reportEntityList);
-        assertTrue(S3SolrExceptionReportGenerator.isTransmitted(RecapCommonConstants.FTP));
-        assertTrue(S3SolrExceptionReportGenerator.isInterested(RecapCommonConstants.SOLR_INDEX_EXCEPTION));
+        String generatedReportFileName = S3SolrExceptionReportGenerator.generateReport(ScsbCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q,reportEntityList);
+        assertTrue(S3SolrExceptionReportGenerator.isTransmitted(ScsbCommonConstants.FTP));
+        assertTrue(S3SolrExceptionReportGenerator.isInterested(ScsbCommonConstants.SOLR_INDEX_EXCEPTION));
     }
 
     @Test
@@ -111,9 +111,9 @@ public class S3SubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList=new ArrayList<>();
         ReportEntity reportEntity=new ReportEntity();
         reportEntityList.add(reportEntity);
-        String generatedReportFileName = CSVSolrExceptionReportGenerator.generateReport(RecapCommonConstants.CSV_SOLR_EXCEPTION_REPORT_Q,reportEntityList);
-        assertTrue(CSVSolrExceptionReportGenerator.isTransmitted(RecapCommonConstants.FILE_SYSTEM));
-        assertTrue(CSVSolrExceptionReportGenerator.isInterested(RecapCommonConstants.SOLR_INDEX_EXCEPTION));
+        String generatedReportFileName = CSVSolrExceptionReportGenerator.generateReport(ScsbCommonConstants.CSV_SOLR_EXCEPTION_REPORT_Q,reportEntityList);
+        assertTrue(CSVSolrExceptionReportGenerator.isTransmitted(ScsbCommonConstants.FILE_SYSTEM));
+        assertTrue(CSVSolrExceptionReportGenerator.isInterested(ScsbCommonConstants.SOLR_INDEX_EXCEPTION));
     }
 
     @Test
@@ -121,33 +121,33 @@ public class S3SubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList=new ArrayList<>();
         ReportEntity reportEntity=new ReportEntity();
         reportEntityList.add(reportEntity);
-        String generatedReportFileName = FSSubmitCollectionSummaryReportGenerator.generateReport(RecapConstants.FS_SUBMIT_COLLECTION_SUMMARY_REPORT_Q,reportEntityList);
-        assertTrue(FSSubmitCollectionSummaryReportGenerator.isTransmitted(RecapCommonConstants.FILE_SYSTEM));
-        assertTrue(FSSubmitCollectionSummaryReportGenerator.isInterested(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY));
+        String generatedReportFileName = FSSubmitCollectionSummaryReportGenerator.generateReport(ScsbConstants.FS_SUBMIT_COLLECTION_SUMMARY_REPORT_Q,reportEntityList);
+        assertTrue(FSSubmitCollectionSummaryReportGenerator.isTransmitted(ScsbCommonConstants.FILE_SYSTEM));
+        assertTrue(FSSubmitCollectionSummaryReportGenerator.isInterested(ScsbCommonConstants.SUBMIT_COLLECTION_SUMMARY));
     }
 
     @Test
     public void testGenerateReport() throws Exception{
-        camelContext.getEndpoint(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q, MockEndpoint.class);
-        boolean isInterested = s3SubmitCollectionReportGenerator.isInterested(RecapConstants.SUBMIT_COLLECTION);
+        camelContext.getEndpoint(ScsbConstants.FTP_SUBMIT_COLLECTION_REPORT_Q, MockEndpoint.class);
+        boolean isInterested = s3SubmitCollectionReportGenerator.isInterested(ScsbConstants.SUBMIT_COLLECTION);
         assertTrue(isInterested);
-        boolean isTransmitted = s3SubmitCollectionReportGenerator.isTransmitted(RecapCommonConstants.FTP);
+        boolean isTransmitted = s3SubmitCollectionReportGenerator.isTransmitted(ScsbCommonConstants.FTP);
         assertTrue(isTransmitted);
-        String response = s3SubmitCollectionReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT));
-        String errorResponse = s3SubmitCollectionReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,null);
+        String response = s3SubmitCollectionReportGenerator.generateReport(ScsbConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT));
+        String errorResponse = s3SubmitCollectionReportGenerator.generateReport(ScsbConstants.SUBMIT_COLLECTION,null);
         assertNotNull(response);
-        assertEquals(RecapCommonConstants.SUCCESS,response);
-        assertEquals(RecapConstants.ERROR,errorResponse);
+        assertEquals(ScsbCommonConstants.SUCCESS,response);
+        assertEquals(ScsbConstants.ERROR,errorResponse);
     }
 
     @Test
     public void testSubmitCollectionSummaryReportGenerator() throws Exception{
-        camelContext.getEndpoint(RecapConstants.FTP_SUBMIT_COLLECTION_REPORT_Q, MockEndpoint.class);
-        boolean isInterested = s3SubmitCollectionSummaryReportGenerator.isInterested(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY);
+        camelContext.getEndpoint(ScsbConstants.FTP_SUBMIT_COLLECTION_REPORT_Q, MockEndpoint.class);
+        boolean isInterested = s3SubmitCollectionSummaryReportGenerator.isInterested(ScsbCommonConstants.SUBMIT_COLLECTION_SUMMARY);
         assertTrue(isInterested);
-        boolean isTransmitted = s3SubmitCollectionSummaryReportGenerator.isTransmitted(RecapCommonConstants.FTP);
+        boolean isTransmitted = s3SubmitCollectionSummaryReportGenerator.isTransmitted(ScsbCommonConstants.FTP);
         assertTrue(isTransmitted);
-        String response = s3SubmitCollectionSummaryReportGenerator.generateReport(RecapConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(RecapCommonConstants.SUBMIT_COLLECTION_SUMMARY));
+        String response = s3SubmitCollectionSummaryReportGenerator.generateReport(ScsbConstants.SUBMIT_COLLECTION,saveSubmitCollectionExceptionReport(ScsbCommonConstants.SUBMIT_COLLECTION_SUMMARY));
         assertNotNull(response);
     }
 
@@ -155,28 +155,28 @@ public class S3SubmitCollectionReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList = new ArrayList<>();
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapCommonConstants.SUBMIT_COLLECTION_REPORT);
+        reportEntity.setFileName(ScsbCommonConstants.SUBMIT_COLLECTION_REPORT);
         reportEntity.setType(reportType);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 
         ReportDataEntity itemBarcodeReportDataEntity = new ReportDataEntity();
-        itemBarcodeReportDataEntity.setHeaderName(RecapCommonConstants.SUBMIT_COLLECTION_ITEM_BARCODE);
+        itemBarcodeReportDataEntity.setHeaderName(ScsbCommonConstants.SUBMIT_COLLECTION_ITEM_BARCODE);
         itemBarcodeReportDataEntity.setHeaderValue("123");
         reportDataEntities.add(itemBarcodeReportDataEntity);
 
         ReportDataEntity customerCodeReportDataEntity = new ReportDataEntity();
-        customerCodeReportDataEntity.setHeaderName(RecapCommonConstants.SUBMIT_COLLECTION_CUSTOMER_CODE);
+        customerCodeReportDataEntity.setHeaderName(ScsbCommonConstants.SUBMIT_COLLECTION_CUSTOMER_CODE);
         customerCodeReportDataEntity.setHeaderValue("PB");
         reportDataEntities.add(customerCodeReportDataEntity);
 
         ReportDataEntity owningInstitutionReportDataEntity = new ReportDataEntity();
-        owningInstitutionReportDataEntity.setHeaderName(RecapCommonConstants.OWNING_INSTITUTION);
+        owningInstitutionReportDataEntity.setHeaderName(ScsbCommonConstants.OWNING_INSTITUTION);
         owningInstitutionReportDataEntity.setHeaderValue("1");
         reportDataEntities.add(owningInstitutionReportDataEntity);
 
         ReportDataEntity message = new ReportDataEntity();
-        message.setHeaderName(RecapCommonConstants.MESSAGE);
+        message.setHeaderName(ScsbCommonConstants.MESSAGE);
         message.setHeaderValue("1");
         reportDataEntities.add(message);
 

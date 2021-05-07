@@ -22,7 +22,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.admin.SolrAdmin;
 import org.recap.model.solr.SolrIndexRequest;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
@@ -197,7 +197,7 @@ public class ExecutorAT extends BaseTestCaseUT {
         solrIndexRequest.setNumberOfDocs(docsPerThread);
         solrIndexRequest.setCommitInterval(commitInterval);
         solrIndexRequest.setDateFrom("27-10-2016 01:00:00");
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(RecapCommonConstants.INCREMENTAL_DATE_FORMAT);
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(ScsbCommonConstants.INCREMENTAL_DATE_FORMAT);
         Date from = DateUtils.addDays(new Date(), -1);
         solrIndexRequest.setDateFrom(dateFormatter.format(from));
         long dbCount = bibliographicDetailsRepository.countByLastUpdatedDateAfter(from);

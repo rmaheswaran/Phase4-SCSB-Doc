@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by SheikS on 6/20/2016.
  */
-public final class RecapConstants {
+public final class ScsbConstants {
     public static final String MONOGRAPHIC_SET = "MonographicSet";
     public static final String FALSE = "false";
     public static final String CGD_CHANGE_LOG = "CGDChangeLog";
@@ -215,7 +215,7 @@ public final class RecapConstants {
     public static final String SHARED = "Shared";
     public static final String OPEN = "Open";
     public static final String LOGGER_MSG = " : {0}";
-    public static final List<String> MATCHING_MATCH_POINTS = Arrays.asList(RecapCommonConstants.MATCH_POINT_FIELD_OCLC,RecapCommonConstants.MATCH_POINT_FIELD_ISBN,RecapCommonConstants.MATCH_POINT_FIELD_LCCN,RecapCommonConstants.MATCH_POINT_FIELD_ISSN);
+    public static final List<String> MATCHING_MATCH_POINTS = Arrays.asList(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC,ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,ScsbCommonConstants.MATCH_POINT_FIELD_LCCN,ScsbCommonConstants.MATCH_POINT_FIELD_ISSN);
     public static final String LOG_EXECUTION_TIME = "Time taken to execute {} : {}";
     public static final String INSTITUTION = "Institution";
     public static final String CGD_ROUND_TRIP_EXCEPTION_MESSAGE = "The reported item is not found";
@@ -295,5 +295,5 @@ public final class RecapConstants {
     public static final String MATCHING_REPORT_FILE_NAME_CAMEL_HEADER = "${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv";
     public static final String MATCHING_ALGORITHM_UPDATE_CGD_MESSAGE = "updateCGDBasedOnMaterialTypes, Match type is Single Match, TileException Found";
 
-    private RecapConstants(){}
+    private ScsbConstants(){}
 }

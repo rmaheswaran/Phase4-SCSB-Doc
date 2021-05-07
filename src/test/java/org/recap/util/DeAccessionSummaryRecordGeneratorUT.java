@@ -3,8 +3,8 @@ package org.recap.util;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.csv.DeAccessionSummaryRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
@@ -49,8 +49,8 @@ public class DeAccessionSummaryRecordGeneratorUT extends BaseTestCaseUT {
     private ReportEntity getReportEntity(){
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapCommonConstants.DEACCESSION_REPORT);
-        reportEntity.setType(RecapCommonConstants.DEACCESSION_SUMMARY_REPORT);
+        reportEntity.setFileName(ScsbCommonConstants.DEACCESSION_REPORT);
+        reportEntity.setType(ScsbCommonConstants.DEACCESSION_SUMMARY_REPORT);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 
@@ -91,7 +91,7 @@ public class DeAccessionSummaryRecordGeneratorUT extends BaseTestCaseUT {
 
         ReportDataEntity reasonForItemFailureReportDataEntity = new ReportDataEntity();
         reasonForItemFailureReportDataEntity.setHeaderName("reasonForFailure");
-        reasonForItemFailureReportDataEntity.setHeaderValue(RecapConstants.ITEM_BARCDE_DOESNOT_EXIST);
+        reasonForItemFailureReportDataEntity.setHeaderValue(ScsbConstants.ITEM_BARCDE_DOESNOT_EXIST);
         reportDataEntities.add(reasonForItemFailureReportDataEntity);
 
         reportEntity.setReportDataEntities(reportDataEntities);

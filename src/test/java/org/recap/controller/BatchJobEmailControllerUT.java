@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.camel.EmailPayLoad;
 
 import static org.junit.Assert.assertEquals;
@@ -27,6 +27,6 @@ public class BatchJobEmailControllerUT extends BaseTestCaseUT {
     @Test
     public void testBatchJobSendEmail() throws Exception {
         String response=batchJobEmailController.batchJobSendEmail(emailPayLoad);
-        assertEquals(RecapCommonConstants.SUCCESS,response);
+        assertEquals(ScsbCommonConstants.SUCCESS,response);
     }
 }

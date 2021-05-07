@@ -5,7 +5,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.model.dataformat.BindyType;
 import org.springframework.context.ApplicationContext;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.camel.processor.EmailService;
 import org.recap.model.csv.OngoingAccessionReportRecord;
 import org.slf4j.Logger;
@@ -36,18 +36,18 @@ public class S3OngoingAccessionReportRouteBuilder {
                 context.addRoutes(new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {
-                        from(RecapConstants.FTP_ONGOING_ACCESSON_REPORT_Q)
-                                .routeId(RecapConstants.FTP_ONGOING_ACCESSION_REPORT_ID)
+                        from(ScsbConstants.FTP_ONGOING_ACCESSON_REPORT_Q)
+                                .routeId(ScsbConstants.FTP_ONGOING_ACCESSION_REPORT_ID)
                                 .marshal().bindy(BindyType.Csv, OngoingAccessionReportRecord.class)
                                 .setHeader(S3Constants.KEY, simple(ongoingAccessionPathS3 + "${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv"))
-                                .to(RecapConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
+                                .to(ScsbConstants.SCSB_CAMEL_S3_TO_ENDPOINT)
                                 .onCompletion()
-                                .bean(applicationContext.getBean(EmailService.class), RecapConstants.ACCESSION_REPORTS_SEND_EMAIL);
+                                .bean(applicationContext.getBean(EmailService.class), ScsbConstants.ACCESSION_REPORTS_SEND_EMAIL);
                     }
                 });
             }
         } catch (Exception e) {
-            logger.error(RecapConstants.ERROR, e);
+            logger.error(ScsbConstants.ERROR, e);
         }
     }
 }

@@ -1,6 +1,6 @@
 package org.recap.model.search.resolver.impl.bib;
 
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.search.resolver.BibValueResolver;
 import org.recap.model.solr.BibItem;
 
@@ -10,7 +10,7 @@ import org.recap.model.solr.BibItem;
 public class OwningInstitutionBibIdValueResolver implements BibValueResolver {
     @Override
     public Boolean isInterested(String field) {
-        return RecapCommonConstants.OWNING_INSTITUTION_BIB_ID.equalsIgnoreCase(field);
+        return ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID.equalsIgnoreCase(field);
     }
 
     @Override

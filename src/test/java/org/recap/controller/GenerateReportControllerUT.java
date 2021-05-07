@@ -5,8 +5,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.model.solr.SolrIndexRequest;
@@ -51,9 +51,9 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setCreatedDate(createdDate);
-        solrIndexRequest.setReportType(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
+        solrIndexRequest.setReportType(ScsbCommonConstants.ACCESSION_SUMMARY_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
-        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
         Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
@@ -64,9 +64,9 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         Date createdDate = reportEntityList.get(0).getCreatedDate();
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setCreatedDate(createdDate);
-        solrIndexRequest.setReportType(RecapConstants.ONGOING_ACCESSION_REPORT);
+        solrIndexRequest.setReportType(ScsbConstants.ONGOING_ACCESSION_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
-        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
         Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
@@ -74,9 +74,9 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Test
     public void testDeaccessionSummaryReportForFileSystem() throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
-        solrIndexRequest.setReportType(RecapCommonConstants.DEACCESSION_SUMMARY_REPORT);
+        solrIndexRequest.setReportType(ScsbCommonConstants.DEACCESSION_SUMMARY_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
-        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
         Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
@@ -84,9 +84,9 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Test
     public void testSubmitRejectedSummaryReportForFileSystem() throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
-        solrIndexRequest.setReportType(RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT);
+        solrIndexRequest.setReportType(ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
-        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
         Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
@@ -98,7 +98,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         solrIndexRequest.setToDate(toDate);
         solrIndexRequest.setReportType("Failure");
         solrIndexRequest.setOwningInstitutionCode("PUL");
-        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
         Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
@@ -107,9 +107,9 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Test
     public void testSubmitExceptionSummaryReportForFileSystem() throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
-        solrIndexRequest.setReportType(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT);
+        solrIndexRequest.setReportType(ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
-        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
         Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
@@ -118,9 +118,9 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Test
     public void testSubmitSuccessSummaryReportForFileSystem() throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
-        solrIndexRequest.setReportType(RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT);
+        solrIndexRequest.setReportType(ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
-        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
         Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
@@ -128,9 +128,9 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Test
     public void testSubmitFailureSummaryReportForFileSystem() throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
-        solrIndexRequest.setReportType(RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT);
+        solrIndexRequest.setReportType(ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
-        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
         Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("test");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
@@ -139,9 +139,9 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Test
     public void testSubmitSummaryReportForFileSystem() throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
-        solrIndexRequest.setReportType(RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT);
+        solrIndexRequest.setReportType(ScsbConstants.SUBMIT_COLLECTION_SUMMARY_REPORT);
         solrIndexRequest.setOwningInstitutionCode("PUL");
-        solrIndexRequest.setTransmissionType(RecapCommonConstants.FILE_SYSTEM);
+        solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
         Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
         assertNotNull(reponse);
@@ -151,43 +151,43 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList = new ArrayList<>();
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapCommonConstants.ACCESSION_REPORT);
-        reportEntity.setType(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
+        reportEntity.setFileName(ScsbCommonConstants.ACCESSION_REPORT);
+        reportEntity.setType(ScsbCommonConstants.ACCESSION_SUMMARY_REPORT);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 
         ReportDataEntity successBibCountReportDataEntity = new ReportDataEntity();
-        successBibCountReportDataEntity.setHeaderName(RecapCommonConstants.BIB_SUCCESS_COUNT);
+        successBibCountReportDataEntity.setHeaderName(ScsbCommonConstants.BIB_SUCCESS_COUNT);
         successBibCountReportDataEntity.setHeaderValue(String.valueOf(1));
         reportDataEntities.add(successBibCountReportDataEntity);
 
         ReportDataEntity successItemCountReportDataEntity = new ReportDataEntity();
-        successItemCountReportDataEntity.setHeaderName(RecapCommonConstants.ITEM_SUCCESS_COUNT);
+        successItemCountReportDataEntity.setHeaderName(ScsbCommonConstants.ITEM_SUCCESS_COUNT);
         successItemCountReportDataEntity.setHeaderValue(String.valueOf(1));
         reportDataEntities.add(successItemCountReportDataEntity);
 
         ReportDataEntity existsBibCountReportDataEntity = new ReportDataEntity();
-        existsBibCountReportDataEntity.setHeaderName(RecapCommonConstants.NUMBER_OF_BIB_MATCHES);
+        existsBibCountReportDataEntity.setHeaderName(ScsbCommonConstants.NUMBER_OF_BIB_MATCHES);
         existsBibCountReportDataEntity.setHeaderValue(String.valueOf(0));
         reportDataEntities.add(existsBibCountReportDataEntity);
 
         ReportDataEntity failedBibCountReportDataEntity = new ReportDataEntity();
-        failedBibCountReportDataEntity.setHeaderName(RecapCommonConstants.BIB_FAILURE_COUNT);
+        failedBibCountReportDataEntity.setHeaderName(ScsbCommonConstants.BIB_FAILURE_COUNT);
         failedBibCountReportDataEntity.setHeaderValue(String.valueOf(0));
         reportDataEntities.add(failedBibCountReportDataEntity);
 
         ReportDataEntity failedItemCountReportDataEntity = new ReportDataEntity();
-        failedItemCountReportDataEntity.setHeaderName(RecapCommonConstants.ITEM_FAILURE_COUNT);
+        failedItemCountReportDataEntity.setHeaderName(ScsbCommonConstants.ITEM_FAILURE_COUNT);
         failedItemCountReportDataEntity.setHeaderValue(String.valueOf(0));
         reportDataEntities.add(failedItemCountReportDataEntity);
 
         ReportDataEntity reasonForBibFailureReportDataEntity = new ReportDataEntity();
-        reasonForBibFailureReportDataEntity.setHeaderName(RecapConstants.FAILURE_BIB_REASON);
+        reasonForBibFailureReportDataEntity.setHeaderName(ScsbConstants.FAILURE_BIB_REASON);
         reasonForBibFailureReportDataEntity.setHeaderValue("");
         reportDataEntities.add(reasonForBibFailureReportDataEntity);
 
         ReportDataEntity reasonForItemFailureReportDataEntity = new ReportDataEntity();
-        reasonForItemFailureReportDataEntity.setHeaderName(RecapConstants.FAILURE_ITEM_REASON);
+        reasonForItemFailureReportDataEntity.setHeaderName(ScsbConstants.FAILURE_ITEM_REASON);
         reasonForItemFailureReportDataEntity.setHeaderValue("");
         reportDataEntities.add(reasonForItemFailureReportDataEntity);
 

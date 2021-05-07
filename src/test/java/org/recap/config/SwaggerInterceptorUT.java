@@ -37,7 +37,7 @@ public class SwaggerInterceptorUT extends BaseTestCaseUT {
     @Test
     public void testPreHandle() throws Exception {
         Mockito.when(httpServletResponse.getWriter()).thenReturn(value);
-        httpServletRequest.setAttribute("api_key","recap");
+        httpServletRequest.setAttribute("api_key","scsb");
         swaggerInterceptor.afterCompletion(httpServletRequest,httpServletResponse,new Object(),new Exception());
         swaggerInterceptor.postHandle(httpServletRequest,httpServletResponse,new Object(),new ModelAndView());
         boolean continueExport = swaggerInterceptor.preHandle(httpServletRequest,httpServletResponse,new Object());

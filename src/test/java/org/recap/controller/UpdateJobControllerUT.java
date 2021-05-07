@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.JobEntity;
 import org.recap.repository.jpa.JobDetailsRepository;
 
@@ -25,8 +25,8 @@ public class UpdateJobControllerUT extends BaseTestCaseUT {
     @Test
     public void testUpdateJob() throws Exception {
         JobEntity jobEntity = new JobEntity();
-        jobEntity.setJobName(RecapConstants.PURGE_EXCEPTION_REQUESTS);
+        jobEntity.setJobName(ScsbConstants.PURGE_EXCEPTION_REQUESTS);
         String status=updateJobController.updateJob(jobEntity);
-        assertEquals(RecapCommonConstants.SUCCESS,status);
+        assertEquals(ScsbCommonConstants.SUCCESS,status);
     }
 }

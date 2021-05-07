@@ -18,7 +18,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.InstitutionEntity;
@@ -332,7 +332,7 @@ public class BibJSONUtilUT extends BaseTestCaseUT {
     @Test
     public void getLeaderMaterialType() {
         String leaderMaterialType = bibJSONUtil.getLeaderMaterialType(leader);
-        assertEquals(RecapCommonConstants.OTHER,leaderMaterialType);
+        assertEquals(ScsbCommonConstants.OTHER,leaderMaterialType);
     }
 
     @Test

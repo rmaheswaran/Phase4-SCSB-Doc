@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.MatchingAlgorithmCGDProcessor;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -62,8 +62,8 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         from = pageNum * Long.valueOf(batchSize);
-        Mockito.when(reportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(RecapCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity());
-        Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(RecapCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity());
+        Mockito.when(reportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity());
+        Mockito.when(reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize)).thenReturn(getReportDataEntity());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
     @Test
     public void testMatchingAlgorithmMonographCGDCallableelseandif() throws Exception {
         Map collectionGroupMap = new HashMap();
-        collectionGroupMap.put(RecapCommonConstants.SHARED_CGD,1);
+        collectionGroupMap.put(ScsbCommonConstants.SHARED_CGD,1);
         Map institutionMap = new HashMap();
         institutionMap.put("NYPL",3);
         Mockito.when(bibliographicDetailsRepository.findByIdIn(Mockito.any())).thenReturn(Arrays.asList(saveBibSingleHoldingsSingleItem()));
@@ -161,7 +161,7 @@ public class MatchingAlgorithmMonographCGDCallableUT extends BaseTestCaseUT {
         itemEntity.setCreatedBy("tst");
         itemEntity.setLastUpdatedBy("tst");
         itemEntity.setItemAvailabilityStatusId(1);
-        itemEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
+        itemEntity.setCatalogingStatus(ScsbCommonConstants.COMPLETE_STATUS);
         itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         ItemEntity itemEntity1 = itemEntity;
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));

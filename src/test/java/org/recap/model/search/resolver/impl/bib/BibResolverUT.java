@@ -2,7 +2,7 @@ package org.recap.model.search.resolver.impl.bib;
 
 import org.junit.Test;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.solr.BibItem;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class BibResolverUT extends BaseTestCaseUT {
     public void testIsDeletedBibValueResolver() throws Exception {
         IsDeletedBibValueResolver isDeletedBibValueResolver = new IsDeletedBibValueResolver();
         isDeletedBibValueResolver.setValue(bibItem(),true);
-        isDeletedBibValueResolver.isInterested(RecapCommonConstants.IS_DELETED_BIB);
+        isDeletedBibValueResolver.isInterested(ScsbCommonConstants.IS_DELETED_BIB);
         assertNotNull(isDeletedBibValueResolver.getClass());
     }
 
@@ -136,7 +136,7 @@ public class BibResolverUT extends BaseTestCaseUT {
     public void testOwningInstitutionBibIdValueResolver() throws Exception {
         OwningInstitutionBibIdValueResolver owningInstitutionBibIdValueResolver = new OwningInstitutionBibIdValueResolver();
         owningInstitutionBibIdValueResolver.setValue(bibItem(),"test");
-        owningInstitutionBibIdValueResolver.isInterested(RecapCommonConstants.OWNING_INSTITUTION_BIB_ID);
+        owningInstitutionBibIdValueResolver.isInterested(ScsbCommonConstants.OWNING_INSTITUTION_BIB_ID);
         assertNotNull(owningInstitutionBibIdValueResolver.getClass());
     }
     @Test

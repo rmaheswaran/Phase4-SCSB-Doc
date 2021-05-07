@@ -6,8 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.report.FSAccessionReportGenerator;
@@ -89,7 +89,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(s3SubmitCollectionExceptionReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
         Mockito.when(s3SubmitCollectionExceptionReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
         Mockito.when(s3SubmitCollectionExceptionReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionExceptionReport.csv");
-        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.LCCN_CRITERIA,RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT,RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName =  reportGenerator.generateReport("",ScsbCommonConstants.LCCN_CRITERIA,ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT,ScsbCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
         assertEquals("SubmitCollectionExceptionReport.csv",generatedReportFileName);
     }
 
@@ -105,7 +105,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(s3SubmitCollectionExceptionReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
         Mockito.when(s3SubmitCollectionExceptionReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
         Mockito.when(s3SubmitCollectionExceptionReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionExceptionReport.csv");
-        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.PRINCETON,RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT,RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName =  reportGenerator.generateReport("",ScsbCommonConstants.PRINCETON,ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT,ScsbCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
         assertEquals("SubmitCollectionExceptionReport.csv",generatedReportFileName);
     }
 
@@ -121,7 +121,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(S3SubmitCollectionRejectionReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
         Mockito.when(S3SubmitCollectionRejectionReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
         Mockito.when(S3SubmitCollectionRejectionReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionRejectionReport.csv");
-        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.LCCN_CRITERIA,RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT,RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName =  reportGenerator.generateReport("",ScsbCommonConstants.LCCN_CRITERIA,ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT,ScsbCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
         assertEquals("SubmitCollectionRejectionReport.csv",generatedReportFileName);
     }
 
@@ -137,7 +137,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(S3SubmitCollectionRejectionReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
         Mockito.when(S3SubmitCollectionRejectionReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
         Mockito.when(S3SubmitCollectionRejectionReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionRejectionReport.csv");
-        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.PRINCETON,RecapCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT,RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName =  reportGenerator.generateReport("",ScsbCommonConstants.PRINCETON,ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT,ScsbCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
         assertEquals("SubmitCollectionRejectionReport.csv",generatedReportFileName);
     }
 
@@ -153,7 +153,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(FSSubmitCollectionSuccessReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
         Mockito.when(FSSubmitCollectionSuccessReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
         Mockito.when(FSSubmitCollectionSuccessReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionSuccessReport.csv");
-        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.LCCN_CRITERIA,RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT,RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName =  reportGenerator.generateReport("",ScsbCommonConstants.LCCN_CRITERIA,ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT,ScsbCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
         assertEquals("SubmitCollectionSuccessReport.csv",generatedReportFileName);
     }
 
@@ -169,7 +169,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(FSSubmitCollectionSuccessReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
         Mockito.when(FSSubmitCollectionSuccessReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
         Mockito.when(FSSubmitCollectionSuccessReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionSuccessReport.csv");
-        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.PRINCETON,RecapCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT,RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName =  reportGenerator.generateReport("",ScsbCommonConstants.PRINCETON,ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT,ScsbCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
         assertEquals("SubmitCollectionSuccessReport.csv",generatedReportFileName);
     }
 
@@ -185,7 +185,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(FSSubmitCollectionFailureReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
         Mockito.when(FSSubmitCollectionFailureReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
         Mockito.when(FSSubmitCollectionFailureReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionFailureReport.csv");
-        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.LCCN_CRITERIA,RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT,RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName =  reportGenerator.generateReport("",ScsbCommonConstants.LCCN_CRITERIA,ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT,ScsbCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
         assertEquals("SubmitCollectionFailureReport.csv",generatedReportFileName);
     }
 
@@ -201,7 +201,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(FSSubmitCollectionFailureReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
         Mockito.when(FSSubmitCollectionFailureReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
         Mockito.when(FSSubmitCollectionFailureReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionFailureReport.csv");
-        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.PRINCETON,RecapCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT,RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName =  reportGenerator.generateReport("",ScsbCommonConstants.PRINCETON,ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT,ScsbCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
         assertEquals("SubmitCollectionFailureReport.csv",generatedReportFileName);
     }
 
@@ -217,7 +217,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(FSSubmitCollectionSummaryReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
         Mockito.when(FSSubmitCollectionSummaryReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
         Mockito.when(FSSubmitCollectionSummaryReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionSummary.csv");
-        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.LCCN_CRITERIA,RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT,RecapCommonConstants.FILE_SYSTEM,null,null);
+        String generatedReportFileName =  reportGenerator.generateReport("",ScsbCommonConstants.LCCN_CRITERIA, ScsbConstants.SUBMIT_COLLECTION_SUMMARY_REPORT,ScsbCommonConstants.FILE_SYSTEM,null,null);
         assertEquals("SubmitCollectionSummary.csv",generatedReportFileName);
     }
 
@@ -233,7 +233,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(FSSubmitCollectionSummaryReportGenerator.isInterested(Mockito.anyString())).thenReturn(true);
         Mockito.when(FSSubmitCollectionSummaryReportGenerator.isTransmitted(Mockito.anyString())).thenReturn(true);
         Mockito.when(FSSubmitCollectionSummaryReportGenerator.generateReport(Mockito.anyString(),Mockito.anyList())).thenReturn("SubmitCollectionSummary.csv");
-        String generatedReportFileName =  reportGenerator.generateReport("",RecapCommonConstants.PRINCETON,RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT,RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName =  reportGenerator.generateReport("",ScsbCommonConstants.PRINCETON, ScsbConstants.SUBMIT_COLLECTION_SUMMARY_REPORT,ScsbCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
         assertEquals("SubmitCollectionSummary.csv",generatedReportFileName);
     }
 
@@ -245,7 +245,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         ReportGeneratorInterface reportGeneratorInterface=fsAccessionReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
-        String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName = reportGenerator.generateReport(ScsbCommonConstants.ACCESSION_REPORT, ScsbCommonConstants.PRINCETON, ScsbCommonConstants.ACCESSION_SUMMARY_REPORT, ScsbCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
         assertNotNull(generatedReportFileName);
     }
 
@@ -257,7 +257,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         ReportGeneratorInterface reportGeneratorInterface=fsAccessionReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
-        String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.LCCN_CRITERIA, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName = reportGenerator.generateReport(ScsbCommonConstants.ACCESSION_REPORT, ScsbCommonConstants.LCCN_CRITERIA, ScsbCommonConstants.ACCESSION_SUMMARY_REPORT, ScsbCommonConstants.FILE_SYSTEM,getFromDate(new Date()),getToDate(new Date()));
         assertNotNull(generatedReportFileName);
     }
 
@@ -269,7 +269,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         ReportGeneratorInterface reportGeneratorInterface= s3AccessionReportGenerator;
         reportGenerators.add(reportGeneratorInterface);
         ReflectionTestUtils.setField(reportGenerator,"reportGenerators",reportGenerators);
-        String generatedReportFileName = reportGenerator.generateReport(RecapCommonConstants.ACCESSION_REPORT, RecapCommonConstants.PRINCETON, RecapCommonConstants.ACCESSION_SUMMARY_REPORT, RecapCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
+        String generatedReportFileName = reportGenerator.generateReport(ScsbCommonConstants.ACCESSION_REPORT, ScsbCommonConstants.PRINCETON, ScsbCommonConstants.ACCESSION_SUMMARY_REPORT, ScsbCommonConstants.FTP,getFromDate(new Date()),getToDate(new Date()));
         assertNotNull(generatedReportFileName);
     }
 
@@ -327,38 +327,38 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         List<ReportEntity> reportEntityList = new ArrayList<>();
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapCommonConstants.ACCESSION_REPORT);
-        reportEntity.setType(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
+        reportEntity.setFileName(ScsbCommonConstants.ACCESSION_REPORT);
+        reportEntity.setType(ScsbCommonConstants.ACCESSION_SUMMARY_REPORT);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 
         ReportDataEntity successBibCountReportDataEntity = new ReportDataEntity();
-        successBibCountReportDataEntity.setHeaderName(RecapCommonConstants.BIB_SUCCESS_COUNT);
+        successBibCountReportDataEntity.setHeaderName(ScsbCommonConstants.BIB_SUCCESS_COUNT);
         successBibCountReportDataEntity.setHeaderValue(String.valueOf(1));
         reportDataEntities.add(successBibCountReportDataEntity);
 
         ReportDataEntity successItemCountReportDataEntity = new ReportDataEntity();
-        successItemCountReportDataEntity.setHeaderName(RecapCommonConstants.ITEM_SUCCESS_COUNT);
+        successItemCountReportDataEntity.setHeaderName(ScsbCommonConstants.ITEM_SUCCESS_COUNT);
         successItemCountReportDataEntity.setHeaderValue(String.valueOf(1));
         reportDataEntities.add(successItemCountReportDataEntity);
 
         ReportDataEntity failedBibCountReportDataEntity = new ReportDataEntity();
-        failedBibCountReportDataEntity.setHeaderName(RecapCommonConstants.BIB_FAILURE_COUNT);
+        failedBibCountReportDataEntity.setHeaderName(ScsbCommonConstants.BIB_FAILURE_COUNT);
         failedBibCountReportDataEntity.setHeaderValue(String.valueOf(0));
         reportDataEntities.add(failedBibCountReportDataEntity);
 
         ReportDataEntity failedItemCountReportDataEntity = new ReportDataEntity();
-        failedItemCountReportDataEntity.setHeaderName(RecapCommonConstants.ITEM_FAILURE_COUNT);
+        failedItemCountReportDataEntity.setHeaderName(ScsbCommonConstants.ITEM_FAILURE_COUNT);
         failedItemCountReportDataEntity.setHeaderValue(String.valueOf(0));
         reportDataEntities.add(failedItemCountReportDataEntity);
 
         ReportDataEntity reasonForBibFailureReportDataEntity = new ReportDataEntity();
-        reasonForBibFailureReportDataEntity.setHeaderName(RecapConstants.FAILURE_BIB_REASON);
+        reasonForBibFailureReportDataEntity.setHeaderName(ScsbConstants.FAILURE_BIB_REASON);
         reasonForBibFailureReportDataEntity.setHeaderValue("");
         reportDataEntities.add(reasonForBibFailureReportDataEntity);
 
         ReportDataEntity reasonForItemFailureReportDataEntity = new ReportDataEntity();
-        reasonForItemFailureReportDataEntity.setHeaderName(RecapConstants.FAILURE_ITEM_REASON);
+        reasonForItemFailureReportDataEntity.setHeaderName(ScsbConstants.FAILURE_ITEM_REASON);
         reasonForItemFailureReportDataEntity.setHeaderValue("");
         reportDataEntities.add(reasonForItemFailureReportDataEntity);
 

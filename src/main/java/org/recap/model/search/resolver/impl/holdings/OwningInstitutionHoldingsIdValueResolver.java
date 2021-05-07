@@ -1,6 +1,6 @@
 package org.recap.model.search.resolver.impl.holdings;
 
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.solr.Holdings;
 
@@ -17,7 +17,7 @@ public class OwningInstitutionHoldingsIdValueResolver implements HoldingsValueRe
      */
     @Override
     public Boolean isInterested(String field) {
-        return RecapCommonConstants.OWNING_INSTITUTION_HOLDINGS_ID.equals(field);
+        return ScsbCommonConstants.OWNING_INSTITUTION_HOLDINGS_ID.equals(field);
     }
 
     /**

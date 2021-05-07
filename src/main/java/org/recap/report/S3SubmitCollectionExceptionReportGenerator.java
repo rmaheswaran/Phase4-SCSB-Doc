@@ -1,8 +1,8 @@
 package org.recap.report;
 
 import org.apache.camel.ProducerTemplate;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,16 +19,16 @@ public class S3SubmitCollectionExceptionReportGenerator extends CommonReportGene
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT);
+        return reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT);
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP);
+        return transmissionType.equalsIgnoreCase(ScsbCommonConstants.FTP);
     }
 
     @Override
     public String generateReport(String fileName, List<ReportEntity> reportEntityList) {
-        return generateSubmitCollectionReportFile(fileName, reportEntityList, RecapConstants.FTP_SUBMIT_COLLECTION_EXCEPTION_REPORT_Q);
+        return generateSubmitCollectionReportFile(fileName, reportEntityList, ScsbConstants.FTP_SUBMIT_COLLECTION_EXCEPTION_REPORT_Q);
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * Created by rajeshbabuk on 1/11/16.
  */
 @Controller
-public class RecapErrorPageController implements ErrorController {
+public class ScsbErrorPageController implements ErrorController {
 
     private static final String PATH = "/error";
 

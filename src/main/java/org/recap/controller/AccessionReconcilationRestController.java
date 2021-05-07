@@ -6,8 +6,8 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,7 +54,7 @@ public class AccessionReconcilationRestController {
      * @return
      */
     private Map<String, String> getDifference(QueryResponse queryResponse, Map<String, String> barcodesAndCustomerCodes) {
-        for (Object barcode : queryResponse.getFieldStatsInfo().get(RecapCommonConstants.BARCODE).getDistinctValues()) {
+        for (Object barcode : queryResponse.getFieldStatsInfo().get(ScsbCommonConstants.BARCODE).getDistinctValues()) {
             barcodesAndCustomerCodes.entrySet().removeIf(p -> p.getKey().contains(barcode.toString()));
         }
         return barcodesAndCustomerCodes;
@@ -68,13 +68,13 @@ public class AccessionReconcilationRestController {
      */
     private SolrQuery getSolrQuery(String barcode,int rows) {
         SolrQuery solrQuery = new SolrQuery();
-        solrQuery.setQuery(RecapConstants.DOC_TYPE_ITEM);
+        solrQuery.setQuery(ScsbConstants.DOC_TYPE_ITEM);
         solrQuery.setRows(rows);
-        solrQuery.addFilterQuery(RecapCommonConstants.BARCODE+":"+ StringEscapeUtils.escapeJava(barcode).replace(",","\" \""));
-        solrQuery.setFields(RecapCommonConstants.BARCODE);
+        solrQuery.addFilterQuery(ScsbCommonConstants.BARCODE+":"+ StringEscapeUtils.escapeJava(barcode).replace(",","\" \""));
+        solrQuery.setFields(ScsbCommonConstants.BARCODE);
         solrQuery.setGetFieldStatistics(true);
-        solrQuery.setGetFieldStatistics(RecapCommonConstants.BARCODE);
-        solrQuery.addStatsFieldCalcDistinct(RecapCommonConstants.BARCODE, true);
+        solrQuery.setGetFieldStatistics(ScsbCommonConstants.BARCODE);
+        solrQuery.addStatsFieldCalcDistinct(ScsbCommonConstants.BARCODE, true);
         return solrQuery;
     }
 

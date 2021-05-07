@@ -5,7 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.search.DataDumpSearchResult;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchResultRow;
@@ -46,7 +46,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         Map<String, Object> searchResponse=new HashMap<>();
         List<BibItem> bibItems = getBibItemList();
-        searchResponse.put(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE,bibItems);
+        searchResponse.put(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE,bibItems);
         Mockito.when(bibSolrDocumentRepository.search(Mockito.any(SearchRecordsRequest.class))).thenReturn(searchResponse);
         Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HTC","HUL"));
 
@@ -63,7 +63,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         searchRecordsRequest.setUseRestrictions(Arrays.asList());
         Map<String, Object> searchResponse=new HashMap<>();
         List<BibItem> bibItems = getBibItemList();
-        searchResponse.put(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE,bibItems);
+        searchResponse.put(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE,bibItems);
         Mockito.when(bibSolrDocumentRepository.search(Mockito.any(SearchRecordsRequest.class))).thenReturn(searchResponse);
         List<SearchResultRow> searchRecords = searchRecordsUtil.searchRecords(searchRecordsRequest);
         assertNotNull(searchRecords);
@@ -92,7 +92,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         bibItem.setNotes("Notes");
         bibItem.setOwningInstitution("PUL");
         bibItem.setOwningInstitutionBibId("1");
-        bibItem.setMaterialType(RecapCommonConstants.SERIAL);
+        bibItem.setMaterialType(ScsbCommonConstants.SERIAL);
         List<Item> items = new ArrayList<>();
         Item item = new Item();
         item.setItemId(1);
@@ -100,8 +100,8 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         item.setCallNumberSearch("123");
         item.setVolumePartYear("V1");
         item.setCustomerCode("NA");
-        item.setAvailability(RecapCommonConstants.NOT_AVAILABLE);
-        item.setAvailabilityDisplay(RecapCommonConstants.NOT_AVAILABLE);
+        item.setAvailability(ScsbCommonConstants.NOT_AVAILABLE);
+        item.setAvailabilityDisplay(ScsbCommonConstants.NOT_AVAILABLE);
         items.add(item);
         Item item1 = new Item();
         item1.setItemId(1);
@@ -109,13 +109,13 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         item1.setCallNumberSearch("123");
         item1.setVolumePartYear("V1");
         item1.setCustomerCode("NA");
-        item1.setAvailability(RecapCommonConstants.NOT_AVAILABLE);
+        item1.setAvailability(ScsbCommonConstants.NOT_AVAILABLE);
         item1.setAvailabilityDisplay("1");
         items.add(item);
         items.add(item1);
         bibItem.setItems(items);
         bibItems.add(bibItem);
-        searchResponse.put(RecapCommonConstants.SEARCH_SUCCESS_RESPONSE,bibItems);
+        searchResponse.put(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE,bibItems);
         Mockito.when(bibSolrDocumentRepository.search(Mockito.any(SearchRecordsRequest.class))).thenReturn(searchResponse);
         List<SearchResultRow> searchRecords = searchRecordsUtil.searchRecords(searchRecordsRequest);
         assertNotNull(searchRecords);
@@ -137,7 +137,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
     public void searchRecordsError() throws Exception {
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         Map<String, Object> searchResponse=new HashMap<>();
-        searchResponse.put(RecapCommonConstants.SEARCH_ERROR_RESPONSE,"testError");
+        searchResponse.put(ScsbCommonConstants.SEARCH_ERROR_RESPONSE,"testError");
         Mockito.when(bibSolrDocumentRepository.search(Mockito.any())).thenReturn(searchResponse);
         Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HTC","HUL"));
         List<SearchResultRow> searchRecords = searchRecordsUtil.searchRecords(searchRecordsRequest);
@@ -148,7 +148,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
     public void searchRecordsForDataDump() throws Exception {
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         Map<String, Object> searchResponse=new HashMap<>();
-        searchResponse.put(RecapCommonConstants.SEARCH_ERROR_RESPONSE,"testError");
+        searchResponse.put(ScsbCommonConstants.SEARCH_ERROR_RESPONSE,"testError");
         Mockito.when(searchRecordsUtil.getDataDumpSolrDocumentRepository().search(Mockito.any())).thenReturn(searchResponse);
         List<DataDumpSearchResult> searchRecords = searchRecordsUtil.searchRecordsForDataDump(searchRecordsRequest);
         assertNotNull(searchRecords);
@@ -158,7 +158,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
     public void searchRecordsForDataDumpSuccess() throws Exception {
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
         Map<String, Object> searchResponse=new HashMap<>();
-        searchResponse.put(RecapCommonConstants.SEARCH_ERROR_RESPONSE,null);
+        searchResponse.put(ScsbCommonConstants.SEARCH_ERROR_RESPONSE,null);
         Mockito.when(searchRecordsUtil.getDataDumpSolrDocumentRepository().search(Mockito.any())).thenReturn(searchResponse);
         List<DataDumpSearchResult> searchRecords = searchRecordsUtil.searchRecordsForDataDump(searchRecordsRequest);
         assertNotNull(searchRecords);
@@ -193,7 +193,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         bibItem.setNotes("Notes");
         bibItem.setOwningInstitution("PUL");
         bibItem.setOwningInstitutionBibId("1");
-        bibItem.setMaterialType(RecapCommonConstants.OTHER);
+        bibItem.setMaterialType(ScsbCommonConstants.OTHER);
         List<Holdings> holdings = new ArrayList<>();
         Holdings holding= new Holdings();
         holding.setId("1");

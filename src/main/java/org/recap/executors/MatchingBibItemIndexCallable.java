@@ -2,7 +2,7 @@ package org.recap.executors;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.solr.common.SolrInputDocument;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
@@ -77,7 +77,7 @@ public class MatchingBibItemIndexCallable extends CommonCallable implements Call
         bibliographicEntities = bibliographicDetailsRepository.getBibliographicEntitiesForChangedItems(PageRequest.of(pageNum, docsPerPage), operationType, from, to);
         List<SolrInputDocument> solrInputDocumentsToIndex = setSolrInputDocuments(bibliographicEntities, solrTemplate, bibliographicDetailsRepository, holdingsDetailsRepository, producerTemplate, logger,nonHoldingInstitutionList);
         if (!CollectionUtils.isEmpty(solrInputDocumentsToIndex)) {
-            producerTemplate.sendBodyAndHeader(RecapCommonConstants.SOLR_QUEUE, solrInputDocumentsToIndex, RecapCommonConstants.SOLR_CORE, coreName);
+            producerTemplate.sendBodyAndHeader(ScsbCommonConstants.SOLR_QUEUE, solrInputDocumentsToIndex, ScsbCommonConstants.SOLR_CORE, coreName);
         }
         return solrInputDocumentsToIndex.size();
     }

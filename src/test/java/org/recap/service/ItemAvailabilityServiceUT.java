@@ -5,7 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.BibAvailabilityResponse;
 import org.recap.model.BibItemAvailabityStatusRequest;
 import org.recap.model.ItemAvailabilityResponse;
@@ -90,7 +90,7 @@ public class ItemAvailabilityServiceUT extends BaseTestCaseUT {
         bibItemAvailabityStatusRequest.setInstitutionId("SCSB");
         List<BibAvailabilityResponse> bibAvailabilityResponses = itemAvailabilityService.getBibItemAvailabilityStatus(bibItemAvailabityStatusRequest);
         assertNotNull(bibAvailabilityResponses);
-        assertEquals(RecapConstants.BIB_ITEM_DOESNOT_EXIST,bibAvailabilityResponses.get(0).getErrorMessage());
+        assertEquals(ScsbConstants.BIB_ITEM_DOESNOT_EXIST,bibAvailabilityResponses.get(0).getErrorMessage());
     }
 
     private InstitutionEntity getInstitutionEntity() {

@@ -11,15 +11,15 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by hemalathas on 23/2/17.
  */
-public class RecapErrorPageControllerUT extends BaseTestCaseUT {
+public class ScsbErrorPageControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
-    RecapErrorPageController recapErrorPageController;
+    ScsbErrorPageController scsbErrorPageController;
 
     @Test
     public void testErrorPage(){
-        String response = recapErrorPageController.recapErrorPage();
-        String path = recapErrorPageController.getErrorPath();
+        String response = scsbErrorPageController.recapErrorPage();
+        String path = scsbErrorPageController.getErrorPath();
         assertNotNull(response);
         assertEquals("error",response);
         assertNotNull(path);

@@ -3,9 +3,9 @@ package org.recap.util;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
-import org.recap.model.csv.SolrExceptionReportReCAPCSVRecord;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
+import org.recap.model.csv.SolrExceptionReportCSVRecord;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 
@@ -21,29 +21,29 @@ import static org.junit.Assert.assertNull;
 /**
  * Created by hemalathas on 22/2/17.
  */
-public class ReCAPCSVSolrExceptionRecordGeneratorUT extends BaseTestCaseUT {
+public class SolrExceptionCSVRecordGeneratorUT extends BaseTestCaseUT {
 
     @InjectMocks
-    ReCAPCSVSolrExceptionRecordGenerator reCAPCSVSolrExceptionRecordGenerator;
+    SolrExceptionCSVRecordGenerator solrExceptionCSVRecordGenerator;
 
     @Test
     public void testSolrExceptionRecordGenerator(){
-        SolrExceptionReportReCAPCSVRecord solrExceptionReportReCAPCSVRecord = new SolrExceptionReportReCAPCSVRecord();
-        solrExceptionReportReCAPCSVRecord.setDocType("Test");
-        solrExceptionReportReCAPCSVRecord.setOwningInstitutionBibId("124566");
-        solrExceptionReportReCAPCSVRecord.setOwningInstitution("PUL");
-        solrExceptionReportReCAPCSVRecord.setBibId("123");
-        solrExceptionReportReCAPCSVRecord.setHoldingsId("231");
-        solrExceptionReportReCAPCSVRecord.setItemId("1");
-        solrExceptionReportReCAPCSVRecord.setExceptionMessage("Title is mandatory");
+        SolrExceptionReportCSVRecord solrExceptionReportCSVRecord = new SolrExceptionReportCSVRecord();
+        solrExceptionReportCSVRecord.setDocType("Test");
+        solrExceptionReportCSVRecord.setOwningInstitutionBibId("124566");
+        solrExceptionReportCSVRecord.setOwningInstitution("PUL");
+        solrExceptionReportCSVRecord.setBibId("123");
+        solrExceptionReportCSVRecord.setHoldingsId("231");
+        solrExceptionReportCSVRecord.setItemId("1");
+        solrExceptionReportCSVRecord.setExceptionMessage("Title is mandatory");
         ReportEntity reportEntity = getReportEntity();
-        SolrExceptionReportReCAPCSVRecord solrExceptionReportReCAPCSVRecord1 = reCAPCSVSolrExceptionRecordGenerator.prepareSolrExceptionReportReCAPCSVRecord(reportEntity,solrExceptionReportReCAPCSVRecord);
-        assertNotNull(solrExceptionReportReCAPCSVRecord1);
-        assertEquals("PUL",solrExceptionReportReCAPCSVRecord1.getOwningInstitution());
-        assertEquals(RecapConstants.ITEM_ALREADY_ACCESSIONED,solrExceptionReportReCAPCSVRecord1.getExceptionMessage());
-        Method getterMethod= reCAPCSVSolrExceptionRecordGenerator.getGetterMethod("docType");
-        Method setterMethod= reCAPCSVSolrExceptionRecordGenerator.getSetterMethod("test");
-        Method getterMethodExp= reCAPCSVSolrExceptionRecordGenerator.getGetterMethod("test");
+        SolrExceptionReportCSVRecord solrExceptionReportCSVRecord1 = solrExceptionCSVRecordGenerator.prepareSolrExceptionReportCSVRecord(reportEntity, solrExceptionReportCSVRecord);
+        assertNotNull(solrExceptionReportCSVRecord1);
+        assertEquals("PUL", solrExceptionReportCSVRecord1.getOwningInstitution());
+        assertEquals(ScsbConstants.ITEM_ALREADY_ACCESSIONED, solrExceptionReportCSVRecord1.getExceptionMessage());
+        Method getterMethod= solrExceptionCSVRecordGenerator.getGetterMethod("docType");
+        Method setterMethod= solrExceptionCSVRecordGenerator.getSetterMethod("test");
+        Method getterMethodExp= solrExceptionCSVRecordGenerator.getGetterMethod("test");
         assertNull(setterMethod);
         assertNull(getterMethodExp);
         assertNotNull(getterMethod);
@@ -52,8 +52,8 @@ public class ReCAPCSVSolrExceptionRecordGeneratorUT extends BaseTestCaseUT {
     private ReportEntity getReportEntity(){
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapCommonConstants.ACCESSION_REPORT);
-        reportEntity.setType(RecapCommonConstants.ACCESSION_SUMMARY_REPORT);
+        reportEntity.setFileName(ScsbCommonConstants.ACCESSION_REPORT);
+        reportEntity.setType(ScsbCommonConstants.ACCESSION_SUMMARY_REPORT);
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 
@@ -89,7 +89,7 @@ public class ReCAPCSVSolrExceptionRecordGeneratorUT extends BaseTestCaseUT {
 
         ReportDataEntity reasonForItemFailureReportDataEntity = new ReportDataEntity();
         reasonForItemFailureReportDataEntity.setHeaderName("exceptionMessage");
-        reasonForItemFailureReportDataEntity.setHeaderValue(RecapConstants.ITEM_ALREADY_ACCESSIONED);
+        reasonForItemFailureReportDataEntity.setHeaderValue(ScsbConstants.ITEM_ALREADY_ACCESSIONED);
         reportDataEntities.add(reasonForItemFailureReportDataEntity);
 
         reportEntity.setReportDataEntities(reportDataEntities);

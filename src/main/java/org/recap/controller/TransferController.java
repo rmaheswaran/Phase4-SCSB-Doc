@@ -2,7 +2,7 @@ package org.recap.controller;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.transfer.HoldingTransferResponse;
 import org.recap.model.transfer.ItemTransferResponse;
@@ -61,11 +61,11 @@ public class TransferController {
 
         InstitutionEntity institutionEntity = null;
         if(StringUtils.isBlank(institution)) {
-            return getTransferResponse(transferRequest, transferResponse, RecapConstants.Transfer.INSTITUTION_EMPTY);
+            return getTransferResponse(transferRequest, transferResponse, ScsbConstants.Transfer.INSTITUTION_EMPTY);
         } else {
             institutionEntity = getTransferService().getInstitutionDetailsRepository().findByInstitutionCode(institution);
             if(null == institutionEntity) {
-                return getTransferResponse(transferRequest, transferResponse, RecapConstants.Transfer.UNKNOWN_INSTITUTION);
+                return getTransferResponse(transferRequest, transferResponse, ScsbConstants.Transfer.UNKNOWN_INSTITUTION);
             }
         }
 
@@ -99,13 +99,13 @@ public class TransferController {
 
 
         if(successCount > 0 && failureCount > 0) {
-            transferResponse.setMessage(RecapConstants.Transfer.PARTIALLY_SUCCESS);
+            transferResponse.setMessage(ScsbConstants.Transfer.PARTIALLY_SUCCESS);
             return transferResponse;
         } else if(successCount > 0) {
-            transferResponse.setMessage(RecapConstants.Transfer.COMPLETED);
+            transferResponse.setMessage(ScsbConstants.Transfer.COMPLETED);
             return transferResponse;
         } else if(failureCount > 0) {
-            transferResponse.setMessage(RecapConstants.Transfer.FAILED);
+            transferResponse.setMessage(ScsbConstants.Transfer.FAILED);
             return transferResponse;
         }
 
@@ -116,10 +116,10 @@ public class TransferController {
     private TransferResponse getTransferResponse(@RequestBody TransferRequest transferRequest, TransferResponse transferResponse, String instituionEmpty) {
         String institution;
         transferResponse.setMessage(instituionEmpty);
-        institution = RecapConstants.UNKNOWN_INSTITUTION;
+        institution = ScsbConstants.UNKNOWN_INSTITUTION;
         String requestString = getHelperUtil().getJsonString(transferRequest);
         String responseString = transferResponse.getMessage();
-        getTransferService().saveReportForTransfer(requestString, responseString, institution, RecapConstants.Transfer.ROOT);
+        getTransferService().saveReportForTransfer(requestString, responseString, institution, ScsbConstants.Transfer.ROOT);
         return transferResponse;
     }
 }

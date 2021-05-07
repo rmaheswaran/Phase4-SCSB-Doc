@@ -1,6 +1,6 @@
 package org.recap.report;
 
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.ReportEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,16 +15,16 @@ public class S3SolrExceptionReportGenerator extends CommonReportGenerator implem
 
     @Override
     public boolean isInterested(String reportType) {
-        return reportType.equalsIgnoreCase(RecapCommonConstants.SOLR_INDEX_EXCEPTION);
+        return reportType.equalsIgnoreCase(ScsbCommonConstants.SOLR_INDEX_EXCEPTION);
     }
 
     @Override
     public boolean isTransmitted(String transmissionType) {
-        return transmissionType.equalsIgnoreCase(RecapCommonConstants.FTP);
+        return transmissionType.equalsIgnoreCase(ScsbCommonConstants.FTP);
     }
 
     @Override
     public String generateReport(String fileName, List<ReportEntity> reportEntityList) {
-        return generateReportForSolrExceptionCsvRecords(fileName, RecapCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q, reportEntityList);
+        return generateReportForSolrExceptionCsvRecords(fileName, ScsbCommonConstants.FTP_SOLR_EXCEPTION_REPORT_Q, reportEntityList);
     }
 }

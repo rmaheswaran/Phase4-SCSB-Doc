@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.deaccession.DeAccessionSolrRequest;
 import org.recap.service.deaccession.DeAccessSolrDocumentService;
 import org.springframework.http.HttpStatus;
@@ -33,6 +33,6 @@ public class DeaccessionSolrControllerUT extends BaseTestCaseUT {
         deAccessionSolrRequest.setItemIds(Arrays.asList(1));
         ResponseEntity responseEntity=deaccessionSolrController.deaccessionInSolr(deAccessionSolrRequest);
         assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
-        assertEquals(RecapCommonConstants.SUCCESS,responseEntity.getBody());
+        assertEquals(ScsbCommonConstants.SUCCESS,responseEntity.getBody());
     }
 }

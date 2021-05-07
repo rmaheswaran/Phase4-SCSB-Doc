@@ -8,8 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
@@ -49,10 +49,10 @@ public class HelperUtilUT extends BaseTestCaseUT {
     public void saveReportEntity() {
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
         ReportDataEntity titleReportDataEntity = new ReportDataEntity();
-        titleReportDataEntity.setHeaderName(RecapCommonConstants.TITLE);
+        titleReportDataEntity.setHeaderName(ScsbCommonConstants.TITLE);
         titleReportDataEntity.setHeaderValue("1");
         reportDataEntities.add(titleReportDataEntity);
-        helperUtil.saveReportEntity("PUL","test", RecapConstants.SUBMIT_COLLECTION_SUMMARY_REPORT,reportDataEntities);
+        helperUtil.saveReportEntity("PUL","test", ScsbConstants.SUBMIT_COLLECTION_SUMMARY_REPORT,reportDataEntities);
         assertNotNull(titleReportDataEntity);
     }
 
