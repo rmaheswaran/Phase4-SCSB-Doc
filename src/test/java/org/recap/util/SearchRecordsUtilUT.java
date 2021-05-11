@@ -16,13 +16,9 @@ import org.recap.repository.solr.main.BibSolrDocumentRepository;
 import org.recap.repository.solr.main.DataDumpSolrDocumentRepository;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by hemalathas on 24/2/17.
@@ -216,6 +212,32 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         bibItem.setItems(items);
         bibItems.add(bibItem);
         return bibItems;
+    }
+
+    @Test
+    public void modifySearchRequestForCirculationFreeze() {
+        SearchRecordsRequest searchRecordsRequest = getSearchRecordsRequest();
+        Map<String, String> propertyMap = getCirculationFreezePropertyMap();
+        propertyMap.put("PUL", "true");
+        Mockito.when(propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE)).thenReturn(propertyMap);
+        searchRecordsUtil.modifySearchRequestForCirculationFreeze(searchRecordsRequest);
+        assertNotNull(searchRecordsRequest);
+        assertFalse(searchRecordsRequest.getOwningInstitutions().contains("PUL"));
+    }
+
+    private SearchRecordsRequest getSearchRecordsRequest() {
+        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest(Arrays.asList("PUL", "CUL", "NYPL", "HL"));
+        searchRecordsRequest.setAvailability(Collections.singletonList(ScsbCommonConstants.AVAILABLE));
+        return searchRecordsRequest;
+    }
+
+    private Map<String, String> getCirculationFreezePropertyMap() {
+        Map<String, String> propertyMap = new HashMap<>();
+        propertyMap.put("PUL", "false");
+        propertyMap.put("CUL", "false");
+        propertyMap.put("NYPL", "false");
+        propertyMap.put("HL", "false");
+        return propertyMap;
     }
 
 }

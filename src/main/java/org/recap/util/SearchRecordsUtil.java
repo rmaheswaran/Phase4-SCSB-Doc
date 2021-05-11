@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by sudhish on 14/10/16.
@@ -33,6 +34,9 @@ public final class SearchRecordsUtil {
 
     @Autowired
     private DataDumpSolrDocumentRepository dataDumpSolrDocumentRepository;
+
+    @Autowired
+    private CommonUtil commonUtil;
 
     @Autowired
     PropertyUtil propertyUtil;
@@ -53,16 +57,35 @@ public final class SearchRecordsUtil {
      * @return the SearchResultRow list
      * @throws Exception the exception
      */
-    public List<SearchResultRow> searchRecords(SearchRecordsRequest searchRecordsRequest) throws Exception{
-
+    public List<SearchResultRow> searchRecords(SearchRecordsRequest searchRecordsRequest) throws Exception {
         if (!isEmptySearch(searchRecordsRequest)) {
-            if(CollectionUtils.isEmpty(searchRecordsRequest.getOwningInstitutions())){
-                searchRecordsRequest.setOwningInstitutions(propertyUtil.getAllInstitutions());
+            if (CollectionUtils.isEmpty(searchRecordsRequest.getOwningInstitutions())) {
+                searchRecordsRequest.setOwningInstitutions(commonUtil.findAllInstitutionCodesExceptSupportInstitution());
+            }
+            modifySearchRequestForCirculationFreeze(searchRecordsRequest);
+            if (CollectionUtils.isEmpty(searchRecordsRequest.getOwningInstitutions())) {
+                return new ArrayList<>();
             }
             return searchAndBuildResults(searchRecordsRequest);
         }
         searchRecordsRequest.setErrorMessage(ScsbConstants.EMPTY_FACET_ERROR_MSG);
         return new ArrayList<>();
+    }
+
+    /**
+     * This method checks if the search request is only for available items, exclude the circulation freeze enabled institution from the institutions list
+     * as those institution items will be virtually unavailable.
+     * @param searchRecordsRequest ths Search Records Request
+     */
+    public void modifySearchRequestForCirculationFreeze(SearchRecordsRequest searchRecordsRequest) {
+        List<String> availabilitySearch = searchRecordsRequest.getAvailability();
+        boolean isOnlyAvailableSearch = availabilitySearch.size() == 1 && availabilitySearch.get(0).equalsIgnoreCase(ScsbCommonConstants.AVAILABLE);
+        if (isOnlyAvailableSearch) {
+            Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+            searchRecordsRequest.getOwningInstitutions().removeAll(propertyMap.entrySet().stream()
+                    .filter(e -> Boolean.parseBoolean(e.getValue()))
+                    .map(Map.Entry::getKey).collect(Collectors.toList()));
+        }
     }
 
     /**
