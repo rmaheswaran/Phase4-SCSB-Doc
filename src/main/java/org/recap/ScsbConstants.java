@@ -214,6 +214,7 @@ public final class ScsbConstants {
     public static final String MATCHING_COUNTER_UPDATED_OPEN = "AfterOpenCount";
     public static final String SHARED = "Shared";
     public static final String OPEN = "Open";
+    public static final String COMMITTED="Committed";
     public static final String LOGGER_MSG = " : {0}";
     public static final List<String> MATCHING_MATCH_POINTS = Arrays.asList(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC,ScsbCommonConstants.MATCH_POINT_FIELD_ISBN,ScsbCommonConstants.MATCH_POINT_FIELD_LCCN,ScsbCommonConstants.MATCH_POINT_FIELD_ISSN);
     public static final String LOG_EXECUTION_TIME = "Time taken to execute {} : {}";

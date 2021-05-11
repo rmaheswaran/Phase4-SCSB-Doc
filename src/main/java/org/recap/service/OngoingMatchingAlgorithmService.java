@@ -39,7 +39,7 @@ public class OngoingMatchingAlgorithmService {
     @Autowired
     ItemDetailsRepository itemDetailsRepository;
 
-    public String generateCGDRoundTripReport() throws Exception {
+    public String generateCGDRoundTripReport(){
         List<ItemChangeLogEntity> itemChangeLogEntityList = itemChangeLogDetailsRepository.findByUpdatedDateAndOperationType(LocalDate.now().toString(), ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE);
         if (!itemChangeLogEntityList.isEmpty()) {
             try {
@@ -54,13 +54,13 @@ public class OngoingMatchingAlgorithmService {
             }
             catch (CamelExecutionException camelExecutionException){
                 camelExecutionException.printStackTrace();
-                throw new CGDRoundTripReportException("Exception occured in camel executing while trying to generate CGD Round Trip report",camelExecutionException.getCause());
+                throw new CGDRoundTripReportException("Exception occurred in camel executing while trying to generate CGD Round Trip report",camelExecutionException.getCause());
             }
             catch (NoSuchElementException elementException){
                 throw new CGDRoundTripReportException(ScsbConstants.CGD_ROUND_TRIP_EXCEPTION_MESSAGE,elementException.getCause());
             }
             catch (Exception exception) {
-                throw new CGDRoundTripReportException("Exception occured while genenarting CGD Round-Trip report",exception.getCause());
+                throw new CGDRoundTripReportException("Exception occurred while generating CGD Round-Trip report",exception.getCause());
             }
         } else {
             return "No records found to generate CGD Round-Trip report";
