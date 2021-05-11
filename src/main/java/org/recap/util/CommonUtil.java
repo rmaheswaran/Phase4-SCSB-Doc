@@ -73,6 +73,7 @@ import org.recap.repository.jpa.ItemStatusDetailsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
 
@@ -106,6 +107,9 @@ public class CommonUtil {
 
     @Autowired
     private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     /**
      * This method gets item for the given item solr document.
@@ -380,8 +384,20 @@ public class CommonUtil {
         return institutionCodes;
     }
 
-    public List<String> findAllInstitutionCodesExceptHTC(){
-       return  institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+    /**
+     * Get All Institution Codes Except Support Institution
+     * @return institutionCodes
+     */
+    public List<String> findAllInstitutionCodesExceptSupportInstitution() {
+        return institutionDetailsRepository.findAllInstitutionCodesExceptSupportInstitution(supportInstitution);
+    }
+
+    /**
+     * Get All Institution Codes Except Support Institution
+     * @return institutionCodes
+     */
+    public List<InstitutionEntity> findAllInstitutionsExceptSupportInstitution() {
+        return institutionDetailsRepository.findAllInstitutionsExceptSupportInstitution(supportInstitution);
     }
 
 }

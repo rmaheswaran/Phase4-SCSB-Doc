@@ -13,6 +13,7 @@ import org.recap.matchingalgorithm.MatchingCounter;
 import org.recap.model.jpa.*;
 import org.recap.repository.jpa.*;
 import org.recap.service.ActiveMqQueuesInfo;
+import org.recap.util.CommonUtil;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,9 @@ public class MatchingAlgorithmUpdateCGDService {
 
     @Autowired
     private ActiveMqQueuesInfo activeMqQueuesInfo;
+
+    @Autowired
+    private CommonUtil commonUtil;
 
     /**
      * Gets report data details repository.
@@ -126,8 +130,8 @@ public class MatchingAlgorithmUpdateCGDService {
         Integer updateItemsQ = getUpdatedItemsQ();
         processCallablesForMonographs(batchSize, executor, true);
         getMatchingAlgorithmUtil().saveCGDUpdatedSummaryReport(ScsbConstants.MATCHING_SUMMARY_MONOGRAPH);
-        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
-        for (String institutionCode : allInstitutionCodeExceptHTC) {
+        List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
+        for (String institutionCode : allInstitutionCodesExceptSupportInstitution) {
             logger.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
         }
 
@@ -365,8 +369,8 @@ public class MatchingAlgorithmUpdateCGDService {
     private void setCGDUpdateSummaryReport(ExecutorService executor, List<Callable<Integer>> callables, String reportName) throws InterruptedException {
         getFutures(executor, callables);
         getMatchingAlgorithmUtil().saveCGDUpdatedSummaryReport(reportName);
-        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
-        for (String institutionCode : allInstitutionCodeExceptHTC) {
+        List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
+        for (String institutionCode : allInstitutionCodesExceptSupportInstitution) {
             logger.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
         }
         getUpdatedItemsQ();

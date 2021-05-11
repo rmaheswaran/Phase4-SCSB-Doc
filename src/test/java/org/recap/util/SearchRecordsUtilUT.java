@@ -14,6 +14,7 @@ import org.recap.model.solr.Holdings;
 import org.recap.model.solr.Item;
 import org.recap.repository.solr.main.BibSolrDocumentRepository;
 import org.recap.repository.solr.main.DataDumpSolrDocumentRepository;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +41,8 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
     @Mock
     PropertyUtil propertyUtil;
 
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     @Test
     public void searchRecords() throws Exception {
@@ -48,7 +51,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         List<BibItem> bibItems = getBibItemList();
         searchResponse.put(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE,bibItems);
         Mockito.when(bibSolrDocumentRepository.search(Mockito.any(SearchRecordsRequest.class))).thenReturn(searchResponse);
-        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HTC","HUL"));
+        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HL", supportInstitution));
 
         List<SearchResultRow> searchRecords = searchRecordsUtil.searchRecords(searchRecordsRequest);
         assertNotNull(searchRecords);
@@ -139,7 +142,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         Map<String, Object> searchResponse=new HashMap<>();
         searchResponse.put(ScsbCommonConstants.SEARCH_ERROR_RESPONSE,"testError");
         Mockito.when(bibSolrDocumentRepository.search(Mockito.any())).thenReturn(searchResponse);
-        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HTC","HUL"));
+        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HL", supportInstitution));
         List<SearchResultRow> searchRecords = searchRecordsUtil.searchRecords(searchRecordsRequest);
         assertNotNull(searchRecords);
     }

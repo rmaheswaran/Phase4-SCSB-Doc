@@ -12,6 +12,7 @@ import org.recap.repository.solr.main.BibSolrCrudRepository;
 import org.recap.repository.solr.main.HoldingsSolrCrudRepository;
 import org.recap.repository.solr.main.ItemCrudRepository;
 import org.recap.service.accession.SolrIndexService;
+import org.recap.util.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,9 @@ public class SolrIndexController {
 
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Autowired
+    private CommonUtil commonUtil;
 
     /**
      * To initialize solr indexing ui page.
@@ -292,8 +296,8 @@ public class SolrIndexController {
 
     @GetMapping(value = "/solrIndexer/institutions")
     @ResponseBody
-    public List<String> getInstitution(){
-        return  institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+    public List<String> getInstitution() {
+        return commonUtil.findAllInstitutionCodesExceptSupportInstitution();
     }
 
     /**

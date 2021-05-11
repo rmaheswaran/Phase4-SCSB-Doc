@@ -99,6 +99,8 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
     @Mock
     PropertyUtil propertyUtil;
 
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     @Before
     public void setUp() throws Exception {
@@ -251,7 +253,7 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT{
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(camelContext.getRouteController()).thenReturn(routeController);
-        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HTC","HUL"));
+        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HL", supportInstitution));
         ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
         assertNotNull(matchingSummaryReports);
         }

@@ -10,6 +10,7 @@ import org.recap.matchingalgorithm.service.MatchingAlgorithmUpdateCGDService;
 import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.util.CommonUtil;
 import org.recap.util.StopWatchUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,9 @@ public class MatchingAlgorithmController {
 
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Autowired
+    private CommonUtil commonUtil;
 
     /**
      * Gets logger.
@@ -349,8 +353,8 @@ public class MatchingAlgorithmController {
     }
 
     private void runReportsForMatchingAlgorithm(Integer batchSize){
-        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
-        Map<String, Integer> institutionCounterMap = allInstitutionCodeExceptHTC.stream().collect(Collectors.toMap(Function.identity(), institution -> 0));
+        List<String> allInstitutionCodeExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
+        Map<String, Integer> institutionCounterMap = allInstitutionCodeExceptSupportInstitution.stream().collect(Collectors.toMap(Function.identity(), institution -> 0));
 
         getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, institutionCounterMap);
         getMatchingAlgorithmHelperService().populateReportsForMatchPoints(batchSize, ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, institutionCounterMap);
@@ -376,8 +380,8 @@ public class MatchingAlgorithmController {
         stopwatch.start();
         MatchingCounter.reset();
         getMatchingAlgorithmUpdateCGDService().getItemsCountForSerialsMatching(Integer.valueOf(getMatchingAlgoBatchSize()));
-        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
-        for (String institutionCode : allInstitutionCodeExceptHTC) {
+        List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
+        for (String institutionCode : allInstitutionCodesExceptSupportInstitution) {
             getLogger().info("Total {} Shared Serial Items in Matching : {}" , institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_UPDATED_SHARED));
             response.append(institutionCode+" Shared Serial Items Count : ").append(MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_UPDATED_SHARED)).append("\n");
         }

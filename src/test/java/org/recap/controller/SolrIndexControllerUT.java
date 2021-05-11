@@ -20,6 +20,7 @@ import org.recap.repository.solr.main.BibSolrCrudRepository;
 import org.recap.repository.solr.main.HoldingsSolrCrudRepository;
 import org.recap.repository.solr.main.ItemCrudRepository;
 import org.recap.service.accession.SolrIndexService;
+import org.recap.util.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
@@ -76,6 +77,9 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
 
     @Mock
     InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Mock
+    CommonUtil commonUtil;
 
     @Before
     public void setUp()throws Exception {
@@ -221,7 +225,7 @@ public class SolrIndexControllerUT extends BaseTestCaseUT {
     @Test
     public void getInstitution(){
         List<String> institutionCodes= Arrays.asList(ScsbCommonConstants.NYPL,ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.PRINCETON);
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodeExceptHTC()).thenReturn(institutionCodes);
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(institutionCodes);
         List<String> institution=solrIndexController.getInstitution();
         assertNotNull(institution);
         assertTrue(institution.get(0).contains(ScsbCommonConstants.NYPL));

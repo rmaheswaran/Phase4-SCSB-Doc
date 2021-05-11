@@ -20,11 +20,7 @@ import org.recap.model.matchingreports.TitleExceptionReport;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ReportDetailRepository;
-import org.recap.util.CsvUtil;
-import org.recap.util.DateUtil;
-import org.recap.util.OngoingMatchingAlgorithmReportGenerator;
-import org.recap.util.PropertyUtil;
-import org.recap.util.SolrQueryBuilder;
+import org.recap.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +80,9 @@ public class OngoingMatchingReportsService {
      */
     @Autowired
     InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Autowired
+    private CommonUtil commonUtil;
 
     /**
      * The Producer template.
@@ -292,8 +291,8 @@ public class OngoingMatchingReportsService {
      */
     public List<MatchingSummaryReport> populateSummaryReportBeforeMatching() {
         List<MatchingSummaryReport> matchingSummaryReports = new ArrayList<>();
-        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
-        for (String institutionCode : allInstitutionCodeExceptHTC) {
+        List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
+        for (String institutionCode : allInstitutionCodesExceptSupportInstitution) {
             MatchingSummaryReport matchingSummaryReport = new MatchingSummaryReport();
             matchingSummaryReport.setInstitution(institutionCode);
             matchingSummaryReport.setOpenItemsBeforeMatching(String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_OPEN)));
@@ -330,7 +329,7 @@ public class OngoingMatchingReportsService {
                 matchingSummaryReport.setTotalItems(String.valueOf(itemCount));
                 String openItemsAfterMatching = "";
                 String sharedItemsAfterMatching = "";
-                List<String> institutions = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+                List<String> institutions = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
                 for (String institution : institutions) {
                     if (matchingSummaryReport.getInstitution().equalsIgnoreCase(institution)) {
                         openItemsAfterMatching = String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institution).get(MATCHING_COUNTER_OPEN));

@@ -126,7 +126,7 @@ public class EmailService {
 
     public void getCc(EmailPayLoad emailPayLoad) {
         StringBuilder cc = new StringBuilder();
-        List<String> institutionCodes = commonUtil.findAllInstitutionCodesExceptHTC();
+        List<String> institutionCodes = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         String matchingEmailTo="";
         for (String institution : institutionCodes) {
              matchingEmailTo = propertyUtil.getPropertyByInstitutionAndKey(institution, "email.matching.reports.to");

@@ -14,6 +14,7 @@ import org.recap.model.solr.SolrIndexRequest;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.JobParamDetailRepository;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +40,8 @@ public class GenerateReportRestControllerUT extends BaseTestCaseUT {
     @Mock
     ReportGenerator reportGenerator;
 
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     @Test
     public void generateReportsJob() throws Exception{
@@ -57,7 +60,7 @@ public class GenerateReportRestControllerUT extends BaseTestCaseUT {
 
     private List<InstitutionEntity> getInstitutionEntities() {
         List<InstitutionEntity> institutionEntities = new ArrayList<>();
-        institutionEntities.add(TestUtil.getInstitutionEntity(4, "HTC", "HTC"));
+        institutionEntities.add(TestUtil.getInstitutionEntity(4, supportInstitution, supportInstitution));
         institutionEntities.add(TestUtil.getInstitutionEntity(2, "CUL", "CUL"));
         return institutionEntities;
     }

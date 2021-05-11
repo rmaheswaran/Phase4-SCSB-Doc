@@ -16,6 +16,7 @@ import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.service.ActiveMqQueuesInfo;
+import org.recap.util.CommonUtil;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.recap.util.SolrQueryBuilder;
 import org.slf4j.Logger;
@@ -79,6 +80,9 @@ public class MatchingAlgorithmHelperService {
 
     @Autowired
     InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Autowired
+    private CommonUtil commonUtil;
 
     /**
      * Gets logger.
@@ -339,8 +343,8 @@ public class MatchingAlgorithmHelperService {
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
 
 
-        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
-        for (String institution : allInstitutionCodeExceptHTC) {
+        List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
+        for (String institution : allInstitutionCodesExceptSupportInstitution) {
             ReportDataEntity reportDataEntity = new ReportDataEntity();
             reportDataEntity.setHeaderName(institution.toLowerCase()+"MatchingCount");
             reportDataEntity.setHeaderValue(String.valueOf(institutionCounterMap.get(institution)));

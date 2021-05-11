@@ -17,7 +17,6 @@ import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
@@ -86,7 +85,7 @@ public class MatchingAlgorithmUtil {
     private Integer matchingHeaderValueLength;
 
     @Autowired
-    private InstitutionDetailsRepository institutionDetailsRepository;
+    private CommonUtil commonUtil;
 
     /**
      * Gets report detail repository.
@@ -855,8 +854,8 @@ public class MatchingAlgorithmUtil {
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName(ScsbCommonConstants.ALL_INST);
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
-        List<String> allInstitutionCodeExceptHTC = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
-        for (String institutionCode : allInstitutionCodeExceptHTC) {
+        List<String> allInstitutionCodesExceptSupportInstitution = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
+        for (String institutionCode : allInstitutionCodesExceptSupportInstitution) {
             logger.info("{} Final Counter Value:{} " ,institutionCode, MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_SHARED));
             getReportDataEntity(institutionCode+"SharedCount", String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_UPDATED_SHARED)), reportDataEntities);
             getReportDataEntity(institutionCode+"OpenCount", String.valueOf(MatchingCounter.getSpecificInstitutionCounterMap(institutionCode).get(MATCHING_COUNTER_UPDATED_OPEN)), reportDataEntities);
@@ -872,7 +871,7 @@ public class MatchingAlgorithmUtil {
      * @throws SolrServerException the solr server exception
      */
     public void populateMatchingCounter() throws IOException, SolrServerException {
-        List<String> institutions = institutionDetailsRepository.findAllInstitutionCodeExceptHTC();
+        List<String> institutions = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
         MatchingCounter.setScsbInstitutions(institutions);
         MatchingCounter.reset();
         for (String institution : institutions) {
