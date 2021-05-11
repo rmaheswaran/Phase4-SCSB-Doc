@@ -32,16 +32,11 @@ import org.recap.model.solr.Item;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemStatusDetailsRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.solr.core.SolrTemplate;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -65,6 +60,9 @@ public class CommonUtilUT extends BaseTestCaseUT {
 
     @Mock
     CollectionGroupDetailsRepository collectionGroupDetailsRepository;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     @Before
     public  void setup(){
@@ -228,5 +226,29 @@ public class CommonUtilUT extends BaseTestCaseUT {
         ItemCreatedByValueResolver.setValue(new Item(),"true");
         ItemCreatedByValueResolver.isInterested("ItemCreatedBy");
         return solrDocument;
+    }
+
+    @Test
+    public void findAllInstitutionCodesExceptSupportInstitution() {
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        Mockito.when(institutionDetailsRepository.findAllInstitutionCodesExceptSupportInstitution(supportInstitution)).thenReturn(Collections.singletonList(institutionEntity.getInstitutionName()));
+        List<String> result = commonUtil.findAllInstitutionCodesExceptSupportInstitution();
+        assertNotNull(result);
+    }
+
+    @Test
+    public void findAllInstitutionsExceptSupportInstitution() {
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        Mockito.when(institutionDetailsRepository.findAllInstitutionsExceptSupportInstitution(supportInstitution)).thenReturn(Collections.singletonList(institutionEntity));
+        List<InstitutionEntity> result = commonUtil.findAllInstitutionsExceptSupportInstitution();
+        assertNotNull(result);
+    }
+
+    private InstitutionEntity getInstitutionEntity() {
+        InstitutionEntity institutionEntity = new InstitutionEntity();
+        institutionEntity.setId(1);
+        institutionEntity.setInstitutionCode("PUL");
+        institutionEntity.setInstitutionName("PUL");
+        return institutionEntity;
     }
 }

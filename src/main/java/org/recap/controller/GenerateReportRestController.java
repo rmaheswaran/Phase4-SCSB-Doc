@@ -13,6 +13,7 @@ import org.recap.repository.jpa.JobParamDetailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +47,9 @@ public class GenerateReportRestController {
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
 
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
+
     @PostMapping(value = "/generateReports", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String generateReportsJob(@RequestBody SolrIndexRequest solrIndexRequest) {
@@ -61,7 +65,7 @@ public class GenerateReportRestController {
         String reportType = jobParamMap.get(ScsbConstants.REPORT_TYPE);
         String fileName = jobParamMap.get(ScsbConstants.JOB_PARAM_DATA_FILE_NAME);
         StringBuilder generateReportFileName = new StringBuilder();
-        Iterable<InstitutionEntity> institutionEntities = institutionDetailsRepository.findByInstitutionCodeNotIn(Arrays.asList("HTC"));
+        Iterable<InstitutionEntity> institutionEntities = institutionDetailsRepository.findByInstitutionCodeNotIn(Arrays.asList(supportInstitution));
 
         for (Iterator<InstitutionEntity> iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
             InstitutionEntity institutionEntity = iterator.next();
