@@ -1,0 +1,168 @@
+buildscript {
+	ext {
+		springBootVersion = '2.3.1.RELEASE'
+		set('springCloudVersion', "Hoxton.SR5")
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+	}
+}
+
+buildscript {
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+}
+
+plugins {
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'org.springframework.boot' version '2.3.1.RELEASE'
+	id "org.sonarqube" version "2.8"
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'jacoco'
+
+//added to accept systemproperties while executing gradlew test cmd
+test {
+	systemProperties = System.properties
+}
+
+jar {
+	archiveBaseName = 'phase4-scsb-doc'
+	archiveVersion = '0.0.1-SNAPSHOT'
+}
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	/*implementation('org.recap:phase4-scsb-common:1.0') {
+		version  {
+			branch = 'development'
+		}
+	}*/
+	compile fileTree(dir: '/data/commonjar', include: '*1.3.jar')
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	//implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+	//implementation 'org.springframework.boot:spring-boot-starter-data-solr'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.apache.camel.springboot:camel-spring-boot-starter:3.2.0'
+	implementation('org.springframework.data:spring-data-solr:4.2.0.RELEASE')
+			{exclude module: 'solr-solrj'; exclude module: 'solr-data-commons'; exclude module: 'spring-data-jpa'}
+	implementation 'org.apache.solr:solr-solrj:8.5.1'
+	implementation 'org.apache.camel:camel-solr:3.2.0'
+	implementation 'org.apache.camel:camel-bindy:3.2.0'
+	implementation 'org.apache.camel:camel-metrics:3.2.0'
+	implementation 'org.apache.camel:camel-csv:3.2.0'
+	implementation 'org.apache.camel:camel-mail:3.2.0'
+	implementation 'org.apache.camel:camel-ftp:3.2.0'
+	implementation 'org.apache.camel:camel-activemq:3.2.0'
+	//implementation 'org.apache.camel:camel-core-engine:3.2.0'
+	//implementation 'org.apache.camel:camel-core:3.2.0'
+	implementation('org.apache.camel.springboot:camel-aws-s3-starter:3.2.0')
+	implementation('org.apache.camel:camel-aws-s3:3.2.0')
+	implementation 'org.apache.activemq:activemq-camel:5.15.12'
+	implementation 'org.apache.activemq:activemq-pool:5.15.12'
+	implementation 'org.apache.activemq:activemq-broker:5.15.12'
+	implementation 'org.apache.activemq:activemq-client:5.15.12'
+	implementation 'commons-beanutils:commons-beanutils:1.9.4'
+	implementation 'org.apache.commons:commons-collections4:4.4'
+	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+	implementation 'io.springfox:springfox-swagger2:2.9.2'
+	implementation 'log4j:log4j:1.2.17'
+	implementation 'info.freelibrary:freelib-marc4j:2.6.12'
+	implementation 'net.sourceforge.javacsv:javacsv:2.0'
+	implementation 'commons-codec:commons-codec:1.14'
+	implementation 'org.codehaus.jettison:jettison:1.4.1'
+	implementation 'junit:junit:4.13'
+	//implementation 'org.springframework.plugin:spring-plugin-core:2.0.0.RELEASE'
+	implementation('com.google.guava:guava:23.0') { exclude module: 'solr-solrj' }
+	implementation 'org.projectlombok:lombok:1.18.12'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation('org.apache.commons:commons-text:1.8');
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'net.logstash.logback:logstash-logback-encoder:6.4'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+	implementation 'org.json:json:20200518'
+	implementation 'com.google.code.gson:gson:2.8.6'
+	annotationProcessor 'org.projectlombok:lombok:1.18.12'
+	testImplementation 'org.projectlombok:lombok:1.18.12'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+	runtimeOnly 'mysql:mysql-connector-java'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation('org.springframework.restdocs:spring-restdocs-mockmvc')
+	compile group: 'javax.validation', name: 'validation-api', version: '2.0.0.Final'
+	testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.7'
+	testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.7'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+	implementation 'org.json:json:20200518'
+	implementation 'com.google.code.gson:gson:2.8.6'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+eclipse {
+	classpath {
+		 containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+		 containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+	}
+}
+
+/*jacoco {
+	toolVersion = "0.7.9"
+	reportsDir = file("$buildDir/customJacocoReportDir")
+}*/
+
+test {
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+		classDumpDir = file("$buildDir/jacoco/classpathdumps")
+	}
+}
+
+jacocoTestReport {
+	group = "Reporting"
+	reports {
+		xml.enabled true
+		csv.enabled false
+		html.enabled = true
+		html.destination file("${buildDir}/jacocoHtml")
+	}
+}
+
+task scsbDocJavadocs(type: Javadoc) {
+	source = sourceSets.main.java
+	classpath = configurations.compile
+	options.addStringOption('Xdoclint:none', '-quiet')
+	String home = System.getProperty("user.home");
+	destinationDir = new File(home+"/scsb-javadocs/phase4-scsb-doc");
+}
+
+bootJar {
+	layered()
+}
