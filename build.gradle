@@ -1,0 +1,124 @@
+buildscript {
+	ext {
+		springBootVersion = '1.4.2.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+	}
+}
+
+buildscript {
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+}
+
+plugins {
+	id "org.sonarqube" version "2.0.1"
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'spring-boot'
+apply plugin: 'jacoco'
+
+springBoot {
+	executable = true
+}
+//added to accept systemproperties while executing gradlew test cmd
+test {
+	systemProperties = System.properties
+}
+
+jar {
+	baseName = 'scsb-solr-client'
+	version = '0.0.1-SNAPSHOT'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	compile('org.apache.camel:camel-spring-boot-starter:2.18.0')
+	compile('org.apache.camel:camel-metrics:2.18.0')
+	compile('org.apache.camel:camel-ftp:2.18.0')
+	compile('org.apache.camel:camel-csv:2.18.0')
+	compile('org.apache.camel:camel-bindy:2.18.0')
+	compile('org.apache.camel:camel-mail:2.18.0')
+	compile('org.apache.camel:camel-solr:2.17.3')
+	compile('org.apache.activemq:activemq-camel:5.14.1')
+	compile('org.apache.activemq:activemq-pool:5.14.1')
+	compile('org.apache.activemq:activemq-broker:5.14.1')
+	compile('org.apache.activemq:activemq-client:5.14.1')
+	compile('commons-beanutils:commons-beanutils:1.9.2')
+	compile('org.apache.commons:commons-collections4:4.0')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-ws')
+	compile('org.springframework.data:spring-data-solr:2.0.1.RELEASE')
+			{exclude module: 'solr-solrj'; exclude module: 'solr-data-commons'; exclude module: 'spring-data-jpa'}
+	compile('org.codehaus.jettison:jettison:1.3.7')
+	compile('org.springframework.data:spring-data-commons:1.12.1.RELEASE')
+	compile('org.springframework.data:spring-data-jpa:1.10.2.RELEASE')
+	compile('com.google.guava:guava:19.0') {exclude module: "solr-solrj"}
+	compile('org.apache.solr:solr-solrj:6.0.1')
+	compile('info.freelibrary:freelib-marc4j:2.6.12')
+	compile(group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0')
+	compile('org.springframework.boot:spring-boot-starter-data-rest:1.2.5.RELEASE')
+	compile('io.springfox:springfox-swagger-ui:2.5.0')
+	compile('io.springfox:springfox-swagger2:2.5.0')
+	compile('org.codehaus.jackson:jackson-mapper-asl:1.9.13')
+	runtime('mysql:mysql-connector-java:6.0.3')
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
+}
+
+
+eclipse {
+	classpath {
+		 containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+		 containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+	}
+}
+
+jacoco {
+	toolVersion = "0.7.9"
+	reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+test {
+	jacoco {
+		append = false
+		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+		classDumpFile = file("$buildDir/jacoco/classpathdumps")
+	}
+}
+
+jacocoTestReport {
+	group = "Reporting"
+	reports {
+		xml.enabled true
+		csv.enabled false
+		html.enabled = true
+		html.destination "${buildDir}/jacocoHtml"
+	}
+}
+
+task scsbSolrClientJavadocs(type: Javadoc) {
+	source = sourceSets.main.java
+	classpath = configurations.compile
+	options.addStringOption('Xdoclint:none', '-quiet')
+	String home = System.getProperty("user.home");
+	destinationDir = new File(home+"/scsb-javadocs/scsb-solr-client");
+}
