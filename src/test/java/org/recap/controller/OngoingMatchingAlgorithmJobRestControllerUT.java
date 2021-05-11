@@ -10,6 +10,7 @@ import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.matchingalgorithm.service.MatchingBibInfoDetailService;
 import org.recap.model.solr.SolrIndexRequest;
+import org.recap.service.OngoingMatchingAlgorithmService;
 import org.recap.util.DateUtil;
 import org.recap.util.OngoingMatchingAlgorithmUtil;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -32,6 +33,9 @@ public class OngoingMatchingAlgorithmJobRestControllerUT extends BaseTestCaseUT 
 
     @Mock
     MatchingBibInfoDetailService matchingBibInfoDetailService;
+
+    @Mock
+    OngoingMatchingAlgorithmService ongoingMatchingAlgorithmService;
 
     @Mock
     DateUtil dateUtil;
@@ -57,6 +61,13 @@ public class OngoingMatchingAlgorithmJobRestControllerUT extends BaseTestCaseUT 
         Mockito.when(ongoingMatchingAlgorithmUtil.fetchUpdatedRecordsAndStartProcess(Mockito.any(),Mockito.anyInt())).thenThrow(NullPointerException.class);
         String status=ongoingMatchingAlgorithmJobRestController.startMatchingAlgorithmJob(getSolrIndexRequest());
         assertNotNull(status);
+    }
+
+    @Test
+    public void testGenerateCGDRoundTripReport() throws Exception {
+        Mockito.when(ongoingMatchingAlgorithmService.generateCGDRoundTripReport()).thenReturn("CGD Round-Trip report generated successfully");
+        String result = ongoingMatchingAlgorithmJobRestController.generateCGDRoundTripReport();
+        assertNotNull(result);
     }
 
     private SolrIndexRequest getSolrIndexRequest() {

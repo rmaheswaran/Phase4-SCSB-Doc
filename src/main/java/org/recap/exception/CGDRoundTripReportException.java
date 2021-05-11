@@ -1,6 +1,6 @@
 package org.recap.exception;
 
-public class CGDRoundTripReportException extends Exception {
+public class CGDRoundTripReportException extends RuntimeException {
 
     public CGDRoundTripReportException(String message){
         super(message);

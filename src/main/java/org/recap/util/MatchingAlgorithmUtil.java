@@ -173,18 +173,18 @@ public class MatchingAlgorithmUtil {
                     if(matchingBibEntity.getMatching().equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC)) {
                         matchPointValue = matchingBibEntity.getOclc();
                         if(StringUtils.isNotBlank(matchPointValue))
-                            query = solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, Arrays.asList(matchPointValue.split(",")));
+                            query = solrQueryBuilder.solrQueryForInitialMatching(ScsbCommonConstants.MATCH_POINT_FIELD_OCLC, Arrays.asList(matchPointValue.split(",")));
                     } else if(matchingBibEntity.getMatching().equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN)) {
                         matchPointValue = matchingBibEntity.getIsbn();
                         if(StringUtils.isNotBlank(matchPointValue))
-                            query = solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, Arrays.asList(matchPointValue.split(",")));
+                            query = solrQueryBuilder.solrQueryForInitialMatching(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, Arrays.asList(matchPointValue.split(",")));
                     } else if(matchingBibEntity.getMatching().equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN)) {
                         matchPointValue = matchingBibEntity.getIssn();
                         if(StringUtils.isNotBlank(matchPointValue))
-                            query = solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, Arrays.asList(matchPointValue.split(",")));
+                            query = solrQueryBuilder.solrQueryForInitialMatching(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, Arrays.asList(matchPointValue.split(",")));
                     } else if(matchingBibEntity.getMatching().equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_LCCN)) {
                         matchPointValue = matchingBibEntity.getLccn();
-                        query = solrQueryBuilder.solrQueryForOngoingMatching(ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, matchPointValue);
+                        query = solrQueryBuilder.solrQueryForInitialMatching(ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, matchPointValue);
                     }
                     List<Integer> bibIds = getBibsFromSolr(query);
                     if(bibIds.size() > 1) {

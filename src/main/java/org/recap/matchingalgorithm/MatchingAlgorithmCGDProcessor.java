@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -69,88 +70,124 @@ public class MatchingAlgorithmCGDProcessor {
         this.institutionDetailsRepository=institutionDetailsRepository;
     }
 
+    private static boolean checkIfItemsAreCommitted(Map.Entry<Integer, ItemEntity> entry) {
+        return ScsbConstants.COMMITTED.equals(entry.getValue().getCollectionGroupEntity().getCollectionGroupCode());
+    }
+
     /**
      * This method updates cgd based on the counter values of use restriction for each institution and saves them in the database.
      *
      * @param itemEntityMap     the item entity map
      */
     public void updateCGDProcess(Map<Integer, ItemEntity> itemEntityMap) {
-        Map<Integer, List<ItemEntity>> owningInstitutionMap=itemEntityMap.values()
-                .stream()
-                .collect(Collectors.groupingBy(itemEntity -> itemEntity.getInstitutionEntity().getId()));
         if(matchingType.equalsIgnoreCase(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE)) {
             /* For Initial Matching algorithm if the use restriction are same,
              * then we need to check for counter and select the item which needs to be Shared
              */
+            Map<Integer, List<ItemEntity>> owningInstitutionMap=itemEntityMap.values()
+                    .stream()
+                    .collect(Collectors.groupingBy(itemEntity -> itemEntity.getInstitutionEntity().getId()));
             findItemToBeSharedBasedOnCounter(itemEntityMap, owningInstitutionMap);
         } else {
-            /* For Ongoing Matching algorithm if the use restriction are same,
-             * then we need to check for date of accession and select the item which needs to be Shared
-             */
             findItemToBeSharedBasedOnDate(itemEntityMap);
         }
         updateItemsCGD(itemEntityMap);
     }
 
+
+    /**
+     * This method removes the items to be retained as Shared from the itemEntityMap,
+     *  so that the map can be passed to another method to change the remaining item's CGD to Open
+     * @param itemEntityMap
+     */
     private void findItemToBeSharedBasedOnDate(Map<Integer, ItemEntity> itemEntityMap) {
-        List<ItemEntity> itemEntities = new ArrayList<>(itemEntityMap.values());
-        ItemEntity itemEntityToBeShared = getItemToBeSharedBasedOnInitialMatchingDate(itemEntities);
-        if(itemEntityToBeShared != null) {
-            itemEntityMap.remove(itemEntityToBeShared.getId());
-            MatchingCounter.updateCGDCounter(itemEntityToBeShared.getInstitutionEntity().getInstitutionCode(),false);
-        } else {
-            itemEntities.sort(Comparator.comparing(ItemEntity::getCreatedDate));
-            findAndremoveSharedItem(itemEntityMap, itemEntities);
+        //Remove any committed items from the itemEntityMap if any
+        if(findCommittedItemsIfAny(itemEntityMap).isPresent()) {
+            itemEntityMap.values().removeIf(value -> ScsbConstants.COMMITTED.equals(value.getCollectionGroupEntity().getCollectionGroupCode()));
+        }
+        else {// Check if an item has undergone initial matching, if yes retain it as Shared or else find the first created item and retain it as Shared.
+            List<ItemEntity> itemEntities = new ArrayList<>(itemEntityMap.values());
+            Optional<ItemEntity> itemEntityToBeShared = getItemToBeSharedBasedOnInitialMatchingDate(itemEntities);
+            if (itemEntityToBeShared.isPresent()) {
+                itemEntityMap.remove(itemEntityToBeShared.get().getId());
+                MatchingCounter.updateCGDCounter(itemEntityToBeShared.get().getInstitutionEntity().getInstitutionCode(), false);
+            } else {
+                itemEntities.sort(Comparator.comparing(ItemEntity::getCreatedDate));
+                findAndremoveSharedItem(itemEntityMap, itemEntities);
+            }
         }
     }
 
-    private ItemEntity getItemToBeSharedBasedOnInitialMatchingDate (List<ItemEntity> itemEntities) {
-        for(ItemEntity itemEntity : itemEntities) {
-            if(itemEntity.getInitialMatchingDate() != null) {
-                return itemEntity;
-            }
-        }
-        return null;
+    private Optional<Map.Entry<Integer, ItemEntity>> findCommittedItemsIfAny(Map<Integer, ItemEntity> itemEntityMap) {
+        return itemEntityMap
+                .entrySet()
+                .stream()
+                .filter(MatchingAlgorithmCGDProcessor::checkIfItemsAreCommitted)
+                .findAny();
+    }
+
+    private Optional<ItemEntity> getItemToBeSharedBasedOnInitialMatchingDate (List<ItemEntity> itemEntities) {
+        return itemEntities.stream().filter(itemEntity -> itemEntity.getInitialMatchingDate() != null).findFirst();
     }
 
     /**
-     * Update items cgd.
+     * This method updates all the items in the itemEntityMap to Open
+     * The updated items are also updated and tracked in item_change_log_t
      *
      * @param itemEntityMap the item entity map
      */
     public void updateItemsCGD(Map<Integer, ItemEntity> itemEntityMap) {
-        List<ItemEntity> itemEntitiesToUpdate = new ArrayList<>();
-        List<ItemChangeLogEntity> itemChangeLogEntities = new ArrayList<>();
-        CollectionGroupEntity collectionGroupEntity = null;
         Integer collectionGroupId = (Integer) collectionGroupMap.get(ScsbCommonConstants.REPORTS_OPEN);
+        CollectionGroupEntity finalCollectionGroupEntity = getCollectionGroupEntity(collectionGroupId);
+
+        List<ItemEntity> updatedItemsAsOpen = updateItemsAsOpenFromItemEntityMap(itemEntityMap, collectionGroupId, finalCollectionGroupEntity);
+        List<ItemChangeLogEntity> itemChangeLogEntityList = prepareItemChangeLogForUpdatedItems(updatedItemsAsOpen);
+        if(CollectionUtils.isNotEmpty(updatedItemsAsOpen) && CollectionUtils.isNotEmpty(itemChangeLogEntityList)) {
+            saveTheUpdatedChangesToDB(updatedItemsAsOpen, itemChangeLogEntityList);
+        }
+    }
+
+    private CollectionGroupEntity getCollectionGroupEntity(Integer collectionGroupId) {
+        CollectionGroupEntity collectionGroupEntity = collectionGroupDetailsRepository.findById(collectionGroupId).orElse(null);
         if(matchingType.equalsIgnoreCase(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM)) {
             collectionGroupEntity = collectionGroupDetailsRepository.findById(collectionGroupId).orElse(null);
         }
-        for (Iterator<ItemEntity> iterator = itemEntityMap.values().iterator(); iterator.hasNext(); ) {
-            // Items which needs to be changed to open status
-            ItemEntity itemEntity = iterator.next();
-            MatchingCounter.updateCGDCounter(itemEntity.getInstitutionEntity().getInstitutionCode(),true);
-            Integer oldCgd = itemEntity.getCollectionGroupId();
-            itemEntity.setLastUpdatedDate(new Date());
-            itemEntity.setCollectionGroupId(collectionGroupId);
-            if(matchingType.equalsIgnoreCase(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM)) {
-                itemEntity.setCollectionGroupEntity(collectionGroupEntity);
-                itemEntity.setLastUpdatedBy(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM);
-            } else {
-                itemEntity.setInitialMatchingDate(null);
-                itemEntity.setLastUpdatedBy(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE);
-            }
-            itemEntitiesToUpdate.add(itemEntity);
-            itemChangeLogEntities.add(getItemChangeLogEntity(oldCgd, itemEntity));
+        return collectionGroupEntity;
+    }
+
+    private void saveTheUpdatedChangesToDB(List<ItemEntity> updatedItemsAsOpen, List<ItemChangeLogEntity> itemChangeLogEntityList) {
+        if(matchingType.equalsIgnoreCase(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM)) {
+            itemDetailsRepository.saveAll(updatedItemsAsOpen);
+        } else {
+            producerTemplate.sendBody("scsbactivemq:queue:updateItemsQ", updatedItemsAsOpen);
         }
-        if(CollectionUtils.isNotEmpty(itemEntitiesToUpdate) && CollectionUtils.isNotEmpty(itemChangeLogEntities)) {
-            if(matchingType.equalsIgnoreCase(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM)) {
-                itemDetailsRepository.saveAll(itemEntitiesToUpdate);
-            } else {
-                producerTemplate.sendBody("scsbactivemq:queue:updateItemsQ", itemEntitiesToUpdate);
-            }
-            itemChangeLogDetailsRepository.saveAll(itemChangeLogEntities);
+        itemChangeLogDetailsRepository.saveAll(itemChangeLogEntityList);
+    }
+
+    private List<ItemChangeLogEntity> prepareItemChangeLogForUpdatedItems(List<ItemEntity> updatedItemsAsOpen) {
+        return updatedItemsAsOpen.stream()
+                .map(itemEntity -> getItemChangeLogEntity(1, itemEntity))
+                .collect(Collectors.toList());
+    }
+
+    private List<ItemEntity> updateItemsAsOpenFromItemEntityMap(Map<Integer, ItemEntity> itemEntityMap, Integer collectionGroupId, CollectionGroupEntity finalCollectionGroupEntity) {
+        return itemEntityMap.values().stream()
+                .map(itemEntity -> updateItemsAsOpen(collectionGroupId, finalCollectionGroupEntity, itemEntity))
+                .collect(Collectors.toList());
+    }
+
+    private ItemEntity updateItemsAsOpen(Integer collectionGroupId, CollectionGroupEntity collectionGroupEntity, ItemEntity itemEntity) {
+        MatchingCounter.updateCGDCounter(itemEntity.getInstitutionEntity().getInstitutionCode(),true);
+        itemEntity.setLastUpdatedDate(new Date());
+        itemEntity.setCollectionGroupId(collectionGroupId);
+        if(matchingType.equalsIgnoreCase(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM)) {
+            itemEntity.setCollectionGroupEntity(collectionGroupEntity);
+            itemEntity.setLastUpdatedBy(ScsbCommonConstants.ONGOING_MATCHING_ALGORITHM);
+        } else {
+            itemEntity.setInitialMatchingDate(null);
+            itemEntity.setLastUpdatedBy(ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE);
         }
+        return itemEntity;
     }
 
     private ItemChangeLogEntity getItemChangeLogEntity(Integer oldCgd, ItemEntity itemEntity) {
@@ -176,10 +213,11 @@ public class MatchingAlgorithmCGDProcessor {
         List<BibliographicEntity> bibliographicEntities = bibliographicDetailsRepository.findByIdIn(bibIdList);
         for(BibliographicEntity bibliographicEntity : bibliographicEntities) {
             List<ItemEntity> itemEntities = bibliographicEntity.getNonDeletedAndCompleteItemEntities();
+
             //Check for Monograph - (Single Bib & Single Item)
             if(itemEntities != null && itemEntities.size() == 1) {
                 ItemEntity itemEntity = itemEntities.get(0);
-                if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(ScsbCommonConstants.SHARED_CGD))) {
+                if(isItemCommittedOrShared(itemEntity)) {
                     populateValues(itemEntityMap, itemEntity);
                 }
                 materialTypeSet.add(ScsbCommonConstants.MONOGRAPH);
@@ -192,7 +230,7 @@ public class MatchingAlgorithmCGDProcessor {
                             if(itemEntity.getCopyNumber() != null && itemEntity.getCopyNumber() > 1) {
                                 isMultipleCopy = true;
                             }
-                            if(itemEntity.getCollectionGroupId().equals(collectionGroupMap.get(ScsbCommonConstants.SHARED_CGD))) {
+                            if(isItemCommittedOrShared(itemEntity)) {
                                 populateValues(itemEntityMap, itemEntity);
                             }
                         }
@@ -225,6 +263,12 @@ public class MatchingAlgorithmCGDProcessor {
             }
         }
         return isMonograph;
+    }
+
+    private boolean isItemCommittedOrShared(ItemEntity itemEntity) {
+        Predicate<ItemEntity> isItemCGDShared=item->item.getCollectionGroupId().equals(collectionGroupMap.get(ScsbCommonConstants.SHARED_CGD));
+        Predicate<ItemEntity> isItemCGDCommitted=item->item.getCollectionGroupId()==collectionGroupMap.get(ScsbConstants.COMMITTED);
+        return isItemCGDShared.or(isItemCGDCommitted).test(itemEntity);
     }
 
     /**

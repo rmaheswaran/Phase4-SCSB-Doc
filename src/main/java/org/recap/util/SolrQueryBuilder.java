@@ -549,6 +549,19 @@ public class SolrQueryBuilder {
     }
 
     /**
+     * Solr query for initial matching.
+     *
+     * @param fieldName           the field name
+     * @param matchingPointValues the matching point values
+     * @return the string
+     */
+    public String solrQueryForInitialMatching(String fieldName, List<String> matchingPointValues) {
+        StringBuilder query = new StringBuilder();
+        query.append(buildQueryForMatchChildReturnParent(fieldName, matchingPointValues));
+        return getBibliographicFilterSolrQuery(query);  // initial MA
+    }
+
+    /**
      * Solr query for ongoing matching.
      *
      * @param fieldName           the field name
@@ -558,8 +571,25 @@ public class SolrQueryBuilder {
     public String solrQueryForOngoingMatching(String fieldName, List<String> matchingPointValues) {
         StringBuilder query = new StringBuilder();
         query.append(buildQueryForMatchChildReturnParent(fieldName, matchingPointValues));
+        return getBibliographicFilterSolrQueryForOngoingMA(query);  // Ongoing MA
+    }
+
+    /**
+     * Solr query for initial matching.
+     *
+     * @param fieldName          the field name
+     * @param matchingPointValue the matching point value
+     * @return the string
+     */
+    public String solrQueryForInitialMatching(String fieldName, String matchingPointValue) {
+        StringBuilder query = new StringBuilder();
+        if(matchingPointValue.contains("\\")) {
+            matchingPointValue = matchingPointValue.replaceAll("\\\\", "\\\\\\\\");
+        }
+        query.append(fieldName).append(":").append("\"").append(matchingPointValue).append("\"");
         return getBibliographicFilterSolrQuery(query);
     }
+
 
     /**
      * Solr query for ongoing matching.
@@ -574,7 +604,24 @@ public class SolrQueryBuilder {
             matchingPointValue = matchingPointValue.replaceAll("\\\\", "\\\\\\\\");
         }
         query.append(fieldName).append(":").append("\"").append(matchingPointValue).append("\"");
-        return getBibliographicFilterSolrQuery(query);
+        return getBibliographicFilterSolrQueryForOngoingMA(query);
+    }
+
+    private String getBibliographicFilterSolrQueryForOngoingMA(StringBuilder query) {
+        query.append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS)
+                .append(and)
+                .append("(").append("(")
+                .append(coreParentFilterQuery).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(ScsbCommonConstants.SHARED_CGD)
+                .append(")")
+                .append(or)
+                .append("(")
+                .append(coreParentFilterQuery).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(ScsbConstants.COMMITTED)
+                .append(")")
+                .append(")")
+                .append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        return query.toString();
     }
 
     private String getBibliographicFilterSolrQuery(StringBuilder query) {
