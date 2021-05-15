@@ -5,6 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.search.DataDumpSearchResult;
 import org.recap.model.search.SearchRecordsRequest;
@@ -219,7 +220,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT {
         SearchRecordsRequest searchRecordsRequest = getSearchRecordsRequest();
         Map<String, String> propertyMap = getCirculationFreezePropertyMap();
         propertyMap.put("PUL", "true");
-        Mockito.when(propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE)).thenReturn(propertyMap);
+        Mockito.when(propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE)).thenReturn(propertyMap);
         searchRecordsUtil.modifySearchRequestForCirculationFreeze(searchRecordsRequest);
         assertNotNull(searchRecordsRequest);
         assertFalse(searchRecordsRequest.getOwningInstitutions().contains("PUL"));
