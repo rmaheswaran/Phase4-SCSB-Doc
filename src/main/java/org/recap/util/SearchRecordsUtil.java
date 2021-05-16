@@ -1,6 +1,7 @@
 package org.recap.util;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.search.DataDumpSearchResult;
@@ -81,7 +82,7 @@ public final class SearchRecordsUtil {
         List<String> availabilitySearch = searchRecordsRequest.getAvailability();
         boolean isOnlyAvailableSearch = availabilitySearch.size() == 1 && availabilitySearch.get(0).equalsIgnoreCase(ScsbCommonConstants.AVAILABLE);
         if (isOnlyAvailableSearch) {
-            Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+            Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE);
             searchRecordsRequest.getOwningInstitutions().removeAll(propertyMap.entrySet().stream()
                     .filter(e -> Boolean.parseBoolean(e.getValue()))
                     .map(Map.Entry::getKey).collect(Collectors.toList()));
@@ -139,7 +140,7 @@ public final class SearchRecordsUtil {
      */
     private List<SearchResultRow> buildGeneralResults(List<BibItem> bibItems) {
         List<SearchResultRow> searchResultRows = new ArrayList<>();
-        Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+        Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE);
         if (!CollectionUtils.isEmpty(bibItems)) {
             for (BibItem bibItem : bibItems) {
                 String institutionCode = bibItem.getOwningInstitution();

@@ -1,5 +1,6 @@
 package org.recap.service;
 
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.BibAvailabilityResponse;
@@ -69,7 +70,7 @@ public class ItemAvailabilityService {
         Map<String, String> barcodeStatusMap = new HashMap<>();
         List<ItemAvailabilityResponse> itemAvailabilityResponses = new ArrayList<>();
         List<ItemEntity> itemEntityList = itemDetailsRepository.getItemStatusByBarcodeAndIsDeletedFalseList(barcodes);
-        Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+        Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE);
         ItemStatusEntity itemNotAvailableStatusEntity = itemStatusDetailsRepository.findByStatusCode(ScsbCommonConstants.NOT_AVAILABLE);
         for (ItemEntity itemEntity : itemEntityList) {
             String institutionCode = itemEntity.getInstitutionEntity().getInstitutionCode().toUpperCase();
@@ -100,7 +101,7 @@ public class ItemAvailabilityService {
         List<BibAvailabilityResponse> bibAvailabilityResponses = new ArrayList<>();
         BibliographicEntity bibliographicEntity;
         try {
-            Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+            Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE);
             ItemStatusEntity itemNotAvailableStatusEntity = itemStatusDetailsRepository.findByStatusCode(ScsbCommonConstants.NOT_AVAILABLE);
             if (bibItemAvailabilityStatusRequest.getInstitutionId().equalsIgnoreCase(ScsbConstants.SCSB)) {
                 bibliographicEntity = bibliographicDetailsRepository.findById(Integer.parseInt(bibItemAvailabilityStatusRequest.getBibliographicId())).orElse(null);
