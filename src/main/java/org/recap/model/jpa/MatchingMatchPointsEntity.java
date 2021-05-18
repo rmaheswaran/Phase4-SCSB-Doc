@@ -12,7 +12,7 @@ import javax.persistence.Table;
  * Created by angelind on 27/10/16.
  */
 @Entity
-@Table(name = "MATCHING_MATCHPOINTS_T", schema = "RECAP", catalog = "")
+@Table(name = "MATCHING_MATCHPOINTS_T", catalog = "")
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)

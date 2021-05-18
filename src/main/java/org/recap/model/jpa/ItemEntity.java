@@ -24,7 +24,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "item_t", schema = "recap", catalog = "")
+@Table(name = "item_t", catalog = "")
 @AttributeOverride(name = "id", column = @Column(name = "ITEM_ID"))
 @DynamicUpdate
 public class ItemEntity extends ItemAbstractEntity {

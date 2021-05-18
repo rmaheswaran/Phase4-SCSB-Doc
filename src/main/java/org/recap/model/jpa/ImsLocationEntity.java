@@ -12,7 +12,7 @@ import java.util.Date;
  * Created by rajeshbabuk on 25/Nov/2020
  */
 @Entity
-@Table(name = "ims_location_t", schema = "recap", catalog = "")
+@Table(name = "ims_location_t", catalog = "")
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)

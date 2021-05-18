@@ -14,7 +14,7 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Table(name = "OWNING_INST_ID_SEQ", schema = "recap", catalog = "")
+@Table(name = "OWNING_INST_ID_SEQ", catalog = "")
 public class OwningInstitutionIDSequence {
 
     @Id
