@@ -48,7 +48,7 @@ public class SolrQueryBuilder {
         }
         appendToQueryByFieldType(stringBuilder, collectionGroupDesignations, ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION);
         appendToQueryByFieldType(stringBuilder, useRestrictions, ScsbCommonConstants.USE_RESTRICTION);
-        appendToQueryByFieldType(stringBuilder, imsDepositoryCodes, ScsbConstants.IMS_LOCATION);
+        appendToQueryByFieldType(stringBuilder, imsDepositoryCodes, ScsbConstants.IMS_LOCATION_CODE);
         stringBuilder
                 .append(and)
                 .append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(searchRecordsRequest.isDeleted())
@@ -151,16 +151,9 @@ public class SolrQueryBuilder {
         if (CollectionUtils.isNotEmpty(availability)) {
             stringBuilder.append(buildQueryForMatchChildReturnParent(ScsbCommonConstants.AVAILABILITY, availability));
         }
-
-        List<String> collectionGroupDesignations = searchRecordsRequest.getCollectionGroupDesignations();
-        if (StringUtils.isNotBlank(stringBuilder.toString()) && CollectionUtils.isNotEmpty(collectionGroupDesignations)) {
-            stringBuilder.append(and).append(buildQueryForMatchChildReturnParent(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION, collectionGroupDesignations));
-        } else if (CollectionUtils.isNotEmpty(collectionGroupDesignations)) {
-            stringBuilder.append(buildQueryForMatchChildReturnParent(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION, collectionGroupDesignations));
-        }
-
-        List<String> useRestrictions = searchRecordsRequest.getUseRestrictions();
-        return buildQueryByFieldType(stringBuilder, useRestrictions, ScsbCommonConstants.USE_RESTRICTION);
+        buildQueryByFieldType(stringBuilder, searchRecordsRequest.getCollectionGroupDesignations(), ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION);
+        buildQueryByFieldType(stringBuilder, searchRecordsRequest.getUseRestrictions(), ScsbCommonConstants.USE_RESTRICTION);
+        return buildQueryByFieldType(stringBuilder, searchRecordsRequest.getImsDepositoryCodes(), ScsbConstants.IMS_LOCATION_CODE);
     }
 
     /**
@@ -402,7 +395,7 @@ public class SolrQueryBuilder {
     public SolrQuery getDeletedQueryForDataDump(SearchRecordsRequest searchRecordsRequest,boolean isCGDChangedToPrivate) {
         String queryForFieldCriteria = getQueryForFieldCriteria(searchRecordsRequest);
         String queryForBibCriteria = buildQueryForBibFacetCriteria(searchRecordsRequest);
-        String queryForImsLocation = buildQueryForFilterGivenChild(ScsbConstants.IMS_LOCATION,searchRecordsRequest.getImsDepositoryCodes());
+        String queryForImsLocation = buildQueryForFilterGivenChild(ScsbConstants.IMS_LOCATION_CODE,searchRecordsRequest.getImsDepositoryCodes());
         String queryStringForItemCriteria;
         SolrQuery solrQuery;
         if (isCGDChangedToPrivate) {
