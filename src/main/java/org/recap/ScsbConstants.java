@@ -207,7 +207,6 @@ public final class ScsbConstants {
     public static final String BULK_ACCESSION_SUMMARY = "BULK_ACCESSION_SUMMARY";
     public static final String ACCESSION_SUMMARY = "ACCESSION_SUMMARY";
     public static final String ACCESSION_JOB_FAILURE = "Exception occurred in SCSB Ongoing Accession Job";
-    public static final String IMS_LOCATION = "ImsLocation";
     public static final String MATCHING_COUNTER_SHARED = "SharedCount";
     public static final String MATCHING_COUNTER_OPEN = "OpenCount";
     public static final String MATCHING_COUNTER_UPDATED_SHARED = "AfterSharedCount";
