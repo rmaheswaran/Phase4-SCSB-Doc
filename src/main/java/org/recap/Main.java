@@ -2,6 +2,7 @@ package org.recap;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -94,6 +95,11 @@ public class Main {
 		TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
 		factory.addConnectorCustomizers( connector -> connector.setMaxParameterCount(tomcatMaxParameterCount));
 		return factory;
+	}
+
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
 	}
 
     /**
