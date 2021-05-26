@@ -6,6 +6,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.modelmapper.ModelMapper;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
@@ -100,6 +101,9 @@ public class CommonUtil {
     private Map itemStatusMap;
     private Map collectionGroupMap;
 
+    @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
+    private String supportInstitution;
+
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
 
@@ -109,8 +113,8 @@ public class CommonUtil {
     @Autowired
     private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
 
-    @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
-    private String supportInstitution;
+    @Autowired
+    private ModelMapper modelMapper;
 
     /**
      * This method gets item for the given item solr document.
@@ -399,6 +403,16 @@ public class CommonUtil {
      */
     public List<InstitutionEntity> findAllInstitutionsExceptSupportInstitution() {
         return institutionDetailsRepository.findAllInstitutionsExceptSupportInstitution(supportInstitution);
+    }
+
+    /**
+     * This method converts the passed object to of the required type class
+     * @param object
+     * @param type class type
+     * @return class type object
+     */
+    public Object convertToDto(Object object, Class<?> type) {
+        return modelMapper.map(object, type);
     }
 
 }
