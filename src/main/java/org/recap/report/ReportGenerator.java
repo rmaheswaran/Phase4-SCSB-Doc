@@ -3,11 +3,19 @@ package org.recap.report;
 import org.apache.commons.collections.CollectionUtils;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.jpa.ReportEntity;
+import org.recap.model.submitCollection.SubmitCollectionReprot;
+import org.recap.model.submitCollection.SubmitCollectionResultsRow;
 import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.util.SubmitCollectionReportGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
@@ -135,6 +143,18 @@ public class ReportGenerator {
         return null;
     }
 
+    public SubmitCollectionReprot submitCollectionExceptionReportGenerator(SubmitCollectionReprot submitCollectionReprot) {
+        Pageable pageable = PageRequest.of(submitCollectionReprot.getPageNumber(), submitCollectionReprot.getPageSize());
+        Page<ReportEntity> reportEntityList = reportDetailRepository.findByInstitutionAndTypeandDateRange(pageable, submitCollectionReprot.getInstitutionName(), ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT, submitCollectionReprot.getFrom(), submitCollectionReprot.getTo());
+        submitCollectionReprot.setTotalPageCount(reportEntityList.getTotalPages());
+        submitCollectionReprot.setTotalRecordsCount(reportEntityList.getTotalElements());
+        return this.mapSCResults(reportEntityList.getContent(), submitCollectionReprot);
+    }
+
+    public SubmitCollectionReprot submitCollectionExceptionReportExport(SubmitCollectionReprot submitCollectionReprot) {
+        List<ReportEntity> reportEntityList = reportDetailRepository.findByInstitutionAndTypeAndDateRange(submitCollectionReprot.getInstitutionName(), ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT, submitCollectionReprot.getFrom(), submitCollectionReprot.getTo());
+        return this.mapSCResults(reportEntityList, submitCollectionReprot);
+    }
     private List<ReportEntity> getReportEntities(String fileName, String institutionName, String reportType, Date from, Date to) {
         List<ReportEntity> reportEntityList;
         if(!institutionName.equalsIgnoreCase(ScsbCommonConstants.LCCN_CRITERIA) && (reportType.equalsIgnoreCase(ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT)
@@ -218,5 +238,25 @@ public class ReportGenerator {
 
     private String getFileNameLike(String fileName) {
         return fileName+"%";
+    }
+    private SubmitCollectionReprot mapSCResults(List<ReportEntity> reportEntityList, SubmitCollectionReprot submitCollectionReprot){
+        List<SubmitCollectionReportRecord> submitCollectionReportRecordList = new ArrayList<>();
+        SubmitCollectionReportGenerator submitCollectionReportGenerator = new SubmitCollectionReportGenerator();
+        for (ReportEntity reportEntity : reportEntityList) {
+            List<SubmitCollectionReportRecord> submitCollectionReportRecords = submitCollectionReportGenerator.prepareSubmitCollectionRejectionRecord(reportEntity);
+            submitCollectionReportRecordList.addAll(submitCollectionReportRecords);
+        }
+        List<SubmitCollectionResultsRow> submitCollectionResultsRowsList = new ArrayList<>();
+        SubmitCollectionResultsRow submitCollectionResultsRow = new SubmitCollectionResultsRow();
+        for (SubmitCollectionReportRecord submitCollectionReportRecord : submitCollectionReportRecordList) {
+            submitCollectionResultsRow.setCustomerCode(submitCollectionReportRecord.getCustomerCode());
+            submitCollectionResultsRow.setReportType(submitCollectionReportRecord.getReportType());
+            submitCollectionResultsRow.setItemBarcode(submitCollectionReportRecord.getItemBarcode());
+            submitCollectionResultsRow.setOwningInstitution(submitCollectionReportRecord.getOwningInstitution());
+            submitCollectionResultsRow.setMessage(submitCollectionReportRecord.getMessage());
+            submitCollectionResultsRowsList.add(submitCollectionResultsRow);
+        }
+        submitCollectionReprot.setSubmitCollectionResultsRows(submitCollectionResultsRowsList);
+        return submitCollectionReprot;
     }
 }

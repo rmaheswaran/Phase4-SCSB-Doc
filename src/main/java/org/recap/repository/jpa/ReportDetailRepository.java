@@ -131,6 +131,18 @@ public interface ReportDetailRepository extends BaseRepository<ReportEntity> {
     List<ReportEntity> findByFileAndInstitutionAndTypeAndDateRange(String fileName, String institutionName, String type, Date from, Date to);
 
     /**
+     *
+     * @param pageable
+     * @param institutionName
+     * @param type
+     * @param from
+     * @param to
+     * @return List of Report Entity
+     */
+    @Query(value= "select * from report_t where INSTITUTION_NAME=?1 and TYPE = ?2 and CREATED_DATE >= ?3 and CREATED_DATE <= ?4", nativeQuery = true)
+    Page<ReportEntity> findByInstitutionAndTypeandDateRange(Pageable pageable, String institutionName, String type, Date from, Date to);
+
+    /**
      * Finds a list of report entities based on the given institution,type and date range.
      *
      * @param institutionName the institution name
