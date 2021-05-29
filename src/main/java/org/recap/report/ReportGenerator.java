@@ -247,8 +247,8 @@ public class ReportGenerator {
             submitCollectionReportRecordList.addAll(submitCollectionReportRecords);
         }
         List<SubmitCollectionResultsRow> submitCollectionResultsRowsList = new ArrayList<>();
-        SubmitCollectionResultsRow submitCollectionResultsRow = new SubmitCollectionResultsRow();
         for (SubmitCollectionReportRecord submitCollectionReportRecord : submitCollectionReportRecordList) {
+            SubmitCollectionResultsRow submitCollectionResultsRow = new SubmitCollectionResultsRow();
             submitCollectionResultsRow.setCustomerCode(submitCollectionReportRecord.getCustomerCode());
             submitCollectionResultsRow.setReportType(submitCollectionReportRecord.getReportType());
             submitCollectionResultsRow.setItemBarcode(submitCollectionReportRecord.getItemBarcode());
