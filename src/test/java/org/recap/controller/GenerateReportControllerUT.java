@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -10,9 +11,11 @@ import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.model.solr.SolrIndexRequest;
+import org.recap.model.submitCollection.SubmitCollectionReprot;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.DateUtil;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -45,7 +48,12 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Mock
     DateUtil dateUtil;
 
+    @Mock
+    SubmitCollectionReprot submitCollectionReprot;
+
+
     @Test
+    @DisplayName("Test accession summary reports for file system")
     public void testAccessionSummaryReportForFileSystem() throws Exception{
         List<ReportEntity> reportEntityList = saveSummaryReportEntity();
         Date createdDate = reportEntityList.get(0).getCreatedDate();
@@ -59,6 +67,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         assertNotNull(reponse);
     }
     @Test
+    @DisplayName("Test ongoing accession summary reports for file system")
     public void testOngoingAccessionSummaryReportForFileSystem() throws Exception{
         List<ReportEntity> reportEntityList = saveSummaryReportEntity();
         Date createdDate = reportEntityList.get(0).getCreatedDate();
@@ -72,6 +81,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         assertNotNull(reponse);
     }
     @Test
+    @DisplayName("Test deaccession summary reports for file system")
     public void testDeaccessionSummaryReportForFileSystem() throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setReportType(ScsbCommonConstants.DEACCESSION_SUMMARY_REPORT);
@@ -82,6 +92,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         assertNotNull(reponse);
     }
     @Test
+    @DisplayName("Test solr rejected summary reports for file system")
     public void testSubmitRejectedSummaryReportForFileSystem() throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setReportType(ScsbCommonConstants.SUBMIT_COLLECTION_REJECTION_REPORT);
@@ -92,6 +103,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         assertNotNull(reponse);
     }
     @Test
+    @DisplayName("Test solr failure summary reports for file system")
     public void testSolrFailureSummaryReportForFileSystem() throws Exception{
         Date toDate = new Date();
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
@@ -105,6 +117,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     }
 
     @Test
+    @DisplayName("Test submit exception summary reports for file system")
     public void testSubmitExceptionSummaryReportForFileSystem() throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setReportType(ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT);
@@ -116,6 +129,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     }
 
     @Test
+    @DisplayName("Test submit success summary reports for file system")
     public void testSubmitSuccessSummaryReportForFileSystem() throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setReportType(ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT);
@@ -126,6 +140,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         assertNotNull(reponse);
     }
     @Test
+    @DisplayName("Test submit failure summary reports for file system")
     public void testSubmitFailureSummaryReportForFileSystem() throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setReportType(ScsbCommonConstants.SUBMIT_COLLECTION_FAILURE_REPORT);
@@ -137,6 +152,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     }
 
     @Test
+    @DisplayName("Test submit collection reports for file system")
     public void testSubmitSummaryReportForFileSystem() throws Exception{
         SolrIndexRequest solrIndexRequest = new SolrIndexRequest();
         solrIndexRequest.setReportType(ScsbConstants.SUBMIT_COLLECTION_SUMMARY_REPORT);
@@ -144,6 +160,20 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         solrIndexRequest.setTransmissionType(ScsbCommonConstants.FILE_SYSTEM);
         Mockito.when(reportGenerator.generateReport(Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn("");
         String reponse = generateReportController.generateReports(solrIndexRequest,bindingResult,model);
+        assertNotNull(reponse);
+    }
+    @Test
+    @DisplayName("Test submit collection reports when export disabled")
+    public void testSubmitCollectionReports() throws Exception{
+        ResponseEntity<SubmitCollectionReprot> reponse = generateReportController.submitCollectionReports(submitCollectionReprot);
+        assertNotNull(reponse);
+    }
+
+    @Test
+    @DisplayName("Test submit collection reports when export enabled")
+    public void testSubmitCollectionReports1() throws Exception{
+        Mockito.when(submitCollectionReprot.isExportEnabled()).thenReturn(true);
+        ResponseEntity<SubmitCollectionReprot> reponse = generateReportController.submitCollectionReports(submitCollectionReprot);
         assertNotNull(reponse);
     }
 
