@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by angelind on 25/7/17.
@@ -39,6 +40,9 @@ public class EmailService {
 
     @Value("${" + PropertyKeyConstants.SCSB_EMAIL_ASSIST_TO + "}")
     private String recapSupportEmailTo;
+
+    @Value("${" + PropertyKeyConstants.SCSB_CGD_REPORT_MAIL_SUBJECT + "}")
+    private String cgdReportEmailSubject;
 
     private String institutionCode;
 
@@ -74,7 +78,8 @@ public class EmailService {
      */
     public void sendEmailForMatchingReports(Exchange exchange) {
         logger.info("matching algorithm reports email started ");
-        producerTemplate.sendBodyAndHeader(ScsbConstants.EMAIL_Q, getEmailPayLoadForMatching(exchange), ScsbConstants.EMAIL_FOR, ScsbConstants.MATCHING_REPORTS);
+        String headerValue=Optional.ofNullable(exchange.getIn().getHeader(ScsbConstants.SUBJECT)).orElse("").equals(cgdReportEmailSubject)?cgdReportEmailSubject:ScsbConstants.MATCHING_REPORTS;
+        producerTemplate.sendBodyAndHeader(ScsbConstants.EMAIL_Q, getEmailPayLoadForMatching(exchange), ScsbConstants.EMAIL_FOR, headerValue);
     }
 
     /**
@@ -100,6 +105,8 @@ public class EmailService {
         String path = file.getParent();
         emailPayLoad.setTo(recapSupportEmailTo);
         getCc(emailPayLoad);
+        String subject = (String) exchange.getIn().getHeader(ScsbConstants.SUBJECT);
+        Optional.ofNullable(subject).ifPresent(ins->emailPayLoad.setSubject(subject));
         emailPayLoad.setMessage("The Reports for Matching Algorithm is available at the s3 location " + path);
         logger.info("Matching Algorithm Reports email has been sent to : {} and cc : {} ",emailPayLoad.getTo(),emailPayLoad.getCc());
         return emailPayLoad;

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.exception.CGDRoundTripReportException;
 import org.recap.model.jpa.ItemChangeLogEntity;
@@ -13,6 +14,7 @@ import org.recap.model.matchingreports.OngoingMatchingCGDReport;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -38,6 +40,9 @@ public class OngoingMatchingAlgorithmService {
 
     @Autowired
     ItemDetailsRepository itemDetailsRepository;
+
+    @Value("${" + PropertyKeyConstants.SCSB_CGD_REPORT_MAIL_SUBJECT + "}")
+    private String cgdReportEmailSubject;
 
     public String generateCGDRoundTripReport(){
         List<ItemChangeLogEntity> itemChangeLogEntityList = itemChangeLogDetailsRepository.findByUpdatedDateAndOperationType(LocalDate.now().toString(), ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE);
@@ -89,6 +94,7 @@ public class OngoingMatchingAlgorithmService {
         Map<String, Object> headers = new HashMap<>();
         headers.put(ScsbConstants.INSTITUTION, key);
         headers.put(ScsbConstants.FILE_NAME, ScsbConstants.CGD_ROUND_TRIP_REPORT);
+        headers.put(ScsbConstants.SUBJECT,cgdReportEmailSubject);
         producerTemplate.sendBodyAndHeaders(ScsbConstants.S3_ONGOING_MATCHING_CGD_REPORT_Q, value, headers);
     }
 }

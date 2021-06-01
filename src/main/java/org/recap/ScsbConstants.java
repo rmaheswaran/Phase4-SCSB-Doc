@@ -291,6 +291,7 @@ public final class ScsbConstants {
     public static final String SMTPS_USERNAME = "?username=";
     public static final String SMTPS_PASSWORD = "&password=";
     public static final String EMAIL_HEADER_MESSAGE = "${header.emailPayLoad.message}";
+    public static final String EMAIL_HEADER_SUBJECT = "${header.emailPayLoad.subject}";
     public static final String EMAIL_HEADER_TO = "${header.emailPayLoad.to}";
     public static final String EMAIL_HEADER_CC = "${header.emailPayLoad.cc}";
     public static final String MATCHING_REPORT_FILE_NAME_CAMEL_HEADER = "${in.header.fileName}-${date:now:ddMMMyyyyHHmmss}.csv";
