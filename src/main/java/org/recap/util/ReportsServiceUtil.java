@@ -100,6 +100,10 @@ public class ReportsServiceUtil {
                     reportsInstitutionForm.setSharedCgdCount(numFound);
                 } else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_PRIVATE)) {
                     reportsInstitutionForm.setPrivateCgdCount(numFound);
+                }else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_COMMITTED)) {
+                    reportsInstitutionForm.setCommittedCgdCount(numFound);
+                }else if (collectionGroupDesignation.equalsIgnoreCase(ScsbCommonConstants.REPORTS_UNCOMMITTABLE)) {
+                    reportsInstitutionForm.setUncommittableCgdCount(numFound);
                 }
             }
             reportsResponse.getReportsInstitutionFormList().add(reportsInstitutionForm);
