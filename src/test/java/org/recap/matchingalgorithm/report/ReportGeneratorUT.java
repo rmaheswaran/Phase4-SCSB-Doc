@@ -11,6 +11,7 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
+import org.recap.model.submitCollection.SubmitCollectionReprot;
 import org.recap.report.FSAccessionReportGenerator;
 import org.recap.report.FSSubmitCollectionFailureReportGenerator;
 import org.recap.report.FSSubmitCollectionSuccessReportGenerator;
@@ -23,6 +24,7 @@ import org.recap.report.S3SubmitCollectionRejectionReportGenerator;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.DateUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -62,6 +64,12 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
 
     @Mock
     ReportEntity reportEntity;
+
+    @Mock
+    ReportDataEntity reportDataEntity;
+
+    @Mock
+    SubmitCollectionReprot submitCollectionReprot;
 
     @Mock
     S3SubmitCollectionExceptionReportGenerator s3SubmitCollectionExceptionReportGenerator;
@@ -281,6 +289,36 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void submitCollectionExceptionReportGenerator() {
+        Page<ReportEntity> reportEntityList=Mockito.mock(Page.class);
+        List<ReportEntity> reportEntities=new ArrayList<>();
+        reportEntities.add(reportEntity);
+        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.BARCODE, "123456"));
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.CUSTOMER_CODE, "PA"));
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.OWNING_INSTITUTION, ScsbCommonConstants.PRINCETON));
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.MESSAGE, "testsubmit"));
+        Mockito.when(reportEntity.getReportDataEntities()).thenReturn(reportDataEntities);
+        Mockito.when(reportEntity.getType()).thenReturn(ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT);
+        Mockito.when(reportEntityList.getContent()).thenReturn(reportEntities);
+        Mockito.when(reportEntityList.getTotalPages()).thenReturn(1);
+        Mockito.when(reportEntityList.getTotalElements()).thenReturn(1l);
+        Mockito.when(submitCollectionReprot.getInstitutionName()).thenReturn(ScsbCommonConstants.PRINCETON);
+        Mockito.when(submitCollectionReprot.getPageNumber()).thenReturn(1);
+        Mockito.when(submitCollectionReprot.getPageSize()).thenReturn(1);
+        Mockito.when(reportDetailRepository.findByInstitutionAndTypeandDateRange(Mockito.any(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        SubmitCollectionReprot submitCollectionReport=  reportGenerator.submitCollectionExceptionReportGenerator(submitCollectionReprot);
+        assertNotNull(submitCollectionReport);
+    }
+
+    private ReportDataEntity getReportDataEntity(String barcode, String s) {
+        ReportDataEntity reportDataEntity = new ReportDataEntity();
+        reportDataEntity.setHeaderName(barcode);
+        reportDataEntity.setHeaderValue(s);
+        return reportDataEntity;
+    }
+
+    @Test
     public void testReportDataEntity(){
         ReportEntity reportEntity = new ReportEntity();
         reportEntity.setId(1);
@@ -333,34 +371,22 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         reportEntity.setCreatedDate(new Date());
         reportEntity.setInstitutionName("PUL");
 
-        ReportDataEntity successBibCountReportDataEntity = new ReportDataEntity();
-        successBibCountReportDataEntity.setHeaderName(ScsbCommonConstants.BIB_SUCCESS_COUNT);
-        successBibCountReportDataEntity.setHeaderValue(String.valueOf(1));
+        ReportDataEntity successBibCountReportDataEntity = getReportDataEntity(ScsbCommonConstants.BIB_SUCCESS_COUNT, String.valueOf(1));
         reportDataEntities.add(successBibCountReportDataEntity);
 
-        ReportDataEntity successItemCountReportDataEntity = new ReportDataEntity();
-        successItemCountReportDataEntity.setHeaderName(ScsbCommonConstants.ITEM_SUCCESS_COUNT);
-        successItemCountReportDataEntity.setHeaderValue(String.valueOf(1));
+        ReportDataEntity successItemCountReportDataEntity = getReportDataEntity(ScsbCommonConstants.ITEM_SUCCESS_COUNT, String.valueOf(1));
         reportDataEntities.add(successItemCountReportDataEntity);
 
-        ReportDataEntity failedBibCountReportDataEntity = new ReportDataEntity();
-        failedBibCountReportDataEntity.setHeaderName(ScsbCommonConstants.BIB_FAILURE_COUNT);
-        failedBibCountReportDataEntity.setHeaderValue(String.valueOf(0));
+        ReportDataEntity failedBibCountReportDataEntity = getReportDataEntity(ScsbCommonConstants.BIB_FAILURE_COUNT, String.valueOf(0));
         reportDataEntities.add(failedBibCountReportDataEntity);
 
-        ReportDataEntity failedItemCountReportDataEntity = new ReportDataEntity();
-        failedItemCountReportDataEntity.setHeaderName(ScsbCommonConstants.ITEM_FAILURE_COUNT);
-        failedItemCountReportDataEntity.setHeaderValue(String.valueOf(0));
+        ReportDataEntity failedItemCountReportDataEntity = getReportDataEntity(ScsbCommonConstants.ITEM_FAILURE_COUNT, String.valueOf(0));
         reportDataEntities.add(failedItemCountReportDataEntity);
 
-        ReportDataEntity reasonForBibFailureReportDataEntity = new ReportDataEntity();
-        reasonForBibFailureReportDataEntity.setHeaderName(ScsbConstants.FAILURE_BIB_REASON);
-        reasonForBibFailureReportDataEntity.setHeaderValue("");
+        ReportDataEntity reasonForBibFailureReportDataEntity = getReportDataEntity(ScsbConstants.FAILURE_BIB_REASON, "");
         reportDataEntities.add(reasonForBibFailureReportDataEntity);
 
-        ReportDataEntity reasonForItemFailureReportDataEntity = new ReportDataEntity();
-        reasonForItemFailureReportDataEntity.setHeaderName(ScsbConstants.FAILURE_ITEM_REASON);
-        reasonForItemFailureReportDataEntity.setHeaderValue("");
+        ReportDataEntity reasonForItemFailureReportDataEntity = getReportDataEntity(ScsbConstants.FAILURE_ITEM_REASON, "");
         reportDataEntities.add(reasonForItemFailureReportDataEntity);
 
         reportEntity.setReportDataEntities(reportDataEntities);

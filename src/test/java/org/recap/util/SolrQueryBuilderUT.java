@@ -1,6 +1,7 @@
 package org.recap.util;
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
@@ -165,6 +166,7 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
     }
 
     @Test
+    @DisplayName("Test Build Build solr query for cgd reports")
     public void buildSolrQueryForCGDReports(){
         SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForCGDReports("PUL",ScsbCommonConstants.SHARED_CGD);
         assertNotNull(solrQuery);
@@ -172,6 +174,7 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
     }
 
     @Test
+    @DisplayName("Test Build solr query for deaccesion report information")
     public void buildSolrQueryForDeaccesionReportInformation(){
         SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForDeaccesionReportInformation(new Date().toString(),"PUL",true);
         assertNotNull(solrQuery);
@@ -179,6 +182,7 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
     }
 
     @Test
+    @DisplayName("Test Build solr query for Incomplete reports")
     public void buildSolrQueryForIncompleteReports(){
         SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForIncompleteReports("PUL");
         assertNotNull(solrQuery);
@@ -186,9 +190,27 @@ public class SolrQueryBuilderUT extends BaseTestCaseUT {
     }
 
     @Test
+    @DisplayName("Test Build solr query for accession reports")
     public void buildSolrQueryForAccessionReports(){
         SolrQuery solrQuery=solrQueryBuilder.buildSolrQueryForAccessionReports(new Date().toString(),"PUL",true,ScsbCommonConstants.SHARED_CGD);
         assertNotNull(solrQuery);
         assertTrue(solrQuery.getQuery().contains(ScsbCommonConstants.SHARED_CGD));
     }
+
+    @Test
+    @DisplayName("Test Solr query for initial matching for listed matchingpointvale")
+    public void solrQueryForInitialMatchingList(){
+        String solrQuery=solrQueryBuilder.solrQueryForInitialMatching(ScsbCommonConstants.BARCODE,Arrays.asList("\\123456"));
+        assertNotNull(solrQuery);
+        assertTrue(solrQuery.contains("123456"));
+    }
+
+    @Test
+    @DisplayName("Test Solr query for initial matching")
+    public void solrQueryForInitialMatching(){
+        String solrQuery=solrQueryBuilder.solrQueryForInitialMatching(ScsbCommonConstants.BARCODE,"\\123456");
+        assertNotNull(solrQuery);
+        assertTrue(solrQuery.contains("123456"));
+    }
+
 }
