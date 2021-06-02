@@ -11,7 +11,7 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
-import org.recap.model.submitCollection.SubmitCollectionReprot;
+import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.report.FSAccessionReportGenerator;
 import org.recap.report.FSSubmitCollectionFailureReportGenerator;
 import org.recap.report.FSSubmitCollectionSuccessReportGenerator;
@@ -69,7 +69,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
     ReportDataEntity reportDataEntity;
 
     @Mock
-    SubmitCollectionReprot submitCollectionReprot;
+    SubmitCollectionReport submitCollectionReprot;
 
     @Mock
     S3SubmitCollectionExceptionReportGenerator s3SubmitCollectionExceptionReportGenerator;
@@ -307,7 +307,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(submitCollectionReprot.getPageNumber()).thenReturn(1);
         Mockito.when(submitCollectionReprot.getPageSize()).thenReturn(1);
         Mockito.when(reportDetailRepository.findByInstitutionAndTypeandDateRange(Mockito.any(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
-        SubmitCollectionReprot submitCollectionReport=  reportGenerator.submitCollectionExceptionReportGenerator(submitCollectionReprot);
+        SubmitCollectionReport submitCollectionReport=  reportGenerator.submitCollectionExceptionReportGenerator(submitCollectionReprot);
         assertNotNull(submitCollectionReport);
     }
 

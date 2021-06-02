@@ -11,7 +11,7 @@ import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.model.solr.SolrIndexRequest;
-import org.recap.model.submitCollection.SubmitCollectionReprot;
+import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.DateUtil;
@@ -49,7 +49,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     DateUtil dateUtil;
 
     @Mock
-    SubmitCollectionReprot submitCollectionReprot;
+    SubmitCollectionReport submitCollectionReprot;
 
 
     @Test
@@ -165,7 +165,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @Test
     @DisplayName("Test submit collection reports when export disabled")
     public void testSubmitCollectionReports() throws Exception{
-        ResponseEntity<SubmitCollectionReprot> reponse = generateReportController.submitCollectionReports(submitCollectionReprot);
+        ResponseEntity<SubmitCollectionReport> reponse = generateReportController.submitCollectionReports(submitCollectionReprot);
         assertNotNull(reponse);
     }
 
@@ -173,7 +173,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     @DisplayName("Test submit collection reports when export enabled")
     public void testSubmitCollectionReports1() throws Exception{
         Mockito.when(submitCollectionReprot.isExportEnabled()).thenReturn(true);
-        ResponseEntity<SubmitCollectionReprot> reponse = generateReportController.submitCollectionReports(submitCollectionReprot);
+        ResponseEntity<SubmitCollectionReport> reponse = generateReportController.submitCollectionReports(submitCollectionReprot);
         assertNotNull(reponse);
     }
 
