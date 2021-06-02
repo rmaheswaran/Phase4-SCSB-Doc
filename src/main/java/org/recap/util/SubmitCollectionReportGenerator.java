@@ -56,7 +56,6 @@ public class SubmitCollectionReportGenerator {
         }
         return submitCollectionReportRecordList;
     }
-
     private boolean isReportRecordFullyUpdated(SubmitCollectionReportRecord submitCollectionReportRecord){
         boolean newReportObject;
         if (null == submitCollectionReportRecord) {

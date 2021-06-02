@@ -1,12 +1,10 @@
 package org.recap.controller;
 
-import jdk.dynalink.linker.LinkerServices;
 import org.codehaus.plexus.util.StringUtils;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
-import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.solr.SolrIndexRequest;
-import org.recap.model.submitCollection.SubmitCollectionReprot;
+import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.report.ReportGenerator;
 import org.recap.util.DateUtil;
 import org.slf4j.Logger;
@@ -14,24 +12,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StopWatch;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by angelind on 11/11/16.
@@ -101,7 +93,7 @@ public class GenerateReportController {
     }
 
     @PostMapping("/submitCollectionReport")
-    public ResponseEntity<SubmitCollectionReprot> submitCollectionReports(@RequestBody SubmitCollectionReprot submitCollectionReprot) throws ParseException {
+    public ResponseEntity<SubmitCollectionReport> submitCollectionReports(@RequestBody SubmitCollectionReport submitCollectionReprot) throws ParseException {
         return (!submitCollectionReprot.isExportEnabled()) ?
                 new ResponseEntity<>(reportGenerator.submitCollectionExceptionReportGenerator(submitCollectionReprot), HttpStatus.OK) :
                 new ResponseEntity<>(reportGenerator.submitCollectionExceptionReportExport(submitCollectionReprot), HttpStatus.OK);
