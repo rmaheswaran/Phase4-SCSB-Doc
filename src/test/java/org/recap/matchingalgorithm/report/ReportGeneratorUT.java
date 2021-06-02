@@ -11,7 +11,7 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
-import org.recap.model.submitCollection.SubmitCollectionReprot;
+import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.report.FSAccessionReportGenerator;
 import org.recap.report.FSSubmitCollectionFailureReportGenerator;
 import org.recap.report.FSSubmitCollectionSuccessReportGenerator;

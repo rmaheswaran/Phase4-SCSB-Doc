@@ -11,7 +11,7 @@ import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.recap.model.solr.SolrIndexRequest;
-import org.recap.model.submitCollection.SubmitCollectionReprot;
+import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.DateUtil;
