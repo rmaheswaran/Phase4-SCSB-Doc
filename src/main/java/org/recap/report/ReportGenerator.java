@@ -5,7 +5,7 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.csv.SubmitCollectionReportRecord;
 import org.recap.model.jpa.ReportEntity;
-import org.recap.model.submitCollection.SubmitCollectionReprot;
+import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.model.submitCollection.SubmitCollectionResultsRow;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.SubmitCollectionReportGenerator;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
@@ -143,7 +142,7 @@ public class ReportGenerator {
         return null;
     }
 
-    public SubmitCollectionReprot submitCollectionExceptionReportGenerator(SubmitCollectionReprot submitCollectionReprot) {
+    public SubmitCollectionReport submitCollectionExceptionReportGenerator(SubmitCollectionReport submitCollectionReprot) {
         Pageable pageable = PageRequest.of(submitCollectionReprot.getPageNumber(), submitCollectionReprot.getPageSize());
         Page<ReportEntity> reportEntityList = reportDetailRepository.findByInstitutionAndTypeandDateRange(pageable, submitCollectionReprot.getInstitutionName(), ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT, submitCollectionReprot.getFrom(), submitCollectionReprot.getTo());
         submitCollectionReprot.setTotalPageCount(reportEntityList.getTotalPages());
@@ -151,7 +150,7 @@ public class ReportGenerator {
         return this.mapSCResults(reportEntityList.getContent(), submitCollectionReprot);
     }
 
-    public SubmitCollectionReprot submitCollectionExceptionReportExport(SubmitCollectionReprot submitCollectionReprot) {
+    public SubmitCollectionReport submitCollectionExceptionReportExport(SubmitCollectionReport submitCollectionReprot) {
         List<ReportEntity> reportEntityList = reportDetailRepository.findByInstitutionAndTypeAndDateRange(submitCollectionReprot.getInstitutionName(), ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT, submitCollectionReprot.getFrom(), submitCollectionReprot.getTo());
         return this.mapSCResults(reportEntityList, submitCollectionReprot);
     }
@@ -239,12 +238,13 @@ public class ReportGenerator {
     private String getFileNameLike(String fileName) {
         return fileName+"%";
     }
-    private SubmitCollectionReprot mapSCResults(List<ReportEntity> reportEntityList, SubmitCollectionReprot submitCollectionReprot){
+    private SubmitCollectionReport mapSCResults(List<ReportEntity> reportEntityList, SubmitCollectionReport submitCollectionReprot){
         List<SubmitCollectionReportRecord> submitCollectionReportRecordList = new ArrayList<>();
         SubmitCollectionReportGenerator submitCollectionReportGenerator = new SubmitCollectionReportGenerator();
         for (ReportEntity reportEntity : reportEntityList) {
             List<SubmitCollectionReportRecord> submitCollectionReportRecords = submitCollectionReportGenerator.prepareSubmitCollectionRejectionRecord(reportEntity);
             submitCollectionReportRecordList.addAll(submitCollectionReportRecords);
+
         }
         List<SubmitCollectionResultsRow> submitCollectionResultsRowsList = new ArrayList<>();
         for (SubmitCollectionReportRecord submitCollectionReportRecord : submitCollectionReportRecordList) {
