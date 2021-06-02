@@ -69,7 +69,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
     ReportDataEntity reportDataEntity;
 
     @Mock
-    SubmitCollectionReprot submitCollectionReprot;
+    SubmitCollectionReport submitCollectionReprot;
 
     @Mock
     S3SubmitCollectionExceptionReportGenerator s3SubmitCollectionExceptionReportGenerator;

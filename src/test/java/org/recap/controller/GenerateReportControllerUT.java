@@ -49,7 +49,7 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
     DateUtil dateUtil;
 
     @Mock
-    SubmitCollectionReprot submitCollectionReprot;
+    SubmitCollectionReport submitCollectionReprot;
 
 
     @Test
