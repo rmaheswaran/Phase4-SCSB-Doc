@@ -307,7 +307,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
         Mockito.when(submitCollectionReprot.getPageNumber()).thenReturn(1);
         Mockito.when(submitCollectionReprot.getPageSize()).thenReturn(1);
         Mockito.when(reportDetailRepository.findByInstitutionAndTypeandDateRange(Mockito.any(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
-        SubmitCollectionReprot submitCollectionReport=  reportGenerator.submitCollectionExceptionReportGenerator(submitCollectionReprot);
+        SubmitCollectionReport submitCollectionReport=  reportGenerator.submitCollectionExceptionReportGenerator(submitCollectionReprot);
         assertNotNull(submitCollectionReport);
     }
 
