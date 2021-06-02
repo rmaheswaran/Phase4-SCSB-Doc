@@ -1,6 +1,8 @@
 package org.recap.camel.route;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.io.FileUtils;
 import org.recap.PropertyKeyConstants;
@@ -32,6 +34,7 @@ public class EmailRouteBuilder {
     private String emailBodyForBatchJob;
     private String emailPassword;
 
+
     /**
      * This method instantiates a new route builder to send email.
      *
@@ -48,7 +51,9 @@ public class EmailRouteBuilder {
     @Autowired
     public EmailRouteBuilder(CamelContext context, @Value("${" + PropertyKeyConstants.EMAIL_SMTP_SERVER_USERNAME + "}") String username, @Value("${" + PropertyKeyConstants.EMAIL_SMTP_SERVER_PASSWORD_FILE + "}") String passwordDirectory,
                              @Value("${" + PropertyKeyConstants.EMAIL_SMTP_SERVER_ADDRESS_FROM + "}") String from, @Value("${" + PropertyKeyConstants.EMAIL_SCSB_UPDATECGD_TO + "}") String upadteCgdTo, @Value("${" + PropertyKeyConstants.EMAIL_SCSB_UPDATECGD_CC + "}") String updateCGDCC, @Value("${" + PropertyKeyConstants.EMAIL_SCSB_BATCH_JOB_TO + "}") String batchJobTo,
-                             @Value("${" + PropertyKeyConstants.EMAIL_SCSB_UPDATECGD_SUBJECT + "}") String updateCgdSubject, @Value("${" + PropertyKeyConstants.EMAIL_SCSB_BATCH_JOB_SUBJECT + "}") String batchJobSubject, @Value("${" + PropertyKeyConstants.EMAIL_SMTP_SERVER + "}") String smtpServer) {
+                             @Value("${" + PropertyKeyConstants.EMAIL_SCSB_UPDATECGD_SUBJECT + "}") String updateCgdSubject, @Value("${" + PropertyKeyConstants.EMAIL_SCSB_BATCH_JOB_SUBJECT + "}") String batchJobSubject, @Value("${" + PropertyKeyConstants.EMAIL_SMTP_SERVER + "}") String smtpServer
+    ,@Value("${" + PropertyKeyConstants.SCSB_CGD_REPORT_MAIL_SUBJECT + "}")
+    String cgdReportEmailSubject) {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -85,6 +90,14 @@ public class EmailRouteBuilder {
                                         .setHeader("to", simple(ScsbConstants.EMAIL_HEADER_TO))
                                         .setHeader("cc", simple(ScsbConstants.EMAIL_HEADER_CC))
                                         .log("Email For Matching algorithm reports")
+                                        .to(ScsbConstants.SMTPS_PREFIX + smtpServer + ScsbConstants.SMTPS_USERNAME + username + ScsbConstants.SMTPS_PASSWORD + emailPassword)
+                                    .when(header(ScsbConstants.EMAIL_FOR).isEqualTo(cgdReportEmailSubject))
+                                        .setHeader(ScsbConstants.SUBJECT, simple(ScsbConstants.EMAIL_HEADER_SUBJECT))
+                                        .setBody(simple(ScsbConstants.EMAIL_HEADER_MESSAGE))
+                                        .setHeader("from", simple(from))
+                                        .setHeader("to", simple(ScsbConstants.EMAIL_HEADER_TO))
+                                        .setHeader("cc", simple(ScsbConstants.EMAIL_HEADER_CC))
+                                        .log("Email For Matching algorithm CGD reports")
                                         .to(ScsbConstants.SMTPS_PREFIX + smtpServer + ScsbConstants.SMTPS_USERNAME + username + ScsbConstants.SMTPS_PASSWORD + emailPassword)
                                     .when(header(ScsbConstants.EMAIL_FOR).isEqualTo(ScsbConstants.ACCESSION_REPORTS))
                                         .setHeader(ScsbConstants.SUBJECT, simple(ScsbConstants.ACCESSION_BATCH_COMPLETE))
