@@ -270,11 +270,11 @@ public final class SearchRecordsUtil {
     private boolean isEmptySearch(SearchRecordsRequest searchRecordsRequest) {
         boolean emptySearch = false;
         if (searchRecordsRequest.getMaterialTypes().isEmpty() && searchRecordsRequest.getAvailability().isEmpty() &&
-                searchRecordsRequest.getCollectionGroupDesignations().isEmpty() && ((searchRecordsRequest.getOwningInstitutions().size() == 0) ? true : false) && searchRecordsRequest.getUseRestrictions().isEmpty()) {
+                searchRecordsRequest.getCollectionGroupDesignations().isEmpty() && ((searchRecordsRequest.getOwningInstitutions().size() == 0) ? true : false) && searchRecordsRequest.getUseRestrictions().isEmpty() && searchRecordsRequest.getImsDepositoryCodes().isEmpty()) {
             emptySearch = true;
         } else if(!((CollectionUtils.isNotEmpty(searchRecordsRequest.getMaterialTypes()) || ((searchRecordsRequest.getOwningInstitutions().size() == 0)  ? false : true)) &&
                 (CollectionUtils.isNotEmpty(searchRecordsRequest.getAvailability()) || CollectionUtils.isNotEmpty(searchRecordsRequest.getCollectionGroupDesignations())
-                        || CollectionUtils.isNotEmpty(searchRecordsRequest.getUseRestrictions())))) {
+                        || CollectionUtils.isNotEmpty(searchRecordsRequest.getUseRestrictions()) || CollectionUtils.isNotEmpty(searchRecordsRequest.getImsDepositoryCodes())))) {
             emptySearch = true;
         }
         return emptySearch;
