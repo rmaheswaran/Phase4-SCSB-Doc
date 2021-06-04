@@ -92,6 +92,12 @@ public class GenerateReportController {
         return status;
     }
 
+    /**
+     *
+     * @param submitCollectionReprot
+     * @return
+     * @throws ParseException
+     */
     @PostMapping("/submitCollectionReport")
     public ResponseEntity<SubmitCollectionReport> submitCollectionReports(@RequestBody SubmitCollectionReport submitCollectionReprot) throws ParseException {
         return (!submitCollectionReprot.isExportEnabled()) ?

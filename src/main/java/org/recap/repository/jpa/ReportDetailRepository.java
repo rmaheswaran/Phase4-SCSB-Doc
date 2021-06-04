@@ -151,7 +151,7 @@ public interface ReportDetailRepository extends BaseRepository<ReportEntity> {
      * @param to              the to
      * @return the list
      */
-    @Query(value = "select * from report_t where INSTITUTION_NAME=?1 and TYPE=?2 and CREATED_DATE >= ?3 and CREATED_DATE <= ?4", nativeQuery = true)
+    @Query(value = "select * from report_t where INSTITUTION_NAME=?1 and TYPE=?2 and CREATED_DATE >= ?3 and CREATED_DATE <= ?4 ORDER BY CREATED_DATE DESC", nativeQuery = true)
     List<ReportEntity> findByInstitutionAndTypeAndDateRange(String institutionName, String type, Date from, Date to);
 
     /**

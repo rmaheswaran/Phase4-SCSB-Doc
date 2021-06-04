@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
@@ -143,7 +144,7 @@ public class ReportGenerator {
     }
 
     public SubmitCollectionReport submitCollectionExceptionReportGenerator(SubmitCollectionReport submitCollectionReprot) {
-        Pageable pageable = PageRequest.of(submitCollectionReprot.getPageNumber(), submitCollectionReprot.getPageSize());
+        Pageable pageable = PageRequest.of(submitCollectionReprot.getPageNumber(), submitCollectionReprot.getPageSize(), Sort.Direction.DESC,ScsbConstants.COLUMN_CREATED_DATE);
         Page<ReportEntity> reportEntityList = reportDetailRepository.findByInstitutionAndTypeandDateRange(pageable, submitCollectionReprot.getInstitutionName(), ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT, submitCollectionReprot.getFrom(), submitCollectionReprot.getTo());
         submitCollectionReprot.setTotalPageCount(reportEntityList.getTotalPages());
         submitCollectionReprot.setTotalRecordsCount(reportEntityList.getTotalElements());
@@ -240,21 +241,20 @@ public class ReportGenerator {
     }
     private SubmitCollectionReport mapSCResults(List<ReportEntity> reportEntityList, SubmitCollectionReport submitCollectionReprot){
         List<SubmitCollectionReportRecord> submitCollectionReportRecordList = new ArrayList<>();
+        List<SubmitCollectionResultsRow> submitCollectionResultsRowsList = new ArrayList<>();
         SubmitCollectionReportGenerator submitCollectionReportGenerator = new SubmitCollectionReportGenerator();
         for (ReportEntity reportEntity : reportEntityList) {
             List<SubmitCollectionReportRecord> submitCollectionReportRecords = submitCollectionReportGenerator.prepareSubmitCollectionRejectionRecord(reportEntity);
-            submitCollectionReportRecordList.addAll(submitCollectionReportRecords);
-
-        }
-        List<SubmitCollectionResultsRow> submitCollectionResultsRowsList = new ArrayList<>();
-        for (SubmitCollectionReportRecord submitCollectionReportRecord : submitCollectionReportRecordList) {
-            SubmitCollectionResultsRow submitCollectionResultsRow = new SubmitCollectionResultsRow();
-            submitCollectionResultsRow.setCustomerCode(submitCollectionReportRecord.getCustomerCode());
-            submitCollectionResultsRow.setReportType(submitCollectionReportRecord.getReportType());
-            submitCollectionResultsRow.setItemBarcode(submitCollectionReportRecord.getItemBarcode());
-            submitCollectionResultsRow.setOwningInstitution(submitCollectionReportRecord.getOwningInstitution());
-            submitCollectionResultsRow.setMessage(submitCollectionReportRecord.getMessage());
-            submitCollectionResultsRowsList.add(submitCollectionResultsRow);
+            for (SubmitCollectionReportRecord submitCollectionReportRecord : submitCollectionReportRecords) {
+                SubmitCollectionResultsRow submitCollectionResultsRow = new SubmitCollectionResultsRow();
+                submitCollectionResultsRow.setCustomerCode(submitCollectionReportRecord.getCustomerCode());
+                submitCollectionResultsRow.setReportType(submitCollectionReportRecord.getReportType());
+                submitCollectionResultsRow.setItemBarcode(submitCollectionReportRecord.getItemBarcode());
+                submitCollectionResultsRow.setOwningInstitution(submitCollectionReportRecord.getOwningInstitution());
+                submitCollectionResultsRow.setMessage(submitCollectionReportRecord.getMessage());
+                submitCollectionResultsRow.setCreatedDate(reportEntity.getCreatedDate());
+                submitCollectionResultsRowsList.add(submitCollectionResultsRow);
+            }
         }
         submitCollectionReprot.setSubmitCollectionResultsRows(submitCollectionResultsRowsList);
         return submitCollectionReprot;
