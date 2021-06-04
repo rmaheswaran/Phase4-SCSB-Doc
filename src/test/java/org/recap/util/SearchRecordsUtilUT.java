@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.recap.BaseTestCaseUT;
 import org.recap.BaseTestCaseUT4;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
@@ -22,9 +21,15 @@ import org.recap.repository.solr.main.DataDumpSolrDocumentRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 24/2/17.
@@ -69,7 +74,41 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT4 {
         searchResponse.put(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE,bibItems);
         Mockito.when(bibSolrDocumentRepository.search(Mockito.any(SearchRecordsRequest.class))).thenReturn(searchResponse);
         Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HL", supportInstitution));
+        List<SearchResultRow> searchRecords = searchRecordsUtil.searchRecords(searchRecordsRequest);
+        assertNotNull(searchRecords);
+    }
 
+    @Test
+    public void searchRecordsErrorServerDown() throws Exception {
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        searchRecordsRequest.setOwningInstitutions(Arrays.asList("PUL","CUL","NYPL","HL"));
+        Map<String, Object> searchResponse=new HashMap<>();
+        searchResponse.put(ScsbCommonConstants.SEARCH_ERROR_RESPONSE,ScsbCommonConstants.SEARCH_ERROR_RESPONSE);
+        Mockito.when(bibSolrDocumentRepository.search(Mockito.any(SearchRecordsRequest.class))).thenReturn(searchResponse);
+        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HL", supportInstitution));
+        List<SearchResultRow> searchRecords = searchRecordsUtil.searchRecords(searchRecordsRequest);
+        assertNotNull(searchRecords);
+    }
+
+
+    @Test
+    public void searchRecordsNotAvailable() throws Exception {
+        Map<String, String> propertyMap = getCirculationFreezePropertyMap();
+        Mockito.when(propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE)).thenReturn(propertyMap);
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        searchRecordsRequest.setOwningInstitutions(Arrays.asList("PUL","CUL","NYPL","HL"));
+        Map<String, Object> searchResponse=new HashMap<>();
+        BibItem bibItem=getBibItemList().get(0);
+        bibItem.setLeaderMaterialType(ScsbCommonConstants.SERIAL);
+        bibItem.getItems().get(0).setAvailabilityDisplay(ScsbCommonConstants.NOT_AVAILABLE);
+        Item item= bibItem.getItems().get(0);
+        item.setAvailabilityDisplay(ScsbCommonConstants.AVAILABLE);
+        bibItem.getItems().add(item);
+        List<BibItem> bibItems =new ArrayList<>() ;
+        bibItems.add(bibItem);
+        searchResponse.put(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE,bibItems);
+        Mockito.when(bibSolrDocumentRepository.search(Mockito.any(SearchRecordsRequest.class))).thenReturn(searchResponse);
+        Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HL", supportInstitution));
         List<SearchResultRow> searchRecords = searchRecordsUtil.searchRecords(searchRecordsRequest);
         assertNotNull(searchRecords);
     }
@@ -149,6 +188,7 @@ public class SearchRecordsUtilUT extends BaseTestCaseUT4 {
         searchRecordsRequest.setCollectionGroupDesignations(new ArrayList<>());
         searchRecordsRequest.setOwningInstitutions(new ArrayList<>());
         searchRecordsRequest.setUseRestrictions(new ArrayList<>());
+        searchRecordsRequest.setImsDepositoryCodes(new ArrayList<>());
         List<SearchResultRow> searchRecordsEmpty = searchRecordsUtil.searchRecords(searchRecordsRequest);
         assertNotNull(searchRecordsEmpty);
     }

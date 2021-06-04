@@ -310,6 +310,8 @@ public class MatchingAlgorithmHelperServiceUT extends BaseTestCaseUT {
         Mockito.when(matchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1000, ScsbCommonConstants.MATCH_POINT_FIELD_ISBN, getStringIntegerMap())).thenReturn(countMap);
         Mockito.when(matchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1000, ScsbCommonConstants.MATCH_POINT_FIELD_ISSN, getStringIntegerMap())).thenReturn(countMap);
         Mockito.when(matchingAlgorithmUtil.getSingleMatchBibsAndSaveReport(1000, ScsbCommonConstants.MATCH_POINT_FIELD_LCCN, getStringIntegerMap())).thenReturn(countMap);
+        List<String> allInstitutionCodeExceptSupportInstitution=Arrays.asList(ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.PRINCETON,ScsbCommonConstants.NYPL);
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(allInstitutionCodeExceptSupportInstitution);
         matchingAlgorithmHelperService.saveMatchingSummaryCount(getStringIntegerMap());
         Mockito.when(matchingBibDetailsRepository.findByStatus(PageRequest.of(0,1000), ScsbConstants.PENDING)).thenReturn(getMatchingBibEntity(matchingBibEntities));
         Mockito.when(matchingBibDetailsRepository.findByStatus(PageRequest.of(1,1000), ScsbConstants.PENDING)).thenReturn(getMatchingBibEntity(matchingBibEntities));

@@ -37,13 +37,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.recap.ScsbConstants.*;
+import static org.recap.ScsbConstants.MATCHING_COUNTER_UPDATED_OPEN;
 
 /**
  * Created by Anitha on 10/10/20.
@@ -104,8 +103,19 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+        Map<String,Integer> cgdCounterMap=new HashMap<>();
+        cgdCounterMap.put(MATCHING_COUNTER_SHARED,1);
+        cgdCounterMap.put(MATCHING_COUNTER_OPEN,1);
+        cgdCounterMap.put(MATCHING_COUNTER_UPDATED_SHARED,0);
+        cgdCounterMap.put(MATCHING_COUNTER_UPDATED_OPEN,0);
+        List<String> institutions= Arrays.asList("PUL","CUL","NYPL","HL","UC");
+        Map<String, Map<String, Integer>> institutionCounterMap=new HashMap<>();
+        for (String institution : institutions) {
+            institutionCounterMap.put(institution,cgdCounterMap);
+        }
         ReflectionTestUtils.setField(commonUtil,"institutionDetailsRepository",institutionDetailsRepository);
         ReflectionTestUtils.setField(matchingCounter,"scsbInstitutions",scsbInstitutions);
+        ReflectionTestUtils.setField(matchingCounter,"institutionCounterMap",institutionCounterMap);
         ReflectionTestUtils.setField(ongoingMatchingReportsService,"matchingReportsDirectory",matchingReportsDirectory);
     }
 
@@ -227,7 +237,9 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
     public void generateSummaryReport() throws Exception {
         String[] institutions={ScsbCommonConstants.PRINCETON,ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.NYPL};
         for (String institution:institutions) {
-        List<MatchingSummaryReport> matchingSummaryReports=new ArrayList<>();
+            List<String> allInstitutionCodeExceptSupportInstitution=Arrays.asList(ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.PRINCETON,ScsbCommonConstants.NYPL);
+            Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(allInstitutionCodeExceptSupportInstitution);
+            List<MatchingSummaryReport> matchingSummaryReports=new ArrayList<>();
         matchingSummaryReports.add(getMatchingSummaryReport(institution));
         SolrQuery solrQuery= new SolrQuery();
         Mockito.when(solrQueryBuilder.getCountQueryForParentAndChildCriteria(Mockito.any())).thenReturn(solrQuery);
@@ -256,9 +268,8 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
 
     @Test
     public void populateSummaryReport() throws Exception {
-        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenCallRealMethod();
         List<String> allInstitutionCodeExceptSupportInstitution=Arrays.asList(ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.PRINCETON,ScsbCommonConstants.NYPL);
-        Mockito.when(institutionDetailsRepository.findAllInstitutionCodesExceptSupportInstitution(Mockito.anyString())).thenReturn(allInstitutionCodeExceptSupportInstitution);
+        Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(allInstitutionCodeExceptSupportInstitution);
         List<InstitutionEntity> institutionEntities=new ArrayList<>();
         institutionEntities.add(TestUtil.getInstitutionEntity(3,ScsbCommonConstants.NYPL,ScsbCommonConstants.NYPL));
         institutionEntities.add(TestUtil.getInstitutionEntity(2,ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.COLUMBIA));

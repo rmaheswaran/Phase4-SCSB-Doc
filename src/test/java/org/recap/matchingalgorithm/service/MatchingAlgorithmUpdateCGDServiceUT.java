@@ -100,16 +100,15 @@ public class MatchingAlgorithmUpdateCGDServiceUT extends BaseTestCaseUT4 {
 
         @Test
         public void updateCGDProcessForMVMs() throws SolrServerException, InterruptedException, IOException {
-            Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenCallRealMethod();
             List<String> allInstitutionCodeExceptSupportInstitution=Arrays.asList(ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.PRINCETON,ScsbCommonConstants.NYPL);
-            Mockito.when(institutionDetailsRepository.findAllInstitutionCodesExceptSupportInstitution(Mockito.anyString())).thenReturn(allInstitutionCodeExceptSupportInstitution);
+            Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(allInstitutionCodeExceptSupportInstitution);
             Mockito.when(institutionDetailsRepository.findAll()).thenReturn(getInstitutionEntities());
             Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(getCollectionGroupEntities());
             Mockito.when(activeMqQueuesInfo.getActivemqQueuesInfo(Mockito.anyString())).thenReturn(1).thenReturn(0);
             matchingAlgorithmUpdateCGDService.updateCGDProcessForMonographs(1);
             matchingAlgorithmUpdateCGDService.updateCGDProcessForMVMs(1);
             matchingAlgorithmUpdateCGDService.updateCGDProcessForSerials(1);
-        assertNotNull(getCollectionGroupEntities());
+            assertNotNull(getCollectionGroupEntities());
     }
 
         @Test
