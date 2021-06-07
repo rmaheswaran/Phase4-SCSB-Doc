@@ -57,8 +57,7 @@ public class OngoingMatchingAlgorithmService {
                 throw new CGDRoundTripReportException(ScsbConstants.CGD_ROUND_TRIP_EXCEPTION_MESSAGE);
             }
             catch (CamelExecutionException camelExecutionException){
-                camelExecutionException.printStackTrace();
-                throw new CGDRoundTripReportException("Exception occurred in camel executing while trying to generate CGD Round Trip report",camelExecutionException.getCause());
+               throw new CGDRoundTripReportException("Exception occurred in camel executing while trying to generate CGD Round Trip report",camelExecutionException.getCause());
             }
             catch (NoSuchElementException elementException){
                 throw new CGDRoundTripReportException(ScsbConstants.CGD_ROUND_TRIP_EXCEPTION_MESSAGE,elementException.getCause());
