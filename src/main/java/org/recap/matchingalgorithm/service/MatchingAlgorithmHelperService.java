@@ -200,7 +200,7 @@ public class MatchingAlgorithmHelperService {
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                   logger.error(ScsbConstants.ERROR,e);
                 }
                 saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo(queueName);
             }
@@ -294,7 +294,7 @@ public class MatchingAlgorithmHelperService {
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error(ScsbConstants.ERROR,e);
                 }
                 saveMatchingBibsQ = getActiveMqQueuesInfo().getActivemqQueuesInfo("updateMatchingBibEntityQ");
             }
