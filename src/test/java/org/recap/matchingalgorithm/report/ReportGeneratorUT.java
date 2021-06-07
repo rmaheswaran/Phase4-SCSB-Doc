@@ -289,6 +289,25 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void submitCollectionExceptionReportExport() {
+        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.BARCODE, "123456"));
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.CUSTOMER_CODE, "PA"));
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.OWNING_INSTITUTION, ScsbCommonConstants.PRINCETON));
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.MESSAGE, "testsubmit"));
+        Mockito.when(reportEntity.getReportDataEntities()).thenReturn(reportDataEntities);
+        Mockito.when(reportEntity.getType()).thenReturn(ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT);
+        Mockito.when(submitCollectionReprot.getFrom()).thenReturn(new Date());
+        Mockito.when(submitCollectionReprot.getTo()).thenReturn(new Date());
+        Mockito.when(submitCollectionReprot.getInstitutionName()).thenReturn(ScsbCommonConstants.PRINCETON);
+        List<ReportEntity> reportEntities=new ArrayList<>();
+        reportEntities.add(reportEntity);
+        Mockito.when(reportDetailRepository.findByInstitutionAndTypeAndDateRange(Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntities);
+        SubmitCollectionReport submitCollectionExceptionReportExport= reportGenerator.submitCollectionExceptionReportExport(submitCollectionReprot);
+        assertNotNull(submitCollectionExceptionReportExport);
+    }
+
+    @Test
     public void submitCollectionExceptionReportGenerator() {
         Page<ReportEntity> reportEntityList=Mockito.mock(Page.class);
         List<ReportEntity> reportEntities=new ArrayList<>();
