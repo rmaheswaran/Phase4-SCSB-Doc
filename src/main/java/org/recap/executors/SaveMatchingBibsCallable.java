@@ -1,5 +1,6 @@
 package org.recap.executors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,7 @@ import java.util.concurrent.Callable;
 /**
  * Created by angelind on 4/11/16.
  */
+@Slf4j
 public class SaveMatchingBibsCallable implements Callable {
 
     private MatchingMatchPointsDetailsRepository matchingMatchPointsDetailsRepository;
@@ -117,6 +119,9 @@ public class SaveMatchingBibsCallable implements Callable {
                     matchingBibEntity.setTitle(bibItem.getTitleSubFieldA());
                     matchingBibEntity.setOclc(CollectionUtils.isNotEmpty(bibItem.getOclcNumber()) ? StringUtils.join(bibItem.getOclcNumber(), ",") : null);
                     matchingBibEntity.setIsbn(CollectionUtils.isNotEmpty(bibItem.getIsbn()) ? StringUtils.join(bibItem.getIsbn(), ",") : null);
+                    if (null != matchingBibEntity.getIsbn() && matchingBibEntity.getIsbn().length() > 1500) {
+                        log.info("Bib Id : {}, Length of ISBN: {}", bibId, matchingBibEntity.getIsbn().length());
+                    }
                     matchingBibEntity.setIssn(CollectionUtils.isNotEmpty(bibItem.getIssn()) ? StringUtils.join(bibItem.getIssn(), ",") : null);
                     matchingBibEntity.setLccn(bibItem.getLccn());
                     matchingBibEntity.setMaterialType(bibItem.getLeaderMaterialType());
