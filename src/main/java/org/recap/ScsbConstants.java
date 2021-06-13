@@ -14,7 +14,7 @@ public final class ScsbConstants {
     public static final String CGD_CHANGE_LOG_OPEN_TO_PRIVATE = "OpenToPrivate";
     public static final String TITLE_SUBFIELD_A = "Title_subfield_a";
     public static final String USE_RESTRICTION_DISPLAY = "UseRestriction_display";
-
+    public static final String SUCCESS = "success";
     //Camel Queues Constants
     public static final String FS_SUBMIT_COLLECTION_EXCEPTION_REPORT_Q = "scsbactivemq:queue:fsSubmitCollectionExceptionReportQ";
     public static final String FTP_SUBMIT_COLLECTION_EXCEPTION_REPORT_Q = "scsbactivemq:queue:ftpSubmitCollectionExceptionReportQ";

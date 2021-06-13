@@ -143,6 +143,17 @@ public interface ReportDetailRepository extends BaseRepository<ReportEntity> {
     Page<ReportEntity> findByInstitutionAndTypeandDateRange(Pageable pageable, String institutionName, String type, Date from, Date to);
 
     /**
+     *
+     * @param pageable
+     * @param institutionName
+     * @param type
+     * @param from
+     * @param to
+     * @return List Of Report Entity
+     */
+    @Query(value = "SELECT * FROM REPORT_T WHERE RECORD_NUM IN (SELECT RECORD_NUM FROM REPORT_DATA_T WHERE RECORD_NUM IN (SELECT RECORD_NUM  FROM REPORT_T WHERE  INSTITUTION_NAME = ?1 AND TYPE= ?2 AND CREATED_DATE >= ?3 AND CREATED_DATE <= ?4) AND HEADER_NAME = 'MESSAGE' AND HEADER_VALUE NOT LIKE '%Success%')", nativeQuery = true)
+    Page<ReportEntity> findByInstitutionAndTypeAndDateRangeAndAccession(Pageable pageable, String institutionName, String type, Date from, Date to);
+    /**
      * Finds a list of report entities based on the given institution,type and date range.
      *
      * @param institutionName the institution name
@@ -154,6 +165,16 @@ public interface ReportDetailRepository extends BaseRepository<ReportEntity> {
     @Query(value = "select * from report_t where INSTITUTION_NAME=?1 and TYPE=?2 and CREATED_DATE >= ?3 and CREATED_DATE <= ?4 ORDER BY CREATED_DATE DESC", nativeQuery = true)
     List<ReportEntity> findByInstitutionAndTypeAndDateRange(String institutionName, String type, Date from, Date to);
 
+    /**
+     *
+     * @param institutionName
+     * @param type
+     * @param from
+     * @param to
+     * @return List of Report Entity
+     */
+    @Query(value = "SELECT * FROM REPORT_T WHERE RECORD_NUM IN (SELECT RECORD_NUM FROM REPORT_DATA_T WHERE RECORD_NUM IN (SELECT RECORD_NUM  FROM REPORT_T WHERE  INSTITUTION_NAME = ?1 AND TYPE= ?2 AND CREATED_DATE >= ?3 AND CREATED_DATE <= ?4) AND HEADER_NAME = 'MESSAGE' AND HEADER_VALUE NOT LIKE '%Success%')", nativeQuery = true)
+    List<ReportEntity> findByInstitutionAndTypeAndDateRangeAndAccession(String institutionName, String type, Date from, Date to);
     /**
      * Deletes report data entities for the record num based on the given list of types.
      *
