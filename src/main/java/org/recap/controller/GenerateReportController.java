@@ -104,4 +104,17 @@ public class GenerateReportController {
                 new ResponseEntity<>(reportGenerator.submitCollectionExceptionReportGenerator(submitCollectionReprot), HttpStatus.OK) :
                 new ResponseEntity<>(reportGenerator.submitCollectionExceptionReportExport(submitCollectionReprot), HttpStatus.OK);
     }
+
+    /**
+     *
+     * @param submitCollectionReprot
+     * @return
+     * @throws ParseException
+     */
+    @PostMapping("/accessionException")
+    public ResponseEntity<SubmitCollectionReport> accessionException(@RequestBody SubmitCollectionReport submitCollectionReprot) throws ParseException {
+        return (!submitCollectionReprot.isExportEnabled()) ?
+                new ResponseEntity<>(reportGenerator.accessionExceptionReportGenerator(submitCollectionReprot), HttpStatus.OK) :
+                new ResponseEntity<>(reportGenerator.accessionExceptionReportExport(submitCollectionReprot), HttpStatus.OK);
+    }
 }

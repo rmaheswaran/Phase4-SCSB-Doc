@@ -148,12 +148,24 @@ public class ReportGenerator {
         Page<ReportEntity> reportEntityList = reportDetailRepository.findByInstitutionAndTypeandDateRange(pageable, submitCollectionReprot.getInstitutionName(), ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT, submitCollectionReprot.getFrom(), submitCollectionReprot.getTo());
         submitCollectionReprot.setTotalPageCount(reportEntityList.getTotalPages());
         submitCollectionReprot.setTotalRecordsCount(reportEntityList.getTotalElements());
-        return this.mapSCResults(reportEntityList.getContent(), submitCollectionReprot);
+        return mapSCResults(reportEntityList.getContent(), submitCollectionReprot);
+    }
+
+    public SubmitCollectionReport accessionExceptionReportGenerator(SubmitCollectionReport submitCollectionReprot) {
+        Pageable pageable = PageRequest.of(submitCollectionReprot.getPageNumber(), submitCollectionReprot.getPageSize(), Sort.Direction.DESC,ScsbConstants.COLUMN_CREATED_DATE);
+        Page<ReportEntity> reportEntityList = reportDetailRepository.findByInstitutionAndTypeAndDateRangeAndAccession(pageable, submitCollectionReprot.getInstitutionName(), ScsbConstants.ONGOING_ACCESSION_REPORT, submitCollectionReprot.getFrom(), submitCollectionReprot.getTo());
+        submitCollectionReprot.setTotalPageCount(reportEntityList.getTotalPages());
+        submitCollectionReprot.setTotalRecordsCount(reportEntityList.getTotalElements());
+        return mapAccessionResults(reportEntityList.getContent(), submitCollectionReprot);
     }
 
     public SubmitCollectionReport submitCollectionExceptionReportExport(SubmitCollectionReport submitCollectionReprot) {
         List<ReportEntity> reportEntityList = reportDetailRepository.findByInstitutionAndTypeAndDateRange(submitCollectionReprot.getInstitutionName(), ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT, submitCollectionReprot.getFrom(), submitCollectionReprot.getTo());
-        return this.mapSCResults(reportEntityList, submitCollectionReprot);
+        return mapSCResults(reportEntityList, submitCollectionReprot);
+    }
+    public SubmitCollectionReport accessionExceptionReportExport(SubmitCollectionReport submitCollectionReprot) {
+        List<ReportEntity> reportEntityList = reportDetailRepository.findByInstitutionAndTypeAndDateRangeAndAccession(submitCollectionReprot.getInstitutionName(), ScsbConstants.ONGOING_ACCESSION_REPORT, submitCollectionReprot.getFrom(), submitCollectionReprot.getTo());
+        return mapAccessionResults(reportEntityList, submitCollectionReprot);
     }
     private List<ReportEntity> getReportEntities(String fileName, String institutionName, String reportType, Date from, Date to) {
         List<ReportEntity> reportEntityList;
@@ -239,6 +251,7 @@ public class ReportGenerator {
     private String getFileNameLike(String fileName) {
         return fileName+"%";
     }
+
     private SubmitCollectionReport mapSCResults(List<ReportEntity> reportEntityList, SubmitCollectionReport submitCollectionReprot){
         List<SubmitCollectionReportRecord> submitCollectionReportRecordList = new ArrayList<>();
         List<SubmitCollectionResultsRow> submitCollectionResultsRowsList = new ArrayList<>();
@@ -254,6 +267,29 @@ public class ReportGenerator {
                 submitCollectionResultsRow.setMessage(submitCollectionReportRecord.getMessage());
                 submitCollectionResultsRow.setCreatedDate(reportEntity.getCreatedDate());
                 submitCollectionResultsRowsList.add(submitCollectionResultsRow);
+            }
+        }
+        submitCollectionReprot.setSubmitCollectionResultsRows(submitCollectionResultsRowsList);
+        return submitCollectionReprot;
+    }
+
+    private SubmitCollectionReport mapAccessionResults(List<ReportEntity> reportEntityList, SubmitCollectionReport submitCollectionReprot){
+        List<SubmitCollectionReportRecord> submitCollectionReportRecordList = new ArrayList<>();
+        List<SubmitCollectionResultsRow> submitCollectionResultsRowsList = new ArrayList<>();
+        SubmitCollectionReportGenerator submitCollectionReportGenerator = new SubmitCollectionReportGenerator();
+        for (ReportEntity reportEntity : reportEntityList) {
+            List<SubmitCollectionReportRecord> submitCollectionReportRecords = submitCollectionReportGenerator.prepareAcessuibExceptionRecord(reportEntity);
+            for (SubmitCollectionReportRecord submitCollectionReportRecord : submitCollectionReportRecords) {
+                SubmitCollectionResultsRow submitCollectionResultsRow = new SubmitCollectionResultsRow();
+                if(!submitCollectionReportRecord.getMessage().toLowerCase().contains(ScsbConstants.SUCCESS)) {
+                    submitCollectionResultsRow.setCustomerCode(submitCollectionReportRecord.getCustomerCode());
+                    submitCollectionResultsRow.setReportType(submitCollectionReportRecord.getReportType());
+                    submitCollectionResultsRow.setItemBarcode(submitCollectionReportRecord.getItemBarcode());
+                    submitCollectionResultsRow.setOwningInstitution(submitCollectionReportRecord.getOwningInstitution());
+                    submitCollectionResultsRow.setMessage(submitCollectionReportRecord.getMessage());
+                    submitCollectionResultsRow.setCreatedDate(reportEntity.getCreatedDate());
+                    submitCollectionResultsRowsList.add(submitCollectionResultsRow);
+                }
             }
         }
         submitCollectionReprot.setSubmitCollectionResultsRows(submitCollectionResultsRowsList);
