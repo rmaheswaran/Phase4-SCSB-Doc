@@ -56,6 +56,38 @@ public class SubmitCollectionReportGenerator {
         }
         return submitCollectionReportRecordList;
     }
+    /**
+     * This method prepares submit collection rejection report based on the given report entity.
+     *
+     * @param reportEntity the report entity
+     * @return the SubmitCollectionReportRecord list
+     */
+    public List<SubmitCollectionReportRecord> prepareAcessuibExceptionRecord(ReportEntity reportEntity) {
+        List<SubmitCollectionReportRecord> submitCollectionReportRecordList = new ArrayList<>();
+        List<ReportDataEntity> reportDataEntities = reportEntity.getReportDataEntities();
+        SubmitCollectionReportRecord submitCollectionReportRecord = null;
+        for (Iterator<ReportDataEntity> iterator = reportDataEntities.iterator(); iterator.hasNext(); ) {
+            if(null == submitCollectionReportRecord || isReportRecordFullyUpdatedAcession(submitCollectionReportRecord)){
+                submitCollectionReportRecord = new SubmitCollectionReportRecord();
+                submitCollectionReportRecord.setReportType(getReportType(reportEntity.getType()));
+            }
+            ReportDataEntity report =  iterator.next();
+            String headerValue = report.getHeaderValue();
+            String headerName = report.getHeaderName();
+            Method setterMethod = getSetterMethod(headerName);
+            if(null != setterMethod){
+                try {
+                    setterMethod.invoke(submitCollectionReportRecord, headerValue);
+                } catch (Exception e) {
+                    logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                }
+                if(isReportRecordFullyUpdatedAcession(submitCollectionReportRecord) ) {
+                    submitCollectionReportRecordList.add(submitCollectionReportRecord);
+                }
+            }
+        }
+        return submitCollectionReportRecordList;
+    }
     private boolean isReportRecordFullyUpdated(SubmitCollectionReportRecord submitCollectionReportRecord){
         boolean newReportObject;
         if (null == submitCollectionReportRecord) {
@@ -67,7 +99,16 @@ public class SubmitCollectionReportGenerator {
         newReportObject &= (null != submitCollectionReportRecord.getMessage());
         return newReportObject;
     }
-
+    private boolean isReportRecordFullyUpdatedAcession(SubmitCollectionReportRecord submitCollectionReportRecord){
+        boolean newReportObject;
+        if (null == submitCollectionReportRecord) {
+            return false;
+        }
+        newReportObject = (null != submitCollectionReportRecord.getCustomerCode());
+        newReportObject &= (null != submitCollectionReportRecord.getItemBarcode());
+        newReportObject &= (null != submitCollectionReportRecord.getMessage());
+        return newReportObject;
+    }
     private String getReportType(String type) {
         switch (type) {
             case ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT:
