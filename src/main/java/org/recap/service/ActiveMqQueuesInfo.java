@@ -48,7 +48,7 @@ public class ActiveMqQueuesInfo {
                 ResponseEntity<String> response = new RestTemplate().exchange(searchUrl, HttpMethod.GET, stringHttpEntity, String.class);
                 QueueSizeInfoJson queueInfo = new ObjectMapper().readValue(response.getBody(), QueueSizeInfoJson.class);
                 String queueValue = queueInfo.getValue();
-                if (queueValue != null || queueValue != "") {
+                if (queueValue != null && queueValue != "" && !queueValue.isEmpty()) {
                     queueSizeCount = Integer.valueOf(queueInfo.getValue());
                 }
                 break;
