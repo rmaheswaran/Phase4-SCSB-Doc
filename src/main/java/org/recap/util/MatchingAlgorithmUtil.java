@@ -636,6 +636,9 @@ public class MatchingAlgorithmUtil {
      */
     public void getReportDataEntity(String headerName, String headerValues, List<ReportDataEntity> reportDataEntities) {
         ReportDataEntity criteriaReportDataEntity = new ReportDataEntity();
+        if (headerValues.length() > 10000) {
+            logger.info(" Length of the header - {} - is- {}",headerName, headerValues);
+        }
         criteriaReportDataEntity.setHeaderName(headerName);
         criteriaReportDataEntity.setHeaderValue(headerValues);
         reportDataEntities.add(criteriaReportDataEntity);
