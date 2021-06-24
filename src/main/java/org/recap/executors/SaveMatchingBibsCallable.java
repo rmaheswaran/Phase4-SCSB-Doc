@@ -28,6 +28,8 @@ import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.util.CommonUtil;
 import org.recap.util.MatchingAlgorithmUtil;
 import org.recap.util.SolrQueryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.solr.core.SolrTemplate;
 
 import java.util.ArrayList;
@@ -42,6 +44,8 @@ import java.util.concurrent.Callable;
  * Created by angelind on 4/11/16.
  */
 public class SaveMatchingBibsCallable implements Callable {
+
+    private static final Logger logger = LoggerFactory.getLogger(SaveMatchingBibsCallable.class);
 
     private MatchingMatchPointsDetailsRepository matchingMatchPointsDetailsRepository;
     private String matchCriteria;
@@ -118,6 +122,10 @@ public class SaveMatchingBibsCallable implements Callable {
                     matchingBibEntity.setOclc(CollectionUtils.isNotEmpty(bibItem.getOclcNumber()) ? StringUtils.join(bibItem.getOclcNumber(), ",") : null);
                     matchingBibEntity.setIsbn(CollectionUtils.isNotEmpty(bibItem.getIsbn()) ? StringUtils.join(bibItem.getIsbn(), ",") : null);
                     matchingBibEntity.setIssn(CollectionUtils.isNotEmpty(bibItem.getIssn()) ? StringUtils.join(bibItem.getIssn(), ",") : null);
+                    if (null != matchingBibEntity.getIsbn() && matchingBibEntity.getIsbn().length() > 1500) {
+                        logger.info("Bib Id : {}, Length of ISBN: {}", bibId, matchingBibEntity.getIsbn().length());
+                    }
+
                     matchingBibEntity.setLccn(bibItem.getLccn());
                     matchingBibEntity.setMaterialType(bibItem.getLeaderMaterialType());
                     matchingBibEntity.setMatching(matchCriteria);

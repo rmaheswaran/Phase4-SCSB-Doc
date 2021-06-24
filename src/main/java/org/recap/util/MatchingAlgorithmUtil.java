@@ -305,17 +305,19 @@ public class MatchingAlgorithmUtil {
         for (Iterator<Integer> iterator = bibIdList.iterator(); iterator.hasNext(); ) {
             Integer bibId = iterator.next();
             MatchingBibEntity matchingBibEntity = matchingBibEntityMap.get(bibId);
-            owningInstSet.add(matchingBibEntity.getOwningInstitution());
-            owningInstList.add(matchingBibEntity.getOwningInstitution());
-            owningInstBibIds.add(matchingBibEntity.getOwningInstBibId());
-            bibIds.add(bibId);
-            materialTypeList.add(matchingBibEntity.getMaterialType());
-            materialTypeSet.add(matchingBibEntity.getMaterialType());
-            index = index + 1;
-            if(StringUtils.isNotBlank(matchingBibEntity.getTitle())) {
-                String titleHeader = ScsbCommonConstants.TITLE + index;
-                getReportDataEntity(titleHeader, matchingBibEntity.getTitle(), reportDataEntities);
-                titleMap.put(titleHeader, matchingBibEntity.getTitle());
+            if (matchingBibEntity != null) {
+                owningInstSet.add(matchingBibEntity.getOwningInstitution());
+                owningInstList.add(matchingBibEntity.getOwningInstitution());
+                owningInstBibIds.add(matchingBibEntity.getOwningInstBibId());
+                bibIds.add(bibId);
+                materialTypeList.add(matchingBibEntity.getMaterialType());
+                materialTypeSet.add(matchingBibEntity.getMaterialType());
+                index = index + 1;
+                if (StringUtils.isNotBlank(matchingBibEntity.getTitle())) {
+                    String titleHeader = ScsbCommonConstants.TITLE + index;
+                    getReportDataEntity(titleHeader, matchingBibEntity.getTitle(), reportDataEntities);
+                    titleMap.put(titleHeader, matchingBibEntity.getTitle());
+                }
             }
         }
 
@@ -484,7 +486,9 @@ public class MatchingAlgorithmUtil {
 
     private void setTrimmedHeaderValue(String headerName, ReportDataEntity bibIdReportDataEntity, String joinedHeaderValue) {
         int headerValueLength = joinedHeaderValue.length();
-        logger.info("Matching header value length : {}",headerValueLength);
+        if (headerValueLength > matchingHeaderValueLength) {
+            logger.info("Matching header value length : {} - Item No. - {}", headerValueLength,bibIdReportDataEntity.getRecordNum() );
+        }
         if (headerValueLength <= matchingHeaderValueLength){
             bibIdReportDataEntity.setHeaderValue(joinedHeaderValue);
         }else {
