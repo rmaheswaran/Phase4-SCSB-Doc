@@ -63,6 +63,9 @@ public final class SearchRecordsUtil {
             if (CollectionUtils.isEmpty(searchRecordsRequest.getOwningInstitutions())) {
                 searchRecordsRequest.setOwningInstitutions(commonUtil.findAllInstitutionCodesExceptSupportInstitution());
             }
+            if(searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_ISBN) || searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.MATCH_POINT_FIELD_ISSN)){
+                searchRecordsRequest.setFieldValue(searchRecordsRequest.getFieldValue().replaceAll(ScsbConstants.NUMBER_PATTERN, ""));
+            }
             modifySearchRequestForCirculationFreeze(searchRecordsRequest);
             if (CollectionUtils.isEmpty(searchRecordsRequest.getOwningInstitutions())) {
                 return new ArrayList<>();
