@@ -259,6 +259,12 @@ public class MatchingAlgorithmHelperService {
                         matchPoints1.append(StringUtils.isNotBlank(matchPoints2.toString()) ? "," : "").append(matchingBibEntity.getIssn());
                         matchPoints2.append(StringUtils.isNotBlank(matchPoints2.toString()) ? "," : "").append(matchingBibEntity.getLccn());
                     }
+                    if (matchPoint1.length() > 10000) {
+                        logger.info(" Length of the matchpoint - {} - Bib Id - {}",matchPoint1, bibId);
+                    }
+                    if (matchPoint2.length() > 10000) {
+                        logger.info(" Length of the matchpoint - {} - Bib Id - {}",matchPoint2, bibId);
+                    }
                     String[] matchPoint1List = matchPoints1.toString().split(",");
                     tempBibIds.addAll(getMatchingAlgorithmUtil().getBibIdsForCriteriaValue(matchPoint1AndBibIdMap, matchPoint1Set, matchPoint, matchPoint1, matchPoint1List, bibEntityMap, matchPoints1));
                 }
