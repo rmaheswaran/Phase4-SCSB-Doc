@@ -22,6 +22,7 @@ import org.recap.ScsbConstants;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.resolver.HoldingsValueResolver;
 import org.recap.model.solr.BibItem;
+import org.recap.model.solr.Holdings;
 import org.recap.model.solr.Item;
 import org.recap.util.CommonUtil;
 import org.recap.util.SolrQueryBuilder;
@@ -29,10 +30,7 @@ import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -60,6 +58,9 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT4 {
     @Mock
     HoldingsValueResolver holdingsValueResolver;
 
+    @Mock
+    SolrDocument holdingsSolrDocument;
+
     @Test
     public void searchIsEmptyField() throws Exception{
         SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
@@ -81,6 +82,36 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT4 {
         SolrDocumentList solrDocumentList = getSolrDocumentList();
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenReturn(solrDocumentList);
+        BibItem bibItem=new BibItem();
+        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(),Mockito.anyCollection(),Mockito.any())).thenReturn(bibItem);
+        Item item=new Item();
+        item.setDocType("doctype");
+        Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(item);
+        Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
+        assertTrue(search.containsKey(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE));
+    }
+
+    @Test
+    public void searchIsEmptyFieldSolrServerException() throws Exception{
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        searchRecordsRequest.setRequestingInstitution("NYPL");
+        searchRecordsRequest.setFieldValue("Shared");
+        searchRecordsRequest.setFieldName("test");
+        searchRecordsRequest.setPageSize(1);
+        searchRecordsRequest.setPageNumber(1);
+        searchRecordsRequest.setCatalogingStatus("Shared");
+        SolrQuery queryForParentAndChildCriteria=new SolrQuery();
+        Mockito.when(solrQueryBuilder.getQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        Mockito.when(solrQueryBuilder.getCountQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        SolrDocumentList solrDocumentList = getSolrDocumentList();
+        Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+        Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenThrow(SolrServerException.class);
         BibItem bibItem=new BibItem();
         Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(),Mockito.anyCollection(),Mockito.any())).thenReturn(bibItem);
         Item item=new Item();
@@ -171,6 +202,36 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT4 {
     }
 
     @Test
+    public void searchIsItemFieldSolrServerException() throws Exception{
+        SearchRecordsRequest searchRecordsRequest=new SearchRecordsRequest();
+        searchRecordsRequest.setRequestingInstitution("NYPL");
+        searchRecordsRequest.setFieldValue("NA");
+        searchRecordsRequest.setFieldName(ScsbCommonConstants.CUSTOMER_CODE);
+        searchRecordsRequest.setPageSize(1);
+        searchRecordsRequest.setPageNumber(1);
+        searchRecordsRequest.setCatalogingStatus("Shared");
+        SolrQuery queryForParentAndChildCriteria=new SolrQuery();
+        Mockito.when(solrQueryBuilder.getQueryForChildAndParentCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        Mockito.when(solrQueryBuilder.getCountQueryForParentAndChildCriteria(Mockito.any())).thenReturn(queryForParentAndChildCriteria);
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        ReflectionTestUtils.setField(bibSolrDocumentRepository,"solrTemplate",mocksolrTemplate1);
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        SolrDocumentList solrDocumentList = getSolrDocumentList();
+        Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+        Mockito.when(commonUtil.getSolrDocumentsByDocType(null,mocksolrTemplate1)).thenThrow(SolrServerException.class);
+        BibItem bibItem=new BibItem();
+        Mockito.when(commonUtil.getBibItemFromSolrFieldNames(Mockito.any(),Mockito.anyCollection(),Mockito.any())).thenReturn(bibItem);
+        Item item=new Item();
+        item.setDocType("doctype");
+        Mockito.when(commonUtil.getItem(Mockito.any())).thenReturn(item);
+        Map<String, Object> search=bibSolrDocumentRepository.search(searchRecordsRequest);
+        assertTrue(search.containsKey(ScsbCommonConstants.SEARCH_SUCCESS_RESPONSE));
+    }
+
+    @Test
     public void getPageNumberOnPageSizeChangeException() throws Exception{
         SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
         searchRecordsRequest.setTotalBibRecordsCount("U");
@@ -212,6 +273,17 @@ public class BibSolrDocumentRepositoryImplUT extends BaseTestCaseUT4 {
             int page = bibSolrDocumentRepository.getPageNumberOnPageSizeChange(searchRecordsRequest);
             assertNotNull(page);
         }
+    }
+
+    @Test
+    public void getHoldings() {
+        List<HoldingsValueResolver> holdingsValueResolvers =new ArrayList<>();
+        holdingsValueResolvers.add(holdingsValueResolver);
+        Mockito.when(holdingsValueResolver.isInterested(Mockito.any())).thenReturn(true);
+        Mockito.when(commonUtil.getHoldingsValueResolvers()).thenReturn(holdingsValueResolvers);
+        Mockito.when(holdingsSolrDocument.getFieldNames()).thenReturn(Collections.singleton("id"));
+        Holdings holdings=bibSolrDocumentRepository.getHoldings(holdingsSolrDocument);
+        assertNotNull(holdings);
     }
 
     private SolrDocumentList getSolrDocumentList() {
