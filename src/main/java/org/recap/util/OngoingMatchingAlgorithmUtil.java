@@ -485,7 +485,7 @@ public class OngoingMatchingAlgorithmUtil {
             Map<Integer, ItemEntity> itemEntityMap = new HashMap<>();
             if(materialTypes.contains(ScsbCommonConstants.MONOGRAPH)) {
                 Set<String> materialTypeSet = new HashSet<>();
-                boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList);
+                boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList,ScsbConstants.ONGOING_MATCHING_OPERATION_TYPE);
                 if(isMonograph) {
                     if(matchType.equalsIgnoreCase(ScsbConstants.SINGLE_MATCH)) {
                         ReportEntity reportEntityForTitleException = titleVerificationForSingleMatch(reportEntity.getFileName(), titleMap, bibIdList, materialTypeList, parameterMap);

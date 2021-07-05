@@ -127,6 +127,9 @@ public class Bib {
     @Field("BibCatalogingStatus")
     private String bibCatalogingStatus;
 
+    @Field("MatchingIdentifier")
+    private String matchingIdentifier;
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -192,6 +195,8 @@ public class Bib {
             return false;
         if (getBibCatalogingStatus() != null ? !getBibCatalogingStatus().equals(bib.getBibCatalogingStatus()) : bib.getBibCatalogingStatus() != null)
             return false;
+        if (getMatchingIdentifier() != null ? !getMatchingIdentifier().equals(bib.getMatchingIdentifier()) : bib.getMatchingIdentifier() != null)
+            return false;
         return getTitleSort() != null ? getTitleSort().equals(bib.getTitleSort()) : bib.getTitleSort() == null;
 
     }
@@ -227,6 +232,7 @@ public class Bib {
         result = 31 * result + (getLeaderMaterialType() != null ? getLeaderMaterialType().hashCode() : 0);
         result = 31 * result + (getBibCatalogingStatus() != null ? getBibCatalogingStatus().hashCode() : 0);
         result = 31 * result + (getTitleSort() != null ? getTitleSort().hashCode() : 0);
+        result = 31 * result + (getMatchingIdentifier() != null ? getMatchingIdentifier().hashCode() : 0);
         return result;
     }
 }

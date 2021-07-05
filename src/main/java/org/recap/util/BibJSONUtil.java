@@ -314,6 +314,7 @@ public class BibJSONUtil extends MarcUtil {
 
             bib.setDeletedBib(bibliographicEntity.isDeleted());
             bib.setBibCatalogingStatus(bibliographicEntity.getCatalogingStatus());
+            bib.setMatchingIdentifier(bibliographicEntity.getMatchingIdentity());
             return bib;
         } catch (Exception e) {
             saveExceptionReportForBib(bibliographicEntity, e);

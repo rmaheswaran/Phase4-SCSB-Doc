@@ -536,7 +536,7 @@ public class SolrQueryBuilder {
         if (CollectionUtils.isNotEmpty(matchCriteriaValues)) {
             query.append(buildQueryForMatchChildReturnParent(matchingCriteria, matchCriteriaValues));
         }
-        SolrQuery solrQuery = new SolrQuery(getBibliographicFilterSolrQuery(query));
+        SolrQuery solrQuery = new SolrQuery(getAllCGDBibliographicFilterSolrQuery(query));
         solrQuery.setRows(rows);
         return solrQuery;
     }
@@ -551,7 +551,7 @@ public class SolrQueryBuilder {
     public String solrQueryForInitialMatching(String fieldName, List<String> matchingPointValues) {
         StringBuilder query = new StringBuilder();
         query.append(buildQueryForMatchChildReturnParent(fieldName, matchingPointValues));
-        return getBibliographicFilterSolrQuery(query);  // initial MA
+        return getAllCGDBibliographicFilterSolrQuery(query);  // initial MA
     }
 
     /**
@@ -621,6 +621,14 @@ public class SolrQueryBuilder {
         query.append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
                 .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS)
                 .append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION).append(":").append(ScsbCommonConstants.SHARED_CGD)
+                .append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
+        return query.toString();
+    }
+
+    private String getAllCGDBibliographicFilterSolrQuery(StringBuilder query) {
+        query.append(and).append(ScsbCommonConstants.IS_DELETED_BIB).append(":").append(ScsbConstants.FALSE)
+                .append(and).append(ScsbConstants.BIB_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS)
                 .append(and).append(coreParentFilterQuery).append(ScsbCommonConstants.IS_DELETED_ITEM).append(":").append(ScsbConstants.FALSE)
                 .append(and).append(coreParentFilterQuery).append(ScsbConstants.ITEM_CATALOGING_STATUS).append(":").append(ScsbCommonConstants.COMPLETE_STATUS);
         return query.toString();

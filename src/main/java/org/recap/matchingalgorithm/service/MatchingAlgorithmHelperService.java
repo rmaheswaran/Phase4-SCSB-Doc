@@ -15,6 +15,7 @@ import org.recap.model.jpa.ReportEntity;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
+import org.recap.repository.jpa.ReportDataDetailsRepository;
 import org.recap.service.ActiveMqQueuesInfo;
 import org.recap.util.CommonUtil;
 import org.recap.util.MatchingAlgorithmUtil;
@@ -31,6 +32,7 @@ import org.springframework.util.StopWatch;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,6 +85,9 @@ public class MatchingAlgorithmHelperService {
 
     @Autowired
     private CommonUtil commonUtil;
+
+    @Autowired
+    ReportDataDetailsRepository reportDataDetailsRepository;
 
     /**
      * Gets logger.
@@ -383,6 +388,16 @@ public class MatchingAlgorithmHelperService {
         return size;
     }
 
+    public List<Integer> getBibIdListFromString(ReportDataEntity reportDataEntity) {
+        String bibId = reportDataEntity.getHeaderValue();
+        String[] bibIds = bibId.split(",");
+        List<Integer> bibIdList = new ArrayList<>();
+        for(int i=0; i< bibIds.length; i++) {
+            bibIdList.add(Integer.valueOf(bibIds[i]));
+        }
+        return bibIdList;
+    }
+
     private Integer executeCallables(Integer size, ExecutorService executorService, List<Callable<Integer>> callables) {
         List<Future<Integer>> futures = null;
         try {
@@ -438,6 +453,63 @@ public class MatchingAlgorithmHelperService {
             List<MatchingBibEntity> bibEntitiesBasedOnBibIds = getMatchingBibDetailsRepository().getMultiMatchBibEntitiesBasedOnBibIds(bibIds, matchPoint1, matchPoint2);
             if (CollectionUtils.isNotEmpty(bibEntitiesBasedOnBibIds)) {
                 getMatchingAlgorithmUtil().populateBibIdWithMatchingCriteriaValue(matchPoint1AndBibIdMap, bibEntitiesBasedOnBibIds, matchPoint1, bibEntityMap);
+            }
+        }
+    }
+
+    public String groupBibsForMonograph(Integer batchSize, Boolean isPendingMatch){
+        long countOfRecordNum;
+        if(isPendingMatch) {
+            countOfRecordNum = reportDataDetailsRepository.getCountOfRecordNumForMatchingPendingMonograph(ScsbCommonConstants.BIB_ID);
+        } else {
+            countOfRecordNum = reportDataDetailsRepository.getCountOfRecordNumForMatchingMonograph(ScsbCommonConstants.BIB_ID);
+        }
+        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        int totalPagesCount = (int) (countOfRecordNum / batchSize);
+        logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
+        for(int pageNum = 0; pageNum < totalPagesCount + 1; pageNum++) {
+            long from = pageNum * Long.valueOf(batchSize);
+            List<ReportDataEntity> reportDataEntities;
+            if(isPendingMatch) {
+                reportDataEntities = reportDataDetailsRepository.getReportDataEntityForPendingMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize);
+            } else {
+                reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingMonographs(ScsbCommonConstants.BIB_ID, from, batchSize);
+            }
+            for (ReportDataEntity reportDataEntity : reportDataEntities) {
+                List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
+                matchingAlgorithmUtil.updateBibForMatchingIdentifier(bibIdList);
+            }
+        }
+        return "Success";
+    }
+
+    public void groupBibsForMVMS(Integer batchSize) {
+        long countOfRecordNum = reportDataDetailsRepository.getCountOfRecordNumForMatchingMVMs(ScsbCommonConstants.BIB_ID);
+        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        int totalPagesCount = (int) (countOfRecordNum / batchSize);
+        logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
+        for(int pageNum=0; pageNum < totalPagesCount + 1; pageNum++) {
+            long from = pageNum * Long.valueOf(batchSize);
+            List<ReportDataEntity> reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingMVMs(ScsbCommonConstants.BIB_ID, from, batchSize);
+            for(ReportDataEntity reportDataEntity : reportDataEntities) {
+                List<Integer> bibIdList = getBibIdListFromString(reportDataEntity);
+                matchingAlgorithmUtil.updateBibForMatchingIdentifier(bibIdList);
+            }
+        }
+    }
+
+    public void groupBibsForSerials(Integer batchSize) {
+        long countOfRecordNum = reportDataDetailsRepository.getCountOfRecordNumForMatchingSerials(ScsbCommonConstants.BIB_ID);
+        logger.info(ScsbConstants.TOTAL_RECORDS + "{}", countOfRecordNum);
+        int totalPagesCount = (int) (countOfRecordNum / batchSize);
+        logger.info(ScsbConstants.TOTAL_PAGES + "{}" , totalPagesCount);
+        for(int pageNum=0; pageNum < totalPagesCount + 1; pageNum++) {
+            long from = pageNum * Long.valueOf(batchSize);
+            List<ReportDataEntity> reportDataEntities =  reportDataDetailsRepository.getReportDataEntityForMatchingSerials(ScsbCommonConstants.BIB_ID, from, batchSize);
+            for(ReportDataEntity reportDataEntity : reportDataEntities) {
+                String bibId = reportDataEntity.getHeaderValue();
+                String[] bibIds = bibId.split(",");
+                matchingAlgorithmUtil.updateBibForMatchingIdentifier(Arrays.asList(bibIds).stream().map(Integer::valueOf).collect(Collectors.toList()));
             }
         }
     }
