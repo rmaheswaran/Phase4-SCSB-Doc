@@ -97,7 +97,7 @@ public class MatchingAlgorithmMonographCGDCallable extends  CommonCallable imple
             Set<String> materialTypeSet = new HashSet<>();
             MatchingAlgorithmCGDProcessor matchingAlgorithmCGDProcessor = new MatchingAlgorithmCGDProcessor(bibliographicDetailsRepository, producerTemplate, collectionGroupMap,
                     institutionMap, itemChangeLogDetailsRepository, ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE, collectionGroupDetailsRepository, itemDetailsRepository,institutionDetailsRepository);
-            boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList);
+            boolean isMonograph = matchingAlgorithmCGDProcessor.checkForMonographAndPopulateValues(materialTypeSet, itemEntityMap, bibIdList,ScsbConstants.INITIAL_MATCHING_OPERATION_TYPE);
             if(isMonograph) {
                 matchingAlgorithmCGDProcessor.updateCGDProcess(itemEntityMap);
             } else {

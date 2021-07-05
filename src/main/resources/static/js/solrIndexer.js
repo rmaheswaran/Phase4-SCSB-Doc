@@ -156,7 +156,10 @@ function saveReport() {
         url = "/matchingAlgorithm/findMatchingAndSaveReports";
     } else if (criteria === 'Reports') {
         url = "/matchingAlgorithm/reports";
-    } else if (criteria === 'UpdateMonographCGDInDB') {
+    } else if (criteria === 'GroupBibs') {
+        url = "/matchingAlgorithm/groupBibs";
+    }
+    else if (criteria === 'UpdateMonographCGDInDB') {
         url = "/matchingAlgorithm/updateMonographCGDInDB";
     } else if (criteria === 'UpdateSerialCGDInDB') {
         url = "/matchingAlgorithm/updateSerialCGDInDB";

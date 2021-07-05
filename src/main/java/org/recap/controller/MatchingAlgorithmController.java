@@ -160,6 +160,7 @@ public class MatchingAlgorithmController {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             status.append(matchingAlgorithmFindMatchingAndReports());
+            status.append(groupMatchingBibs());
             status.append(updateMonographCGDInDB());
             status.append(updateSerialCGDInDB());
             status.append(updateMvmCGDInDB());
@@ -221,6 +222,28 @@ public class MatchingAlgorithmController {
             getLogger().info("Total Time taken to process Matching Algorithm Reports :{} " , stopWatch.getTotalTimeSeconds());
             status.append(ScsbConstants.STATUS_DONE ).append("\n");
             status.append(ScsbConstants.TOTAL_TIME_TAKEN + "to save reports only : " + stopWatch.getTotalTimeSeconds()).append("\n");
+        } catch (Exception e) {
+            getLogger().error(ScsbCommonConstants.LOG_ERROR,e);
+            status.append(ScsbConstants.STATUS_FAILED);
+        }
+        return status.toString();
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/matchingAlgorithm/groupBibs")
+    public String groupMatchingBibs(){
+        StringBuilder status = new StringBuilder();
+        try {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            matchingAlgorithmHelperService.groupBibsForMonograph(Integer.valueOf(getMatchingAlgoBatchSize()), true);
+            matchingAlgorithmHelperService.groupBibsForMonograph(Integer.valueOf(getMatchingAlgoBatchSize()), false);
+            matchingAlgorithmHelperService.groupBibsForMVMS(Integer.valueOf(getMatchingAlgoBatchSize()));
+            matchingAlgorithmHelperService.groupBibsForSerials(Integer.valueOf(getMatchingAlgoBatchSize()));
+            stopWatch.stop();
+            getLogger().info("Total Time taken to group matching bibs :{} " , stopWatch.getTotalTimeSeconds());
+            status.append(ScsbConstants.STATUS_DONE ).append("\n");
+            status.append(ScsbConstants.TOTAL_TIME_TAKEN + "to group matching bibs : " + stopWatch.getTotalTimeSeconds()).append("\n");
         } catch (Exception e) {
             getLogger().error(ScsbCommonConstants.LOG_ERROR,e);
             status.append(ScsbConstants.STATUS_FAILED);

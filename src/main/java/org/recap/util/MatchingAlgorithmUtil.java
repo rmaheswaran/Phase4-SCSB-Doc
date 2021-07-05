@@ -14,14 +14,17 @@ import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.matchingalgorithm.MatchingCounter;
+import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.MatchingBibEntity;
 import org.recap.model.jpa.MatchingMatchPointsEntity;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
+import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.MatchingBibDetailsRepository;
 import org.recap.repository.jpa.MatchingMatchPointsDetailsRepository;
 import org.recap.repository.jpa.ReportDataDetailsRepository;
 import org.recap.repository.jpa.ReportDetailRepository;
+import org.recap.service.accession.SolrIndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +45,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.recap.ScsbConstants.MATCHING_COUNTER_OPEN;
 import static org.recap.ScsbConstants.MATCHING_COUNTER_SHARED;
@@ -78,6 +84,9 @@ public class MatchingAlgorithmUtil {
     @Autowired
     private ReportDataDetailsRepository reportDataDetailsRepository;
 
+    @Autowired
+    SolrIndexService solrIndexService;
+
     private String and = " AND ";
 
     private String coreParentFilterQuery = "{!parent which=\"ContentType:parent\"}";
@@ -87,6 +96,8 @@ public class MatchingAlgorithmUtil {
 
     @Autowired
     private CommonUtil commonUtil;
+    @Autowired
+    private BibliographicDetailsRepository bibliographicDetailsRepository;
 
     /**
      * Gets report detail repository.
@@ -731,7 +742,6 @@ public class MatchingAlgorithmUtil {
         String query = ScsbCommonConstants.DOCTYPE + ":" + ScsbCommonConstants.BIB +
                 and + ScsbConstants.BIB_CATALOGING_STATUS + ":" + ScsbCommonConstants.COMPLETE_STATUS +
                 and + ScsbCommonConstants.IS_DELETED_BIB + ":" + ScsbConstants.FALSE +
-                and + coreParentFilterQuery + ScsbCommonConstants.COLLECTION_GROUP_DESIGNATION + ":" + ScsbCommonConstants.SHARED_CGD +
                 and + coreParentFilterQuery + ScsbConstants.ITEM_CATALOGING_STATUS + ":" + ScsbCommonConstants.COMPLETE_STATUS +
                 and + coreParentFilterQuery + ScsbCommonConstants.IS_DELETED_ITEM + ":" + ScsbConstants.FALSE;
         SolrQuery solrQuery = new SolrQuery(query);
@@ -884,5 +894,20 @@ public class MatchingAlgorithmUtil {
                 MatchingCounter.setSpecificInstitutionCounterMap(institution, specificInstitutionCounterMap);
             }
         }
+    }
+
+    public void updateBibForMatchingIdentifier(List<Integer> bibIdList) {
+        List<BibliographicEntity> bibliographicEntityList = bibliographicDetailsRepository.findByIdIn(bibIdList);
+        Optional<BibliographicEntity> existingIdentifier = bibliographicEntityList.stream().filter(bibliographicEntity -> StringUtils.isNotEmpty(bibliographicEntity.getMatchingIdentity())).findFirst();
+        String matchingIdentity = existingIdentifier.map(BibliographicEntity::getMatchingIdentity).orElseGet(() -> UUID.randomUUID().toString());
+        List<BibliographicEntity> bibliographicEntitiesToUpdate = bibliographicEntityList.stream()
+                .filter(bibliographicEntity -> StringUtils.isEmpty(bibliographicEntity.getMatchingIdentity()))
+                .map(bibliographicEntity -> {
+                    bibliographicEntity.setMatchingIdentity(matchingIdentity);
+                    return bibliographicEntity;
+                })
+                .collect(Collectors.toList());
+        bibliographicDetailsRepository.saveAll(bibliographicEntitiesToUpdate);
+        bibliographicEntitiesToUpdate.forEach(bibliographicEntity->solrIndexService.indexByBibliographicId(bibliographicEntity.getId()));
     }
 }
