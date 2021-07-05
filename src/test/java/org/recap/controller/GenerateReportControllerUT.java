@@ -15,7 +15,9 @@ import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.report.ReportGenerator;
 import org.recap.repository.jpa.ReportDetailRepository;
 import org.recap.util.DateUtil;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -50,6 +52,9 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
 
     @Mock
     SubmitCollectionReport submitCollectionReprot;
+
+    @Mock
+    ReportEntity reportEntity;
 
 
     @Test
@@ -175,6 +180,64 @@ public class GenerateReportControllerUT extends BaseTestCaseUT {
         Mockito.when(submitCollectionReprot.isExportEnabled()).thenReturn(true);
         ResponseEntity<SubmitCollectionReport> reponse = generateReportController.submitCollectionReports(submitCollectionReprot);
         assertNotNull(reponse);
+    }
+
+    @Test
+    @DisplayName("Test Accession report for Exception")
+    public void accessionException() throws Exception{
+        Mockito.when(reportGenerator.accessionExceptionReportGenerator(Mockito.any())).thenCallRealMethod();
+        Mockito.when(submitCollectionReprot.getPageNumber()).thenReturn(1);
+        Mockito.when(submitCollectionReprot.getPageSize()).thenReturn(1);
+        Mockito.when(submitCollectionReprot.getInstitutionName()).thenReturn(ScsbCommonConstants.PRINCETON);
+        Mockito.when(submitCollectionReprot.getFrom()).thenReturn(new Date());
+        Mockito.when(submitCollectionReprot.getTo()).thenReturn(new Date());
+        Page<ReportEntity> reportEntityList=Mockito.mock(Page.class);
+        List<ReportEntity> reportEntities=new ArrayList<>();
+        reportEntities.add(reportEntity);
+        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        reportDataEntities.add(getReportDataEntity("itemBarcode", "123456"));
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.CUSTOMER_CODE, "PA"));
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.OWNING_INSTITUTION, ScsbCommonConstants.PRINCETON));
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.MESSAGE, "testsubmit"));
+        Mockito.when(reportEntity.getReportDataEntities()).thenReturn(reportDataEntities);
+        Mockito.when(reportEntityList.getContent()).thenReturn(reportEntities);
+        Mockito.when(reportEntityList.getTotalPages()).thenReturn(1);
+        Mockito.when(reportEntityList.getTotalElements()).thenReturn(1l);
+        Mockito.when(reportEntity.getType()).thenReturn(ScsbCommonConstants.SUBMIT_COLLECTION_EXCEPTION_REPORT);
+        ReflectionTestUtils.setField(reportGenerator,"reportDetailRepository",reportDetailRepository);
+        Mockito.when(reportDetailRepository.findByInstitutionAndTypeAndDateRangeAndAccession(Mockito.any(),Mockito.anyString(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(reportEntityList);
+        ResponseEntity<SubmitCollectionReport> accessionException=generateReportController.accessionException(submitCollectionReprot);
+        assertNotNull(accessionException);
+    }
+
+    @Test
+    @DisplayName("Test Accession report for Exception")
+    public void accessionExceptionReportExport() throws Exception{
+        Mockito.when(submitCollectionReprot.isExportEnabled()).thenReturn(true);
+        Mockito.when(submitCollectionReprot.getInstitutionName()).thenReturn(ScsbCommonConstants.PRINCETON);
+        Mockito.when(submitCollectionReprot.getFrom()).thenReturn(new Date());
+        Mockito.when(submitCollectionReprot.getTo()).thenReturn(new Date());
+        List<ReportEntity> reportEntities=new ArrayList<>();
+        reportEntities.add(reportEntity);
+        List<ReportDataEntity> reportDataEntities = new ArrayList<>();
+        reportDataEntities.add(getReportDataEntity("itemBarcode", "123456"));
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.CUSTOMER_CODE, "PA"));
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.OWNING_INSTITUTION, ScsbCommonConstants.PRINCETON));
+        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.MESSAGE, "testsubmit"));
+        Mockito.when(reportEntity.getReportDataEntities()).thenReturn(reportDataEntities);
+        Mockito.when(reportEntity.getType()).thenReturn(ScsbCommonConstants.SUBMIT_COLLECTION_SUCCESS_REPORT);
+        ReflectionTestUtils.setField(reportGenerator,"reportDetailRepository",reportDetailRepository);
+        Mockito.when(reportDetailRepository.findByInstitutionAndTypeAndDateRangeAndAccession(Mockito.any(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(reportEntities);
+        Mockito.when(reportGenerator.accessionExceptionReportExport(Mockito.any())).thenCallRealMethod();
+        ResponseEntity<SubmitCollectionReport> accessionException=generateReportController.accessionException(submitCollectionReprot);
+        assertNotNull(accessionException);
+    }
+
+    private ReportDataEntity getReportDataEntity(String barcode, String s) {
+        ReportDataEntity reportDataEntity = new ReportDataEntity();
+        reportDataEntity.setHeaderName(barcode);
+        reportDataEntity.setHeaderValue(s);
+        return reportDataEntity;
     }
 
     private List<ReportEntity> saveSummaryReportEntity(){

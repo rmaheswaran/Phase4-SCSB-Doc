@@ -147,6 +147,32 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
         assertEquals(String.valueOf(file),file1);
     }
 
+    @Test
+    public void generateTitleExceptionReportException() throws Exception {
+        List<ReportEntity> reportEntities=new ArrayList<>();
+        List<ReportDataEntity> reportDataEntities=new ArrayList<>();
+        ReportDataEntity reportDataEntity=new ReportDataEntity();
+        reportDataEntity.setHeaderName("Title");
+        reportDataEntity.setHeaderValue("test");
+        reportDataEntities.add(reportDataEntity);
+        ReportEntity reportEntity=new ReportEntity();
+        reportEntity.addAll(reportDataEntities);
+        reportEntities.add(reportEntity);
+        File file=new File("Test");
+        Page<ReportEntity> page=Mockito.mock(Page.class);
+        Mockito.when(page.getContent()).thenReturn(reportEntities);
+        Mockito.when(page.getTotalPages()).thenReturn(2);
+        Mockito.when(mockOngoingMatchingReportsService.getCamelContext()).thenReturn(camelContext);
+        Mockito.when(mockOngoingMatchingReportsService.getReportDetailRepository()).thenReturn(reportDetailRepository);
+        Mockito.when(mockOngoingMatchingReportsService.getDateUtil()).thenReturn(dateUtil);
+        Mockito.when(mockOngoingMatchingReportsService.getCsvUtil()).thenReturn(csvUtil);
+        Mockito.when(mockOngoingMatchingReportsService.getMatchingReportsDirectory()).thenReturn(matchingReportsDirectory);
+        Mockito.when(reportDetailRepository.findByFileAndTypeAndDateRangeWithPaging(Mockito.any(),Mockito.anyString(),Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(page);
+        Mockito.when(csvUtil.createTitleExceptionReportFile(Mockito.anyString(),Mockito.anyInt(),Mockito.anyList())).thenReturn(file);
+        String file1=ongoingMatchingReportsService.generateTitleExceptionReport(new Date(), 1);
+        assertEquals(String.valueOf(file),file1);
+    }
+
         @Test
         public void generateSerialAndMVMsReportException() throws IOException, SolrServerException {
         SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
@@ -166,6 +192,71 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
         Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
         Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
         List<Integer> serialMvmBibIds= Arrays.asList(1);
+        ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
+        assertNotNull(serialMvmBibIds);
+    }
+
+    @Test
+    public void generateSerialAndMVMsReportSolrException() throws Exception {
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
+        ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrTemplate",mocksolrTemplate1);
+        ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrQueryBuilder",solrQueryBuilder);
+        SolrQuery solrQuery = new SolrQuery("testquery");
+        solrQuery.setStart(1);
+        solrQuery.setRows(1);
+        SolrDocumentList solrDocumentList =new SolrDocumentList();
+        SolrDocument solrDocument = new SolrDocument();
+        solrDocument.setField(ScsbCommonConstants.DOCTYPE,ScsbCommonConstants.ITEM);
+        solrDocument.setField(ScsbCommonConstants.IS_DELETED_ITEM,false);
+        solrDocument.setField(ScsbConstants.ITEM_CATALOGING_STATUS,ScsbCommonConstants.COMPLETE_STATUS);
+        solrDocument.setField(ScsbCommonConstants.HOLDINGS_ID,Arrays.asList(1));
+        solrDocumentList.add(solrDocument);
+        solrDocumentList.setNumFound(11);
+        Mockito.when(mockOngoingMatchingReportsService.getSolrTemplate()).thenReturn(mocksolrTemplate1);
+        Mockito.when(mockOngoingMatchingReportsService.getSolrQueryBuilder()).thenReturn(solrQueryBuilder);
+        Mockito.when(mockOngoingMatchingReportsService.getCamelContext()).thenReturn(camelContext);
+        Mockito.when(mockOngoingMatchingReportsService.getProducerTemplate()).thenReturn(producerTemplate);
+        Mockito.when(solrQueryBuilder.getSolrQueryForBibItem(Mockito.anyString())).thenReturn(solrQuery);
+        Mockito.doNothing().when(producerTemplate).sendBodyAndHeader(String.valueOf(Mockito.anyInt()),Mockito.anyString(),Mockito.anyString(),Mockito.anyString());
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse).thenThrow(NullPointerException.class);
+        Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+        List<Integer> serialMvmBibIds= Arrays.asList(1);
+        ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
+        assertNotNull(serialMvmBibIds);
+    }
+
+    @Test
+    public void generateSerialAndMVMsReportCamelException() throws Exception {
+        SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+        SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+        QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
+        ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrTemplate",mocksolrTemplate1);
+        ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrQueryBuilder",solrQueryBuilder);
+        SolrQuery solrQuery = new SolrQuery("testquery");
+        solrQuery.setStart(1);
+        solrQuery.setRows(1);
+        SolrDocumentList solrDocumentList =new SolrDocumentList();
+        SolrDocument solrDocument = new SolrDocument();
+        solrDocument.setField(ScsbCommonConstants.DOCTYPE,ScsbCommonConstants.ITEM);
+        solrDocument.setField(ScsbCommonConstants.IS_DELETED_ITEM,false);
+        solrDocument.setField(ScsbConstants.ITEM_CATALOGING_STATUS,ScsbCommonConstants.COMPLETE_STATUS);
+        solrDocument.setField(ScsbCommonConstants.HOLDINGS_ID,Arrays.asList(1));
+        solrDocumentList.add(solrDocument);
+        solrDocumentList.setNumFound(11);
+        Mockito.when(mockOngoingMatchingReportsService.getSolrTemplate()).thenReturn(mocksolrTemplate1);
+        Mockito.when(mockOngoingMatchingReportsService.getSolrQueryBuilder()).thenReturn(solrQueryBuilder);
+        Mockito.when(mockOngoingMatchingReportsService.getCamelContext()).thenReturn(camelContext);
+        Mockito.when(mockOngoingMatchingReportsService.getProducerTemplate()).thenReturn(producerTemplate);
+        Mockito.when(solrQueryBuilder.getSolrQueryForBibItem(Mockito.anyString())).thenReturn(solrQuery);
+        Mockito.doNothing().when(producerTemplate).sendBodyAndHeader(String.valueOf(Mockito.anyInt()),Mockito.anyString(),Mockito.anyString(),Mockito.anyString());
+        PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+        Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenReturn(queryResponse);
+        Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+        List<Integer> serialMvmBibIds= Arrays.asList(1);
+        ongoingMatchingReportsService.getInstitutionDetailsRepository();
         ongoingMatchingReportsService.generateSerialAndMVMsReport(serialMvmBibIds);
         assertNotNull(serialMvmBibIds);
     }
@@ -263,6 +354,38 @@ public class OngoingMatchingReportsServiceUT extends BaseTestCaseUT4{
         Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HL", supportInstitution));
         ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
         assertNotNull(matchingSummaryReports);
+        }
+    }
+
+    @Test
+    public void generateSummaryReportException() throws Exception {
+        String[] institutions={ScsbCommonConstants.PRINCETON,ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.NYPL};
+        for (String institution:institutions) {
+            List<String> allInstitutionCodeExceptSupportInstitution=Arrays.asList(ScsbCommonConstants.COLUMBIA,ScsbCommonConstants.PRINCETON,ScsbCommonConstants.NYPL);
+            Mockito.when(commonUtil.findAllInstitutionCodesExceptSupportInstitution()).thenReturn(allInstitutionCodeExceptSupportInstitution);
+            List<MatchingSummaryReport> matchingSummaryReports=new ArrayList<>();
+            matchingSummaryReports.add(getMatchingSummaryReport(institution));
+            SolrQuery solrQuery= new SolrQuery();
+            Mockito.when(solrQueryBuilder.getCountQueryForParentAndChildCriteria(Mockito.any())).thenReturn(solrQuery);
+            Mockito.when(solrQueryBuilder.getCountQueryForChildAndParentCriteria(Mockito.any())).thenReturn(solrQuery);
+            SolrTemplate mocksolrTemplate1 = PowerMockito.mock(SolrTemplate.class);
+            ReflectionTestUtils.setField(ongoingMatchingReportsService,"solrTemplate",mocksolrTemplate1);
+            Mockito.when(mockOngoingMatchingReportsService.getSolrTemplate()).thenReturn(mocksolrTemplate1);
+            SolrClient solrClient=PowerMockito.mock(SolrClient.class);
+            QueryResponse queryResponse= Mockito.mock(QueryResponse.class);
+            SolrDocumentList solrDocumentList =new SolrDocumentList();
+            SolrDocument solrDocument = new SolrDocument();
+            solrDocument.setField(ScsbCommonConstants.DOCTYPE,ScsbCommonConstants.HOLDINGS);
+            solrDocument.setField(ScsbCommonConstants.HOLDING_ID,345);
+            solrDocument.setField(ScsbConstants.SUMMARY_HOLDINGS,"45");
+            solrDocumentList.add(solrDocument);
+            solrDocumentList.setNumFound(11);
+            PowerMockito.when(mocksolrTemplate1.getSolrClient()).thenReturn(solrClient);
+            Mockito.when(solrClient.query(Mockito.any(SolrQuery.class))).thenThrow(NullPointerException.class);
+            Mockito.when(queryResponse.getResults()).thenReturn(solrDocumentList);
+            Mockito.when(propertyUtil.getAllInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HL", supportInstitution));
+            ongoingMatchingReportsService.generateSummaryReport(matchingSummaryReports);
+            assertNotNull(matchingSummaryReports);
         }
     }
 
