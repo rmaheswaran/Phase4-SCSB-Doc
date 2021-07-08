@@ -291,7 +291,7 @@ public class ReportGeneratorUT extends BaseTestCaseUT {
     @Test
     public void submitCollectionExceptionReportExport() {
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
-        reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.BARCODE, "123456"));
+        reportDataEntities.add(getReportDataEntity("itemBarcode", "123456"));
         reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.CUSTOMER_CODE, "PA"));
         reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.OWNING_INSTITUTION, ScsbCommonConstants.PRINCETON));
         reportDataEntities.add(getReportDataEntity(ScsbCommonConstants.MESSAGE, "testsubmit"));
